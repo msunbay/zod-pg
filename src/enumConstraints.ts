@@ -1,16 +1,21 @@
-import type { Client } from 'pg';
-import type { CheckConstraint } from './types';
+import type { Client } from "pg";
+import type { CheckConstraint } from "./types";
 
-import { sql } from './utils';
+import { sql } from "./utils";
 
 /**
  * Returns a mapping of column_name -> allowed values for enum-like constraints.
  * Supports: col = ANY (ARRAY['a','b']), col IN ('a','b'), col = 'a' OR col = 'b', col <@ ARRAY['a','b']
  */
-export async function getEnumConstraints(
-  client: Client,
-  tableName: string
-): Promise<Record<string, string[]>> {
+export async function getEnumConstraints({
+  client,
+  schemaName,
+  tableName,
+}: {
+  client: Client;
+  schemaName: string;
+  tableName: string;
+}): Promise<Record<string, string[]>> {
   const enumConstraints: Record<string, string[]> = {};
   const res = await client.query<CheckConstraint>(
     sql`
@@ -20,9 +25,9 @@ export async function getEnumConstraints(
     FROM information_schema.table_constraints tc
     JOIN information_schema.check_constraints cc ON tc.constraint_name = cc.constraint_name
     JOIN information_schema.constraint_column_usage kcu ON cc.constraint_name = kcu.constraint_name
-    WHERE tc.table_name = $1 AND tc.constraint_type = 'CHECK'
+    WHERE tc.table_schema = $1 AND tc.table_name = $2 AND tc.constraint_type = 'CHECK'
   `,
-    [tableName]
+    [schemaName, tableName]
   );
 
   for (const row of res.rows) {
@@ -33,11 +38,11 @@ export async function getEnumConstraints(
     );
 
     if (match && match[1] === columnName) {
-      const values = match[2].split(',').map((v) =>
+      const values = match[2].split(",").map((v) =>
         v
           .trim()
-          .replace(/'::text/g, '')
-          .replace(/'/g, '')
+          .replace(/'::text/g, "")
+          .replace(/'/g, "")
       );
 
       enumConstraints[columnName] = values;
@@ -48,11 +53,11 @@ export async function getEnumConstraints(
     match = checkClause.match(/\(\s*"?([a-zA-Z0-9_]+)"?\s+IN\s+\((.*?)\)\s*\)/);
 
     if (match && match[1] === columnName) {
-      const values = match[2].split(',').map((v) =>
+      const values = match[2].split(",").map((v) =>
         v
           .trim()
-          .replace(/'::text/g, '')
-          .replace(/'/g, '')
+          .replace(/'::text/g, "")
+          .replace(/'/g, "")
       );
 
       enumConstraints[columnName] = values;
@@ -89,11 +94,11 @@ export async function getEnumConstraints(
     );
 
     if (match && match[1] === columnName) {
-      const values = match[2].split(',').map((v) =>
+      const values = match[2].split(",").map((v) =>
         v
           .trim()
-          .replace(/'::text/g, '')
-          .replace(/'/g, '')
+          .replace(/'::text/g, "")
+          .replace(/'/g, "")
       );
 
       enumConstraints[columnName] = values;

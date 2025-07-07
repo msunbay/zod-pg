@@ -1,26 +1,41 @@
 {
-  "name": "pg-to-zod",
-  "version": "0.0.1",
+  "name": "zodium",
+  "version": "0.0.6",
   "description": "Opinionated Zod schema generator for PostgreSQL databases",
-  "main": "dist/index.js",
+  "main": "./index.js",
+  "bin": {
+    "zodium": "index.js"
+  },
   "scripts": {
-    "build": "tsc",
+    "build": "rm -rf ./dist && tsc",
     "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/msolvaag/zodium.git"
   },
   "keywords": [
     "zod",
     "postgresql"
   ],
+  "files": [
+    "dist"
+  ],
   "author": "msolvaag",
   "license": "ISC",
   "devDependencies": {
-    "@types/lodash-es": "^4.17.12",
+    "@types/lodash": "^4.17.20",
     "@types/node": "^20",
     "@types/pg": "^8.15.4",
-    "typescript": "^5.8.3"
+    "tsx": "^4.20.3",
+    "typescript": "^5.8.3",
+    "zod": "^3.25.75"
   },
   "dependencies": {
-    "lodash-es": "^4.17.21",
+    "commander": "^14.0.0",
+    "dotenv": "^17.0.1",
+    "lodash": "^4.17.21",
     "pg": "^8.16.3"
-  }
+  },
+  "packageManager": "yarn@1.22.22+sha1.ac34549e6aa8e7ead463a7407e1c7390f61a6610"
 }

@@ -1,7 +1,5 @@
-import { readdirSync, unlinkSync } from "fs";
-import camelCase from "lodash-es/camelCase";
-import upperFirst from "lodash-es/upperFirst";
-import snakeCase from "lodash-es/snakeCase";
+import { existsSync, mkdirSync, readdirSync, unlinkSync } from "fs";
+import { camelCase, upperFirst, snakeCase } from "lodash";
 
 // Dummy tagged template literal for SQL queries
 // This is used to allow for syntax highlighting in IDEs.
@@ -35,20 +33,42 @@ export const getEnumConstantName = (
 /**
  * Deletes all .ts files in the output schema folder.
  */
-export function clearOutputDirectory() {
-  const OUTPUT_PATH = "./app/database/schema/tables";
-
+export function clearOutputDirectory(outputPath: string) {
   try {
-    const files = readdirSync(OUTPUT_PATH);
+    const exists = existsSync(outputPath);
+
+    if (!exists) {
+      mkdirSync(outputPath);
+    }
+
+    const files = readdirSync(outputPath);
 
     for (const file of files) {
       if (file.endsWith(".ts")) {
-        unlinkSync(`${OUTPUT_PATH}/${file}`);
+        unlinkSync(`${outputPath}/${file}`);
       }
     }
 
-    console.log(`Deleted all .ts files in ${OUTPUT_PATH}`);
+    if (files.length > 0) {
+      console.log(`Deleted all .ts files in ${outputPath}`);
+    }
   } catch (err) {
-    console.error(`Error cleaning output folder:`, err);
+    console.error(`Error cleaning output folder: ${toError(err).message}`);
   }
 }
+
+export const ensureEnvVar = (name: string): string => {
+  const value = process.env[name];
+  if (!value) {
+    throw new Error(`Environment variable ${name} is not set`);
+  }
+  return value;
+};
+
+export const toError = (error: unknown): Error => {
+  if (error instanceof Error) {
+    return error;
+  }
+
+  return new Error(String(error));
+};
