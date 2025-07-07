@@ -1,0 +1,26 @@
+{
+  "name": "pg-to-zod",
+  "version": "0.0.1",
+  "description": "Opinionated Zod schema generator for PostgreSQL databases",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "zod",
+    "postgresql"
+  ],
+  "author": "msolvaag",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/lodash-es": "^4.17.12",
+    "@types/node": "^20",
+    "@types/pg": "^8.15.4",
+    "typescript": "^5.8.3"
+  },
+  "dependencies": {
+    "lodash-es": "^4.17.21",
+    "pg": "^8.16.3"
+  }
+}
