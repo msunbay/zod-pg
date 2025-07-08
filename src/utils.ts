@@ -31,26 +31,28 @@ export const getEnumConstantName = (
 };
 
 /**
- * Deletes all .ts files in the output schema folder.
+ * Deletes all .ts files in the output tables folder.
  */
-export function clearOutputDirectory(outputPath: string) {
+export function clearTablesDirectory(outputPath: string) {
+  const tablesPath = `${outputPath}/tables`;
+
   try {
-    const exists = existsSync(outputPath);
+    const exists = existsSync(tablesPath);
 
     if (!exists) {
-      mkdirSync(outputPath);
+      mkdirSync(tablesPath, { recursive: true });
     }
 
-    const files = readdirSync(outputPath);
+    const files = readdirSync(tablesPath);
 
     for (const file of files) {
       if (file.endsWith(".ts")) {
-        unlinkSync(`${outputPath}/${file}`);
+        unlinkSync(`${tablesPath}/${file}`);
       }
     }
 
     if (files.length > 0) {
-      console.log(`Deleted all .ts files in ${outputPath}`);
+      console.log(`Deleted all .ts files in ${tablesPath}`);
     }
   } catch (err) {
     console.error(`Error cleaning output folder: ${toError(err).message}`);

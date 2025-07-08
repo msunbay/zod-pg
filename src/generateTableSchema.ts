@@ -86,6 +86,6 @@ export type ${singularPascalCase(
 ${enumTypes.join("\n")}
 `;
 
-  const fileName = `${outputPath}/${tableName}.ts`;
+  const fileName = `${outputPath}/tables/${tableName}.ts`;
   writeFileSync(fileName, schema);
 }
