@@ -1,11 +1,6 @@
 import type { ColumnInfo } from "./types";
 
-import { pascalCase, singularPascalCase } from "./utils";
-
-const TYPE_MAP: Record<
-  string,
-  string | ((col: ColumnInfo, tableName: string) => string)
-> = {
+const TYPE_MAP: Record<string, string> = {
   integer: "z.number().int()",
   int4: "z.number().int()",
   serial: "z.number().int()",
@@ -23,8 +18,7 @@ const TYPE_MAP: Record<
   date: "z.date({ coerce: true })",
   bool: "z.boolean()",
   boolean: "z.boolean()",
-  jsonb: (col, table) =>
-    `json.${singularPascalCase(table)}${pascalCase(col.name)}Schema`,
+  jsonb: "z.any()",
   json: "z.any()",
   _text: "z.array(z.string())",
   uuid: "z.string().uuid()",
@@ -34,7 +28,10 @@ const TYPE_MAP: Record<
 export function mapColumnType(col: ColumnInfo, tableName: string): string {
   const { dataType, udtName } = col;
 
-  const mapped = TYPE_MAP[dataType] || TYPE_MAP[`${dataType}:${udtName}`];
-  if (typeof mapped === "function") return mapped(col, tableName);
-  return mapped || "z.any()";
+  return (
+    TYPE_MAP[dataType] ||
+    TYPE_MAP[`${dataType}:${udtName}`] ||
+    TYPE_MAP[udtName] ||
+    "z.any()"
+  );
 }

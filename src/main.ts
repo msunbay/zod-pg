@@ -5,7 +5,7 @@ import { generateTableSchema } from "./generateTableSchema";
 import { clearTablesDirectory, ensureEnvVar, sql, toError } from "./utils";
 import { program } from "commander";
 import { createClient } from "./client";
-import { generateIndexFile } from "./generateIndexFile";
+import { generateTablesIndexFile } from "./generateIndexFile";
 import { generateConstantsFile, generateTypesFile } from "./generateTypesFile";
 
 /**
@@ -25,6 +25,10 @@ export const main = async () => {
     "Include only tables matching this regex"
   );
   program.option("--schema <name>", "Specify schema name (default: public)");
+  program.option(
+    "--json-schema-import-location <path>",
+    "Path to import JSON schemas"
+  );
 
   program.parse();
 
@@ -33,6 +37,7 @@ export const main = async () => {
   const excludeRegex = options.exclude ? new RegExp(options.exclude) : null;
   const includeRegex = options.include ? new RegExp(options.include) : null;
   const schemaName = options.schema || "public";
+  const jsonSchemaImportLocation = options.jsonSchemaImportLocation;
 
   clearTablesDirectory(outputPath);
 
@@ -74,10 +79,16 @@ export const main = async () => {
 
     for (const tableName of includedTables) {
       console.log(`Generating schema for table: ${tableName}`);
-      await generateTableSchema({ client, schemaName, tableName, outputPath });
+      await generateTableSchema({
+        client,
+        schemaName,
+        tableName,
+        outputPath,
+        jsonSchemaImportLocation,
+      });
     }
 
-    await generateIndexFile(outputPath, includedTables);
+    await generateTablesIndexFile(outputPath, includedTables);
     await generateConstantsFile(outputPath, includedTables);
     await generateTypesFile(outputPath, includedTables);
   } catch (error) {

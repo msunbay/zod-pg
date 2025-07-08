@@ -1,6 +1,6 @@
 import { writeFileSync } from "fs";
 
-export const generateIndexFile = async (
+export const generateTablesIndexFile = async (
   outputPath: string,
   tableNames: string[]
 ) => {
@@ -9,7 +9,7 @@ export const generateIndexFile = async (
     .map((name) => `export * from './${name}';`)
     .join("\n");
 
-  const indexFilePath = `${outputPath}/index.ts`;
+  const indexFilePath = `${outputPath}/tables/index.ts`;
   writeFileSync(indexFilePath, indexContent);
 
   console.log(`Generated index file at ${indexFilePath}`);

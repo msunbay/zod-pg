@@ -1,7 +1,7 @@
-import type { ColumnInfo } from './types';
+import type { ColumnInfo } from "./types";
 
-import { mapColumnType } from './typeMap';
-import { getEnumConstantName, singularPascalCase } from './utils';
+import { mapColumnType } from "./typeMap";
+import { getEnumConstantName, pascalCase, singularPascalCase } from "./utils";
 
 export const getEnums = (
   tableName: string,
@@ -14,11 +14,15 @@ export const getEnums = (
     const enumName = getEnumConstantName(tableName, colName);
 
     enumLiterals.push(
-      `export const ${enumName} = ${JSON.stringify(enumConstraints[colName])} as const;`
+      `export const ${enumName} = ${JSON.stringify(
+        enumConstraints[colName]
+      )} as const;`
     );
 
     enumTypes.push(
-      `export type ${singularPascalCase(enumName)} = (typeof ${enumName})[number];`
+      `export type ${singularPascalCase(
+        enumName
+      )} = (typeof ${enumName})[number];`
     );
   }
 
@@ -29,6 +33,7 @@ interface CreateSchemaFieldsParams {
   columns: ColumnInfo[];
   tableName: string;
   enumConstraints: Record<string, string[]>;
+  useJsonSchemaImports: boolean;
 }
 
 interface CreateFieldTypeParams {
@@ -36,6 +41,7 @@ interface CreateFieldTypeParams {
   column: ColumnInfo;
   includeConstraints: boolean;
   enumConstraints: Record<string, string[]>;
+  useJsonSchemaImports: boolean;
 }
 
 const createFieldType = ({
@@ -43,6 +49,7 @@ const createFieldType = ({
   column,
   includeConstraints,
   enumConstraints,
+  useJsonSchemaImports,
 }: CreateFieldTypeParams): string => {
   let zodType: string;
 
@@ -50,9 +57,9 @@ const createFieldType = ({
     const enumName = getEnumConstantName(tableName, column.name);
 
     if (
-      column.dataType === '_text' ||
-      column.dataType === 'ARRAY' ||
-      column.udtName === '_text'
+      column.dataType === "_text" ||
+      column.dataType === "ARRAY" ||
+      column.udtName === "_text"
     ) {
       zodType = `z.array(z.enum(${enumName}))`;
     } else {
@@ -60,19 +67,25 @@ const createFieldType = ({
     }
   } else {
     zodType = mapColumnType(column, tableName);
+
+    if (column.dataType === "jsonb" && useJsonSchemaImports) {
+      zodType = `json.${singularPascalCase(tableName)}${pascalCase(
+        column.name
+      )}Schema`;
+    }
   }
 
   if (includeConstraints && column.maxLen) {
     zodType = `${zodType}.max(${column.maxLen})`;
   }
 
-  if (zodType === 'z.any()')
+  if (zodType === "z.any()")
     console.warn(
       `No mapping found for type: ${tableName}.${column.name}:${column.dataType}. Defaulting to z.any()`,
       { column }
     );
 
-  if (column.isNullable === 'YES') {
+  if (column.isNullable === "YES") {
     zodType = `${zodType}.nullable().optional()`;
   }
 
@@ -91,20 +104,20 @@ export const createOutputSchemaFields = ({
         includeConstraints: false,
       });
 
-      if (column.isNullable === 'YES') {
+      if (column.isNullable === "YES") {
         zodType = `${zodType}.transform(val => (val === null ? undefined : val))`;
       }
 
       return `  ${column.name}: ${zodType},`;
     })
-    .join('\n');
+    .join("\n");
 
 export const createInputSchemaFields = ({
   columns,
   ...params
 }: CreateSchemaFieldsParams) =>
   columns
-    .filter((column) => column.name !== 'id')
+    .filter((column) => column.name !== "id")
     .map((column) => {
       let zodType = createFieldType({
         column,
@@ -112,13 +125,13 @@ export const createInputSchemaFields = ({
         includeConstraints: true,
       });
 
-      if (column.dataType === 'jsonb') {
+      if (column.dataType === "jsonb") {
         zodType =
-          column.isNullable === 'YES'
+          column.isNullable === "YES"
             ? `${zodType}.transform(val => val ? JSON.stringify(val) : null)`
             : `${zodType}.transform(val => JSON.stringify(val))`;
       }
 
       return `  ${column.name}: ${zodType},`;
     })
-    .join('\n');
+    .join("\n");
