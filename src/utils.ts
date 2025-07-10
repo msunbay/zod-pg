@@ -1,5 +1,23 @@
 import { existsSync, mkdirSync, readdirSync, unlinkSync } from "fs";
-import { camelCase, upperFirst, snakeCase } from "lodash";
+
+export function camelCase(str: string): string {
+  return str
+    .replace(/[_-]+/g, " ")
+    .replace(/(?:^|\s)(\w)/g, (_, c) => (c ? c.toUpperCase() : ""))
+    .replace(/\s+/g, "")
+    .replace(/^(.)/, (m) => m.toLowerCase());
+}
+
+export function upperFirst(str: string): string {
+  return str.charAt(0).toUpperCase() + str.slice(1);
+}
+
+export function snakeCase(str: string): string {
+  return str
+    .replace(/([a-z])([A-Z])/g, "$1_$2")
+    .replace(/[-\s]+/g, "_")
+    .toLowerCase();
+}
 
 // Dummy tagged template literal for SQL queries
 // This is used to allow for syntax highlighting in IDEs.
@@ -16,7 +34,13 @@ export const singularUpperCase = (tableName: string): string => {
 };
 
 export const singularPascalCase = (tableName: string): string => {
-  return pascalCase(singularUpperCase(tableName));
+  // Singularize each part, then PascalCase each part, handling uppercase input
+  return tableName
+    .split(/_|-|\s+/)
+    .map((part) => part.toLowerCase())
+    .map((part) => (part.endsWith("s") ? part.slice(0, -1) : part))
+    .map((part) => upperFirst(camelCase(part)))
+    .join("");
 };
 
 export const getEnumConstantName = (

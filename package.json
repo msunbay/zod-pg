@@ -1,6 +1,6 @@
 {
   "name": "zodium",
-  "version": "0.0.14",
+  "version": "0.0.15",
   "description": "Opinionated Zod schema generator for PostgreSQL databases",
   "main": "./index.js",
   "bin": {
@@ -8,7 +8,7 @@
   },
   "scripts": {
     "build": "rm -rf ./dist && tsc",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jest"
   },
   "repository": {
     "type": "git",
@@ -24,18 +24,21 @@
   "author": "msolvaag",
   "license": "ISC",
   "devDependencies": {
+    "@types/jest": "^30.0.0",
     "@types/lodash": "^4.17.20",
     "@types/node": "^20",
     "@types/pg": "^8.15.4",
+    "jest": "^30.0.4",
+    "ts-jest": "^29.4.0",
     "tsx": "^4.20.3",
     "typescript": "^5.8.3",
     "zod": "^3.25.75"
   },
+  "peerDependencies": {
+    "pg": "^8"
+  },
   "dependencies": {
     "commander": "^14.0.0",
-    "dotenv": "^17.0.1",
-    "lodash": "^4.17.21",
-    "pg": "^8.16.3"
-  },
-  "packageManager": "yarn@1.22.22+sha1.ac34549e6aa8e7ead463a7407e1c7390f61a6610"
+    "dotenv": "^17.0.1"
+  }
 }
