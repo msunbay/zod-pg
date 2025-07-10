@@ -1,6 +1,6 @@
 {
   "name": "zodium",
-  "version": "0.0.15",
+  "version": "0.0.16",
   "description": "Opinionated Zod schema generator for PostgreSQL databases",
   "main": "./index.js",
   "bin": {

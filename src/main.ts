@@ -6,7 +6,8 @@ import { clearTablesDirectory, ensureEnvVar, sql, toError } from "./utils";
 import { program } from "commander";
 import { createClient } from "./client";
 import { generateTablesIndexFile } from "./generateIndexFile";
-import { generateConstantsFile, generateTypesFile } from "./generateTypesFile";
+import { generateTypesFile } from "./generateTypesFile";
+import { generateConstantsFile } from "./generateConstantsFile";
 
 /**
  * Main entrypoint: connects to Postgres, cleans output, generates Zod schemas for all tables, and writes an index file.
