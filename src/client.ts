@@ -5,7 +5,7 @@ export const createClient = () => {
   if (process.env.POSTGRES_CONNECTION_STRING) {
     return new Client({
       connectionString: process.env.POSTGRES_CONNECTION_STRING,
-      application_name: "zodium",
+      application_name: "zod-pg",
     });
   }
 
@@ -16,6 +16,6 @@ export const createClient = () => {
     host: ensureEnvVar("POSTGRES_HOST"),
     ssl: process.env.POSTGRES_PORT === "true",
     port: parseInt(process.env.POSTGRES_PORT ?? "5432", 10),
-    application_name: "zodium",
+    application_name: "zod-pg",
   });
 };

@@ -13,7 +13,7 @@ import { generateConstantsFile } from "./generateConstantsFile";
  * Main entrypoint: connects to Postgres, cleans output, generates Zod schemas for all tables, and writes an index file.
  */
 export const main = async () => {
-  program.name("zodium");
+  program.name("zod-pg");
   program.description("Generates Zod schemas from PostgreSQL database tables.");
   program.requiredOption(
     "-o,--output <path>",
