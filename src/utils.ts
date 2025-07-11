@@ -25,11 +25,41 @@ export const sql = String.raw;
 
 export const pascalCase = (str: string): string => upperFirst(camelCase(str));
 
+const singularize = (word: string): string => {
+  const IGNORED_WORDS = ["status"];
+
+  const KNOWN_IRREGULARS: Record<string, string> = {
+    children: "child",
+  };
+
+  // Check for ignored words
+  if (IGNORED_WORDS.includes(word.toLowerCase())) {
+    return word;
+  }
+
+  // Check for known irregulars first
+  if (KNOWN_IRREGULARS[word]) {
+    return KNOWN_IRREGULARS[word];
+  }
+
+  const lowerWord = word.toLowerCase();
+
+  // Basic singularization logic
+  if (lowerWord.endsWith("ies")) {
+    return word.slice(0, -3) + "y";
+  } else if (lowerWord.endsWith("es")) {
+    return word.slice(0, -2);
+  } else if (lowerWord.endsWith("s")) {
+    return word.slice(0, -1);
+  }
+  return word;
+};
+
 export const singularUpperCase = (tableName: string): string => {
   return snakeCase(tableName)
     .toUpperCase()
     .split("_")
-    .map((part) => (part.endsWith("S") ? part.slice(0, -1) : part))
+    .map(singularize)
     .join("_");
 };
 
@@ -38,7 +68,7 @@ export const singularPascalCase = (tableName: string): string => {
   return tableName
     .split(/_|-|\s+/)
     .map((part) => part.toLowerCase())
-    .map((part) => (part.endsWith("s") ? part.slice(0, -1) : part))
+    .map(singularize)
     .map((part) => upperFirst(camelCase(part)))
     .join("");
 };
