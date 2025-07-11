@@ -41,9 +41,9 @@ jobs:
           echo "Published version: $NPM_VIEW"
           if [ "$PKG_VERSION" = "$NPM_VIEW" ]; then
             echo "Version $PKG_VERSION is already published. Skipping publish."
-            echo "::set-output name=should_publish::false"
+            echo "should_publish=false" >> $GITHUB_OUTPUT
           else
-            echo "::set-output name=should_publish::true"
+            echo "should_publish=true" >> $GITHUB_OUTPUT
           fi
 
       - name: Publish to npm
