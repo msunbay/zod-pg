@@ -104,7 +104,7 @@ Since reading and writing are two different operations, zod-pg generates separat
 ### The Read Schemas
 
 - Used for reading data from the database.
-- Does not enforce write constraints (e.g., max length, min length, required fields).
+- Does not enforce write constraints (e.g., max length, min length).
 - Transforms nulls to `undefined`, making it easier to work with optional fields in TypeScript.
 
 ### The Write Schemas
