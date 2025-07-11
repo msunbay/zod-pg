@@ -1,19 +1,20 @@
-const IGNORED_WORDS = ["status"];
+// Words that should not be transformed to singular form
+const IGNORED_WORDS = ["status", "business"];
 
 const KNOWN_IRREGULARS: Record<string, string> = {
   children: "child",
 };
 
 export const singularize = (word: string): string => {
-  if (IGNORED_WORDS.includes(word.toLowerCase())) {
+  const lowerWord = word.toLowerCase();
+
+  if (IGNORED_WORDS.includes(lowerWord)) {
     return word;
   }
 
-  if (KNOWN_IRREGULARS[word]) {
+  if (KNOWN_IRREGULARS[lowerWord]) {
     return KNOWN_IRREGULARS[word];
   }
-
-  const lowerWord = word.toLowerCase();
 
   // Basic english singularization logic
   if (lowerWord.endsWith("ies")) {

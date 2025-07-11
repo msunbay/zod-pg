@@ -23,18 +23,17 @@ export const pascalCase = (str: string): string => upperFirst(camelCase(str));
 
 export const singularUpperCase = (tableName: string): string => {
   return snakeCase(tableName)
-    .toUpperCase()
     .split("_")
     .map(singularize)
+    .map((part) => part.toUpperCase())
     .join("_");
 };
 
 export const singularPascalCase = (tableName: string): string => {
-  // Singularize each part, then PascalCase each part, handling uppercase input
   return tableName
     .split(/_|-|\s+/)
-    .map((part) => part.toLowerCase())
     .map(singularize)
+    .map((part) => part.toLowerCase())
     .map((part) => upperFirst(camelCase(part)))
     .join("");
 };

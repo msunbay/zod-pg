@@ -1,9 +1,9 @@
-import { camelCase, upperFirst, snakeCase } from "../src/utils";
+import { camelCase, upperFirst, snakeCase } from "../../src/utils";
 import {
   pascalCase,
   singularUpperCase,
   singularPascalCase,
-} from "../src/utils";
+} from "../../src/utils";
 
 describe("utils replacements", () => {
   describe("pascalCase", () => {
