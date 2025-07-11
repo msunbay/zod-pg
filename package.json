@@ -1,6 +1,6 @@
 {
   "name": "zod-pg",
-  "version": "0.0.19",
+  "version": "0.0.20",
   "description": "Opinionated Zod schema generator for PostgreSQL databases",
   "main": "./index.js",
   "bin": {
