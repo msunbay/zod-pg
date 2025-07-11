@@ -57,20 +57,28 @@ zod-pg does not automatically load `.env` files, but you can use a package like 
 dotenv -e .env npx zod-pg --output ./src/output
 ```
 
-### Options
+### Exclude Tables
 
-| Option                          | Description                                     | Required | Default     |
-| ------------------------------- | ----------------------------------------------- | -------- | ----------- |
-| `--connection`                  | Connection string for PostgreSQL.               | false    |             |
-| `--user`                        | PostgreSQL user name.                           | false    |             |
-| `--password`                    | PostgreSQL user password.                       | false    |             |
-| `--host`                        | PostgreSQL host.                                | false    | `localhost` |
-| `--port`                        | PostgreSQL port.                                | false    | `5432`      |
-| `--database`                    | PostgreSQL database name.                       | false    | `postgres`  |
-| `--ssl`                         | Use SSL for the connection.                     | false    | `false`     |
-| `--output`                      | Output directory for generated files.           | true     |             |
-| `--json-schema-import-location` | Location to import Zod schemas for JSON fields. | false    |             |
-| `--help`                        | Show help message.                              | false    |             |
+You can exclude specific tables from schema generation using the `--exclude` option with a regex pattern. For example, to exclude all tables starting with "temp":
+
+```sh
+npx zod-pg --exclude '^temp_' --output ./src/output
+```
+
+### All Options
+
+| Option                          | Description                                      | Required | Default     |
+| ------------------------------- | ------------------------------------------------ | -------- | ----------- |
+| `--connection`                  | Connection string for PostgreSQL.                | false    |             |
+| `--user`                        | PostgreSQL user name.                            | false    |             |
+| `--password`                    | PostgreSQL user password.                        | false    |             |
+| `--host`                        | PostgreSQL host.                                 | false    | `localhost` |
+| `--port`                        | PostgreSQL port.                                 | false    | `5432`      |
+| `--database`                    | PostgreSQL database name.                        | false    | `postgres`  |
+| `--ssl`                         | Use SSL for the connection.                      | false    | `false`     |
+| `--exclude`                     | Regex pattern to exclude tables from generation. | false    |             |
+| `--json-schema-import-location` | Location to import Zod schemas for JSON fields.  | false    |             |
+| `--help`                        | Show help message.                               | false    |             |
 
 ## Output File Structure
 
