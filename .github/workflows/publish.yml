@@ -1,5 +1,8 @@
 name: Release and Publish to npm
 
+permissions:
+  contents: write
+
 on:
   push:
     branches:
