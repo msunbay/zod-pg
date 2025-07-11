@@ -1,6 +1,6 @@
 {
   "name": "zod-pg",
-  "version": "0.0.17",
+  "version": "0.0.19",
   "description": "Opinionated Zod schema generator for PostgreSQL databases",
   "main": "./index.js",
   "bin": {
@@ -39,7 +39,6 @@
     "pg": ">=8.12.0"
   },
   "dependencies": {
-    "commander": "^14.0.0",
-    "dotenv": "^17.0.1"
+    "commander": "^14.0.0"
   }
 }

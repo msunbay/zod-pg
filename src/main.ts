@@ -31,6 +31,31 @@ export const main = async () => {
     "Path to import JSON schemas"
   );
 
+  program.option("--connection-string <string>", "Postgres connection string");
+
+  program.option(
+    "--password <string>",
+    "Postgres password",
+    process.env.POSTGRES_PASSWORD
+  );
+  program.option("--user <string>", "Postgres user", process.env.POSTGRES_USER);
+  program.option(
+    "--database <string>",
+    "Postgres database",
+    process.env.POSTGRES_DB
+  );
+  program.option("--host <string>", "Postgres host", process.env.POSTGRES_HOST);
+  program.option(
+    "--ssl",
+    "Use SSL for Postgres connection",
+    process.env.POSTGRES_SSL === "true"
+  );
+  program.option(
+    "--port <number>",
+    "Postgres port",
+    process.env.POSTGRES_PORT || "5432"
+  );
+
   program.parse();
 
   const options = program.opts();
@@ -40,15 +65,33 @@ export const main = async () => {
   const schemaName = options.schema || "public";
   const jsonSchemaImportLocation = options.jsonSchemaImportLocation;
 
+  let connectionString = options.connectionString;
+  const ssl = options.ssl;
+
+  if (!connectionString) {
+    const { user, password, host, port, database } = options;
+
+    connectionString = `postgresql://${user}:${password}@${host}:${port}/${database}`;
+  }
+
+  // Mask password in connection string for logging
+  const maskedConnectionString = connectionString.replace(
+    /(postgres(?:ql)?:\/\/[^:]+:)[^@]+(@)/,
+    "$1****$2"
+  );
+
+  console.log(`Using connection string: "${maskedConnectionString}"`);
+
   clearTablesDirectory(outputPath);
 
   let client: Client | undefined = undefined;
 
   try {
-    client = createClient();
+    client = createClient({ connectionString, ssl });
 
-    console.log(`Connecting to Postgres at ${client.host}`);
+    console.log(`Connecting to ${client.host}:${client.port}`);
     await client.connect();
+    console.log(`Connected`);
 
     // Get all user tables in the public schema
     const tablesRes = await client.query(
