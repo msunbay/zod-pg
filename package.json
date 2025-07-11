@@ -14,6 +14,9 @@
     "type": "git",
     "url": "git+https://github.com/msolvaag/zod-pg.git"
   },
+  "publishConfig": {
+    "access": "public"
+  },
   "keywords": [
     "zod",
     "postgresql"
