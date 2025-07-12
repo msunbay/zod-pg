@@ -1,8 +1,8 @@
 // Words that should not be transformed to singular form
-const IGNORED_WORDS = ["status", "business"];
+const IGNORED_WORDS = ['status', 'business'];
 
 const KNOWN_IRREGULARS: Record<string, string> = {
-  children: "child",
+  children: 'child',
 };
 
 export const singularize = (word: string): string => {
@@ -17,11 +17,11 @@ export const singularize = (word: string): string => {
   }
 
   // Basic english singularization logic
-  if (lowerWord.endsWith("ies")) {
-    return word.slice(0, -3) + "y";
-  } else if (lowerWord.endsWith("es")) {
+  if (lowerWord.endsWith('ies')) {
+    return word.slice(0, -3) + 'y';
+  } else if (lowerWord.endsWith('es')) {
     return word.slice(0, -2);
-  } else if (lowerWord.endsWith("s")) {
+  } else if (lowerWord.endsWith('s')) {
     return word.slice(0, -1);
   }
   return word;

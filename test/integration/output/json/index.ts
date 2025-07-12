@@ -1,4 +1,4 @@
-import z from "zod";
+import z from 'zod';
 
 export const UserProfileSchema = z.object({
   name: z.string().max(100),

@@ -1,7 +1,7 @@
-import type { Client } from "pg";
-import type { CheckConstraint } from "./types";
+import type { Client } from 'pg';
+import type { CheckConstraint } from './types';
 
-import { sql } from "./utils";
+import { sql } from './utils';
 
 /**
  * Returns a mapping of column_name -> allowed values for enum-like constraints.
@@ -38,11 +38,11 @@ export async function getEnumConstraints({
     );
 
     if (match && match[1] === columnName) {
-      const values = match[2].split(",").map((v) =>
+      const values = match[2].split(',').map((v) =>
         v
           .trim()
-          .replace(/'::text/g, "")
-          .replace(/'/g, "")
+          .replace(/'::text/g, '')
+          .replace(/'/g, '')
       );
 
       enumConstraints[columnName] = values;
@@ -53,11 +53,11 @@ export async function getEnumConstraints({
     match = checkClause.match(/\(\s*"?([a-zA-Z0-9_]+)"?\s+IN\s+\((.*?)\)\s*\)/);
 
     if (match && match[1] === columnName) {
-      const values = match[2].split(",").map((v) =>
+      const values = match[2].split(',').map((v) =>
         v
           .trim()
-          .replace(/'::text/g, "")
-          .replace(/'/g, "")
+          .replace(/'::text/g, '')
+          .replace(/'/g, '')
       );
 
       enumConstraints[columnName] = values;
@@ -94,11 +94,11 @@ export async function getEnumConstraints({
     );
 
     if (match && match[1] === columnName) {
-      const values = match[2].split(",").map((v) =>
+      const values = match[2].split(',').map((v) =>
         v
           .trim()
-          .replace(/'::text/g, "")
-          .replace(/'/g, "")
+          .replace(/'::text/g, '')
+          .replace(/'/g, '')
       );
 
       enumConstraints[columnName] = values;

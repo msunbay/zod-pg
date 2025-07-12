@@ -1,4 +1,4 @@
-import { Client } from "pg";
+import { Client } from 'pg';
 
 export const createClient = ({
   connectionString,
@@ -10,6 +10,6 @@ export const createClient = ({
   return new Client({
     connectionString,
     ssl,
-    application_name: "zod-pg",
+    application_name: 'zod-pg',
   });
 };

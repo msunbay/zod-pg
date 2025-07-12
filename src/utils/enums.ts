@@ -1,4 +1,4 @@
-import { singularUpperCase, snakeCase } from "./casing";
+import { singularUpperCase, snakeCase } from './casing';
 
 export const getEnumConstantName = (
   tableName: string,
@@ -8,6 +8,6 @@ export const getEnumConstantName = (
     colName
   ).toUpperCase()}`;
 
-  if (name.endsWith("S")) return name;
+  if (name.endsWith('S')) return name;
   return `${name}S`;
 };

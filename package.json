@@ -18,7 +18,8 @@
     "test:unit": "jest test/unit",
     "test:integration": "jest test/integration --runInBand",
     "test:types": "tsc --noEmit",
-    "test:watch": "jest --watch"
+    "test:watch": "jest --watch",
+    "format": "prettier --write ."
   },
   "repository": {
     "type": "git",
@@ -37,6 +38,7 @@
   "author": "msolvaag",
   "license": "ISC",
   "devDependencies": {
+    "@ianvs/prettier-plugin-sort-imports": "^4.5.1",
     "@testcontainers/postgresql": "^11.2.1",
     "@types/jest": "^30.0.0",
     "@types/lodash": "^4.17.20",
@@ -44,6 +46,7 @@
     "@types/pg": "^8.15.4",
     "jest": "^30.0.4",
     "pg": "^8.16.3",
+    "prettier": "^3.6.2",
     "testcontainers": "^11.2.1",
     "ts-jest": "^29.4.0",
     "tsx": "^4.20.3",

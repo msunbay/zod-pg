@@ -1,5 +1,6 @@
-import { existsSync, mkdirSync, readdirSync, unlinkSync } from "fs";
-import { toError } from "./error";
+import { existsSync, mkdirSync, readdirSync, unlinkSync } from 'fs';
+
+import { toError } from './error';
 
 /**
  * Deletes all .ts files in the output tables folder.
@@ -17,7 +18,7 @@ export function clearTablesDirectory(outputPath: string) {
     const files = readdirSync(tablesPath);
 
     for (const file of files) {
-      if (file.endsWith(".ts")) {
+      if (file.endsWith('.ts')) {
         unlinkSync(`${tablesPath}/${file}`);
       }
     }

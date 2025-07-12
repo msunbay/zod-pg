@@ -1,20 +1,21 @@
+import fs from 'fs';
+import path from 'path';
 import {
   PostgreSqlContainer,
   StartedPostgreSqlContainer,
-} from "@testcontainers/postgresql";
-import { Client } from "pg";
-import fs from "fs";
-import path from "path";
-import { generateSchemas } from "../../../src/generateSchemas";
+} from '@testcontainers/postgresql';
+import { Client } from 'pg';
+
+import { generateSchemas } from '../../../src/generateSchemas';
 
 jest.setTimeout(60000);
 
 let container: StartedPostgreSqlContainer;
 let client: Client;
-const outputDir = path.resolve(__dirname, "../output/generated");
+const outputDir = path.resolve(__dirname, '../output/generated');
 
 beforeAll(async () => {
-  container = await new PostgreSqlContainer("postgres").start();
+  container = await new PostgreSqlContainer('postgres').start();
 
   client = new Client({
     host: container.getHost(),
@@ -28,13 +29,13 @@ beforeAll(async () => {
 
   // Create schema
   const schemaSql = fs.readFileSync(
-    path.resolve(__dirname, "../schema.sql"),
-    "utf8"
+    path.resolve(__dirname, '../schema.sql'),
+    'utf8'
   );
 
   await client.query(schemaSql);
 
-  jest.spyOn(console, "log").mockImplementation(() => {});
+  jest.spyOn(console, 'log').mockImplementation(() => {});
 });
 
 afterAll(async () => {
@@ -42,11 +43,11 @@ afterAll(async () => {
   await container.stop();
 });
 
-it("generates correct zod schemas", async () => {
+it('generates correct zod schemas', async () => {
   await generateSchemas({
     connectionString: `postgres://${client.user}:${client.password}@${client.host}:${client.port}/${client.database}`,
     outputDir,
-    jsonSchemaImportLocation: "../../json",
+    jsonSchemaImportLocation: '../../json',
   });
 
   function getAllFiles(dir: string): string[] {
@@ -65,7 +66,7 @@ it("generates correct zod schemas", async () => {
 
   const outputFiles = getAllFiles(outputDir);
   for (const file of outputFiles) {
-    const content = fs.readFileSync(file, "utf8");
+    const content = fs.readFileSync(file, 'utf8');
     expect(content).toMatchSnapshot(path.relative(outputDir, file));
   }
 });

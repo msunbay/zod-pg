@@ -1,10 +1,11 @@
-import { Client } from "pg";
-import { createClient } from "./client";
-import { generateConstantsFile } from "./generateConstantsFile";
-import { generateTablesIndexFile } from "./generateIndexFile";
-import { generateTableSchema } from "./generateTableSchema";
-import { generateTypesFile } from "./generateTypesFile";
-import { clearTablesDirectory, sql, toError } from "./utils";
+import { Client } from 'pg';
+
+import { createClient } from './client';
+import { generateConstantsFile } from './generateConstantsFile';
+import { generateTablesIndexFile } from './generateIndexFile';
+import { generateTableSchema } from './generateTableSchema';
+import { generateTypesFile } from './generateTypesFile';
+import { clearTablesDirectory, sql, toError } from './utils';
 
 interface GenerateSchemasOptions {
   connectionString: string;
@@ -19,7 +20,7 @@ interface GenerateSchemasOptions {
 export const generateSchemas = async ({
   connectionString,
   outputDir,
-  schemaName = "public",
+  schemaName = 'public',
   includeRegex,
   excludeRegex,
   jsonSchemaImportLocation,
@@ -60,7 +61,7 @@ export const generateSchemas = async ({
     );
 
     if (includedTables.length === 0) {
-      console.error("No tables found to generate schemas for.");
+      console.error('No tables found to generate schemas for.');
       process.exit(1);
     }
 

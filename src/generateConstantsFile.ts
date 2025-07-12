@@ -1,4 +1,4 @@
-import { writeFileSync } from "fs";
+import { writeFileSync } from 'fs';
 
 export const generateConstantsFile = async (
   outputPath: string,
@@ -6,7 +6,7 @@ export const generateConstantsFile = async (
 ) => {
   const consts = tableNames
     .map((name) => `export const TABLE_${name.toUpperCase()} = '${name}';`)
-    .join("\n");
+    .join('\n');
 
   const indexFilePath = `${outputPath}/constants.ts`;
   writeFileSync(

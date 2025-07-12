@@ -1,1 +1,1 @@
-export { generateSchemas } from "./generateSchemas";
+export { generateSchemas } from './generateSchemas';

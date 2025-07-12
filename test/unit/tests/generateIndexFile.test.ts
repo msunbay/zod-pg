@@ -1,14 +1,15 @@
-import { dirname } from "path";
-import { generateTablesIndexFile } from "../../../src/generateIndexFile";
-import { mkdirSync, readFileSync, rmSync } from "fs";
+import { mkdirSync, readFileSync, rmSync } from 'fs';
+import { dirname } from 'path';
 
-describe("generateTablesIndexFile", () => {
-  const outputPath = "./test/tmp";
-  const tableNames = ["users", "accounts"];
+import { generateTablesIndexFile } from '../../../src/generateIndexFile';
+
+describe('generateTablesIndexFile', () => {
+  const outputPath = './test/tmp';
+  const tableNames = ['users', 'accounts'];
   const filePath = `${outputPath}/tables/index.ts`;
 
   beforeAll(() => {
-    jest.spyOn(console, "log").mockImplementation(() => {});
+    jest.spyOn(console, 'log').mockImplementation(() => {});
   });
 
   beforeEach(() => {
@@ -23,10 +24,10 @@ describe("generateTablesIndexFile", () => {
     } catch {}
   });
 
-  it("should generate an index file exporting all tables", async () => {
+  it('should generate an index file exporting all tables', async () => {
     await generateTablesIndexFile(outputPath, tableNames);
 
-    const content = readFileSync(filePath, "utf8");
+    const content = readFileSync(filePath, 'utf8');
     expect(content).toContain("export * from './users';");
     expect(content).toContain("export * from './accounts';");
   });

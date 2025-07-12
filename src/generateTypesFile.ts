@@ -1,10 +1,10 @@
-import { writeFileSync } from "fs";
+import { writeFileSync } from 'fs';
 
 export const generateTypesFile = async (
   outputPath: string,
   tableNames: string[]
 ) => {
-  const types = tableNames.map((name) => `  | '${name}'`).join("\n");
+  const types = tableNames.map((name) => `  | '${name}'`).join('\n');
 
   const indexFilePath = `${outputPath}/types.ts`;
   writeFileSync(

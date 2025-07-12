@@ -141,8 +141,9 @@ npx zod-pg --json-schema-import-location '../../json' --output ./schema/generate
 This will create a `./schema/generated/tables/user.ts` file looking similar to this:
 
 ```ts
-import { z } from "zod";
-import * as json from "../../json";
+import { z } from 'zod';
+
+import * as json from '../../json';
 
 export const UserSchema = z.object({
   id: z.number().int(),
@@ -159,7 +160,7 @@ e.g
 
 ```ts
 // src/schema/json.ts
-import { z } from "zod";
+import { z } from 'zod';
 
 export const UserProfileSchema = z.object({
   firstName: z.string(),
