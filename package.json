@@ -2,14 +2,21 @@
   "name": "zod-pg",
   "version": "0.0.26",
   "description": "Opinionated Zod schema generator for PostgreSQL databases",
-  "main": "./index.js",
+  "main": "./dist/index.js",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "require": "./dist/index.js"
+    }
+  },
   "bin": {
     "zod-pg": "index.js"
   },
   "scripts": {
-    "build": "rm -rf ./dist && tsc",
-    "test": "npm run test:types && npm run test:unit",
-    "test:unit": "jest",
+    "build": "rm -rf ./dist && tsc --project tsconfig.build.json",
+    "test": "npm run test:types && npm run test:unit && npm run test:integration && npm run test:types",
+    "test:unit": "jest test/unit",
+    "test:integration": "jest test/integration --runInBand",
     "test:types": "tsc --noEmit",
     "test:watch": "jest --watch"
   },
@@ -30,12 +37,14 @@
   "author": "msolvaag",
   "license": "ISC",
   "devDependencies": {
+    "@testcontainers/postgresql": "^11.2.1",
     "@types/jest": "^30.0.0",
     "@types/lodash": "^4.17.20",
     "@types/node": "^22",
     "@types/pg": "^8.15.4",
     "jest": "^30.0.4",
     "pg": "^8.16.3",
+    "testcontainers": "^11.2.1",
     "ts-jest": "^29.4.0",
     "tsx": "^4.20.3",
     "typescript": "^5.8.3",

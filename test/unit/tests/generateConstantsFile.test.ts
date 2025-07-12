@@ -1,4 +1,4 @@
-import { generateConstantsFile } from "../../src/generateConstantsFile";
+import { generateConstantsFile } from "../../../src/generateConstantsFile";
 import { mkdirSync, readFileSync, rmSync } from "fs";
 
 describe("generateConstantsFile", () => {

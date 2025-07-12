@@ -1,4 +1,4 @@
-import type { ColumnInfo, CheckConstraint } from "../../src/types";
+import type { ColumnInfo, CheckConstraint } from "../../../src/types";
 
 describe("types", () => {
   it("ColumnInfo type should have required fields", () => {

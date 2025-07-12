@@ -1,4 +1,4 @@
-import { mapColumnType } from "../../src/typeMap";
+import { mapColumnType } from "../../../src/typeMap";
 
 describe("mapColumnType", () => {
   it("should map known types to correct zod schemas", () => {

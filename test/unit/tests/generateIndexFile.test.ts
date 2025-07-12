@@ -1,5 +1,5 @@
 import { dirname } from "path";
-import { generateTablesIndexFile } from "../../src/generateIndexFile";
+import { generateTablesIndexFile } from "../../../src/generateIndexFile";
 import { mkdirSync, readFileSync, rmSync } from "fs";
 
 describe("generateTablesIndexFile", () => {

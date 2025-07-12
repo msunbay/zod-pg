@@ -2,8 +2,8 @@ import {
   getEnums,
   createInputSchemaFields,
   createOutputSchemaFields,
-} from "../../src/generateFieldSchema";
-import { ColumnInfo } from "../../src/types";
+} from "../../../src/generateFieldSchema";
+import { ColumnInfo } from "../../../src/types";
 
 describe("getEnums", () => {
   it("should generate enum literals and types", () => {

@@ -1,4 +1,4 @@
-import { singularize } from "../../src/utils/singularize";
+import { singularize } from "../../../src/utils/singularize";
 
 describe("singularize", () => {
   it("should not singularize ignored words", () => {

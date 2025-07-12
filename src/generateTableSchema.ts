@@ -15,13 +15,13 @@ export async function generateTableSchema({
   client,
   tableName,
   schemaName,
-  outputPath,
+  outputDir,
   jsonSchemaImportLocation,
 }: {
   client: Client;
   tableName: string;
   schemaName: string;
-  outputPath: string;
+  outputDir: string;
   jsonSchemaImportLocation?: string;
 }) {
   const [res, enumConstraints] = await Promise.all([
@@ -104,6 +104,6 @@ export type ${singularPascalCase(
 ${enumTypes.join("\n")}
 `;
 
-  const fileName = `${outputPath}/tables/${tableName}.ts`;
+  const fileName = `${outputDir}/tables/${tableName}.ts`;
   writeFileSync(fileName, schema);
 }

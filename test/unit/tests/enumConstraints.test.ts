@@ -1,4 +1,4 @@
-import { getEnumConstraints } from "../../src/enumConstraints";
+import { getEnumConstraints } from "../../../src/enumConstraints";
 
 describe("getEnumConstraints", () => {
   it("should parse enum-like check constraints", async () => {

@@ -1,0 +1,1 @@
+export { generateSchemas } from "./generateSchemas";
