@@ -5,3 +5,4 @@ export * from './enums';
 export * from './fs';
 export * from './singularize';
 export * from './sql';
+export * from './logger';

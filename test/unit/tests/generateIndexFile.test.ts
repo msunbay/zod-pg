@@ -1,11 +1,12 @@
 import { mkdirSync, readFileSync, rmSync } from 'fs';
 import { dirname } from 'path';
 
-import { generateTablesIndexFile } from '../../../src/generateIndexFile';
+import { TableInfo } from '../../../src/database/types';
+import { generateTablesIndexFile } from '../../../src/generate/generateIndexFile';
 
 describe('generateTablesIndexFile', () => {
   const outputPath = './test/tmp';
-  const tableNames = ['users', 'accounts'];
+  const tables = [{ name: 'users' }, { name: 'accounts' }] as TableInfo[];
   const filePath = `${outputPath}/tables/index.ts`;
 
   beforeAll(() => {
@@ -25,7 +26,10 @@ describe('generateTablesIndexFile', () => {
   });
 
   it('should generate an index file exporting all tables', async () => {
-    await generateTablesIndexFile(outputPath, tableNames);
+    await generateTablesIndexFile(outputPath, {
+      tables,
+      name: 'public',
+    });
 
     const content = readFileSync(filePath, 'utf8');
     expect(content).toContain("export * from './users';");

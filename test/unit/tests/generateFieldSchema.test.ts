@@ -1,13 +1,28 @@
+import { ColumnInfo, TableInfo } from '../../../src/database/types';
 import {
   createInputSchemaFields,
   createOutputSchemaFields,
   getEnums,
-} from '../../../src/generateFieldSchema';
-import { ColumnInfo } from '../../../src/types';
+} from '../../../src/generate/generateFieldSchema';
 
 describe('getEnums', () => {
   it('should generate enum literals and types', () => {
-    const enums = getEnums('users', { status: ['active', 'inactive'] });
+    const enums = getEnums({
+      name: 'users',
+      schemaName: 'public',
+      columns: [
+        {
+          name: 'status',
+          allowedValues: ['active', 'inactive'],
+          dataType: '',
+          isNullable: false,
+          udtName: '',
+          tableName: '',
+          schemaName: '',
+        },
+      ],
+    });
+
     expect(enums.enumLiterals[0]).toContain('export const USER_STATUS');
     expect(enums.enumTypes[0]).toContain('export type UserStatus');
   });
@@ -19,22 +34,32 @@ describe('createInputSchemaFields', () => {
       {
         name: 'name',
         dataType: 'varchar',
-        isNullable: 'NO',
+        isNullable: false,
         udtName: 'varchar',
+        tableName: '',
+        schemaName: '',
       },
       {
         name: 'status',
         dataType: 'varchar',
-        isNullable: 'YES',
+        isNullable: true,
         udtName: 'varchar',
+        tableName: '',
+        schemaName: '',
       },
     ];
-    const result = createInputSchemaFields({
+
+    const table: TableInfo = {
+      name: 'users',
+      schemaName: 'public',
       columns,
-      tableName: 'users',
-      enumConstraints: {},
+    };
+
+    const result = createInputSchemaFields({
+      table,
       useJsonSchemaImports: false,
     });
+
     expect(result).toContain('name: z.string()');
     expect(result).toContain('status: z.string().nullable().optional()');
   });
@@ -46,22 +71,32 @@ describe('createOutputSchemaFields', () => {
       {
         name: 'name',
         dataType: 'varchar',
-        isNullable: 'NO',
+        isNullable: false,
         udtName: 'varchar',
+        tableName: '',
+        schemaName: '',
       },
       {
         name: 'status',
         dataType: 'varchar',
-        isNullable: 'YES',
+        isNullable: true,
         udtName: 'varchar',
+        tableName: '',
+        schemaName: '',
       },
     ];
-    const result = createOutputSchemaFields({
+
+    const table: TableInfo = {
+      name: 'users',
+      schemaName: 'public',
       columns,
-      tableName: 'users',
-      enumConstraints: {},
+    };
+
+    const result = createOutputSchemaFields({
+      table,
       useJsonSchemaImports: false,
     });
+
     expect(result).toContain('name: z.string()');
     expect(result).toContain(
       'status: z.string().nullable().optional().transform'

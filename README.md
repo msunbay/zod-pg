@@ -61,7 +61,7 @@ zod-pg does not automatically load `.env` files, but you can use a package like 
 dotenv -e .env npx zod-pg --output ./src/output
 ```
 
-### Exclude Tables
+### Exclude / Include Tables
 
 You can exclude specific tables from schema generation using the `--exclude` option with a regex pattern. For example, to exclude all tables starting with "temp":
 
@@ -69,18 +69,29 @@ You can exclude specific tables from schema generation using the `--exclude` opt
 npx zod-pg --exclude '^temp_' --output ./src/output
 ```
 
+To include only specific tables, use the `--include` option with a regex pattern. For example, to include only tables starting with "user" or "account:
+
+```sh
+npx zod-pg --include '^(user|account)' --output ./src/output
+```
+
+Note that if you use both `--exclude` and `--include` options together, the `--include` option is applied first, then the `--exclude` option is applied to the included tables.
+
 ### All Options
 
 | Option                          | Description                                      | Required | Default     |
 | ------------------------------- | ------------------------------------------------ | -------- | ----------- |
 | `--connection`                  | Connection string for PostgreSQL.                | false    |             |
 | `--user`                        | PostgreSQL user name.                            | false    |             |
+| `-o, --output`                  | Output directory for generated files.            | true     |             |
+| `--clean`                       | Delete the output directory before generation.   | false    | `false`     |
 | `--password`                    | PostgreSQL user password.                        | false    |             |
 | `--host`                        | PostgreSQL host.                                 | false    | `localhost` |
 | `--port`                        | PostgreSQL port.                                 | false    | `5432`      |
 | `--database`                    | PostgreSQL database name.                        | false    | `postgres`  |
 | `--ssl`                         | Use SSL for the connection.                      | false    | `false`     |
 | `--exclude`                     | Regex pattern to exclude tables from generation. | false    |             |
+| `--include`                     | Regex pattern to include only specific tables.   | false    |             |
 | `--json-schema-import-location` | Location to import Zod schemas for JSON fields.  | false    |             |
 | `--help`                        | Show help message.                               | false    |             |
 
@@ -172,3 +183,7 @@ export const UserProfileSchema = z.object({
 ## Date Handling
 
 zod-pg automatically converts PostgreSQL `timestamp` and `timestamptz` fields to Zod's `z.date({ coerce: true })` schema. This means you can work with date fields directly in your TypeScript code without additional conversion.
+
+## Contributing
+
+Contributions are welcome! If you find a bug or have a feature request, please open an issue or submit a pull request.

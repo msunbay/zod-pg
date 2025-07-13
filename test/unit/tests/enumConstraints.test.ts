@@ -1,24 +1,15 @@
-import { getEnumConstraints } from '../../../src/enumConstraints';
+import { getEnumConstraints } from '../../../src/database/enumConstraints';
 
 describe('getEnumConstraints', () => {
-  it('should parse enum-like check constraints', async () => {
-    const mockClient = {
-      query: jest.fn().mockResolvedValue({
-        rows: [
-          {
-            columnName: 'status',
-            checkClause: "(status = ANY (ARRAY['active','inactive']))",
-          },
-          { columnName: 'type', checkClause: "(type IN ('foo','bar'))" },
-        ],
-      }),
-    };
-    const result = await getEnumConstraints({
-      client: mockClient as any,
-      schemaName: 'public',
-      tableName: 'users',
-    });
-    expect(result.status).toEqual(['active', 'inactive']);
-    expect(result.type).toEqual(['foo', 'bar']);
+  it('should parse enum-like check constraints', () => {
+    expect(
+      getEnumConstraints('status', [
+        "(status = ANY (ARRAY['active','inactive']))",
+      ])
+    ).toEqual(['active', 'inactive']);
+    expect(getEnumConstraints('type', ["(type IN ('foo','bar'))"])).toEqual([
+      'foo',
+      'bar',
+    ]);
   });
 });

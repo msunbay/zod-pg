@@ -1,1 +1,2 @@
-export { generateSchemas } from './generateSchemas';
+export { generateZodSchemas } from './generateZodSchemas';
+export type { GenerateZodSchemasOptions } from './generateZodSchemas';

@@ -1,17 +1,23 @@
 import { program } from 'commander';
 
-import { generateSchemas } from './generateSchemas';
+import { generateZodSchemas } from './generateZodSchemas';
+import { logAppName, logSetting } from './utils';
 
 /**
  * Main entrypoint: connects to Postgres, cleans output, generates Zod schemas for all tables, and writes an index file.
  */
 export const main = async () => {
+  const version = require('../package.json').version;
+  logAppName(`zod-pg CLI - v${version}`);
+
   program.name('zod-pg');
   program.description('Generates Zod schemas from PostgreSQL database tables.');
   program.requiredOption(
     '-o,--output <path>',
     'Output directory for generated schemas'
   );
+
+  program.option('--clean', 'Clean output directory before generating schemas');
 
   program.option('--exclude <regex>', 'Exclude tables matching this regex');
   program.option(
@@ -53,6 +59,7 @@ export const main = async () => {
 
   const options = program.opts();
   const outputDir = options.output;
+  const cleanOutput = options.clean || false;
   const excludeRegex = options.exclude
     ? new RegExp(options.exclude)
     : undefined;
@@ -77,11 +84,24 @@ export const main = async () => {
     '$1****$2'
   );
 
-  console.log(`Using connection string: "${maskedConnectionString}"`);
+  logSetting('output', outputDir);
+  logSetting('connection', maskedConnectionString);
+  logSetting('ssl', ssl ? 'enabled' : 'disabled');
+  logSetting('schema', schemaName);
 
-  await generateSchemas({
+  if (includeRegex) logSetting('include', options.include);
+  if (excludeRegex) logSetting('exclude', options.exclude);
+
+  if (jsonSchemaImportLocation) {
+    logSetting('json-import-location', jsonSchemaImportLocation);
+  }
+
+  console.log();
+
+  await generateZodSchemas({
     connectionString,
     outputDir,
+    cleanOutput,
     schemaName,
     includeRegex,
     excludeRegex,

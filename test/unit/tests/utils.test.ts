@@ -49,6 +49,7 @@ describe('utils replacements', () => {
     });
     it('should handle uppercase snake case', () => {
       expect(singularPascalCase('ARTIST_ALBUMS')).toBe('ArtistAlbum');
+      expect(singularPascalCase('ACCOUNT_USER_ROLES')).toBe('AccountUserRole');
     });
   });
   describe('camelCase', () => {

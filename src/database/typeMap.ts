@@ -25,7 +25,7 @@ const TYPE_MAP: Record<string, string> = {
   'ARRAY:_text': 'z.array(z.string())',
 };
 
-export function mapColumnType(col: ColumnInfo, tableName: string): string {
+export function mapColumnType(col: ColumnInfo): string {
   const { dataType, udtName } = col;
 
   return (
