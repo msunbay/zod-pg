@@ -29,13 +29,12 @@ export async function generateTableSchema({
 
   const { enumLiterals, enumTypes } = getEnums(table);
 
-  const schema = `import { z } from 'zod';
+  const schema = `${GENERATED_HEADER_COMMENT}\nimport { z } from 'zod';
 ${
   useJsonSchemaImports
     ? `import * as json from '${jsonSchemaImportLocation}';\n`
     : ''
 }
-${GENERATED_HEADER_COMMENT}
 ${
   enumLiterals.length
     ? `
@@ -63,9 +62,7 @@ export type ${singularPascalCase(
 export type ${singularPascalCase(
     table.name
   )}UpdateRecord = z.input<typeof ${pascalCase(table.name)}TableUpdateSchema>;
-${enumTypes.join('\n')}
-
-`;
+${enumTypes ? `${enumTypes.join('\n')}` : ''}`;
 
   const fileName = `${outputDir}/tables/${table.name}.ts`;
   await promises.writeFile(fileName, schema);

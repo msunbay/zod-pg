@@ -1,4 +1,4 @@
-import { parsePgArray } from '../../../src/database/array';
+import { parsePgArray } from '../../../src/utils/pg';
 
 describe('parsePgArray', () => {
   it('parses a simple array of quoted strings', () => {

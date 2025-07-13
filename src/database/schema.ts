@@ -1,7 +1,7 @@
 import { Client } from 'pg';
 
 import { logDebug, sql } from '../utils';
-import { parsePgArray } from './array';
+import { parsePgArray } from '../utils/pg';
 import { getEnumConstraints } from './enumConstraints';
 import { ColumnInfo, SchemaInfo, TableInfo } from './types';
 
@@ -21,7 +21,7 @@ export const getSchemaInformation = async (
         c.table_name AS "tableName",
         c.column_name AS "name",
         c.data_type AS "dataType",
-        c.is_nullable AS "isNullable",
+        (c.is_nullable = 'YES') AS "isNullable",
         c.character_maximum_length AS "maxLen",
         c.udt_name AS "udtName",
         (

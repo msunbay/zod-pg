@@ -5,7 +5,6 @@ import { parseOrConstraint } from './checks/orConstraint';
 
 /**
  * Returns column allowed values for enum-like constraints.
- * Supports: col = ANY (ARRAY['a','b']), col IN ('a','b'), col = 'a' OR col = 'b', col <@ ARRAY['a','b']
  */
 export function getEnumConstraints(
   columnName: string,
