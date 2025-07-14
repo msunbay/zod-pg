@@ -17,7 +17,8 @@ export default defineConfig({
           environment: 'node',
           include: ['test/integration/**/*.test.ts'],
           globals: true,
-          testTimeout: 60000, // Increase timeout for integration tests
+          hookTimeout: 60000,
+          testTimeout: 20000,
         },
       },
     ],
