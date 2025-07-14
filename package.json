@@ -18,7 +18,7 @@
     "build": "rm -rf ./dist && tsc --project tsconfig.build.json",
     "test": "npm run build && npm run test:unit && npm run test:integration && npm run test:types",
     "test:unit": "vitest --project unit run",
-    "test:integration": "vitest --project integration run -u",
+    "test:integration": "vitest --project integration run",
     "test:types": "tsc --noEmit",
     "test:watch": "jest --watch",
     "format": "prettier --write .",
