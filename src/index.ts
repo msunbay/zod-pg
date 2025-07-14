@@ -1,2 +1,2 @@
-export { generateZodSchemas } from './generateZodSchemas';
-export type { GenerateZodSchemasOptions } from './generateZodSchemas';
+export { generateZodSchemas } from './generateZodSchemas.js';
+export type { ZodPgGenerateConfig } from './generateZodSchemas.js';

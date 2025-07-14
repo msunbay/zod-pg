@@ -1,7 +1,7 @@
-import { parseAnyArrayConstraint } from './checks/anyArrayConstraint';
-import { parseArrayContainsConstraint } from './checks/arrayContainsConstraint';
-import { parseInConstraint } from './checks/inConstraint';
-import { parseOrConstraint } from './checks/orConstraint';
+import { parseAnyArrayConstraint } from './checks/anyArrayConstraint.js';
+import { parseArrayContainsConstraint } from './checks/arrayContainsConstraint.js';
+import { parseInConstraint } from './checks/inConstraint.js';
+import { parseOrConstraint } from './checks/orConstraint.js';
 
 /**
  * Returns column allowed values for enum-like constraints.

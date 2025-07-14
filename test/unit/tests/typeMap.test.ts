@@ -1,4 +1,4 @@
-import { mapColumnType } from '../../../src/database/typeMap';
+import { mapColumnType } from '../../../src/database/typeMap.js';
 
 describe('mapColumnType', () => {
   it('should map known types to correct zod schemas', () => {

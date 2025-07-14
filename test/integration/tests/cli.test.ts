@@ -6,15 +6,28 @@ import {
   getClientConnectionString,
   getOutputFiles,
   outputDir,
-} from '../testDbUtils';
+  setupTestDb,
+  teardownTestDb,
+  TestDbContext,
+} from '../testDbUtils.js';
 
 const cliPath = path.resolve(__dirname, '../../../index.js');
+const schemaPath = path.resolve(__dirname, '../schema.sql');
+let ctx: TestDbContext;
+
+beforeAll(async () => {
+  ctx = await setupTestDb(schemaPath);
+});
+
+afterAll(async () => {
+  await teardownTestDb(ctx);
+});
 
 it('CLI generates correct zod schemas', () => {
   const connectionString = getClientConnectionString();
 
   execSync(
-    `node ${cliPath} --connection-string "${connectionString}" --output "${outputDir}" --json-schema-import-location "../../json"`,
+    `node ${cliPath} --connection-string "${connectionString}" --output "${outputDir}" --json-schema-import-location "../../json.js" --silent --module esm --schema public`,
     { stdio: 'inherit' }
   );
 

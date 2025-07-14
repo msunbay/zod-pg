@@ -1,16 +1,17 @@
 import { mkdirSync, readFileSync, rmSync } from 'fs';
 import { dirname } from 'path';
+import { vi } from 'vitest';
 
-import { TableInfo } from '../../../src/database/types';
-import { generateTablesIndexFile } from '../../../src/generate/generateIndexFile';
+import { TableInfo } from '../../../src/database/types.js';
+import { generateTablesIndexFile } from '../../../src/generate/generateIndexFile.js';
 
 describe('generateTablesIndexFile', () => {
-  const outputPath = './test/tmp';
+  const outputDir = './test/tmp';
   const tables = [{ name: 'users' }, { name: 'accounts' }] as TableInfo[];
-  const filePath = `${outputPath}/tables/index.ts`;
+  const filePath = `${outputDir}/tables/index.ts`;
 
   beforeAll(() => {
-    jest.spyOn(console, 'log').mockImplementation(() => {});
+    vi.spyOn(console, 'log').mockImplementation(() => {});
   });
 
   beforeEach(() => {
@@ -21,15 +22,12 @@ describe('generateTablesIndexFile', () => {
   afterEach(() => {
     // Remove the generated file and its parent directories
     try {
-      rmSync(outputPath, { recursive: true });
+      rmSync(outputDir, { recursive: true });
     } catch {}
   });
 
   it('should generate an index file exporting all tables', async () => {
-    await generateTablesIndexFile(outputPath, {
-      tables,
-      name: 'public',
-    });
+    await generateTablesIndexFile({ tables, name: 'public' }, { outputDir });
 
     const content = readFileSync(filePath, 'utf8');
     expect(content).toContain("export * from './users';");

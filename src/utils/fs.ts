@@ -1,7 +1,6 @@
 import { existsSync, mkdirSync, readdirSync, unlinkSync } from 'fs';
 
-import { toError } from './error';
-import { logError, logSuccess } from './logger';
+import { logDebug } from './debug.js';
 
 /**
  * Deletes all .ts files in the output tables folder.
@@ -9,20 +8,16 @@ import { logError, logSuccess } from './logger';
 export function clearTablesDirectory(outputPath: string) {
   const tablesPath = `${outputPath}/tables`;
 
-  try {
-    const files = readdirSync(tablesPath);
+  const files = readdirSync(tablesPath);
 
-    for (const file of files) {
-      if (file.endsWith('.ts')) {
-        unlinkSync(`${tablesPath}/${file}`);
-      }
+  for (const file of files) {
+    if (file.endsWith('.ts')) {
+      unlinkSync(`${tablesPath}/${file}`);
     }
+  }
 
-    if (files.length > 0) {
-      logSuccess(`Deleted all .ts files in ${tablesPath}`);
-    }
-  } catch (err) {
-    logError(`Error cleaning output folder: ${toError(err).message}`);
+  if (files.length > 0) {
+    logDebug(`Deleted all .ts files in ${tablesPath}`);
   }
 }
 

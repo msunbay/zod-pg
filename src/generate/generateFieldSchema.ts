@@ -1,7 +1,11 @@
-import type { ColumnInfo, TableInfo } from '../database/types';
+import type { ColumnInfo, TableInfo } from '../database/types.js';
 
-import { mapColumnType } from '../database/typeMap';
-import { getEnumConstantName, pascalCase, singularPascalCase } from '../utils';
+import { mapColumnType } from '../database/typeMap.js';
+import {
+  getEnumConstantName,
+  pascalCase,
+  singularPascalCase,
+} from '../utils/index.js';
 
 export const getEnums = (table: TableInfo) => {
   const enumLiterals: string[] = [];

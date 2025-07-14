@@ -1,4 +1,4 @@
-import { singularUpperCase, snakeCase } from './casing';
+import { singularUpperCase, snakeCase } from './casing.js';
 
 export const getEnumConstantName = (
   tableName: string,

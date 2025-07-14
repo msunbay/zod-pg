@@ -1,9 +1,10 @@
 {
   "name": "zod-pg",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "description": "Opinionated Zod schema generator for PostgreSQL databases",
   "packageManager": "npm@10.8.2",
   "main": "./dist/index.js",
+  "type": "module",
   "exports": {
     ".": {
       "import": "./dist/index.js",
@@ -16,8 +17,8 @@
   "scripts": {
     "build": "rm -rf ./dist && tsc --project tsconfig.build.json",
     "test": "npm run build && npm run test:unit && npm run test:integration && npm run test:types",
-    "test:unit": "jest test/unit",
-    "test:integration": "jest test/integration --runInBand --setupFilesAfterEnv=./test/integration/setup.ts",
+    "test:unit": "vitest --project unit run",
+    "test:integration": "vitest --project integration run -u",
     "test:types": "tsc --noEmit",
     "test:watch": "jest --watch",
     "format": "prettier --write .",
@@ -48,24 +49,23 @@
     "@types/node": "^22",
     "@types/pg": "^8.15.4",
     "@types/pluralize": "^0.0.33",
-    "chalk": "^5.4.1",
-    "colorette": "^2.0.20",
     "dotenv-cli": "^8.0.0",
-    "jest": "^30.0.4",
     "pg": "^8.16.3",
     "prettier": "^3.6.2",
     "testcontainers": "^11.2.1",
-    "ts-jest": "^29.4.0",
-    "tsx": "^4.20.3",
     "typescript": "^5.8.3",
+    "vitest": "^3.2.4",
     "zod": "^3.25.75"
   },
   "peerDependencies": {
     "pg": ">=8.12.0"
   },
   "dependencies": {
+    "chalk": "^5.4.1",
     "commander": "^14.0.0",
+    "cosmiconfig": "^9.0.0",
     "debug": "^4.4.1",
+    "ora": "^8.2.0",
     "pluralize": "^8.0.0"
   }
 }

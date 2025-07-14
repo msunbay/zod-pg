@@ -1,18 +1,24 @@
 import { promises } from 'fs';
 
-import { GENERATED_HEADER_COMMENT } from '../constants';
-import { SchemaInfo } from '../database/types';
+import { GENERATED_HEADER_COMMENT } from '../constants.js';
+import { SchemaInfo } from '../database/types.js';
+import { ZodPgParsedConfig } from '../types.js';
 
 export const generateTablesIndexFile = async (
-  outputPath: string,
-  schema: SchemaInfo
+  schema: SchemaInfo,
+  {
+    outputDir,
+    outputModule,
+  }: Pick<ZodPgParsedConfig, 'outputDir' | 'outputModule'>
 ) => {
   const indexContent = schema.tables
-    .map(({ name }) => `export * from './${name}';`)
+    .map(({ name }) => {
+      if (outputModule === 'esm') return `export * from './${name}.js';`;
+      else return `export * from './${name}';`;
+    })
     .join('\n');
 
-  const filePath = `${outputPath}/tables/index.ts`;
-  await promises.writeFile(filePath, indexContent);
+  const filePath = `${outputDir}/tables/index.ts`;
 
   await promises.writeFile(
     filePath,

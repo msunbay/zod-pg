@@ -1,4 +1,4 @@
-import { singularize } from './singularize';
+import { singularize } from './singularize.js';
 
 export function camelCase(str: string): string {
   return str

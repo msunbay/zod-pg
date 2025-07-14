@@ -5,7 +5,7 @@ import {
   singularUpperCase,
   snakeCase,
   upperFirst,
-} from '../../../src/utils';
+} from '../../../src/utils/index.js';
 
 describe('utils replacements', () => {
   describe('pascalCase', () => {

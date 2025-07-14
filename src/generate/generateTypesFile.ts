@@ -1,15 +1,17 @@
 import { promises } from 'fs';
 
-import { GENERATED_HEADER_COMMENT } from '../constants';
-import { SchemaInfo } from '../database/types';
+import type { SchemaInfo } from '../database/types.js';
+
+import { GENERATED_HEADER_COMMENT } from '../constants.js';
+import { ZodPgParsedConfig } from '../types.js';
 
 export const generateTypesFile = async (
-  outputPath: string,
-  schema: SchemaInfo
+  schema: SchemaInfo,
+  { outputDir }: Pick<ZodPgParsedConfig, 'outputDir'>
 ) => {
   const types = schema.tables.map(({ name }) => `  | '${name}'`).join('\n');
 
-  const filePath = `${outputPath}/types.ts`;
+  const filePath = `${outputDir}/types.ts`;
 
   await promises.writeFile(
     filePath,

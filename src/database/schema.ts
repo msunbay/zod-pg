@@ -1,8 +1,14 @@
 import { Client } from 'pg';
 
-import { logDebug, sql } from '../utils';
-import { getEnumConstraints } from './enumConstraints';
-import { ColumnInfo, RawColumnInfo, SchemaInfo, TableInfo } from './types';
+import type {
+  ColumnInfo,
+  RawColumnInfo,
+  SchemaInfo,
+  TableInfo,
+} from './types.js';
+
+import { logDebug, sql } from '../utils/index.js';
+import { getEnumConstraints } from './enumConstraints.js';
 
 export const getSchemaInformation = async (
   client: Client,

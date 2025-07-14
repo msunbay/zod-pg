@@ -1,23 +1,20 @@
 import { promises } from 'fs';
 
-import { GENERATED_HEADER_COMMENT } from '../constants';
-import { TableInfo } from '../database/types';
-import { logWarning, pascalCase, singularPascalCase } from '../utils';
+import type { TableInfo } from '../database/types.js';
+
+import { GENERATED_HEADER_COMMENT } from '../constants.js';
+import { ZodPgParsedConfig } from '../types.js';
+import { logWarning, pascalCase, singularPascalCase } from '../utils/index.js';
 import {
   createInputSchemaFields,
   createOutputSchemaFields,
   getEnums,
-} from './generateFieldSchema';
+} from './generateFieldSchema.js';
 
-export async function generateTableSchema({
-  table,
-  outputDir,
-  jsonSchemaImportLocation,
-}: {
-  table: TableInfo;
-  outputDir: string;
-  jsonSchemaImportLocation?: string;
-}) {
+export async function generateTableSchema(
+  table: TableInfo,
+  { outputDir, jsonSchemaImportLocation }: ZodPgParsedConfig
+) {
   if (table.columns.length === 0) {
     logWarning(`No columns found for table: ${table.name}`);
     return;

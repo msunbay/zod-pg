@@ -82,13 +82,14 @@ Note that if you use both `--exclude` and `--include` options together, the `--i
 | Option                          | Description                                      | Required | Default     |
 | ------------------------------- | ------------------------------------------------ | -------- | ----------- |
 | `--connection`                  | Connection string for PostgreSQL.                | false    |             |
-| `--user`                        | PostgreSQL user name.                            | false    |             |
 | `-o, --output`                  | Output directory for generated files.            | true     |             |
 | `--clean`                       | Delete the output directory before generation.   | false    | `false`     |
+| `--user`                        | PostgreSQL user name.                            | false    | `postgres`  |
 | `--password`                    | PostgreSQL user password.                        | false    |             |
 | `--host`                        | PostgreSQL host.                                 | false    | `localhost` |
 | `--port`                        | PostgreSQL port.                                 | false    | `5432`      |
 | `--database`                    | PostgreSQL database name.                        | false    | `postgres`  |
+| `--schema`                      | Specify schema name (default: public)            | false    | `public`    |
 | `--ssl`                         | Use SSL for the connection.                      | false    | `false`     |
 | `--exclude`                     | Regex pattern to exclude tables from generation. | false    |             |
 | `--include`                     | Regex pattern to include only specific tables.   | false    |             |

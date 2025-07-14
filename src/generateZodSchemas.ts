@@ -1,44 +1,40 @@
 import { Client } from 'pg';
 
-import { createClient } from './database/client';
-import { getSchemaInformation } from './database/schema';
-import { generateConstantsFile } from './generate/generateConstantsFile';
-import { generateTablesIndexFile } from './generate/generateIndexFile';
-import { generateTableSchema } from './generate/generateTableSchema';
-import { generateTypesFile } from './generate/generateTypesFile';
+import type { ZodPgParsedConfig, ZodPgProgress } from './types.js';
+
+import { createClient } from './database/client.js';
+import { getSchemaInformation } from './database/schema.js';
+import { SchemaInfo } from './database/types.js';
+import { generateConstantsFile } from './generate/generateConstantsFile.js';
+import { generateTablesIndexFile } from './generate/generateIndexFile.js';
+import { generateTableSchema } from './generate/generateTableSchema.js';
+import { generateTypesFile } from './generate/generateTypesFile.js';
 import {
   clearTablesDirectory,
   ensureOutputDirectories,
   logDebug,
-  logError,
-  logSuccess,
-  toError,
-} from './utils';
+} from './utils/index.js';
 
-export interface GenerateZodSchemasOptions {
-  connectionString: string;
-  outputDir: string;
-  cleanOutput?: boolean;
-  schemaName?: string;
-  includeRegex?: RegExp;
-  excludeRegex?: RegExp;
-  jsonSchemaImportLocation?: string;
-  ssl?: boolean;
+export interface ZodPgGenerateConfig extends ZodPgParsedConfig {
+  onProgress?: (status: ZodPgProgress) => void;
 }
 
 /**
  * Generates Zod schemas for all tables in the specified Postgres database schema.
  */
 export const generateZodSchemas = async ({
-  connectionString,
-  outputDir,
-  cleanOutput = false,
-  schemaName = 'public',
-  includeRegex,
-  excludeRegex,
-  jsonSchemaImportLocation,
-  ssl = false,
-}: GenerateZodSchemasOptions) => {
+  onProgress,
+  ...config
+}: ZodPgGenerateConfig): Promise<SchemaInfo> => {
+  const {
+    connection,
+    outputDir,
+    schemaName,
+    includeRegex,
+    excludeRegex,
+    cleanOutput,
+  } = config;
+
   ensureOutputDirectories(outputDir);
 
   if (cleanOutput) {
@@ -48,49 +44,46 @@ export const generateZodSchemas = async ({
   let client: Client | undefined = undefined;
 
   try {
-    client = createClient({ connectionString, ssl });
+    client = createClient(connection);
 
-    logDebug(`Connecting to Postgres database at ${connectionString}`);
+    onProgress?.('connecting');
+
     await client.connect();
     logDebug(`Connected to Postgres database`);
 
+    onProgress?.('fetchingSchema');
     const schema = await getSchemaInformation(client, {
       schemaName,
       includeRegex,
       excludeRegex,
     });
 
+    onProgress?.('generating');
+
     logDebug(
       `Generating zod schemas for ${schema.tables.length} tables in db schema '${schemaName}'`
     );
 
-    if (schema.tables.length === 0) {
-      logError('No tables found to generate schemas for.');
-      process.exit(1);
-    }
-
     for (const table of schema.tables) {
       logDebug(`Generating schema for table: ${table.name}`);
 
-      await generateTableSchema({ table, outputDir, jsonSchemaImportLocation });
+      await generateTableSchema(table, config);
 
       logDebug(`Generated ${outputDir}/tables/${table.name}.ts file`);
     }
 
-    await generateTablesIndexFile(outputDir, schema);
+    await generateTablesIndexFile(schema, config);
     logDebug(`Generated 'tables/index.ts' file`);
 
-    await generateConstantsFile(outputDir, schema);
+    await generateConstantsFile(schema, config);
     logDebug(`Generated 'constants.ts' file`);
 
-    await generateTypesFile(outputDir, schema);
+    await generateTypesFile(schema, config);
     logDebug(`Generated 'types.ts' file`);
 
-    logSuccess(`Generated ${schema.tables.length} zod schemas successfully!`);
-  } catch (error) {
-    logError(`${toError(error).message}`);
-    logDebug(error);
-    process.exit(1);
+    onProgress?.('done');
+
+    return schema;
   } finally {
     await client?.end();
   }

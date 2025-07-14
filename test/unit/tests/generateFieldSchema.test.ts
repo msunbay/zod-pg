@@ -1,9 +1,9 @@
-import { ColumnInfo, TableInfo } from '../../../src/database/types';
+import { ColumnInfo, TableInfo } from '../../../src/database/types.js';
 import {
   createInputSchemaFields,
   createOutputSchemaFields,
   getEnums,
-} from '../../../src/generate/generateFieldSchema';
+} from '../../../src/generate/generateFieldSchema.js';
 
 describe('getEnums', () => {
   it('should generate enum literals and types', () => {

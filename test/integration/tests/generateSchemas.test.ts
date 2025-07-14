@@ -1,20 +1,39 @@
 import fs from 'fs';
 import path from 'path';
 
-import { generateZodSchemas } from '../../../src/generateZodSchemas';
+import { generateZodSchemas } from '../../../src/generateZodSchemas.js';
 import {
   getClientConnectionString,
   getOutputFiles,
   outputDir,
-} from '../testDbUtils';
+  setupTestDb,
+  teardownTestDb,
+  TestDbContext,
+} from '../testDbUtils.js';
+
+const schemaPath = path.resolve(__dirname, '../schema.sql');
+let ctx: TestDbContext;
+
+beforeAll(async () => {
+  ctx = await setupTestDb(schemaPath);
+});
+
+afterAll(async () => {
+  await teardownTestDb(ctx);
+});
 
 it('generates correct zod schemas', async () => {
   const connectionString = getClientConnectionString();
 
   await generateZodSchemas({
-    connectionString,
+    connection: {
+      connectionString,
+      ssl: false,
+    },
+    schemaName: 'public',
     outputDir,
-    jsonSchemaImportLocation: '../../json',
+    jsonSchemaImportLocation: '../../json.js',
+    outputModule: 'esm',
   });
 
   const outputFiles = getOutputFiles();

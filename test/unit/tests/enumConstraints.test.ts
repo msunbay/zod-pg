@@ -1,4 +1,4 @@
-import { getEnumConstraints } from '../../../src/database/enumConstraints';
+import { getEnumConstraints } from '../../../src/database/enumConstraints.js';
 
 describe('getEnumConstraints', () => {
   it('should parse enum-like check constraints', () => {

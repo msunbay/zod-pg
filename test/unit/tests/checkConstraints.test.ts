@@ -1,4 +1,4 @@
-import { parseAnyArrayConstraint } from '../../../src/database/checks/anyArrayConstraint';
+import { parseAnyArrayConstraint } from '../../../src/database/checks/anyArrayConstraint.js';
 
 describe('parseArrayAnyConstraint', () => {
   it('parses a simple ANY ARRAY constraint', () => {

@@ -1,31 +1,32 @@
 import { mkdirSync, readFileSync, rmSync } from 'fs';
+import { vi } from 'vitest';
 
-import { SchemaInfo } from '../../../src/database/types';
-import { generateConstantsFile } from '../../../src/generate/generateConstantsFile';
+import { SchemaInfo } from '../../../src/database/types.js';
+import { generateConstantsFile } from '../../../src/generate/generateConstantsFile.js';
 
 describe('generateConstantsFile', () => {
-  const outputPath = './test/tmp';
-  const filePath = `${outputPath}/constants.ts`;
+  const outputDir = './test/tmp';
+  const filePath = `${outputDir}/constants.ts`;
   const schema = {
     tables: [{ name: 'users' }, { name: 'accounts' }],
   } as SchemaInfo;
 
   beforeAll(() => {
-    jest.spyOn(console, 'log').mockImplementation(() => {});
+    vi.spyOn(console, 'log').mockImplementation(() => {});
   });
 
   beforeEach(() => {
-    mkdirSync(outputPath, { recursive: true });
+    mkdirSync(outputDir, { recursive: true });
   });
 
   afterEach(() => {
     try {
-      rmSync(outputPath, { recursive: true });
+      rmSync(outputDir, { recursive: true });
     } catch {}
   });
 
   it('should generate a constants file', async () => {
-    await generateConstantsFile(outputPath, schema);
+    await generateConstantsFile(schema, { outputDir });
     const content = readFileSync(filePath, 'utf8');
 
     expect(content).toContain("export const TABLE_USERS = 'users';");
