@@ -19,6 +19,8 @@ describe('getEnums', () => {
           udtName: '',
           tableName: '',
           schemaName: '',
+          isEnum: false,
+          isSerial: false,
         },
       ],
     });
@@ -38,6 +40,8 @@ describe('createInputSchemaFields', () => {
         udtName: 'varchar',
         tableName: '',
         schemaName: '',
+        isEnum: false,
+        isSerial: false,
       },
       {
         name: 'status',
@@ -46,6 +50,8 @@ describe('createInputSchemaFields', () => {
         udtName: 'varchar',
         tableName: '',
         schemaName: '',
+        isEnum: false,
+        isSerial: false,
       },
     ];
 
@@ -75,6 +81,8 @@ describe('createOutputSchemaFields', () => {
         udtName: 'varchar',
         tableName: '',
         schemaName: '',
+        isEnum: false,
+        isSerial: false,
       },
       {
         name: 'status',
@@ -83,6 +91,8 @@ describe('createOutputSchemaFields', () => {
         udtName: 'varchar',
         tableName: '',
         schemaName: '',
+        isEnum: false,
+        isSerial: false,
       },
     ];
 
@@ -96,7 +106,6 @@ describe('createOutputSchemaFields', () => {
       table,
       useJsonSchemaImports: false,
     });
-
     expect(result).toContain('name: z.string()');
     expect(result).toContain(
       'status: z.string().nullable().optional().transform'

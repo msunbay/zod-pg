@@ -1,5 +1,3 @@
-import type { ColumnInfo } from './types';
-
 // Map of Postgres udtName to Zod type
 const UDT_TYPE_MAP: Record<string, string> = {
   // Numeric types
@@ -55,7 +53,10 @@ const UDT_TYPE_MAP: Record<string, string> = {
   _name: 'z.array(z.string())',
 };
 
-export function mapColumnType(col: ColumnInfo): string {
+export function mapColumnType(col: {
+  udtName: string;
+  dataType: string;
+}): string {
   const { udtName, dataType } = col;
 
   // Handle enums (udtName is the enum type name, dataType is 'USER-DEFINED')
