@@ -3,7 +3,7 @@ import { Client } from 'pg';
 import { logDebug, sql } from '../utils';
 import { parsePgArray } from '../utils/pg';
 import { getEnumConstraints } from './enumConstraints';
-import { ColumnInfo, SchemaInfo, TableInfo } from './types';
+import { ColumnInfo, RawColumnInfo, SchemaInfo, TableInfo } from './types';
 
 export const getSchemaInformation = async (
   client: Client,
@@ -15,11 +15,12 @@ export const getSchemaInformation = async (
 ): Promise<SchemaInfo> => {
   logDebug(`Retrieving schema information for schema '${schemaName}'`);
 
-  const res = await client.query<ColumnInfo>(
+  const res = await client.query<RawColumnInfo>(
     sql`
         SELECT
         c.table_name AS "tableName",
         c.column_name AS "name",
+        c.column_default AS "defaultValue",
         c.data_type AS "dataType",
         (c.is_nullable = 'YES') AS "isNullable",
         c.character_maximum_length AS "maxLen",
@@ -54,26 +55,40 @@ export const getSchemaInformation = async (
       (t) => t.name === column.tableName && t.schemaName === schemaName
     );
 
+    const parsedColumn: ColumnInfo = {
+      ...column,
+      isEnum: false,
+      isSerial: false,
+      allowedValues: [],
+    };
+
     if (column.checkConstraints) {
+      const parsedConstraints = parsePgArray(column.checkConstraints);
+
       logDebug(
-        `Parsing constraints for column '${column.tableName}.${column.name}': ${column.checkConstraints}`
+        `Parsing constraints for column '${column.tableName}.${column.name}': ${parsedConstraints}`
       );
 
-      const parsedConstraints = parsePgArray(column.checkConstraints);
-      column.allowedValues = getEnumConstraints(column.name, parsedConstraints);
+      parsedColumn.allowedValues = getEnumConstraints(
+        column.name,
+        parsedConstraints
+      );
 
       logDebug(
-        `Extracted enum values for column '${column.tableName}.${column.name}': ${JSON.stringify(column.allowedValues)}`
+        `Extracted enum values for column '${column.tableName}.${column.name}': ${JSON.stringify(parsedColumn.allowedValues)}`
       );
     }
 
+    parsedColumn.isSerial = !!column.defaultValue?.match(/^nextval\(/i);
+    parsedColumn.isEnum = !!parsedColumn.allowedValues?.length;
+
     if (existingTable) {
-      existingTable.columns.push(column);
+      existingTable.columns.push(parsedColumn);
     } else {
       acc.push({
         name: column.tableName,
         schemaName,
-        columns: [column],
+        columns: [parsedColumn],
       });
     }
 

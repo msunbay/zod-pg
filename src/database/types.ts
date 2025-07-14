@@ -9,10 +9,10 @@ export interface TableInfo {
   columns: ColumnInfo[];
 }
 
-export interface ColumnInfo {
-  allowedValues?: string[];
+export interface RawColumnInfo {
   name: string;
   dataType: string;
+  defaultValue?: string;
   isNullable: boolean;
   maxLen?: number;
   minLen?: number;
@@ -20,4 +20,10 @@ export interface ColumnInfo {
   tableName: string;
   schemaName: string;
   checkConstraints?: string;
+}
+
+export interface ColumnInfo extends RawColumnInfo {
+  isEnum: boolean;
+  isSerial: boolean;
+  allowedValues?: string[];
 }

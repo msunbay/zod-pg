@@ -66,7 +66,7 @@ const createFieldType = ({
     }
   }
 
-  if (includeConstraints && column.maxLen) {
+  if (includeConstraints && column.maxLen && !column.allowedValues) {
     zodType = `${zodType}.max(${column.maxLen})`;
   }
 
@@ -102,7 +102,7 @@ export const createInputSchemaFields = ({
   ...params
 }: CreateSchemaFieldsParams) =>
   table.columns
-    .filter((column) => column.name !== 'id')
+    .filter((column) => !column.isSerial) // Exclude serial columns
     .map((column) => {
       let zodType = createFieldType({
         column,

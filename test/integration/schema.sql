@@ -12,5 +12,7 @@ CREATE TABLE posts (
   user_id INTEGER REFERENCES users(id),
   title TEXT NOT NULL,
   content TEXT,
-  published BOOLEAN DEFAULT false
+  published BOOLEAN DEFAULT false,
+  status VARCHAR(20) DEFAULT 'draft',
+  CHECK ("status" IN ('draft', 'published', 'archived'))
 );

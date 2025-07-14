@@ -27,4 +27,14 @@ describe('parseArrayAnyConstraint', () => {
     const input = "col = ANY (ARRAY['x', 'y'])";
     expect(parseAnyArrayConstraint(input)).toEqual(['x', 'y']);
   });
+
+  it('parses with "::character varying" type', () => {
+    const input =
+      "((status)::text = ANY ((ARRAY['draft'::character varying, 'published'::character varying, 'archived'::character varying])::text[]))";
+    expect(parseAnyArrayConstraint(input)).toEqual([
+      'draft',
+      'published',
+      'archived',
+    ]);
+  });
 });

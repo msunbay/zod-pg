@@ -4,11 +4,14 @@
 import { z } from 'zod';
 
 
+export const POST_STATUS = ["draft","published","archived"] as const;
+
 export const PostsTableInsertSchema = z.object({
   user_id: z.number().int().nullable().optional(),
   title: z.string(),
   content: z.string().nullable().optional(),
   published: z.boolean().nullable().optional(),
+  status: z.enum(POST_STATUS).nullable().optional(),
 });
 
 export const PostsTableSchema = z.object({
@@ -17,6 +20,7 @@ export const PostsTableSchema = z.object({
   title: z.string(),
   content: z.string().nullable().optional().transform(val => (val === null ? undefined : val)),
   published: z.boolean().nullable().optional().transform(val => (val === null ? undefined : val)),
+  status: z.enum(POST_STATUS).nullable().optional().transform(val => (val === null ? undefined : val)),
 });
 
 export const PostsTableUpdateSchema = PostsTableInsertSchema.partial();
@@ -24,3 +28,4 @@ export const PostsTableUpdateSchema = PostsTableInsertSchema.partial();
 export type PostRecord = z.infer<typeof PostsTableSchema>;
 export type PostInsertRecord = z.input<typeof PostsTableInsertSchema>;
 export type PostUpdateRecord = z.input<typeof PostsTableUpdateSchema>;
+export type PostStatus = (typeof POST_STATUS)[number];

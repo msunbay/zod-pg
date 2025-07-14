@@ -10,16 +10,17 @@ export const parseAnyArrayConstraint = (constraint: string): string[] => {
     clause = clause.slice(1, -1);
   }
 
-  // Match with or without parentheses around the whole expression
-  const match = clause.match(
-    /"?([a-zA-Z0-9_]+)"?\s*=\s*ANY\s*\(ARRAY\[(.*?)\]\)/
+  // Match col = ANY ((ARRAY['a'::type, ...])::type[])
+  const arrayMatch = clause.match(
+    /ANY\s*\(\s*(?:\(+)?ARRAY\[(.*?)\](?:\))*(::[a-zA-Z0-9_ \[\]]+)?\s*\)/
   );
 
-  if (match) {
-    return match[2].split(',').map((v) =>
+  if (arrayMatch) {
+    return arrayMatch[1].split(',').map((v) =>
       v
         .trim()
-        .replace(/'::text/g, '')
+        // Remove any ::type cast (e.g., ::text, ::character varying, etc.)
+        .replace(/'::[a-zA-Z0-9_ ]+/g, '')
         .replace(/'/g, '')
     );
   }
