@@ -1,7 +1,6 @@
 import { Client } from 'pg';
 
 import { logDebug, sql } from '../utils';
-import { parsePgArray } from '../utils/pg';
 import { getEnumConstraints } from './enumConstraints';
 import { ColumnInfo, RawColumnInfo, SchemaInfo, TableInfo } from './types';
 
@@ -26,18 +25,22 @@ export const getSchemaInformation = async (
         c.character_maximum_length AS "maxLen",
         c.udt_name AS "udtName",
         (
-            SELECT array_agg(cc.check_clause)
-            FROM information_schema.check_constraints cc
-            JOIN information_schema.table_constraints tc
-            ON cc.constraint_name = tc.constraint_name
-            AND cc.constraint_schema = tc.constraint_schema
-            JOIN information_schema.constraint_column_usage kcu
-            ON cc.constraint_name = kcu.constraint_name
-            AND cc.constraint_schema = kcu.constraint_schema
-            WHERE tc.constraint_type = 'CHECK'
-            AND kcu.table_name = c.table_name
-            AND kcu.column_name = c.column_name
-            AND kcu.table_schema = c.table_schema
+          SELECT json_agg(checks.*)
+          FROM
+          (
+              SELECT cc.check_clause as "checkClause"
+              FROM information_schema.check_constraints cc
+              JOIN information_schema.table_constraints tc
+              ON cc.constraint_name = tc.constraint_name
+              AND cc.constraint_schema = tc.constraint_schema
+              JOIN information_schema.constraint_column_usage kcu
+              ON cc.constraint_name = kcu.constraint_name
+              AND cc.constraint_schema = kcu.constraint_schema
+              WHERE tc.constraint_type = 'CHECK'
+              AND kcu.table_name = c.table_name
+              AND kcu.column_name = c.column_name
+              AND kcu.table_schema = c.table_schema
+          ) AS "checks"
         ) AS "checkConstraints"
         FROM information_schema.columns c
         WHERE c.table_schema = $1
@@ -62,15 +65,9 @@ export const getSchemaInformation = async (
     };
 
     if (column.checkConstraints) {
-      const parsedConstraints = parsePgArray(column.checkConstraints);
-
-      logDebug(
-        `Parsing constraints for column '${column.tableName}.${column.name}': ${parsedConstraints}`
-      );
-
       parsedColumn.allowedValues = getEnumConstraints(
         column.name,
-        parsedConstraints
+        column.checkConstraints.map((c) => c.checkClause)
       );
 
       logDebug(

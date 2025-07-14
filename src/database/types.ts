@@ -19,7 +19,7 @@ export interface RawColumnInfo {
   udtName: string;
   tableName: string;
   schemaName: string;
-  checkConstraints?: string;
+  checkConstraints?: { checkClause: string }[];
 }
 
 export interface ColumnInfo extends RawColumnInfo {
