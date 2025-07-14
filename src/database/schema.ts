@@ -22,7 +22,7 @@ export const getSchemaInformation = async (
 
   const res = await client.query<RawColumnInfo>(
     sql`
-        SELECT
+      SELECT
         c.table_name AS "tableName",
         c.column_name AS "name",
         c.column_default AS "defaultValue",
@@ -30,27 +30,24 @@ export const getSchemaInformation = async (
         (c.is_nullable = 'YES') AS "isNullable",
         c.character_maximum_length AS "maxLen",
         c.udt_name AS "udtName",
-        (
-          SELECT json_agg(checks.*)
-          FROM
-          (
-              SELECT cc.check_clause as "checkClause"
-              FROM information_schema.check_constraints cc
-              JOIN information_schema.table_constraints tc
-              ON cc.constraint_name = tc.constraint_name
-              AND cc.constraint_schema = tc.constraint_schema
-              JOIN information_schema.constraint_column_usage kcu
-              ON cc.constraint_name = kcu.constraint_name
-              AND cc.constraint_schema = kcu.constraint_schema
-              WHERE tc.constraint_type = 'CHECK'
-              AND kcu.table_name = c.table_name
-              AND kcu.column_name = c.column_name
-              AND kcu.table_schema = c.table_schema
-          ) AS "checks"
-        ) AS "checkConstraints"
-        FROM information_schema.columns c
-        WHERE c.table_schema = $1
-        ORDER BY c.table_name, c.ordinal_position;
+        checks."checkConstraints"
+      FROM information_schema.columns c
+      LEFT JOIN LATERAL (
+        SELECT json_agg(json_build_object('checkClause', cc.check_clause)) AS "checkConstraints"
+        FROM information_schema.check_constraints cc
+        JOIN information_schema.table_constraints tc
+          ON cc.constraint_name = tc.constraint_name
+         AND cc.constraint_schema = tc.constraint_schema
+        JOIN information_schema.constraint_column_usage kcu
+          ON cc.constraint_name = kcu.constraint_name
+         AND cc.constraint_schema = kcu.constraint_schema
+        WHERE tc.constraint_type = 'CHECK'
+          AND kcu.table_name = c.table_name
+          AND kcu.column_name = c.column_name
+          AND kcu.table_schema = c.table_schema
+      ) AS checks ON TRUE
+      WHERE c.table_schema = $1
+      ORDER BY c.table_name, c.ordinal_position;
     `,
     [schemaName]
   );
