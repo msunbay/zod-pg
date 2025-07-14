@@ -33,18 +33,15 @@ export const getSchemaInformation = async (
         checks."checkConstraints"
       FROM information_schema.columns c
       LEFT JOIN LATERAL (
-        SELECT json_agg(json_build_object('checkClause', cc.check_clause)) AS "checkConstraints"
-        FROM information_schema.check_constraints cc
-        JOIN information_schema.table_constraints tc
-          ON cc.constraint_name = tc.constraint_name
-         AND cc.constraint_schema = tc.constraint_schema
-        JOIN information_schema.constraint_column_usage kcu
-          ON cc.constraint_name = kcu.constraint_name
-         AND cc.constraint_schema = kcu.constraint_schema
-        WHERE tc.constraint_type = 'CHECK'
-          AND kcu.table_name = c.table_name
-          AND kcu.column_name = c.column_name
-          AND kcu.table_schema = c.table_schema
+        SELECT json_agg(json_build_object('checkClause', pg_get_constraintdef(pgc.oid))) AS "checkConstraints"
+        FROM pg_constraint pgc
+        JOIN pg_class cls ON cls.oid = pgc.conrelid
+        JOIN pg_namespace nsp ON nsp.oid = cls.relnamespace
+        JOIN pg_attribute att ON att.attrelid = cls.oid AND att.attname = c.column_name
+        WHERE pgc.contype = 'c'
+          AND nsp.nspname = c.table_schema
+          AND cls.relname = c.table_name
+          AND pgc.conkey @> ARRAY[att.attnum]
       ) AS checks ON TRUE
       WHERE c.table_schema = $1
       ORDER BY c.table_name, c.ordinal_position;
