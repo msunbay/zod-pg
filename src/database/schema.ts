@@ -59,7 +59,6 @@ export const getSchemaInformation = async (
       ...column,
       isEnum: false,
       isSerial: false,
-      allowedValues: [],
     };
 
     if (column.checkConstraints) {
