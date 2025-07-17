@@ -25,7 +25,7 @@ describe('mapColumnType', () => {
         dataType: 'timestamptz',
         udtName: 'timestamptz',
       })
-    ).toBe('z.date({ coerce: true })');
+    ).toBe('z.coerce.date()');
   });
 
   it('should default to z.any() for unknown types', () => {

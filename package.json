@@ -19,6 +19,7 @@
     "test": "npm run build && npm run test:unit && npm run test:integration && npm run test:types",
     "test:unit": "vitest --project unit run",
     "test:integration": "vitest --project integration run",
+    "test:integration:update": "vitest --project integration run -u",
     "test:types": "tsc --noEmit",
     "test:watch": "jest --watch",
     "format": "prettier --write .",
@@ -55,7 +56,7 @@
     "testcontainers": "^11.2.1",
     "typescript": "^5.8.3",
     "vitest": "^3.2.4",
-    "zod": "^3.25.75"
+    "zod": "^4.0.5"
   },
   "peerDependencies": {
     "pg": ">=8.12.0"

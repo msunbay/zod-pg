@@ -14,6 +14,16 @@ export interface ZodPgConnectionConfig {
   ssl?: boolean;
 }
 
+export type ZodPgFieldNameCasing =
+  | 'passthrough'
+  | 'camelCase'
+  | 'snakeCase'
+  | 'kebabCase';
+
+export interface ZodPgFormattingConfig {
+  fieldNameCasing?: ZodPgFieldNameCasing;
+}
+
 export interface ZodPgConfig {
   connection: ZodPgConnectionConfig;
   outputDir?: string;
@@ -24,6 +34,8 @@ export interface ZodPgConfig {
   silent?: boolean;
   outputModule?: 'esm' | 'commonjs';
   schemaName?: string;
+
+  formatting?: ZodPgFormattingConfig;
 }
 
 export interface ZodPgParsedConnectionConfig {

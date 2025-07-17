@@ -24,9 +24,9 @@ const UDT_TYPE_MAP: Record<string, string> = {
   bool: 'z.boolean()',
 
   // Date/time
-  timestamptz: 'z.date({ coerce: true })',
-  timestamp: 'z.date({ coerce: true })',
-  date: 'z.date({ coerce: true })',
+  timestamptz: 'z.coerce.date()',
+  timestamp: 'z.coerce.date()',
+  date: 'z.coerce.date()',
   time: 'z.string()',
   timetz: 'z.string()',
 

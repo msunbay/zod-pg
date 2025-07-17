@@ -65,7 +65,7 @@ export const UsersTableInsertSchema = z.object({
   email: z.string().max(255).nullable().optional(),
   status: z.string().max(20).nullable().optional(),
   profile: json.UserProfileSchema.nullable().optional().transform(val => val ? JSON.stringify(val) : null),
-  created_at: z.date({ coerce: true }).nullable().optional(),
+  created_at: z.coerce.date().nullable().optional(),
 });
 
 export const UsersTableSchema = z.object({
@@ -74,7 +74,7 @@ export const UsersTableSchema = z.object({
   email: z.string().nullable().optional().transform(val => (val === null ? undefined : val)),
   status: z.string().nullable().optional().transform(val => (val === null ? undefined : val)),
   profile: json.UserProfileSchema.nullable().optional().transform(val => (val === null ? undefined : val)),
-  created_at: z.date({ coerce: true }).nullable().optional().transform(val => (val === null ? undefined : val)),
+  created_at: z.coerce.date().nullable().optional().transform(val => (val === null ? undefined : val)),
 });
 
 export const UsersTableUpdateSchema = UsersTableInsertSchema.partial();
