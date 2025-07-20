@@ -1,5 +1,9 @@
 # Changelog
 
+### v0.2.3 (2025-07-17)
+
+- Added support for Zod v4
+
 ### v0.2.2 (2025-07-14)
 
 - Fixed a performance issue with the schema query.
