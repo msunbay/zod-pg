@@ -81,7 +81,7 @@ export const FilesTableSchema = z.object({
     uploadTime: data.upload_time ?? undefined,
     expiryDate: data.expiry_date ?? undefined,
     metadata: data.metadata ?? undefined,
-    tags: data.tags,
+    tags: data.tags ?? undefined,
     accessCount: data.access_count ?? undefined,
 }));
 

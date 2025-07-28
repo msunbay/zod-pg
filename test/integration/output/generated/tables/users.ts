@@ -52,8 +52,8 @@ export const UsersTableSchema = z.object({
     status: data.status ?? undefined,
     profile: data.profile ?? undefined,
     createdAt: data.created_at ?? undefined,
-    roles: data.roles,
-    dates: data.dates,
+    roles: data.roles ?? undefined,
+    dates: data.dates ?? undefined,
 }));
 
 const TableWriteSchema = z.object({

@@ -68,7 +68,7 @@ export const PostsTableSchema = z.object({
     published: data.published ?? undefined,
     status: data.status ?? undefined,
     views: data.views ?? undefined,
-    tags: data.tags,
+    tags: data.tags ?? undefined,
     metadata: data.metadata ?? undefined,
     publishedAt: data.published_at ?? undefined,
     updatedAt: data.updated_at ?? undefined,

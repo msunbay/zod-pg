@@ -80,7 +80,7 @@ export const OrdersTableSchema = z.object({
     orderDate: data.order_date ?? undefined,
     shippedDate: data.shipped_date ?? undefined,
     deliveryTime: data.delivery_time ?? undefined,
-    notes: data.notes,
+    notes: data.notes ?? undefined,
     metadata: data.metadata ?? undefined,
     createdAt: data.created_at ?? undefined,
 }));

@@ -17,7 +17,7 @@ export const createRenderReadTransform = (
       return `${innerText} ?? []`;
     }
 
-    if (column.isNullable && !column.isArray) {
+    if (column.isNullable) {
       return `${innerText} ?? undefined`;
     }
 

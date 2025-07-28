@@ -1209,7 +1209,7 @@ export const FilesTableSchema = z.object({
     uploadTime: data.upload_time ?? undefined,
     expiryDate: data.expiry_date ?? undefined,
     metadata: data.metadata ?? undefined,
-    tags: data.tags,
+    tags: data.tags ?? undefined,
     accessCount: data.access_count ?? undefined,
 }));
 
@@ -1524,7 +1524,7 @@ export const GeographicDataTableSchema = z.object({
     elevation: data.elevation ?? undefined,
     timezone: data.timezone ?? undefined,
     countryCode: data.country_code ?? undefined,
-    postalCodes: data.postal_codes,
+    postalCodes: data.postal_codes ?? undefined,
     population: data.population ?? undefined,
     establishedDate: data.established_date ?? undefined,
     lastUpdated: data.last_updated ?? undefined,
@@ -1814,7 +1814,7 @@ export const InventoryTableSchema = z.object({
     reorderLevel: data.reorder_level ?? undefined,
     lastRestocked: data.last_restocked ?? undefined,
     supplierInfo: data.supplier_info ?? undefined,
-    warehouseLocations: data.warehouse_locations,
+    warehouseLocations: data.warehouse_locations ?? undefined,
     updatedAt: data.updated_at ?? undefined,
 }));
 
@@ -2526,7 +2526,7 @@ export const OrdersTableSchema = z.object({
     orderDate: data.order_date ?? undefined,
     shippedDate: data.shipped_date ?? undefined,
     deliveryTime: data.delivery_time ?? undefined,
-    notes: data.notes,
+    notes: data.notes ?? undefined,
     metadata: data.metadata ?? undefined,
     createdAt: data.created_at ?? undefined,
 }));
@@ -2910,7 +2910,7 @@ export const PostsTableSchema = z.object({
     published: data.published ?? undefined,
     status: data.status ?? undefined,
     views: data.views ?? undefined,
-    tags: data.tags,
+    tags: data.tags ?? undefined,
     metadata: data.metadata ?? undefined,
     publishedAt: data.published_at ?? undefined,
     updatedAt: data.updated_at ?? undefined,
@@ -3417,7 +3417,7 @@ export const TimeSeriesTableSchema = z.object({
     temperature: data.temperature ?? undefined,
     humidity: data.humidity ?? undefined,
     pressure: data.pressure ?? undefined,
-    readings: data.readings,
+    readings: data.readings ?? undefined,
     anomalyDetected: data.anomaly_detected ?? undefined,
     dataQuality: data.data_quality ?? undefined,
     createdAt: data.created_at ?? undefined,
@@ -3868,8 +3868,8 @@ export const UsersTableSchema = z.object({
     status: data.status ?? undefined,
     profile: data.profile ?? undefined,
     createdAt: data.created_at ?? undefined,
-    roles: data.roles,
-    dates: data.dates,
+    roles: data.roles ?? undefined,
+    dates: data.dates ?? undefined,
 }));
 
 const TableWriteSchema = z.object({

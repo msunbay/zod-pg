@@ -73,7 +73,7 @@ export const GeographicDataTableSchema = z.object({
     elevation: data.elevation ?? undefined,
     timezone: data.timezone ?? undefined,
     countryCode: data.country_code ?? undefined,
-    postalCodes: data.postal_codes,
+    postalCodes: data.postal_codes ?? undefined,
     population: data.population ?? undefined,
     establishedDate: data.established_date ?? undefined,
     lastUpdated: data.last_updated ?? undefined,

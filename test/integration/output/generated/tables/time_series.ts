@@ -61,7 +61,7 @@ export const TimeSeriesTableSchema = z.object({
     temperature: data.temperature ?? undefined,
     humidity: data.humidity ?? undefined,
     pressure: data.pressure ?? undefined,
-    readings: data.readings,
+    readings: data.readings ?? undefined,
     anomalyDetected: data.anomaly_detected ?? undefined,
     dataQuality: data.data_quality ?? undefined,
     createdAt: data.created_at ?? undefined,

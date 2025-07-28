@@ -51,7 +51,7 @@ export const InventoryTableSchema = z.object({
     reorderLevel: data.reorder_level ?? undefined,
     lastRestocked: data.last_restocked ?? undefined,
     supplierInfo: data.supplier_info ?? undefined,
-    warehouseLocations: data.warehouse_locations,
+    warehouseLocations: data.warehouse_locations ?? undefined,
     updatedAt: data.updated_at ?? undefined,
 }));
 
