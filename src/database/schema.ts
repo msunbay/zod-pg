@@ -1,26 +1,27 @@
 import { Client } from 'pg';
 
 import type {
-  ColumnInfo,
-  RawColumnInfo,
-  SchemaInfo,
-  TableInfo,
+  ZodPgColumnInfo,
+  ZodPgRawColumnInfo,
+  ZodPgSchemaInfo,
+  ZodPgTableInfo,
 } from './types.js';
 
 import { logDebug, sql } from '../utils/index.js';
 import { getEnumConstraints } from './enumConstraints.js';
+import { getZodType, isArrayType, isSerialType } from './typeMap.js';
 
 export const getSchemaInformation = async (
   client: Client,
   {
-    schemaName,
-    includeRegex,
-    excludeRegex,
-  }: { schemaName: string; includeRegex?: RegExp; excludeRegex?: RegExp }
-): Promise<SchemaInfo> => {
+    schemaName = 'public',
+    include,
+    exclude,
+  }: { schemaName?: string; include?: string; exclude?: string }
+): Promise<ZodPgSchemaInfo> => {
   logDebug(`Retrieving schema information for schema '${schemaName}'`);
 
-  const res = await client.query<RawColumnInfo>(
+  const res = await client.query<ZodPgRawColumnInfo>(
     sql`
       SELECT
         c.table_name AS "tableName",
@@ -30,7 +31,8 @@ export const getSchemaInformation = async (
         (c.is_nullable = 'YES') AS "isNullable",
         c.character_maximum_length AS "maxLen",
         c.udt_name AS "udtName",
-        checks."checkConstraints"
+        checks."checkConstraints",
+        pgd.description AS "description"
       FROM information_schema.columns c
       LEFT JOIN LATERAL (
         SELECT json_agg(json_build_object('checkClause', pg_get_constraintdef(pgc.oid))) AS "checkConstraints"
@@ -43,6 +45,10 @@ export const getSchemaInformation = async (
           AND cls.relname = c.table_name
           AND pgc.conkey @> ARRAY[att.attnum]
       ) AS checks ON TRUE
+      LEFT JOIN pg_class cls ON cls.relname = c.table_name AND cls.relnamespace = (
+        SELECT oid FROM pg_namespace WHERE nspname = c.table_schema
+      )
+      LEFT JOIN pg_description pgd ON pgd.objoid = cls.oid AND pgd.objsubid = c.ordinal_position
       WHERE c.table_schema = $1
       ORDER BY c.table_name, c.ordinal_position;
     `,
@@ -53,30 +59,35 @@ export const getSchemaInformation = async (
 
   logDebug(`Retrieved ${columns.length} columns from schema '${schemaName}'`);
 
-  let tables = columns.reduce<TableInfo[]>((acc, column) => {
+  let tables = columns.reduce<ZodPgTableInfo[]>((acc, column) => {
     const existingTable = acc.find(
       (t) => t.name === column.tableName && t.schemaName === schemaName
     );
 
-    const parsedColumn: ColumnInfo = {
+    const parsedColumn: ZodPgColumnInfo = {
       ...column,
+      maxLen: column.maxLen ?? undefined,
       isEnum: false,
       isSerial: false,
+      isArray: false,
+      zodType: 'any', // Default type, will be updated later
     };
 
     if (column.checkConstraints) {
-      parsedColumn.allowedValues = getEnumConstraints(
+      parsedColumn.enumValues = getEnumConstraints(
         column.name,
         column.checkConstraints.map((c) => c.checkClause)
       );
 
       logDebug(
-        `Extracted enum values for column '${column.tableName}.${column.name}': ${JSON.stringify(parsedColumn.allowedValues)}`
+        `Extracted enum values for column '${column.tableName}.${column.name}': ${JSON.stringify(parsedColumn.enumValues)}`
       );
     }
 
-    parsedColumn.isSerial = !!column.defaultValue?.match(/^nextval\(/i);
-    parsedColumn.isEnum = !!parsedColumn.allowedValues?.length;
+    parsedColumn.zodType = getZodType(column);
+    parsedColumn.isArray = isArrayType(column);
+    parsedColumn.isSerial = isSerialType(column);
+    parsedColumn.isEnum = !!parsedColumn.enumValues?.length;
 
     if (existingTable) {
       existingTable.columns.push(parsedColumn);
@@ -93,8 +104,9 @@ export const getSchemaInformation = async (
 
   logDebug(`Found ${tables.length} tables in schema '${schemaName}'`);
 
-  if (includeRegex) {
+  if (include) {
     const count = tables.length;
+    const includeRegex = new RegExp(include);
 
     tables = tables.filter((table) => includeRegex.test(table.name));
 
@@ -103,8 +115,9 @@ export const getSchemaInformation = async (
     );
   }
 
-  if (excludeRegex) {
+  if (exclude) {
     const count = tables.length;
+    const excludeRegex = new RegExp(exclude);
 
     tables = tables.filter((table) => !excludeRegex.test(table.name));
 
@@ -115,6 +128,6 @@ export const getSchemaInformation = async (
 
   return {
     name: schemaName,
-    tables,
+    tables: tables,
   };
 };

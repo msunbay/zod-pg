@@ -1,15 +1,17 @@
-export interface SchemaInfo {
+import type { ZodPgColumnType } from '../types.js';
+
+export interface ZodPgSchemaInfo {
   name: string;
-  tables: TableInfo[];
+  tables: ZodPgTableInfo[];
 }
 
-export interface TableInfo {
+export interface ZodPgTableInfo {
   name: string;
   schemaName: string;
-  columns: ColumnInfo[];
+  columns: ZodPgColumnInfo[];
 }
 
-export interface RawColumnInfo {
+export interface ZodPgRawColumnInfo {
   name: string;
   dataType: string;
   defaultValue?: string;
@@ -19,11 +21,14 @@ export interface RawColumnInfo {
   udtName: string;
   tableName: string;
   schemaName: string;
+  description?: string;
   checkConstraints?: { checkClause: string }[];
 }
 
-export interface ColumnInfo extends RawColumnInfo {
+export interface ZodPgColumnInfo extends ZodPgRawColumnInfo {
+  zodType: ZodPgColumnType;
   isEnum: boolean;
   isSerial: boolean;
-  allowedValues?: string[];
+  isArray: boolean;
+  enumValues?: string[];
 }

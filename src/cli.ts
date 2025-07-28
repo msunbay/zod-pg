@@ -2,7 +2,6 @@ import { program } from 'commander';
 
 import { getConfiguration } from './config.js';
 import { generateZodSchemas } from './generateZodSchemas.js';
-import { ZodPgParsedConfig } from './types.js';
 import { logAppName, logError, logSetting, toError } from './utils/index.js';
 import { createProgressHandler } from './utils/progress.js';
 
@@ -37,12 +36,12 @@ export const main = async () => {
   program.option(
     '--exclude <regex>',
     'Exclude tables matching this regex',
-    config.excludeRegex
+    config.exclude
   );
   program.option(
     '--include <regex>',
     'Include only tables matching this regex',
-    config.includeRegex
+    config.include
   );
   program.option(
     '--schema <name>',
@@ -91,6 +90,12 @@ export const main = async () => {
     'Postgres port',
     config.connection.port || process.env.POSTGRES_PORT || '5432'
   );
+  program.option(
+    '--zod-version <number>',
+    'Zod version to use (default: 4)',
+    (value) => parseInt(value, 10),
+    config.zodVersion || 4
+  );
 
   program.parse();
   const options = program.opts();
@@ -103,7 +108,10 @@ export const main = async () => {
     connectionString = `postgresql://${user}:${password}@${host}:${port}/${database}`;
   }
 
-  const cliConfig: ZodPgParsedConfig = {
+  const cliConfig = {
+    defaultEmptyArray: true,
+    stringifyJson: true,
+
     ...config,
     connection: {
       connectionString,
@@ -113,10 +121,11 @@ export const main = async () => {
     outputDir: options.output,
     cleanOutput: options.clean,
     schemaName: options.schema,
-    excludeRegex: options.exclude ? new RegExp(options.exclude) : undefined,
-    includeRegex: options.include ? new RegExp(options.include) : undefined,
+    exclude: options.exclude,
+    include: options.include,
     jsonSchemaImportLocation: options.jsonSchemaImportLocation,
     outputModule: options.module,
+    zodVersion: options.zodVersion,
   };
 
   // Mask password in connection string for logging
@@ -133,8 +142,8 @@ export const main = async () => {
     logSetting('ssl', cliConfig.connection.ssl ? 'enabled' : 'disabled');
     logSetting('schema', cliConfig.schemaName);
 
-    if (cliConfig.includeRegex) logSetting('include', options.include);
-    if (cliConfig.excludeRegex) logSetting('exclude', options.exclude);
+    if (cliConfig.include) logSetting('include', options.include);
+    if (cliConfig.exclude) logSetting('exclude', options.exclude);
 
     if (cliConfig.jsonSchemaImportLocation) {
       logSetting('json-import-location', cliConfig.jsonSchemaImportLocation);

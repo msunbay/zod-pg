@@ -1,13 +1,13 @@
 import { promises } from 'fs';
 
-import type { SchemaInfo } from '../database/types.js';
+import type { ZodPgSchemaInfo } from '../database/types.js';
 
 import { GENERATED_HEADER_COMMENT } from '../constants.js';
-import { ZodPgParsedConfig } from '../types.js';
+import { ZodPgConfig } from '../types.js';
 
 export const generateConstantsFile = async (
-  schema: SchemaInfo,
-  { outputDir }: Pick<ZodPgParsedConfig, 'outputDir'>
+  schema: ZodPgSchemaInfo,
+  { outputDir }: Pick<ZodPgConfig, 'outputDir'>
 ) => {
   const consts = schema.tables
     .map(({ name }) => `export const TABLE_${name.toUpperCase()} = '${name}';`)

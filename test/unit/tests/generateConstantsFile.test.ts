@@ -1,7 +1,7 @@
 import { mkdirSync, readFileSync, rmSync } from 'fs';
 import { vi } from 'vitest';
 
-import { SchemaInfo } from '../../../src/database/types.js';
+import { ZodPgSchemaInfo } from '../../../src/database/types.js';
 import { generateConstantsFile } from '../../../src/generate/generateConstantsFile.js';
 
 describe('generateConstantsFile', () => {
@@ -9,7 +9,7 @@ describe('generateConstantsFile', () => {
   const filePath = `${outputDir}/constants.ts`;
   const schema = {
     tables: [{ name: 'users' }, { name: 'accounts' }],
-  } as SchemaInfo;
+  } as ZodPgSchemaInfo;
 
   beforeAll(() => {
     vi.spyOn(console, 'log').mockImplementation(() => {});

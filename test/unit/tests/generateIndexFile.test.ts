@@ -2,12 +2,12 @@ import { mkdirSync, readFileSync, rmSync } from 'fs';
 import { dirname } from 'path';
 import { vi } from 'vitest';
 
-import { TableInfo } from '../../../src/database/types.js';
+import { ZodPgTableInfo } from '../../../src/database/types.js';
 import { generateTablesIndexFile } from '../../../src/generate/generateIndexFile.js';
 
 describe('generateTablesIndexFile', () => {
   const outputDir = './test/tmp';
-  const tables = [{ name: 'users' }, { name: 'accounts' }] as TableInfo[];
+  const tables = [{ name: 'users' }, { name: 'accounts' }] as ZodPgTableInfo[];
   const filePath = `${outputDir}/tables/index.ts`;
 
   beforeAll(() => {

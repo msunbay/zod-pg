@@ -25,9 +25,9 @@ export const getClientConnectionString = (): string => {
   return `postgres://${client.user}:${client.password}@${client.host}:${client.port}/${client.database}`;
 };
 
-export async function setupTestDb(
-  schemaFilePath: string
-): Promise<TestDbContext> {
+export async function setupTestDb(): Promise<TestDbContext> {
+  const schemaPath = path.resolve(__dirname, './schema.sql');
+
   const container = await new PostgreSqlContainer('postgres').start();
 
   const client = new Client({
@@ -41,7 +41,7 @@ export async function setupTestDb(
   await client.connect();
 
   // Create schema
-  const schemaSql = fs.readFileSync(schemaFilePath, 'utf8');
+  const schemaSql = fs.readFileSync(schemaPath, 'utf8');
   await client.query(schemaSql);
 
   _clientInstance = client;

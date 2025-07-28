@@ -1,13 +1,13 @@
 import { promises } from 'fs';
 
-import type { SchemaInfo } from '../database/types.js';
+import type { ZodPgSchemaInfo } from '../database/types.js';
 
 import { GENERATED_HEADER_COMMENT } from '../constants.js';
-import { ZodPgParsedConfig } from '../types.js';
+import { ZodPgConfig } from '../types.js';
 
 export const generateTypesFile = async (
-  schema: SchemaInfo,
-  { outputDir }: Pick<ZodPgParsedConfig, 'outputDir'>
+  schema: ZodPgSchemaInfo,
+  { outputDir }: Pick<ZodPgConfig, 'outputDir'>
 ) => {
   const types = schema.tables.map(({ name }) => `  | '${name}'`).join('\n');
 

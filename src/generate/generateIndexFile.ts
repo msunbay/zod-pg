@@ -1,15 +1,12 @@
 import { promises } from 'fs';
 
 import { GENERATED_HEADER_COMMENT } from '../constants.js';
-import { SchemaInfo } from '../database/types.js';
-import { ZodPgParsedConfig } from '../types.js';
+import { ZodPgSchemaInfo } from '../database/types.js';
+import { ZodPgConfig } from '../types.js';
 
 export const generateTablesIndexFile = async (
-  schema: SchemaInfo,
-  {
-    outputDir,
-    outputModule,
-  }: Pick<ZodPgParsedConfig, 'outputDir' | 'outputModule'>
+  schema: ZodPgSchemaInfo,
+  { outputDir, outputModule }: Pick<ZodPgConfig, 'outputDir' | 'outputModule'>
 ) => {
   const indexContent = schema.tables
     .map(({ name }) => {
