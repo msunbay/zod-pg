@@ -145,9 +145,9 @@ type TableInsertRecord = z.input<typeof TimeSeriesTableInsertSchema>;
 
 
 /**
-* Represents a database record from the "public.time_series"" table.
+* Represents a database record from the "public.time_series" table.
 */
-export interface TimeSeriesDbRecord {
+export interface TimeSeryRecord {
     /**
      * Primary key for time series table
      */
@@ -191,7 +191,7 @@ export interface TimeSeriesDbRecord {
 }
 
 /**
-* Represents an insertable database record from the "public.time_series"" table.
+* Represents an insertable database record from the "public.time_series" table.
 */
 export interface TimeSeryInsertRecord {
     /**
@@ -236,6 +236,6 @@ export interface TimeSeryInsertRecord {
 }
 
 /**
-* Represents an updateable database record from the "public.time_series"" table.
+* Represents an updateable database record from the "public.time_series" table.
 */
 export type TimeSeryUpdateRecord = Partial<TimeSeryInsertRecord>;

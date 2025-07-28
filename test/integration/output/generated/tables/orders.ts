@@ -184,9 +184,9 @@ type TableInsertRecord = z.input<typeof OrdersTableInsertSchema>;
 
 
 /**
-* Represents a database record from the "public.orders"" table.
+* Represents a database record from the "public.orders" table.
 */
-export interface OrderDbRecord {
+export interface OrderRecord {
     /**
      * Primary key for orders table
      */
@@ -242,7 +242,7 @@ export interface OrderDbRecord {
 }
 
 /**
-* Represents an insertable database record from the "public.orders"" table.
+* Represents an insertable database record from the "public.orders" table.
 */
 export interface OrderInsertRecord {
     /**
@@ -302,6 +302,6 @@ export interface OrderInsertRecord {
 }
 
 /**
-* Represents an updateable database record from the "public.orders"" table.
+* Represents an updateable database record from the "public.orders" table.
 */
 export type OrderUpdateRecord = Partial<OrderInsertRecord>;

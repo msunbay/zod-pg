@@ -8,7 +8,7 @@ export const UserSessionsTableSchema = z.object({
     * dataType: uuid
     * defaultValue: gen_random_uuid()
     */
-    id: z.uuid,
+    id: z.uuid(),
     /**
     * dataType: int4
     * defaultValue: 
@@ -60,7 +60,7 @@ const TableWriteSchema = z.object({
     * dataType: uuid
     * defaultValue: gen_random_uuid()
     */
-    id: z.uuid,
+    id: z.uuid(),
     /**
     * dataType: int4
     * defaultValue: 
@@ -126,9 +126,9 @@ type TableInsertRecord = z.input<typeof UserSessionsTableInsertSchema>;
 
 
 /**
-* Represents a database record from the "public.user_sessions"" table.
+* Represents a database record from the "public.user_sessions" table.
 */
-export interface UserSessionDbRecord {
+export interface UserSessionRecord {
     /**
      * Primary key for user sessions table
      */
@@ -164,7 +164,7 @@ export interface UserSessionDbRecord {
 }
 
 /**
-* Represents an insertable database record from the "public.user_sessions"" table.
+* Represents an insertable database record from the "public.user_sessions" table.
 */
 export interface UserSessionInsertRecord {
     /**
@@ -206,6 +206,6 @@ export interface UserSessionInsertRecord {
 }
 
 /**
-* Represents an updateable database record from the "public.user_sessions"" table.
+* Represents an updateable database record from the "public.user_sessions" table.
 */
 export type UserSessionUpdateRecord = Partial<UserSessionInsertRecord>;

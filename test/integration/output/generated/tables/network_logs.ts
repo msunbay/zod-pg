@@ -171,9 +171,9 @@ type TableInsertRecord = z.input<typeof NetworkLogsTableInsertSchema>;
 
 
 /**
-* Represents a database record from the "public.network_logs"" table.
+* Represents a database record from the "public.network_logs" table.
 */
-export interface NetworkLogDbRecord {
+export interface NetworkLogRecord {
     /**
      * Primary key for network logs table
      */
@@ -225,7 +225,7 @@ export interface NetworkLogDbRecord {
 }
 
 /**
-* Represents an insertable database record from the "public.network_logs"" table.
+* Represents an insertable database record from the "public.network_logs" table.
 */
 export interface NetworkLogInsertRecord {
     /**
@@ -279,6 +279,6 @@ export interface NetworkLogInsertRecord {
 }
 
 /**
-* Represents an updateable database record from the "public.network_logs"" table.
+* Represents an updateable database record from the "public.network_logs" table.
 */
 export type NetworkLogUpdateRecord = Partial<NetworkLogInsertRecord>;

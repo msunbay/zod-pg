@@ -48,9 +48,9 @@ type TableInsertRecord = z.input<typeof PostCategoriesTableInsertSchema>;
 
 
 /**
-* Represents a database record from the "public.post_categories"" table.
+* Represents a database record from the "public.post_categories" table.
 */
-export interface PostCategoryDbRecord {
+export interface PostCategoryRecord {
     /**
      * ID of the post
      */
@@ -62,7 +62,7 @@ export interface PostCategoryDbRecord {
 }
 
 /**
-* Represents an insertable database record from the "public.post_categories"" table.
+* Represents an insertable database record from the "public.post_categories" table.
 */
 export interface PostCategoryInsertRecord {
     /**
@@ -76,6 +76,6 @@ export interface PostCategoryInsertRecord {
 }
 
 /**
-* Represents an updateable database record from the "public.post_categories"" table.
+* Represents an updateable database record from the "public.post_categories" table.
 */
 export type PostCategoryUpdateRecord = Partial<PostCategoryInsertRecord>;

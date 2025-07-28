@@ -119,9 +119,9 @@ type TableInsertRecord = z.input<typeof AuditLogsTableInsertSchema>;
 
 
 /**
-* Represents a database record from the "public.audit_logs"" table.
+* Represents a database record from the "public.audit_logs" table.
 */
-export interface AuditLogDbRecord {
+export interface AuditLogRecord {
     /**
      * Primary key for audit logs table
      */
@@ -157,7 +157,7 @@ export interface AuditLogDbRecord {
 }
 
 /**
-* Represents an insertable database record from the "public.audit_logs"" table.
+* Represents an insertable database record from the "public.audit_logs" table.
 */
 export interface AuditLogInsertRecord {
     /**
@@ -194,7 +194,6 @@ export interface AuditLogInsertRecord {
 }
 
 /**
-* Represents an updateable database record from the "public.audit_logs"" table.
+* Represents an updateable database record from the "public.audit_logs" table.
 */
 export type AuditLogUpdateRecord = Partial<AuditLogInsertRecord>;
-

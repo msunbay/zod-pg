@@ -159,9 +159,9 @@ type TableInsertRecord = z.input<typeof PostsTableInsertSchema>;
 export type PostStatus = (typeof POST_STATUSES)[number];
 
 /**
-* Represents a database record from the "public.posts"" table.
+* Represents a database record from the "public.posts" table.
 */
-export interface PostDbRecord {
+export interface PostRecord {
     id: TableReadRecord['id'];
     userId: TableReadRecord['userId'];
     title: TableReadRecord['title'];
@@ -191,7 +191,7 @@ export interface PostDbRecord {
 }
 
 /**
-* Represents an insertable database record from the "public.posts"" table.
+* Represents an insertable database record from the "public.posts" table.
 */
 export interface PostInsertRecord {
     /**
@@ -237,6 +237,6 @@ export interface PostInsertRecord {
 }
 
 /**
-* Represents an updateable database record from the "public.posts"" table.
+* Represents an updateable database record from the "public.posts" table.
 */
 export type PostUpdateRecord = Partial<PostInsertRecord>;

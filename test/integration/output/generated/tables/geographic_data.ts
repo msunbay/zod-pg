@@ -171,9 +171,9 @@ type TableInsertRecord = z.input<typeof GeographicDataTableInsertSchema>;
 
 
 /**
-* Represents a database record from the "public.geographic_data"" table.
+* Represents a database record from the "public.geographic_data" table.
 */
-export interface GeographicDataDbRecord {
+export interface GeographicDatumRecord {
     /**
      * Primary key for geographic data table
      */
@@ -225,7 +225,7 @@ export interface GeographicDataDbRecord {
 }
 
 /**
-* Represents an insertable database record from the "public.geographic_data"" table.
+* Represents an insertable database record from the "public.geographic_data" table.
 */
 export interface GeographicDatumInsertRecord {
     /**
@@ -279,6 +279,6 @@ export interface GeographicDatumInsertRecord {
 }
 
 /**
-* Represents an updateable database record from the "public.geographic_data"" table.
+* Represents an updateable database record from the "public.geographic_data" table.
 */
 export type GeographicDatumUpdateRecord = Partial<GeographicDatumInsertRecord>;

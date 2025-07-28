@@ -124,9 +124,9 @@ type TableInsertRecord = z.input<typeof ConstraintVariationsTableInsertSchema>;
 export type ConstraintVariationAnimal = (typeof CONSTRAINT_VARIATION_ANIMALS)[number];export type ConstraintVariationFruit = (typeof CONSTRAINT_VARIATION_FRUITS)[number];export type ConstraintVariationVehicle = (typeof CONSTRAINT_VARIATION_VEHICLES)[number];export type ConstraintVariationLanguage = (typeof CONSTRAINT_VARIATION_LANGUAGES)[number];export type ConstraintVariationActiveStatus = (typeof CONSTRAINT_VARIATION_ACTIVE_STATUSES)[number];
 
 /**
-* Represents a database record from the "public.constraint_variations"" table.
+* Represents a database record from the "public.constraint_variations" table.
 */
-export interface ConstraintVariationDbRecord {
+export interface ConstraintVariationRecord {
     /**
      * Primary key for constraint variations table
      */
@@ -162,7 +162,7 @@ export interface ConstraintVariationDbRecord {
 }
 
 /**
-* Represents an insertable database record from the "public.constraint_variations"" table.
+* Represents an insertable database record from the "public.constraint_variations" table.
 */
 export interface ConstraintVariationInsertRecord {
     /**
@@ -186,7 +186,6 @@ export interface ConstraintVariationInsertRecord {
     language?: TableInsertRecord['language'];
     /**
     * Rating score (1-5)
-    * @maxLen: 1
     */
     rating?: TableInsertRecord['rating'];
     /**
@@ -201,6 +200,6 @@ export interface ConstraintVariationInsertRecord {
 }
 
 /**
-* Represents an updateable database record from the "public.constraint_variations"" table.
+* Represents an updateable database record from the "public.constraint_variations" table.
 */
 export type ConstraintVariationUpdateRecord = Partial<ConstraintVariationInsertRecord>;

@@ -126,9 +126,9 @@ type TableInsertRecord = z.input<typeof InventoryTableInsertSchema>;
 
 
 /**
-* Represents a database record from the "public.inventory"" table.
+* Represents a database record from the "public.inventory" table.
 */
-export interface InventoryDbRecord {
+export interface InventoryRecord {
     /**
      * ID of the product
      */
@@ -164,7 +164,7 @@ export interface InventoryDbRecord {
 }
 
 /**
-* Represents an insertable database record from the "public.inventory"" table.
+* Represents an insertable database record from the "public.inventory" table.
 */
 export interface InventoryInsertRecord {
     /**
@@ -206,6 +206,6 @@ export interface InventoryInsertRecord {
 }
 
 /**
-* Represents an updateable database record from the "public.inventory"" table.
+* Represents an updateable database record from the "public.inventory" table.
 */
 export type InventoryUpdateRecord = Partial<InventoryInsertRecord>;

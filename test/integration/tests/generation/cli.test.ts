@@ -14,7 +14,7 @@ import {
 const cliPath = path.resolve(__dirname, '../../../../index.js');
 let ctx: TestDbContext;
 
-describe.skip('CLI Tests', () => {
+describe('CLI Tests', () => {
   beforeAll(async () => {
     ctx = await setupTestDb();
   });

@@ -120,9 +120,9 @@ type TableInsertRecord = z.input<typeof UsersTableInsertSchema>;
 export type UserRoles = (typeof USER_ROLES)[number];
 
 /**
-* Represents a database record from the "public.users"" table.
+* Represents a database record from the "public.users" table.
 */
-export interface UserDbRecord {
+export interface UserRecord {
     id: TableReadRecord['id'];
     name: TableReadRecord['name'];
     email: TableReadRecord['email'];
@@ -134,7 +134,7 @@ export interface UserDbRecord {
 }
 
 /**
-* Represents an insertable database record from the "public.users"" table.
+* Represents an insertable database record from the "public.users" table.
 */
 export interface UserInsertRecord {
     /**
@@ -161,12 +161,11 @@ export interface UserInsertRecord {
     */
     roles?: TableInsertRecord['roles'];
     /**
-    * @deprecated This column is deprecated
     */
     dates?: TableInsertRecord['dates'];
 }
 
 /**
-* Represents an updateable database record from the "public.users"" table.
+* Represents an updateable database record from the "public.users" table.
 */
 export type UserUpdateRecord = Partial<UserInsertRecord>;

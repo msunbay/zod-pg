@@ -146,9 +146,9 @@ type TableInsertRecord = z.input<typeof AuditLogsTableInsertSchema>;
 
 
 /**
-* Represents a database record from the "public.audit_logs"" table.
+* Represents a database record from the "public.audit_logs" table.
 */
-export interface AuditLogDbRecord {
+export interface AuditLogRecord {
     /**
      * Primary key for audit logs table
      */
@@ -184,7 +184,7 @@ export interface AuditLogDbRecord {
 }
 
 /**
-* Represents an insertable database record from the "public.audit_logs"" table.
+* Represents an insertable database record from the "public.audit_logs" table.
 */
 export interface AuditLogInsertRecord {
     /**
@@ -221,7 +221,7 @@ export interface AuditLogInsertRecord {
 }
 
 /**
-* Represents an updateable database record from the "public.audit_logs"" table.
+* Represents an updateable database record from the "public.audit_logs" table.
 */
 export type AuditLogUpdateRecord = Partial<AuditLogInsertRecord>;
 "
@@ -310,9 +310,9 @@ type TableInsertRecord = z.input<typeof CategoriesTableInsertSchema>;
 
 
 /**
-* Represents a database record from the "public.categories"" table.
+* Represents a database record from the "public.categories" table.
 */
-export interface CategoryDbRecord {
+export interface CategoryRecord {
     /**
      * Primary key for categories table
      */
@@ -336,7 +336,7 @@ export interface CategoryDbRecord {
 }
 
 /**
-* Represents an insertable database record from the "public.categories"" table.
+* Represents an insertable database record from the "public.categories" table.
 */
 export interface CategoryInsertRecord {
     /**
@@ -361,7 +361,7 @@ export interface CategoryInsertRecord {
 }
 
 /**
-* Represents an updateable database record from the "public.categories"" table.
+* Represents an updateable database record from the "public.categories" table.
 */
 export type CategoryUpdateRecord = Partial<CategoryInsertRecord>;
 "
@@ -489,9 +489,9 @@ type TableInsertRecord = z.input<typeof CommentsTableInsertSchema>;
 
 
 /**
-* Represents a database record from the "public.comments"" table.
+* Represents a database record from the "public.comments" table.
 */
-export interface CommentDbRecord {
+export interface CommentRecord {
     /**
      * Primary key for comments table
      */
@@ -527,7 +527,7 @@ export interface CommentDbRecord {
 }
 
 /**
-* Represents an insertable database record from the "public.comments"" table.
+* Represents an insertable database record from the "public.comments" table.
 */
 export interface CommentInsertRecord {
     /**
@@ -564,7 +564,7 @@ export interface CommentInsertRecord {
 }
 
 /**
-* Represents an updateable database record from the "public.comments"" table.
+* Represents an updateable database record from the "public.comments" table.
 */
 export type CommentUpdateRecord = Partial<CommentInsertRecord>;
 "
@@ -697,9 +697,9 @@ type TableInsertRecord = z.input<typeof ConstraintVariationsTableInsertSchema>;
 export type ConstraintVariationAnimal = (typeof CONSTRAINT_VARIATION_ANIMALS)[number];export type ConstraintVariationFruit = (typeof CONSTRAINT_VARIATION_FRUITS)[number];export type ConstraintVariationVehicle = (typeof CONSTRAINT_VARIATION_VEHICLES)[number];export type ConstraintVariationLanguage = (typeof CONSTRAINT_VARIATION_LANGUAGES)[number];export type ConstraintVariationActiveStatus = (typeof CONSTRAINT_VARIATION_ACTIVE_STATUSES)[number];
 
 /**
-* Represents a database record from the "public.constraint_variations"" table.
+* Represents a database record from the "public.constraint_variations" table.
 */
-export interface ConstraintVariationDbRecord {
+export interface ConstraintVariationRecord {
     /**
      * Primary key for constraint variations table
      */
@@ -735,7 +735,7 @@ export interface ConstraintVariationDbRecord {
 }
 
 /**
-* Represents an insertable database record from the "public.constraint_variations"" table.
+* Represents an insertable database record from the "public.constraint_variations" table.
 */
 export interface ConstraintVariationInsertRecord {
     /**
@@ -759,7 +759,6 @@ export interface ConstraintVariationInsertRecord {
     language?: TableInsertRecord['language'];
     /**
     * Rating score (1-5)
-    * @maxLen: 1
     */
     rating?: TableInsertRecord['rating'];
     /**
@@ -774,7 +773,7 @@ export interface ConstraintVariationInsertRecord {
 }
 
 /**
-* Represents an updateable database record from the "public.constraint_variations"" table.
+* Represents an updateable database record from the "public.constraint_variations" table.
 */
 export type ConstraintVariationUpdateRecord = Partial<ConstraintVariationInsertRecord>;
 "
@@ -992,9 +991,9 @@ type TableInsertRecord = z.input<typeof EnumTestsTableInsertSchema>;
 export type EnumTestPriority = (typeof ENUM_TEST_PRIORITIES)[number];export type EnumTestColor = (typeof ENUM_TEST_COLORS)[number];export type EnumTestSize = (typeof ENUM_TEST_SIZES)[number];export type EnumTestGrade = (typeof ENUM_TEST_GRADES)[number];export type EnumTestCategory = (typeof ENUM_TEST_CATEGORIES)[number];export type EnumTestMood = (typeof ENUM_TEST_MOODS)[number];export type EnumTestDirection = (typeof ENUM_TEST_DIRECTIONS)[number];export type EnumTestWeatherCondition = (typeof ENUM_TEST_WEATHER_CONDITIONS)[number];export type EnumTestTaskStatus = (typeof ENUM_TEST_TASK_STATUSES)[number];export type EnumTestDifficulty = (typeof ENUM_TEST_DIFFICULTIES)[number];export type EnumTestWeekday = (typeof ENUM_TEST_WEEKDAYS)[number];export type EnumTestPaymentMethod = (typeof ENUM_TEST_PAYMENT_METHODS)[number];
 
 /**
-* Represents a database record from the "public.enum_tests"" table.
+* Represents a database record from the "public.enum_tests" table.
 */
-export interface EnumTestDbRecord {
+export interface EnumTestRecord {
     /**
      * Primary key for enum tests table
      */
@@ -1054,7 +1053,7 @@ export interface EnumTestDbRecord {
 }
 
 /**
-* Represents an insertable database record from the "public.enum_tests"" table.
+* Represents an insertable database record from the "public.enum_tests" table.
 */
 export interface EnumTestInsertRecord {
     /**
@@ -1120,7 +1119,7 @@ export interface EnumTestInsertRecord {
 }
 
 /**
-* Represents an updateable database record from the "public.enum_tests"" table.
+* Represents an updateable database record from the "public.enum_tests" table.
 */
 export type EnumTestUpdateRecord = Partial<EnumTestInsertRecord>;
 "
@@ -1137,7 +1136,7 @@ export const FilesTableSchema = z.object({
     * dataType: uuid
     * defaultValue: gen_random_uuid()
     */
-    id: z.uuid,
+    id: z.uuid(),
     /**
     * dataType: varchar
     * defaultValue: 
@@ -1219,7 +1218,7 @@ const TableWriteSchema = z.object({
     * dataType: uuid
     * defaultValue: gen_random_uuid()
     */
-    id: z.uuid,
+    id: z.uuid(),
     /**
     * dataType: varchar
     * defaultValue: 
@@ -1320,9 +1319,9 @@ type TableInsertRecord = z.input<typeof FilesTableInsertSchema>;
 
 
 /**
-* Represents a database record from the "public.files"" table.
+* Represents a database record from the "public.files" table.
 */
-export interface FileDbRecord {
+export interface FileRecord {
     /**
      * Primary key for files table
      */
@@ -1378,7 +1377,7 @@ export interface FileDbRecord {
 }
 
 /**
-* Represents an insertable database record from the "public.files"" table.
+* Represents an insertable database record from the "public.files" table.
 */
 export interface FileInsertRecord {
     /**
@@ -1443,7 +1442,7 @@ export interface FileInsertRecord {
 }
 
 /**
-* Represents an updateable database record from the "public.files"" table.
+* Represents an updateable database record from the "public.files" table.
 */
 export type FileUpdateRecord = Partial<FileInsertRecord>;
 "
@@ -1623,9 +1622,9 @@ type TableInsertRecord = z.input<typeof GeographicDataTableInsertSchema>;
 
 
 /**
-* Represents a database record from the "public.geographic_data"" table.
+* Represents a database record from the "public.geographic_data" table.
 */
-export interface GeographicDataDbRecord {
+export interface GeographicDatumRecord {
     /**
      * Primary key for geographic data table
      */
@@ -1677,7 +1676,7 @@ export interface GeographicDataDbRecord {
 }
 
 /**
-* Represents an insertable database record from the "public.geographic_data"" table.
+* Represents an insertable database record from the "public.geographic_data" table.
 */
 export interface GeographicDatumInsertRecord {
     /**
@@ -1731,7 +1730,7 @@ export interface GeographicDatumInsertRecord {
 }
 
 /**
-* Represents an updateable database record from the "public.geographic_data"" table.
+* Represents an updateable database record from the "public.geographic_data" table.
 */
 export type GeographicDatumUpdateRecord = Partial<GeographicDatumInsertRecord>;
 "
@@ -1890,9 +1889,9 @@ type TableInsertRecord = z.input<typeof InventoryTableInsertSchema>;
 
 
 /**
-* Represents a database record from the "public.inventory"" table.
+* Represents a database record from the "public.inventory" table.
 */
-export interface InventoryDbRecord {
+export interface InventoryRecord {
     /**
      * ID of the product
      */
@@ -1928,7 +1927,7 @@ export interface InventoryDbRecord {
 }
 
 /**
-* Represents an insertable database record from the "public.inventory"" table.
+* Represents an insertable database record from the "public.inventory" table.
 */
 export interface InventoryInsertRecord {
     /**
@@ -1970,7 +1969,7 @@ export interface InventoryInsertRecord {
 }
 
 /**
-* Represents an updateable database record from the "public.inventory"" table.
+* Represents an updateable database record from the "public.inventory" table.
 */
 export type InventoryUpdateRecord = Partial<InventoryInsertRecord>;
 "
@@ -2150,9 +2149,9 @@ type TableInsertRecord = z.input<typeof NetworkLogsTableInsertSchema>;
 
 
 /**
-* Represents a database record from the "public.network_logs"" table.
+* Represents a database record from the "public.network_logs" table.
 */
-export interface NetworkLogDbRecord {
+export interface NetworkLogRecord {
     /**
      * Primary key for network logs table
      */
@@ -2204,7 +2203,7 @@ export interface NetworkLogDbRecord {
 }
 
 /**
-* Represents an insertable database record from the "public.network_logs"" table.
+* Represents an insertable database record from the "public.network_logs" table.
 */
 export interface NetworkLogInsertRecord {
     /**
@@ -2258,7 +2257,7 @@ export interface NetworkLogInsertRecord {
 }
 
 /**
-* Represents an updateable database record from the "public.network_logs"" table.
+* Represents an updateable database record from the "public.network_logs" table.
 */
 export type NetworkLogUpdateRecord = Partial<NetworkLogInsertRecord>;
 "
@@ -2373,9 +2372,9 @@ type TableInsertRecord = z.input<typeof OrderItemsTableInsertSchema>;
 
 
 /**
-* Represents a database record from the "public.order_items"" table.
+* Represents a database record from the "public.order_items" table.
 */
-export interface OrderItemDbRecord {
+export interface OrderItemRecord {
     /**
      * Primary key for order items table
      */
@@ -2407,7 +2406,7 @@ export interface OrderItemDbRecord {
 }
 
 /**
-* Represents an insertable database record from the "public.order_items"" table.
+* Represents an insertable database record from the "public.order_items" table.
 */
 export interface OrderItemInsertRecord {
     /**
@@ -2438,7 +2437,7 @@ export interface OrderItemInsertRecord {
 }
 
 /**
-* Represents an updateable database record from the "public.order_items"" table.
+* Represents an updateable database record from the "public.order_items" table.
 */
 export type OrderItemUpdateRecord = Partial<OrderItemInsertRecord>;
 "
@@ -2631,9 +2630,9 @@ type TableInsertRecord = z.input<typeof OrdersTableInsertSchema>;
 
 
 /**
-* Represents a database record from the "public.orders"" table.
+* Represents a database record from the "public.orders" table.
 */
-export interface OrderDbRecord {
+export interface OrderRecord {
     /**
      * Primary key for orders table
      */
@@ -2689,7 +2688,7 @@ export interface OrderDbRecord {
 }
 
 /**
-* Represents an insertable database record from the "public.orders"" table.
+* Represents an insertable database record from the "public.orders" table.
 */
 export interface OrderInsertRecord {
     /**
@@ -2749,7 +2748,7 @@ export interface OrderInsertRecord {
 }
 
 /**
-* Represents an updateable database record from the "public.orders"" table.
+* Represents an updateable database record from the "public.orders" table.
 */
 export type OrderUpdateRecord = Partial<OrderInsertRecord>;
 "
@@ -2806,9 +2805,9 @@ type TableInsertRecord = z.input<typeof PostCategoriesTableInsertSchema>;
 
 
 /**
-* Represents a database record from the "public.post_categories"" table.
+* Represents a database record from the "public.post_categories" table.
 */
-export interface PostCategoryDbRecord {
+export interface PostCategoryRecord {
     /**
      * ID of the post
      */
@@ -2820,7 +2819,7 @@ export interface PostCategoryDbRecord {
 }
 
 /**
-* Represents an insertable database record from the "public.post_categories"" table.
+* Represents an insertable database record from the "public.post_categories" table.
 */
 export interface PostCategoryInsertRecord {
     /**
@@ -2834,7 +2833,7 @@ export interface PostCategoryInsertRecord {
 }
 
 /**
-* Represents an updateable database record from the "public.post_categories"" table.
+* Represents an updateable database record from the "public.post_categories" table.
 */
 export type PostCategoryUpdateRecord = Partial<PostCategoryInsertRecord>;
 "
@@ -3002,9 +3001,9 @@ type TableInsertRecord = z.input<typeof PostsTableInsertSchema>;
 export type PostStatus = (typeof POST_STATUSES)[number];
 
 /**
-* Represents a database record from the "public.posts"" table.
+* Represents a database record from the "public.posts" table.
 */
-export interface PostDbRecord {
+export interface PostRecord {
     id: TableReadRecord['id'];
     userId: TableReadRecord['userId'];
     title: TableReadRecord['title'];
@@ -3034,7 +3033,7 @@ export interface PostDbRecord {
 }
 
 /**
-* Represents an insertable database record from the "public.posts"" table.
+* Represents an insertable database record from the "public.posts" table.
 */
 export interface PostInsertRecord {
     /**
@@ -3080,7 +3079,7 @@ export interface PostInsertRecord {
 }
 
 /**
-* Represents an updateable database record from the "public.posts"" table.
+* Represents an updateable database record from the "public.posts" table.
 */
 export type PostUpdateRecord = Partial<PostInsertRecord>;
 "
@@ -3247,9 +3246,9 @@ type TableInsertRecord = z.input<typeof ProductsTableInsertSchema>;
 
 
 /**
-* Represents a database record from the "public.products"" table.
+* Represents a database record from the "public.products" table.
 */
-export interface ProductDbRecord {
+export interface ProductRecord {
     /**
      * Primary key for products table
      */
@@ -3297,7 +3296,7 @@ export interface ProductDbRecord {
 }
 
 /**
-* Represents an insertable database record from the "public.products"" table.
+* Represents an insertable database record from the "public.products" table.
 */
 export interface ProductInsertRecord {
     /**
@@ -3348,7 +3347,7 @@ export interface ProductInsertRecord {
 }
 
 /**
-* Represents an updateable database record from the "public.products"" table.
+* Represents an updateable database record from the "public.products" table.
 */
 export type ProductUpdateRecord = Partial<ProductInsertRecord>;
 "
@@ -3502,9 +3501,9 @@ type TableInsertRecord = z.input<typeof TimeSeriesTableInsertSchema>;
 
 
 /**
-* Represents a database record from the "public.time_series"" table.
+* Represents a database record from the "public.time_series" table.
 */
-export interface TimeSeriesDbRecord {
+export interface TimeSeryRecord {
     /**
      * Primary key for time series table
      */
@@ -3548,7 +3547,7 @@ export interface TimeSeriesDbRecord {
 }
 
 /**
-* Represents an insertable database record from the "public.time_series"" table.
+* Represents an insertable database record from the "public.time_series" table.
 */
 export interface TimeSeryInsertRecord {
     /**
@@ -3593,7 +3592,7 @@ export interface TimeSeryInsertRecord {
 }
 
 /**
-* Represents an updateable database record from the "public.time_series"" table.
+* Represents an updateable database record from the "public.time_series" table.
 */
 export type TimeSeryUpdateRecord = Partial<TimeSeryInsertRecord>;
 "
@@ -3610,7 +3609,7 @@ export const UserSessionsTableSchema = z.object({
     * dataType: uuid
     * defaultValue: gen_random_uuid()
     */
-    id: z.uuid,
+    id: z.uuid(),
     /**
     * dataType: int4
     * defaultValue: 
@@ -3662,7 +3661,7 @@ const TableWriteSchema = z.object({
     * dataType: uuid
     * defaultValue: gen_random_uuid()
     */
-    id: z.uuid,
+    id: z.uuid(),
     /**
     * dataType: int4
     * defaultValue: 
@@ -3728,9 +3727,9 @@ type TableInsertRecord = z.input<typeof UserSessionsTableInsertSchema>;
 
 
 /**
-* Represents a database record from the "public.user_sessions"" table.
+* Represents a database record from the "public.user_sessions" table.
 */
-export interface UserSessionDbRecord {
+export interface UserSessionRecord {
     /**
      * Primary key for user sessions table
      */
@@ -3766,7 +3765,7 @@ export interface UserSessionDbRecord {
 }
 
 /**
-* Represents an insertable database record from the "public.user_sessions"" table.
+* Represents an insertable database record from the "public.user_sessions" table.
 */
 export interface UserSessionInsertRecord {
     /**
@@ -3808,7 +3807,7 @@ export interface UserSessionInsertRecord {
 }
 
 /**
-* Represents an updateable database record from the "public.user_sessions"" table.
+* Represents an updateable database record from the "public.user_sessions" table.
 */
 export type UserSessionUpdateRecord = Partial<UserSessionInsertRecord>;
 "
@@ -3937,9 +3936,9 @@ type TableInsertRecord = z.input<typeof UsersTableInsertSchema>;
 export type UserRoles = (typeof USER_ROLES)[number];
 
 /**
-* Represents a database record from the "public.users"" table.
+* Represents a database record from the "public.users" table.
 */
-export interface UserDbRecord {
+export interface UserRecord {
     id: TableReadRecord['id'];
     name: TableReadRecord['name'];
     email: TableReadRecord['email'];
@@ -3951,7 +3950,7 @@ export interface UserDbRecord {
 }
 
 /**
-* Represents an insertable database record from the "public.users"" table.
+* Represents an insertable database record from the "public.users" table.
 */
 export interface UserInsertRecord {
     /**
@@ -3978,13 +3977,12 @@ export interface UserInsertRecord {
     */
     roles?: TableInsertRecord['roles'];
     /**
-    * @deprecated This column is deprecated
     */
     dates?: TableInsertRecord['dates'];
 }
 
 /**
-* Represents an updateable database record from the "public.users"" table.
+* Represents an updateable database record from the "public.users" table.
 */
 export type UserUpdateRecord = Partial<UserInsertRecord>;
 "

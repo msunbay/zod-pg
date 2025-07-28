@@ -80,9 +80,9 @@ type TableInsertRecord = z.input<typeof CategoriesTableInsertSchema>;
 
 
 /**
-* Represents a database record from the "public.categories"" table.
+* Represents a database record from the "public.categories" table.
 */
-export interface CategoryDbRecord {
+export interface CategoryRecord {
     /**
      * Primary key for categories table
      */
@@ -106,7 +106,7 @@ export interface CategoryDbRecord {
 }
 
 /**
-* Represents an insertable database record from the "public.categories"" table.
+* Represents an insertable database record from the "public.categories" table.
 */
 export interface CategoryInsertRecord {
     /**
@@ -131,6 +131,6 @@ export interface CategoryInsertRecord {
 }
 
 /**
-* Represents an updateable database record from the "public.categories"" table.
+* Represents an updateable database record from the "public.categories" table.
 */
 export type CategoryUpdateRecord = Partial<CategoryInsertRecord>;

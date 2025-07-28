@@ -119,9 +119,9 @@ type TableInsertRecord = z.input<typeof CommentsTableInsertSchema>;
 
 
 /**
-* Represents a database record from the "public.comments"" table.
+* Represents a database record from the "public.comments" table.
 */
-export interface CommentDbRecord {
+export interface CommentRecord {
     /**
      * Primary key for comments table
      */
@@ -157,7 +157,7 @@ export interface CommentDbRecord {
 }
 
 /**
-* Represents an insertable database record from the "public.comments"" table.
+* Represents an insertable database record from the "public.comments" table.
 */
 export interface CommentInsertRecord {
     /**
@@ -194,6 +194,6 @@ export interface CommentInsertRecord {
 }
 
 /**
-* Represents an updateable database record from the "public.comments"" table.
+* Represents an updateable database record from the "public.comments" table.
 */
 export type CommentUpdateRecord = Partial<CommentInsertRecord>;

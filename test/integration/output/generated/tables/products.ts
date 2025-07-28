@@ -158,9 +158,9 @@ type TableInsertRecord = z.input<typeof ProductsTableInsertSchema>;
 
 
 /**
-* Represents a database record from the "public.products"" table.
+* Represents a database record from the "public.products" table.
 */
-export interface ProductDbRecord {
+export interface ProductRecord {
     /**
      * Primary key for products table
      */
@@ -208,7 +208,7 @@ export interface ProductDbRecord {
 }
 
 /**
-* Represents an insertable database record from the "public.products"" table.
+* Represents an insertable database record from the "public.products" table.
 */
 export interface ProductInsertRecord {
     /**
@@ -259,6 +259,6 @@ export interface ProductInsertRecord {
 }
 
 /**
-* Represents an updateable database record from the "public.products"" table.
+* Represents an updateable database record from the "public.products" table.
 */
 export type ProductUpdateRecord = Partial<ProductInsertRecord>;

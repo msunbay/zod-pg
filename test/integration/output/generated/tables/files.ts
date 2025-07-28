@@ -8,7 +8,7 @@ export const FilesTableSchema = z.object({
     * dataType: uuid
     * defaultValue: gen_random_uuid()
     */
-    id: z.uuid,
+    id: z.uuid(),
     /**
     * dataType: varchar
     * defaultValue: 
@@ -90,7 +90,7 @@ const TableWriteSchema = z.object({
     * dataType: uuid
     * defaultValue: gen_random_uuid()
     */
-    id: z.uuid,
+    id: z.uuid(),
     /**
     * dataType: varchar
     * defaultValue: 
@@ -191,9 +191,9 @@ type TableInsertRecord = z.input<typeof FilesTableInsertSchema>;
 
 
 /**
-* Represents a database record from the "public.files"" table.
+* Represents a database record from the "public.files" table.
 */
-export interface FileDbRecord {
+export interface FileRecord {
     /**
      * Primary key for files table
      */
@@ -249,7 +249,7 @@ export interface FileDbRecord {
 }
 
 /**
-* Represents an insertable database record from the "public.files"" table.
+* Represents an insertable database record from the "public.files" table.
 */
 export interface FileInsertRecord {
     /**
@@ -314,6 +314,6 @@ export interface FileInsertRecord {
 }
 
 /**
-* Represents an updateable database record from the "public.files"" table.
+* Represents an updateable database record from the "public.files" table.
 */
 export type FileUpdateRecord = Partial<FileInsertRecord>;

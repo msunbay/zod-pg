@@ -209,9 +209,9 @@ type TableInsertRecord = z.input<typeof EnumTestsTableInsertSchema>;
 export type EnumTestPriority = (typeof ENUM_TEST_PRIORITIES)[number];export type EnumTestColor = (typeof ENUM_TEST_COLORS)[number];export type EnumTestSize = (typeof ENUM_TEST_SIZES)[number];export type EnumTestGrade = (typeof ENUM_TEST_GRADES)[number];export type EnumTestCategory = (typeof ENUM_TEST_CATEGORIES)[number];export type EnumTestMood = (typeof ENUM_TEST_MOODS)[number];export type EnumTestDirection = (typeof ENUM_TEST_DIRECTIONS)[number];export type EnumTestWeatherCondition = (typeof ENUM_TEST_WEATHER_CONDITIONS)[number];export type EnumTestTaskStatus = (typeof ENUM_TEST_TASK_STATUSES)[number];export type EnumTestDifficulty = (typeof ENUM_TEST_DIFFICULTIES)[number];export type EnumTestWeekday = (typeof ENUM_TEST_WEEKDAYS)[number];export type EnumTestPaymentMethod = (typeof ENUM_TEST_PAYMENT_METHODS)[number];
 
 /**
-* Represents a database record from the "public.enum_tests"" table.
+* Represents a database record from the "public.enum_tests" table.
 */
-export interface EnumTestDbRecord {
+export interface EnumTestRecord {
     /**
      * Primary key for enum tests table
      */
@@ -271,7 +271,7 @@ export interface EnumTestDbRecord {
 }
 
 /**
-* Represents an insertable database record from the "public.enum_tests"" table.
+* Represents an insertable database record from the "public.enum_tests" table.
 */
 export interface EnumTestInsertRecord {
     /**
@@ -337,6 +337,6 @@ export interface EnumTestInsertRecord {
 }
 
 /**
-* Represents an updateable database record from the "public.enum_tests"" table.
+* Represents an updateable database record from the "public.enum_tests" table.
 */
 export type EnumTestUpdateRecord = Partial<EnumTestInsertRecord>;
