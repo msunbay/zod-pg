@@ -94,6 +94,9 @@ Note that if you use both `--exclude` and `--include` options together, the `--i
 | `--exclude`                     | Regex pattern to exclude tables from generation. | false    |             |
 | `--include`                     | Regex pattern to include only specific tables.   | false    |             |
 | `--json-schema-import-location` | Location to import Zod schemas for JSON fields.  | false    |             |
+| `--silent`                      | Suppress output messages during generation.      | false    | `false`     |
+| `--module`                      | Output module format (esm, commonjs).            | false    | `commonjs`  |
+| `--zod-version`                 | Target Zod version (3, 4).                       | false    | `3`         |
 | `--help`                        | Show help message.                               | false    |             |
 
 ## Output File Structure

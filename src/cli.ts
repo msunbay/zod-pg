@@ -92,9 +92,9 @@ export const main = async () => {
   );
   program.option(
     '--zod-version <number>',
-    'Zod version to use (default: 4)',
+    'Zod version to use (default: 3)',
     (value) => parseInt(value, 10),
-    config.zodVersion || 4
+    config.zodVersion || 3
   );
 
   program.parse();
