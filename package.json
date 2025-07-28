@@ -1,6 +1,6 @@
 {
   "name": "zod-pg",
-  "version": "0.2.3",
+  "version": "0.3.0",
   "description": "Opinionated Zod schema generator for PostgreSQL databases",
   "packageManager": "npm@10.8.2",
   "main": "./dist/index.js",
@@ -24,8 +24,7 @@
     "test:integration:generation:update": "vitest --project integration:generation run -u",
     "test:types": "tsc --noEmit",
     "test:watch": "jest --watch",
-    "format": "prettier --write .",
-    "start": "dotenv -- npm run build && node index.js -o ./app/database/schema/generated --exclude '(knex|awsdms)_.*' --json-schema-import-location '../../json' --connection-string 'postgresql://postgres:postgres@localhost:5432/songwhip_api'"
+    "format": "prettier --write ."
   },
   "repository": {
     "type": "git",
@@ -47,7 +46,6 @@
     "@ianvs/prettier-plugin-sort-imports": "^4.5.1",
     "@testcontainers/postgresql": "^11.2.1",
     "@types/debug": "^4.1.12",
-    "@types/jest": "^30.0.0",
     "@types/lodash": "^4.17.20",
     "@types/mustache": "^4.2.6",
     "@types/node": "^22",

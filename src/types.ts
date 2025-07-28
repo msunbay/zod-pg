@@ -139,8 +139,8 @@ export type ZodPgZodVersion = 3 | 4;
 export interface ZodPgConfig {
   connection: ZodPgConnectionConfig;
   cleanOutput?: boolean;
-  include?: string;
-  exclude?: string;
+  include?: string | string[];
+  exclude?: string | string[];
   jsonSchemaImportLocation?: string;
 
   stringifyJson?: boolean;

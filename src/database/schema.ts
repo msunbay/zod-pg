@@ -17,7 +17,11 @@ export const getSchemaInformation = async (
     schemaName = 'public',
     include,
     exclude,
-  }: { schemaName?: string; include?: string; exclude?: string }
+  }: {
+    schemaName?: string;
+    include?: string | string[];
+    exclude?: string | string[];
+  }
 ): Promise<ZodPgSchemaInfo> => {
   logDebug(`Retrieving schema information for schema '${schemaName}'`);
 
@@ -106,9 +110,15 @@ export const getSchemaInformation = async (
 
   if (include) {
     const count = tables.length;
-    const includeRegex = new RegExp(include);
+    if (typeof include === 'string') {
+      const includeRegex = new RegExp(include);
 
-    tables = tables.filter((table) => includeRegex.test(table.name));
+      tables = tables.filter((table) => includeRegex.test(table.name));
+    } else {
+      tables = tables.filter((table) =>
+        include.some((name) => name === table.name)
+      );
+    }
 
     logDebug(
       `Filtered tables by "include": ${count} -> ${tables.length} tables`
@@ -117,9 +127,16 @@ export const getSchemaInformation = async (
 
   if (exclude) {
     const count = tables.length;
-    const excludeRegex = new RegExp(exclude);
 
-    tables = tables.filter((table) => !excludeRegex.test(table.name));
+    if (typeof exclude === 'string') {
+      const excludeRegex = new RegExp(exclude);
+
+      tables = tables.filter((table) => !excludeRegex.test(table.name));
+    } else {
+      tables = tables.filter((table) =>
+        exclude.every((name) => name !== table.name)
+      );
+    }
 
     logDebug(
       `Filtered tables by "exclude": ${count} -> ${tables.length} tables`
