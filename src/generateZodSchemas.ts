@@ -76,7 +76,7 @@ export const generateZodSchemas = async ({
     for (const tableInfo of schema.tables) {
       logDebug(`Generating schema for table: ${tableInfo.name}`);
 
-      await generateTableSchema(tableInfo, config);
+      await generateTableSchema(tableInfo, generateConfig);
 
       logDebug(`Generated ${outputDir}/tables/${tableInfo.name}.ts file`);
     }
