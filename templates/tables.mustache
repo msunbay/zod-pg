@@ -52,7 +52,7 @@ type TableInsertRecord = z.input<typeof {{tableInsertSchemaName}}>;
 export type {{typeName}} = (typeof {{constantName}})[number];{{/enums}}
 
 /**
-* Represents a database record from the "{{schemaName}}.{{tableName}}"" table.
+* Represents a database record from the "{{schemaName}}.{{tableName}}" table.
 */
 export interface {{tableReadRecordName}} {
 {{#readableColumns}}
