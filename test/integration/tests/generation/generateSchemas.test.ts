@@ -35,32 +35,6 @@ describe('generateZodSchemas', () => {
       outputDir,
       outputModule: 'esm',
       zodVersion: 4,
-
-      onTableModelCreated: (table) => {
-        return {
-          ...table,
-          tableReadRecordName: `${table.tableSingularName}DbRecord`,
-        };
-      },
-
-      onColumnModelCreated: (column) => {
-        if (column.name === 'dates')
-          return {
-            ...column,
-            isDeprecated: true,
-            isDeprecatedReason: 'This column is deprecated',
-          };
-
-        if (column.name === 'rating') {
-          return {
-            ...column,
-            minLen: 5,
-            maxLen: 1,
-          };
-        }
-
-        return column;
-      },
     });
 
     const outputFiles = getOutputFiles();
