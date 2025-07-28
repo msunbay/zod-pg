@@ -73,7 +73,7 @@ const renderZodType = (
     case 'date':
       return 'z.date()';
     case 'uuid':
-      return version === 4 ? 'z.uuid' : 'z.string().uuid()';
+      return version === 4 ? 'z.uuid()' : 'z.string().uuid()';
     case 'json':
       return version === 4 ? 'z.json()' : 'z.any()';
     default:
