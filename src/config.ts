@@ -9,7 +9,7 @@ export const getConfiguration = async (): Promise<ZodPgConfig> => {
   if (!result) {
     return {
       connection: {},
-      outputDir: './zod-pg',
+      outputDir: './zod-schemas',
     };
   }
 

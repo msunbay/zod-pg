@@ -9,7 +9,7 @@ export const logAppName = (message: string) => {
 };
 
 export const logError = (message: string) => {
-  console.error(`❌ ${message}`);
+  console.error(chalk.red(`${message}`));
 };
 
 export const logWarning = (message: string) => {

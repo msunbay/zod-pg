@@ -1,6 +1,6 @@
-import { ZodPgColumnInfo } from '../database/types.js';
 import {
   ZodPgColumnBaseModel,
+  ZodPgColumnInfo,
   ZodPgColumnType,
   ZodPgConfig,
   ZodPgZodVersion,

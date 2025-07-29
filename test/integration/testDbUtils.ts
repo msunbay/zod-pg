@@ -26,9 +26,14 @@ export const getClientConnectionString = (): string => {
 };
 
 export async function setupTestDb(): Promise<TestDbContext> {
-  const schemaPath = path.resolve(__dirname, './schema.sql');
+  const schemaPath = path.resolve(import.meta.dirname, './schema.sql');
 
-  const container = await new PostgreSqlContainer('postgres').start();
+  const container = await new PostgreSqlContainer('postgres')
+    .withDatabase('test')
+    .withUsername('test')
+    .withPassword('test')
+    .withExposedPorts(5432)
+    .start();
 
   const client = new Client({
     host: container.getHost(),
@@ -37,6 +42,10 @@ export async function setupTestDb(): Promise<TestDbContext> {
     user: container.getUsername(),
     password: container.getPassword(),
   });
+
+  console.log(
+    `Test database running on ${container.getHost()}:${container.getPort()}`
+  );
 
   await client.connect();
 
@@ -54,7 +63,10 @@ export async function teardownTestDb(ctx: TestDbContext) {
   await ctx.container.stop();
 }
 
-export const outputDir = path.resolve(__dirname, './output/generated');
+export const outputDir = path.resolve(
+  import.meta.dirname,
+  './output/generated'
+);
 
 export function getOutputFiles(dir = outputDir): string[] {
   let results: string[] = [];

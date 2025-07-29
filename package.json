@@ -16,6 +16,7 @@
   },
   "scripts": {
     "build": "rm -rf ./dist && tsc --project tsconfig.build.json",
+    "start": "npm run build && node index.js",
     "test": "npm run build && npm run test:unit && npm run test:integration && npm run test:types",
     "test:unit": "vitest --project unit run",
     "test:integration": "npm run test:integration:generation && npm run test:integration:schema",

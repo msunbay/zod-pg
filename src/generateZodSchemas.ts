@@ -1,7 +1,6 @@
 import { Client } from 'pg';
 
-import type { ZodPgSchemaInfo } from './database/types.js';
-import type { ZodPgConfig, ZodPgProgress } from './types.js';
+import type { ZodPgConfig, ZodPgProgress, ZodPgSchemaInfo } from './types.js';
 
 import { createClient } from './database/client.js';
 import { getSchemaInformation } from './database/schema.js';
@@ -53,6 +52,10 @@ export const generateZodSchemas = async ({
   let client: Client | undefined = undefined;
 
   try {
+    logDebug(
+      `Connecting to Postgres database at ${connection.connectionString}`
+    );
+
     client = createClient(connection);
 
     onProgress?.('connecting');
@@ -74,21 +77,12 @@ export const generateZodSchemas = async ({
     );
 
     for (const tableInfo of schema.tables) {
-      logDebug(`Generating schema for table: ${tableInfo.name}`);
-
       await generateTableSchema(tableInfo, generateConfig);
-
-      logDebug(`Generated ${outputDir}/tables/${tableInfo.name}.ts file`);
     }
 
     await generateTablesIndexFile(schema, generateConfig);
-    logDebug(`Generated 'tables/index.ts' file`);
-
     await generateConstantsFile(schema, generateConfig);
-    logDebug(`Generated 'constants.ts' file`);
-
     await generateTypesFile(schema, generateConfig);
-    logDebug(`Generated 'types.ts' file`);
 
     onProgress?.('done');
 

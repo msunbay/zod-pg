@@ -5,7 +5,7 @@ import type {
   ZodPgRawColumnInfo,
   ZodPgSchemaInfo,
   ZodPgTableInfo,
-} from './types.js';
+} from '../types.js';
 
 import { logDebug, sql } from '../utils/index.js';
 import { getEnumConstraints } from './enumConstraints.js';

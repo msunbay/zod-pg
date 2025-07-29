@@ -1,5 +1,11 @@
-import { ZodPgColumnInfo, ZodPgTableInfo } from '../database/types.js';
-import { ZodPgColumn, ZodPgConfig, ZodPgImport, ZodPgTable } from '../types.js';
+import {
+  ZodPgColumn,
+  ZodPgColumnInfo,
+  ZodPgConfig,
+  ZodPgImport,
+  ZodPgTable,
+  ZodPgTableInfo,
+} from '../types.js';
 import { convertCaseFormat, formatSingularString } from '../utils/casing.js';
 import {
   formatEnumConstantName,

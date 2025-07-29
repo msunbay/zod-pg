@@ -1,8 +1,8 @@
 import { promises } from 'fs';
 
 import { GENERATED_HEADER_COMMENT } from '../constants.js';
-import { ZodPgSchemaInfo } from '../database/types.js';
-import { ZodPgConfig } from '../types.js';
+import { ZodPgConfig, ZodPgSchemaInfo } from '../types.js';
+import { logDebug } from '../utils/debug.js';
 
 export const generateTablesIndexFile = async (
   schema: ZodPgSchemaInfo,
@@ -21,4 +21,6 @@ export const generateTablesIndexFile = async (
     filePath,
     `${GENERATED_HEADER_COMMENT}\n${indexContent}\n`
   );
+
+  logDebug(`Generated "${filePath}" file`);
 };
