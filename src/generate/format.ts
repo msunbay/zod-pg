@@ -21,7 +21,7 @@ const getOperationSuffix = (type: 'read' | 'insert' | 'update'): string => {
   }
 };
 
-const getTableType = (tableInfo: ZodPgTableInfo): string => {
+export const getTableType = (tableInfo: ZodPgTableInfo): string => {
   switch (tableInfo.type) {
     case 'table':
     case 'foreign_table':

@@ -116,6 +116,14 @@ export const getSchemaInformation = async (
     return acc;
   }, []);
 
+  // sort tables by type and name
+  tables.sort((a, b) => {
+    if (a.type !== b.type) {
+      return a.type.localeCompare(b.type);
+    }
+    return a.name.localeCompare(b.name);
+  });
+
   logDebug(`Found ${tables.length} tables in schema '${schemaName}'`);
 
   if (include) {

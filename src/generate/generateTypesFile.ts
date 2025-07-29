@@ -10,7 +10,10 @@ export const generateTypesFile = async (
   schema: ZodPgSchemaInfo,
   { outputDir }: Pick<ZodPgConfig, 'outputDir'>
 ) => {
-  const types = schema.tables.map(({ name }) => `  | '${name}'`).join('\n');
+  const types = schema.tables
+    .filter((table) => table.type === 'table')
+    .map(({ name }) => `  | '${name}'`)
+    .join('\n');
 
   const filePath = `${outputDir}/types.ts`;
 

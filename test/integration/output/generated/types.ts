@@ -10,7 +10,6 @@ export type Table =
   | 'files'
   | 'geographic_data'
   | 'inventory'
-  | 'mv_user_posts'
   | 'network_logs'
   | 'order_items'
   | 'orders'
@@ -19,5 +18,4 @@ export type Table =
   | 'products'
   | 'time_series'
   | 'user_sessions'
-  | 'users'
-  | 'view_user_posts';
+  | 'users';
