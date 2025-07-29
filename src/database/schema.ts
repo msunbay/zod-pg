@@ -28,33 +28,42 @@ export const getSchemaInformation = async (
   const res = await client.query<ZodPgRawColumnInfo>(
     sql`
       SELECT
-        c.table_name AS "tableName",
-        c.column_name AS "name",
-        c.column_default AS "defaultValue",
-        c.data_type AS "dataType",
-        (c.is_nullable = 'YES') AS "isNullable",
-        c.character_maximum_length AS "maxLen",
-        c.udt_name AS "udtName",
+        c.relname AS "tableName",
+        a.attname AS "name",
+        pg_get_expr(d.adbin, d.adrelid) AS "defaultValue",
+        t.typname AS "dataType",
+        NOT a.attnotnull AS "isNullable",
+        CASE 
+          WHEN a.atttypmod > 0 THEN a.atttypmod - 4
+          ELSE NULL
+        END AS "maxLen",
+        t.typname AS "udtName",
         checks."checkConstraints",
-        pgd.description AS "description"
-      FROM information_schema.columns c
+        obj_description(c.oid, 'pg_class') AS "description",
+        CASE 
+          WHEN c.relkind = 'r' THEN 'table'
+          WHEN c.relkind = 'v' THEN 'view'
+          WHEN c.relkind = 'm' THEN 'materialized_view'
+          WHEN c.relkind = 'f' THEN 'foreign_table'
+          ELSE 'unknown'
+        END AS "tableType"
+      FROM pg_class c
+      JOIN pg_namespace n ON n.oid = c.relnamespace
+      JOIN pg_attribute a ON a.attrelid = c.oid
+      JOIN pg_type t ON t.oid = a.atttypid
+      LEFT JOIN pg_attrdef d ON d.adrelid = c.oid AND d.adnum = a.attnum
       LEFT JOIN LATERAL (
         SELECT json_agg(json_build_object('checkClause', pg_get_constraintdef(pgc.oid))) AS "checkConstraints"
         FROM pg_constraint pgc
-        JOIN pg_class cls ON cls.oid = pgc.conrelid
-        JOIN pg_namespace nsp ON nsp.oid = cls.relnamespace
-        JOIN pg_attribute att ON att.attrelid = cls.oid AND att.attname = c.column_name
-        WHERE pgc.contype = 'c'
-          AND nsp.nspname = c.table_schema
-          AND cls.relname = c.table_name
-          AND pgc.conkey @> ARRAY[att.attnum]
+        WHERE pgc.conrelid = c.oid
+          AND pgc.contype = 'c'
+          AND pgc.conkey @> ARRAY[a.attnum]
       ) AS checks ON TRUE
-      LEFT JOIN pg_class cls ON cls.relname = c.table_name AND cls.relnamespace = (
-        SELECT oid FROM pg_namespace WHERE nspname = c.table_schema
-      )
-      LEFT JOIN pg_description pgd ON pgd.objoid = cls.oid AND pgd.objsubid = c.ordinal_position
-      WHERE c.table_schema = $1
-      ORDER BY c.table_name, c.ordinal_position;
+      WHERE n.nspname = $1
+        AND c.relkind IN ('r', 'v', 'm', 'f')
+        AND a.attnum > 0
+        AND NOT a.attisdropped
+      ORDER BY c.relname, a.attnum;
     `,
     [schemaName]
   );
@@ -67,6 +76,10 @@ export const getSchemaInformation = async (
     const existingTable = acc.find(
       (t) => t.name === column.tableName && t.schemaName === schemaName
     );
+
+    console.log(`Processing column '${column.tableName}.${column.name}'`, {
+      column,
+    });
 
     const parsedColumn: ZodPgColumnInfo = {
       ...column,
@@ -97,6 +110,7 @@ export const getSchemaInformation = async (
       existingTable.columns.push(parsedColumn);
     } else {
       acc.push({
+        type: column.tableType,
         name: column.tableName,
         schemaName,
         columns: [parsedColumn],

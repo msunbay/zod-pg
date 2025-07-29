@@ -8,8 +8,17 @@ import {
 const setup = async () => {
   const db = await setupTestDb();
 
-  console.log('Test database setup complete.', {
-    connectionString: getClientConnectionString(),
+  // wait for keypress
+  console.log('Press any key to continue...');
+
+  await new Promise<void>((resolve) => {
+    process.stdin.setRawMode(true);
+    process.stdin.resume();
+    process.stdin.once('data', () => {
+      process.stdin.setRawMode(false);
+      process.stdin.pause();
+      resolve();
+    });
   });
 
   process.on('exit', async () => {

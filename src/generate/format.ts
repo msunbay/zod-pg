@@ -1,6 +1,6 @@
 import pluralize from 'pluralize';
 
-import { ZodPgCasing } from '../types.js';
+import { ZodPgCasing, ZodPgTableInfo } from '../types.js';
 import {
   convertCaseFormat,
   pascalCase,
@@ -21,20 +21,37 @@ const getOperationSuffix = (type: 'read' | 'insert' | 'update'): string => {
   }
 };
 
+const getTableType = (tableInfo: ZodPgTableInfo): string => {
+  switch (tableInfo.type) {
+    case 'table':
+    case 'foreign_table':
+      return 'Table';
+    case 'materialized_view':
+      return tableInfo.name.startsWith('mv_') ? '' : 'Mv';
+    case 'view':
+      return tableInfo.name.startsWith('v_') ||
+        tableInfo.name.startsWith('view_')
+        ? ''
+        : 'View';
+    default:
+      return '';
+  }
+};
+
 export const formatTableSchemaName = (
-  tableName: string,
+  tableInfo: ZodPgTableInfo,
   type: 'read' | 'insert' | 'update',
   objectNameCasing: ZodPgCasing = 'PascalCase'
 ): string => {
-  return `${convertCaseFormat(tableName, objectNameCasing)}Table${getOperationSuffix(type)}Schema`;
+  return `${convertCaseFormat(tableInfo.name, objectNameCasing)}${getTableType(tableInfo)}${getOperationSuffix(type)}Schema`;
 };
 
 export const formatTableRecordName = (
-  tableName: string,
+  tableInfo: ZodPgTableInfo,
   type: 'read' | 'insert' | 'update',
   objectNameCasing: ZodPgCasing = 'PascalCase'
 ): string => {
-  return `${convertCaseFormat(singularize(tableName), objectNameCasing)}${getOperationSuffix(type)}Record`;
+  return `${convertCaseFormat(singularize(tableInfo.name), objectNameCasing)}${getOperationSuffix(type)}Record`;
 };
 
 export const formatJsonSchemaName = (

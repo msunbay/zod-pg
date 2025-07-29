@@ -4,10 +4,18 @@ export interface ZodPgSchemaInfo {
 }
 
 export interface ZodPgTableInfo {
+  type: ZodPgTableType;
   name: string;
   schemaName: string;
   columns: ZodPgColumnInfo[];
 }
+
+export type ZodPgTableType =
+  | 'table'
+  | 'view'
+  | 'materialized_view'
+  | 'foreign_table'
+  | 'unknown';
 
 export interface ZodPgRawColumnInfo {
   name: string;
@@ -21,6 +29,7 @@ export interface ZodPgRawColumnInfo {
   schemaName: string;
   description?: string;
   checkConstraints?: { checkClause: string }[];
+  tableType: ZodPgTableType;
 }
 
 export interface ZodPgColumnInfo extends ZodPgRawColumnInfo {
@@ -128,6 +137,7 @@ export interface ZodPgTable {
   enums: ZodPgEnum[];
   readableColumns: ZodPgColumn[];
   writableColumns: ZodPgColumn[];
+  isWritable: boolean;
 }
 
 export type ZodPgProgress =

@@ -5,14 +5,10 @@ import type { ZodPgConfig, ZodPgProgress, ZodPgSchemaInfo } from './types.js';
 import { createClient } from './database/client.js';
 import { getSchemaInformation } from './database/schema.js';
 import { generateConstantsFile } from './generate/generateConstantsFile.js';
-import { generateTablesIndexFile } from './generate/generateIndexFile.js';
-import { generateTableSchema } from './generate/generateTableSchemaFile.js';
+import { generateSchemasIndexFiles } from './generate/generateIndexFile.js';
+import { generateSchemaFile } from './generate/generateSchemaFile.js';
 import { generateTypesFile } from './generate/generateTypesFile.js';
-import {
-  clearTablesDirectory,
-  ensureOutputDirectories,
-  logDebug,
-} from './utils/index.js';
+import { clearTablesDirectory, logDebug } from './utils/index.js';
 
 export interface ZodPgGenerateConfig extends ZodPgConfig {
   outputDir: string;
@@ -42,8 +38,6 @@ export const generateZodSchemas = async ({
 
   const { connection, outputDir, schemaName, include, exclude, cleanOutput } =
     generateConfig;
-
-  ensureOutputDirectories(outputDir);
 
   if (cleanOutput) {
     clearTablesDirectory(outputDir);
@@ -77,10 +71,10 @@ export const generateZodSchemas = async ({
     );
 
     for (const tableInfo of schema.tables) {
-      await generateTableSchema(tableInfo, generateConfig);
+      await generateSchemaFile(tableInfo, generateConfig);
     }
 
-    await generateTablesIndexFile(schema, generateConfig);
+    await generateSchemasIndexFiles(schema, generateConfig);
     await generateConstantsFile(schema, generateConfig);
     await generateTypesFile(schema, generateConfig);
 

@@ -5,7 +5,7 @@ import type { ZodPgProgress } from '../types.js';
 const PROGRESS_STATUS: Record<ZodPgProgress, string> = {
   connecting: 'Connecting to Postgres database...',
   fetchingSchema: 'Fetching schema information...',
-  generating: 'Generating Zod schemas for tables...',
+  generating: 'Generating Zod schemas...',
   done: 'Zod schemas generated successfully.',
 };
 

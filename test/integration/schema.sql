@@ -391,3 +391,19 @@ COMMENT ON COLUMN constraint_variations.rating IS 'Rating score (1-5)';
 COMMENT ON COLUMN constraint_variations.active_status IS 'Whether the item is active';
 COMMENT ON COLUMN constraint_variations.created_at IS 'Timestamp when record was created';
 
+create view view_user_posts as
+select u.id as user_id, u.name as user_name, p.id as post_id, p.title as post_title, p.content as post_content
+from users u
+join posts p on u.id = p.user_id
+where p.published = true;
+--- IGNORE ---
+-- This view selects user IDs and names along with their published posts.
+-- It joins the users and posts tables on user_id, filtering for published posts.
+-- This is useful for generating schemas that include user-post relationships.
+
+create materialized view mv_user_posts as
+select u.id as user_id, u.name as user_name, p.id as post_id, p.title as post_title, p.content as post_content
+from users u
+join posts p on u.id = p.user_id
+where p.published = true
+with data;

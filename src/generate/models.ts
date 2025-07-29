@@ -33,7 +33,7 @@ const createColumnModel = (
       column.name,
       config.objectNameCasing
     ),
-    isWritable: !column.isSerial,
+    isWritable: !column.isSerial && column.tableType === 'table',
     ...column,
   };
 
@@ -136,33 +136,33 @@ export const createTableModel = async (
       config.objectNameCasing
     ),
     tableReadSchemaName: formatTableSchemaName(
-      tableInfo.name,
+      tableInfo,
       'read',
       config.objectNameCasing
     ),
     tableInsertSchemaName: formatTableSchemaName(
-      tableInfo.name,
+      tableInfo,
       'insert',
       config.objectNameCasing
     ),
     tableUpdateSchemaName: formatTableSchemaName(
-      tableInfo.name,
+      tableInfo,
       'update',
       config.objectNameCasing
     ),
 
     tableInsertRecordName: formatTableRecordName(
-      tableInfo.name,
+      tableInfo,
       'insert',
       config.objectNameCasing
     ),
     tableReadRecordName: formatTableRecordName(
-      tableInfo.name,
+      tableInfo,
       'read',
       config.objectNameCasing
     ),
     tableUpdateRecordName: formatTableRecordName(
-      tableInfo.name,
+      tableInfo,
       'update',
       config.objectNameCasing
     ),
@@ -172,6 +172,7 @@ export const createTableModel = async (
     readableColumns,
     writableColumns,
     enums,
+    isWritable: writableColumns.length > 0,
   };
 
   if (config.onTableModelCreated) {

@@ -3,7 +3,7 @@ import { dirname } from 'path';
 import { vi } from 'vitest';
 
 import { ZodPgTableInfo } from '../../../src/database/types.js';
-import { generateTablesIndexFile } from '../../../src/generate/generateIndexFile.js';
+import { generateSchemasIndexFile } from '../../../src/generate/generateIndexFile.js';
 
 describe('generateTablesIndexFile', () => {
   const outputDir = './test/tmp';
@@ -27,7 +27,7 @@ describe('generateTablesIndexFile', () => {
   });
 
   it('should generate an index file exporting all tables', async () => {
-    await generateTablesIndexFile({ tables, name: 'public' }, { outputDir });
+    await generateSchemasIndexFile({ tables, name: 'public' }, { outputDir });
 
     const content = readFileSync(filePath, 'utf8');
     expect(content).toContain("export * from './users';");
