@@ -74,6 +74,8 @@ export const PostsTableSchema = z.object({
     updatedAt: data.updated_at ?? undefined,
 }));
 
+type TableReadRecord = z.output<typeof PostsTableSchema>;
+
 const TableWriteSchema = z.object({
     /**
     * dataType: int4
@@ -153,7 +155,6 @@ export const PostsTableUpdateSchema = TableWriteSchema.partial().transform(data 
     updated_at: data.updatedAt,
 }));
 
-type TableReadRecord = z.output<typeof PostsTableSchema>;
 type TableInsertRecord = z.input<typeof PostsTableInsertSchema>;
 
 export type PostStatus = (typeof POST_STATUSES)[number];
@@ -168,25 +169,10 @@ export interface PostRecord {
     content: TableReadRecord['content'];
     published: TableReadRecord['published'];
     status: TableReadRecord['status'];
-    /**
-     * Number of views for the post
-     */
     views: TableReadRecord['views'];
-    /**
-     * Array of tags associated with the post
-     */
     tags: TableReadRecord['tags'];
-    /**
-     * Additional metadata for the post
-     */
     metadata: TableReadRecord['metadata'];
-    /**
-     * Timestamp when the post was published
-     */
     publishedAt: TableReadRecord['publishedAt'];
-    /**
-     * Timestamp when the post was last updated
-     */
     updatedAt: TableReadRecord['updatedAt'];
 }
 
@@ -213,24 +199,19 @@ export interface PostInsertRecord {
     */
     status?: TableInsertRecord['status'];
     /**
-    * Number of views for the post
     * @default: 0
     */
     views?: TableInsertRecord['views'];
     /**
-    * Array of tags associated with the post
     */
     tags?: TableInsertRecord['tags'];
     /**
-    * Additional metadata for the post
     */
     metadata?: TableInsertRecord['metadata'];
     /**
-    * Timestamp when the post was published
     */
     publishedAt?: TableInsertRecord['publishedAt'];
     /**
-    * Timestamp when the post was last updated
     * @default: now()
     */
     updatedAt?: TableInsertRecord['updatedAt'];

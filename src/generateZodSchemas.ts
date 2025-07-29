@@ -12,7 +12,7 @@ import { clearTablesDirectory, logDebug } from './utils/index.js';
 
 export interface ZodPgGenerateConfig extends ZodPgConfig {
   outputDir: string;
-  onProgress?: (status: ZodPgProgress) => void;
+  onProgress?: (status: ZodPgProgress, args?: unknown) => void;
 }
 
 const defaultConfig = {
@@ -64,7 +64,7 @@ export const generateZodSchemas = async ({
       exclude,
     });
 
-    onProgress?.('generating');
+    onProgress?.('generating', { total: schema.tables.length });
 
     logDebug(
       `Generating zod schemas for ${schema.tables.length} tables in db schema '${schemaName}'`

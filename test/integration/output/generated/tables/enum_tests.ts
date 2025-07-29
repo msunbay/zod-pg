@@ -3,16 +3,27 @@
 import { z } from 'zod';
 
 export const ENUM_TEST_PRIORITIES = ['low','medium','high','critical',] as const;
+
 export const ENUM_TEST_COLORS = ['red','green','blue','yellow',] as const;
+
 export const ENUM_TEST_SIZES = ['xs','s','m','l','xl','xxl',] as const;
+
 export const ENUM_TEST_GRADES = ['A','B','C','D','F',] as const;
+
 export const ENUM_TEST_CATEGORIES = ['electronics','clothing','books','home-garden',] as const;
+
 export const ENUM_TEST_MOODS = ['happy','sad','angry','excited','calm',] as const;
+
 export const ENUM_TEST_DIRECTIONS = ['north','south','east','west',] as const;
+
 export const ENUM_TEST_WEATHER_CONDITIONS = ['sunny','cloudy','rainy','snowy','foggy',] as const;
+
 export const ENUM_TEST_TASK_STATUSES = ['todo','in-progress','done','cancelled',] as const;
+
 export const ENUM_TEST_DIFFICULTIES = ['1','2','3','4','5',] as const;
+
 export const ENUM_TEST_WEEKDAYS = ['monday','tuesday','wednesday','thursday','friday','saturday','sunday',] as const;
+
 export const ENUM_TEST_PAYMENT_METHODS = ['cash','credit-card','debit-card','paypal','bank-transfer',] as const;
 
 export const EnumTestsTableSchema = z.object({
@@ -102,6 +113,8 @@ export const EnumTestsTableSchema = z.object({
     paymentMethod: data.payment_method ?? undefined,
     createdAt: data.created_at ?? undefined,
 }));
+
+type TableReadRecord = z.output<typeof EnumTestsTableSchema>;
 
 const TableWriteSchema = z.object({
     /**
@@ -203,70 +216,49 @@ export const EnumTestsTableUpdateSchema = TableWriteSchema.partial().transform(d
     created_at: data.createdAt,
 }));
 
-type TableReadRecord = z.output<typeof EnumTestsTableSchema>;
 type TableInsertRecord = z.input<typeof EnumTestsTableInsertSchema>;
 
-export type EnumTestPriority = (typeof ENUM_TEST_PRIORITIES)[number];export type EnumTestColor = (typeof ENUM_TEST_COLORS)[number];export type EnumTestSize = (typeof ENUM_TEST_SIZES)[number];export type EnumTestGrade = (typeof ENUM_TEST_GRADES)[number];export type EnumTestCategory = (typeof ENUM_TEST_CATEGORIES)[number];export type EnumTestMood = (typeof ENUM_TEST_MOODS)[number];export type EnumTestDirection = (typeof ENUM_TEST_DIRECTIONS)[number];export type EnumTestWeatherCondition = (typeof ENUM_TEST_WEATHER_CONDITIONS)[number];export type EnumTestTaskStatus = (typeof ENUM_TEST_TASK_STATUSES)[number];export type EnumTestDifficulty = (typeof ENUM_TEST_DIFFICULTIES)[number];export type EnumTestWeekday = (typeof ENUM_TEST_WEEKDAYS)[number];export type EnumTestPaymentMethod = (typeof ENUM_TEST_PAYMENT_METHODS)[number];
+export type EnumTestPriority = (typeof ENUM_TEST_PRIORITIES)[number];
+
+export type EnumTestColor = (typeof ENUM_TEST_COLORS)[number];
+
+export type EnumTestSize = (typeof ENUM_TEST_SIZES)[number];
+
+export type EnumTestGrade = (typeof ENUM_TEST_GRADES)[number];
+
+export type EnumTestCategory = (typeof ENUM_TEST_CATEGORIES)[number];
+
+export type EnumTestMood = (typeof ENUM_TEST_MOODS)[number];
+
+export type EnumTestDirection = (typeof ENUM_TEST_DIRECTIONS)[number];
+
+export type EnumTestWeatherCondition = (typeof ENUM_TEST_WEATHER_CONDITIONS)[number];
+
+export type EnumTestTaskStatus = (typeof ENUM_TEST_TASK_STATUSES)[number];
+
+export type EnumTestDifficulty = (typeof ENUM_TEST_DIFFICULTIES)[number];
+
+export type EnumTestWeekday = (typeof ENUM_TEST_WEEKDAYS)[number];
+
+export type EnumTestPaymentMethod = (typeof ENUM_TEST_PAYMENT_METHODS)[number];
 
 /**
 * Represents a database record from the "public.enum_tests" table.
 */
 export interface EnumTestRecord {
-    /**
-     * Primary key for enum tests table
-     */
     id: TableReadRecord['id'];
-    /**
-     * Task priority level
-     */
     priority: TableReadRecord['priority'];
-    /**
-     * Color selection
-     */
     color: TableReadRecord['color'];
-    /**
-     * Size option
-     */
     size: TableReadRecord['size'];
-    /**
-     * Letter grade
-     */
     grade: TableReadRecord['grade'];
-    /**
-     * Product category
-     */
     category: TableReadRecord['category'];
-    /**
-     * Current mood state
-     */
     mood: TableReadRecord['mood'];
-    /**
-     * Compass direction
-     */
     direction: TableReadRecord['direction'];
-    /**
-     * Current weather condition
-     */
     weatherCondition: TableReadRecord['weatherCondition'];
-    /**
-     * Status of the task
-     */
     taskStatus: TableReadRecord['taskStatus'];
-    /**
-     * Difficulty level (1-5)
-     */
     difficulty: TableReadRecord['difficulty'];
-    /**
-     * Day of the week
-     */
     weekday: TableReadRecord['weekday'];
-    /**
-     * Payment method used
-     */
     paymentMethod: TableReadRecord['paymentMethod'];
-    /**
-     * Timestamp when record was created
-     */
     createdAt: TableReadRecord['createdAt'];
 }
 
@@ -275,62 +267,49 @@ export interface EnumTestRecord {
 */
 export interface EnumTestInsertRecord {
     /**
-    * Task priority level
     * @maxLen: 10
     */
     priority?: TableInsertRecord['priority'];
     /**
-    * Color selection
     * @maxLen: 20
     */
     color?: TableInsertRecord['color'];
     /**
-    * Size option
     */
     size?: TableInsertRecord['size'];
     /**
-    * Letter grade
     * @maxLen: 1
     */
     grade?: TableInsertRecord['grade'];
     /**
-    * Product category
     * @maxLen: 30
     */
     category?: TableInsertRecord['category'];
     /**
-    * Current mood state
     */
     mood?: TableInsertRecord['mood'];
     /**
-    * Compass direction
     * @maxLen: 10
     */
     direction?: TableInsertRecord['direction'];
     /**
-    * Current weather condition
     */
     weatherCondition?: TableInsertRecord['weatherCondition'];
     /**
-    * Status of the task
     * @maxLen: 20
     */
     taskStatus?: TableInsertRecord['taskStatus'];
     /**
-    * Difficulty level (1-5)
     */
     difficulty?: TableInsertRecord['difficulty'];
     /**
-    * Day of the week
     * @maxLen: 10
     */
     weekday?: TableInsertRecord['weekday'];
     /**
-    * Payment method used
     */
     paymentMethod?: TableInsertRecord['paymentMethod'];
     /**
-    * Timestamp when record was created
     * @default: now()
     */
     createdAt?: TableInsertRecord['createdAt'];

@@ -77,10 +77,6 @@ export const getSchemaInformation = async (
       (t) => t.name === column.tableName && t.schemaName === schemaName
     );
 
-    console.log(`Processing column '${column.tableName}.${column.name}'`, {
-      column,
-    });
-
     const parsedColumn: ZodPgColumnInfo = {
       ...column,
       maxLen: column.maxLen ?? undefined,

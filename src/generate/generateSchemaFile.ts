@@ -24,7 +24,7 @@ export async function generateSchemaFile(
     return;
   }
 
-  const output = await renderTemplate('tables', table);
+  const output = await renderTemplate('schema', table);
 
   const folderPath = `${config.outputDir}/${getOutputFolder(tableInfo.type)}`;
   await ensureFolder(folderPath);

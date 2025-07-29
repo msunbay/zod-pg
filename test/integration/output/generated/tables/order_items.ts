@@ -2,7 +2,6 @@
 
 import { z } from 'zod';
 
-
 export const OrderItemsTableSchema = z.object({
     /**
     * dataType: int8
@@ -36,7 +35,7 @@ export const OrderItemsTableSchema = z.object({
     discount_percent: z.number().nullable(),
     /**
     * dataType: numeric
-    * defaultValue: 
+    * defaultValue: (((quantity)::numeric * unit_price) * ((1)::numeric - (discount_percent / (100)::numeric)))
     */
     line_total: z.number().nullable(),
 }).transform(data => ({
@@ -48,6 +47,8 @@ export const OrderItemsTableSchema = z.object({
     discountPercent: data.discount_percent ?? undefined,
     lineTotal: data.line_total ?? undefined,
 }));
+
+type TableReadRecord = z.output<typeof OrderItemsTableSchema>;
 
 const TableWriteSchema = z.object({
     /**
@@ -69,17 +70,17 @@ const TableWriteSchema = z.object({
     * dataType: numeric
     * defaultValue: 
     */
-    unitPrice: z.number(),
+    unitPrice: z.number().max(655362),
     /**
     * dataType: numeric
     * defaultValue: 0
     */
-    discountPercent: z.number().nullish(),
+    discountPercent: z.number().max(327682).nullish(),
     /**
     * dataType: numeric
-    * defaultValue: 
+    * defaultValue: (((quantity)::numeric * unit_price) * ((1)::numeric - (discount_percent / (100)::numeric)))
     */
-    lineTotal: z.number().nullish(),
+    lineTotal: z.number().max(786434).nullish(),
 });
 
 export const OrderItemsTableInsertSchema = TableWriteSchema.transform(data => ({
@@ -100,42 +101,18 @@ export const OrderItemsTableUpdateSchema = TableWriteSchema.partial().transform(
     line_total: data.lineTotal,
 }));
 
-type TableReadRecord = z.output<typeof OrderItemsTableSchema>;
 type TableInsertRecord = z.input<typeof OrderItemsTableInsertSchema>;
-
-
 
 /**
 * Represents a database record from the "public.order_items" table.
 */
 export interface OrderItemRecord {
-    /**
-     * Primary key for order items table
-     */
     id: TableReadRecord['id'];
-    /**
-     * ID of the order this item belongs to
-     */
     orderId: TableReadRecord['orderId'];
-    /**
-     * ID of the product
-     */
     productId: TableReadRecord['productId'];
-    /**
-     * Quantity of the product ordered
-     */
     quantity: TableReadRecord['quantity'];
-    /**
-     * Price per unit
-     */
     unitPrice: TableReadRecord['unitPrice'];
-    /**
-     * Discount percentage applied
-     */
     discountPercent: TableReadRecord['discountPercent'];
-    /**
-     * Calculated line total
-     */
     lineTotal: TableReadRecord['lineTotal'];
 }
 
@@ -144,28 +121,26 @@ export interface OrderItemRecord {
 */
 export interface OrderItemInsertRecord {
     /**
-    * ID of the order this item belongs to
     */
     orderId?: TableInsertRecord['orderId'];
     /**
-    * ID of the product
     */
     productId?: TableInsertRecord['productId'];
     /**
-    * Quantity of the product ordered
     */
     quantity: TableInsertRecord['quantity'];
     /**
-    * Price per unit
+    * @maxLen: 655362
     */
     unitPrice: TableInsertRecord['unitPrice'];
     /**
-    * Discount percentage applied
+    * @maxLen: 327682
     * @default: 0
     */
     discountPercent?: TableInsertRecord['discountPercent'];
     /**
-    * Calculated line total
+    * @maxLen: 786434
+    * @default: (((quantity)::numeric * unit_price) * ((1)::numeric - (discount_percent / (100)::numeric)))
     */
     lineTotal?: TableInsertRecord['lineTotal'];
 }

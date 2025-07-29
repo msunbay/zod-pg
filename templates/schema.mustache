@@ -4,8 +4,8 @@ import { z } from 'zod';
 {{#hasJsonSchemaImports}}
 import { {{#jsonSchemaImports}}{{name}}{{^last}}, {{/last}}{{/jsonSchemaImports}} } from '{{{jsonSchemaImportLocation}}}';
 {{/hasJsonSchemaImports}}
-
 {{#enums}}
+
 export const {{constantName}} = [{{#values}}'{{.}}',{{/values}}] as const;
 {{/enums}}
 
@@ -24,8 +24,8 @@ export const {{tableReadSchemaName}} = z.object({
 }));
 
 type TableReadRecord = z.output<typeof {{tableReadSchemaName}}>;
-
 {{#isWritable}}
+
 const TableWriteSchema = z.object({
 {{#writableColumns}}
     /**
@@ -50,9 +50,10 @@ export const {{tableUpdateSchemaName}} = TableWriteSchema.partial().transform(da
 
 type TableInsertRecord = z.input<typeof {{tableInsertSchemaName}}>;
 {{/isWritable}}
-
 {{#enums}}
-export type {{typeName}} = (typeof {{constantName}})[number];{{/enums}}
+
+export type {{typeName}} = (typeof {{constantName}})[number];
+{{/enums}}
 
 /**
 * Represents a database record from the "{{schemaName}}.{{tableName}}" table.
@@ -67,8 +68,8 @@ export interface {{tableReadRecordName}} {
     {{propertyName}}: TableReadRecord['{{propertyName}}'];
 {{/readableColumns}}
 }
-
 {{#isWritable}}
+
 /**
 * Represents an insertable database record from the "{{schemaName}}.{{tableName}}" table.
 */

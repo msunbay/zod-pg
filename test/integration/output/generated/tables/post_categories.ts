@@ -2,7 +2,6 @@
 
 import { z } from 'zod';
 
-
 export const PostCategoriesTableSchema = z.object({
     /**
     * dataType: int4
@@ -18,6 +17,8 @@ export const PostCategoriesTableSchema = z.object({
     postId: data.post_id,
     categoryId: data.category_id,
 }));
+
+type TableReadRecord = z.output<typeof PostCategoriesTableSchema>;
 
 const TableWriteSchema = z.object({
     /**
@@ -42,22 +43,13 @@ export const PostCategoriesTableUpdateSchema = TableWriteSchema.partial().transf
     category_id: data.categoryId,
 }));
 
-type TableReadRecord = z.output<typeof PostCategoriesTableSchema>;
 type TableInsertRecord = z.input<typeof PostCategoriesTableInsertSchema>;
-
-
 
 /**
 * Represents a database record from the "public.post_categories" table.
 */
 export interface PostCategoryRecord {
-    /**
-     * ID of the post
-     */
     postId: TableReadRecord['postId'];
-    /**
-     * ID of the category
-     */
     categoryId: TableReadRecord['categoryId'];
 }
 
@@ -66,11 +58,9 @@ export interface PostCategoryRecord {
 */
 export interface PostCategoryInsertRecord {
     /**
-    * ID of the post
     */
     postId: TableInsertRecord['postId'];
     /**
-    * ID of the category
     */
     categoryId: TableInsertRecord['categoryId'];
 }

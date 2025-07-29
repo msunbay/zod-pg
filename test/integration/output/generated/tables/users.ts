@@ -56,6 +56,8 @@ export const UsersTableSchema = z.object({
     dates: data.dates ?? undefined,
 }));
 
+type TableReadRecord = z.output<typeof UsersTableSchema>;
+
 const TableWriteSchema = z.object({
     /**
     * dataType: varchar
@@ -114,7 +116,6 @@ export const UsersTableUpdateSchema = TableWriteSchema.partial().transform(data 
     dates: data.dates,
 }));
 
-type TableReadRecord = z.output<typeof UsersTableSchema>;
 type TableInsertRecord = z.input<typeof UsersTableInsertSchema>;
 
 export type UserRoles = (typeof USER_ROLES)[number];

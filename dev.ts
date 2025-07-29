@@ -1,13 +1,10 @@
 import { main } from './src/cli.js';
-import {
-  getClientConnectionString,
-  setupTestDb,
-  teardownTestDb,
-} from './test/integration/testDbUtils.js';
+import { setupTestDb, teardownTestDb } from './test/integration/testDbUtils.js';
 
 const setup = async () => {
   const db = await setupTestDb();
 
+  /*
   // wait for keypress
   console.log('Press any key to continue...');
 
@@ -20,6 +17,7 @@ const setup = async () => {
       resolve();
     });
   });
+*/
 
   process.on('exit', async () => {
     await teardownTestDb(db);

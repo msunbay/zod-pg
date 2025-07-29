@@ -2,7 +2,6 @@
 
 import { z } from 'zod';
 
-
 export const GeographicDataTableSchema = z.object({
     /**
     * dataType: int4
@@ -78,6 +77,8 @@ export const GeographicDataTableSchema = z.object({
     establishedDate: data.established_date ?? undefined,
     lastUpdated: data.last_updated ?? undefined,
 }));
+
+type TableReadRecord = z.output<typeof GeographicDataTableSchema>;
 
 const TableWriteSchema = z.object({
     /**
@@ -165,62 +166,23 @@ export const GeographicDataTableUpdateSchema = TableWriteSchema.partial().transf
     last_updated: data.lastUpdated,
 }));
 
-type TableReadRecord = z.output<typeof GeographicDataTableSchema>;
 type TableInsertRecord = z.input<typeof GeographicDataTableInsertSchema>;
-
-
 
 /**
 * Represents a database record from the "public.geographic_data" table.
 */
 export interface GeographicDatumRecord {
-    /**
-     * Primary key for geographic data table
-     */
     id: TableReadRecord['id'];
-    /**
-     * Name of the location
-     */
     locationName: TableReadRecord['locationName'];
-    /**
-     * Geographic coordinates
-     */
     coordinates: TableReadRecord['coordinates'];
-    /**
-     * Geographic boundary as polygon
-     */
     boundary: TableReadRecord['boundary'];
-    /**
-     * Area represented as circle
-     */
     areaCircle: TableReadRecord['areaCircle'];
-    /**
-     * Elevation above sea level
-     */
     elevation: TableReadRecord['elevation'];
-    /**
-     * Timezone of the location
-     */
     timezone: TableReadRecord['timezone'];
-    /**
-     * ISO country code
-     */
     countryCode: TableReadRecord['countryCode'];
-    /**
-     * Array of postal codes
-     */
     postalCodes: TableReadRecord['postalCodes'];
-    /**
-     * Population count
-     */
     population: TableReadRecord['population'];
-    /**
-     * Date when location was established
-     */
     establishedDate: TableReadRecord['establishedDate'];
-    /**
-     * Timestamp when data was last updated
-     */
     lastUpdated: TableReadRecord['lastUpdated'];
 }
 
@@ -229,50 +191,39 @@ export interface GeographicDatumRecord {
 */
 export interface GeographicDatumInsertRecord {
     /**
-    * Name of the location
     * @maxLen: 255
     */
     locationName: TableInsertRecord['locationName'];
     /**
-    * Geographic coordinates
     */
     coordinates: TableInsertRecord['coordinates'];
     /**
-    * Geographic boundary as polygon
     */
     boundary?: TableInsertRecord['boundary'];
     /**
-    * Area represented as circle
     */
     areaCircle?: TableInsertRecord['areaCircle'];
     /**
-    * Elevation above sea level
     */
     elevation?: TableInsertRecord['elevation'];
     /**
-    * Timezone of the location
     * @maxLen: 50
     */
     timezone?: TableInsertRecord['timezone'];
     /**
-    * ISO country code
     * @maxLen: 2
     */
     countryCode?: TableInsertRecord['countryCode'];
     /**
-    * Array of postal codes
     */
     postalCodes?: TableInsertRecord['postalCodes'];
     /**
-    * Population count
     */
     population?: TableInsertRecord['population'];
     /**
-    * Date when location was established
     */
     establishedDate?: TableInsertRecord['establishedDate'];
     /**
-    * Timestamp when data was last updated
     * @default: now()
     */
     lastUpdated?: TableInsertRecord['lastUpdated'];

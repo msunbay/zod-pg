@@ -2,7 +2,6 @@
 
 import { z } from 'zod';
 
-
 export const ProductsTableSchema = z.object({
     /**
     * dataType: int4
@@ -73,6 +72,8 @@ export const ProductsTableSchema = z.object({
     createdAt: data.created_at ?? undefined,
 }));
 
+type TableReadRecord = z.output<typeof ProductsTableSchema>;
+
 const TableWriteSchema = z.object({
     /**
     * dataType: varchar
@@ -88,12 +89,12 @@ const TableWriteSchema = z.object({
     * dataType: numeric
     * defaultValue: 
     */
-    price: z.number(),
+    price: z.number().max(655362),
     /**
     * dataType: numeric
     * defaultValue: 
     */
-    cost: z.number().nullish(),
+    cost: z.number().max(655362).nullish(),
     /**
     * dataType: float4
     * defaultValue: 
@@ -152,58 +153,22 @@ export const ProductsTableUpdateSchema = TableWriteSchema.partial().transform(da
     created_at: data.createdAt,
 }));
 
-type TableReadRecord = z.output<typeof ProductsTableSchema>;
 type TableInsertRecord = z.input<typeof ProductsTableInsertSchema>;
-
-
 
 /**
 * Represents a database record from the "public.products" table.
 */
 export interface ProductRecord {
-    /**
-     * Primary key for products table
-     */
     id: TableReadRecord['id'];
-    /**
-     * Product name
-     */
     name: TableReadRecord['name'];
-    /**
-     * Stock keeping unit identifier
-     */
     sku: TableReadRecord['sku'];
-    /**
-     * Product price with 2 decimal precision
-     */
     price: TableReadRecord['price'];
-    /**
-     * Product cost with 2 decimal precision
-     */
     cost: TableReadRecord['cost'];
-    /**
-     * Product weight in kilograms
-     */
     weight: TableReadRecord['weight'];
-    /**
-     * Product dimensions as geometric point
-     */
     dimensions: TableReadRecord['dimensions'];
-    /**
-     * Whether the product is active
-     */
     isActive: TableReadRecord['isActive'];
-    /**
-     * Product barcode (13 characters)
-     */
     barcode: TableReadRecord['barcode'];
-    /**
-     * Product description
-     */
     description: TableReadRecord['description'];
-    /**
-     * Timestamp when product was created
-     */
     createdAt: TableReadRecord['createdAt'];
 }
 
@@ -212,47 +177,39 @@ export interface ProductRecord {
 */
 export interface ProductInsertRecord {
     /**
-    * Product name
     * @maxLen: 255
     */
     name: TableInsertRecord['name'];
     /**
-    * Stock keeping unit identifier
     * @maxLen: 50
     */
     sku: TableInsertRecord['sku'];
     /**
-    * Product price with 2 decimal precision
+    * @maxLen: 655362
     */
     price: TableInsertRecord['price'];
     /**
-    * Product cost with 2 decimal precision
+    * @maxLen: 655362
     */
     cost?: TableInsertRecord['cost'];
     /**
-    * Product weight in kilograms
     */
     weight?: TableInsertRecord['weight'];
     /**
-    * Product dimensions as geometric point
     */
     dimensions?: TableInsertRecord['dimensions'];
     /**
-    * Whether the product is active
     * @default: true
     */
     isActive?: TableInsertRecord['isActive'];
     /**
-    * Product barcode (13 characters)
     * @maxLen: 13
     */
     barcode?: TableInsertRecord['barcode'];
     /**
-    * Product description
     */
     description?: TableInsertRecord['description'];
     /**
-    * Timestamp when product was created
     * @default: now()
     */
     createdAt?: TableInsertRecord['createdAt'];

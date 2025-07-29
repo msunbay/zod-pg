@@ -2,7 +2,6 @@
 
 import { z } from 'zod';
 
-
 export const InventoryTableSchema = z.object({
     /**
     * dataType: int4
@@ -54,6 +53,8 @@ export const InventoryTableSchema = z.object({
     warehouseLocations: data.warehouse_locations ?? undefined,
     updatedAt: data.updated_at ?? undefined,
 }));
+
+type TableReadRecord = z.output<typeof InventoryTableSchema>;
 
 const TableWriteSchema = z.object({
     /**
@@ -120,46 +121,19 @@ export const InventoryTableUpdateSchema = TableWriteSchema.partial().transform(d
     updated_at: data.updatedAt,
 }));
 
-type TableReadRecord = z.output<typeof InventoryTableSchema>;
 type TableInsertRecord = z.input<typeof InventoryTableInsertSchema>;
-
-
 
 /**
 * Represents a database record from the "public.inventory" table.
 */
 export interface InventoryRecord {
-    /**
-     * ID of the product
-     */
     productId: TableReadRecord['productId'];
-    /**
-     * Current stock quantity
-     */
     stockQuantity: TableReadRecord['stockQuantity'];
-    /**
-     * Quantity reserved for orders
-     */
     reservedQuantity: TableReadRecord['reservedQuantity'];
-    /**
-     * Minimum stock level before reorder
-     */
     reorderLevel: TableReadRecord['reorderLevel'];
-    /**
-     * Date when last restocked
-     */
     lastRestocked: TableReadRecord['lastRestocked'];
-    /**
-     * Supplier information in JSON format
-     */
     supplierInfo: TableReadRecord['supplierInfo'];
-    /**
-     * Array of warehouse locations
-     */
     warehouseLocations: TableReadRecord['warehouseLocations'];
-    /**
-     * Timestamp when inventory was last updated
-     */
     updatedAt: TableReadRecord['updatedAt'];
 }
 
@@ -168,38 +142,30 @@ export interface InventoryRecord {
 */
 export interface InventoryInsertRecord {
     /**
-    * ID of the product
     */
     productId: TableInsertRecord['productId'];
     /**
-    * Current stock quantity
     * @default: 0
     */
     stockQuantity: TableInsertRecord['stockQuantity'];
     /**
-    * Quantity reserved for orders
     * @default: 0
     */
     reservedQuantity?: TableInsertRecord['reservedQuantity'];
     /**
-    * Minimum stock level before reorder
     * @default: 10
     */
     reorderLevel?: TableInsertRecord['reorderLevel'];
     /**
-    * Date when last restocked
     */
     lastRestocked?: TableInsertRecord['lastRestocked'];
     /**
-    * Supplier information in JSON format
     */
     supplierInfo?: TableInsertRecord['supplierInfo'];
     /**
-    * Array of warehouse locations
     */
     warehouseLocations?: TableInsertRecord['warehouseLocations'];
     /**
-    * Timestamp when inventory was last updated
     * @default: now()
     */
     updatedAt?: TableInsertRecord['updatedAt'];

@@ -2,7 +2,6 @@
 
 import { z } from 'zod';
 
-
 export const TimeSeriesTableSchema = z.object({
     /**
     * dataType: int8
@@ -67,6 +66,8 @@ export const TimeSeriesTableSchema = z.object({
     createdAt: data.created_at ?? undefined,
 }));
 
+type TableReadRecord = z.output<typeof TimeSeriesTableSchema>;
+
 const TableWriteSchema = z.object({
     /**
     * dataType: varchar
@@ -82,17 +83,17 @@ const TableWriteSchema = z.object({
     * dataType: numeric
     * defaultValue: 
     */
-    temperature: z.number().nullish(),
+    temperature: z.number().max(327682).nullish(),
     /**
     * dataType: numeric
     * defaultValue: 
     */
-    humidity: z.number().nullish(),
+    humidity: z.number().max(327682).nullish(),
     /**
     * dataType: numeric
     * defaultValue: 
     */
-    pressure: z.number().nullish(),
+    pressure: z.number().max(458754).nullish(),
     /**
     * dataType: _numeric
     * defaultValue: 
@@ -139,54 +140,21 @@ export const TimeSeriesTableUpdateSchema = TableWriteSchema.partial().transform(
     created_at: data.createdAt,
 }));
 
-type TableReadRecord = z.output<typeof TimeSeriesTableSchema>;
 type TableInsertRecord = z.input<typeof TimeSeriesTableInsertSchema>;
-
-
 
 /**
 * Represents a database record from the "public.time_series" table.
 */
 export interface TimeSeryRecord {
-    /**
-     * Primary key for time series table
-     */
     id: TableReadRecord['id'];
-    /**
-     * Identifier of the sensor
-     */
     sensorId: TableReadRecord['sensorId'];
-    /**
-     * Timestamp of the reading
-     */
     timestamp: TableReadRecord['timestamp'];
-    /**
-     * Temperature reading
-     */
     temperature: TableReadRecord['temperature'];
-    /**
-     * Humidity reading
-     */
     humidity: TableReadRecord['humidity'];
-    /**
-     * Pressure reading
-     */
     pressure: TableReadRecord['pressure'];
-    /**
-     * Array of numeric readings
-     */
     readings: TableReadRecord['readings'];
-    /**
-     * Whether an anomaly was detected
-     */
     anomalyDetected: TableReadRecord['anomalyDetected'];
-    /**
-     * Data quality score (1-10)
-     */
     dataQuality: TableReadRecord['dataQuality'];
-    /**
-     * Timestamp when record was created
-     */
     createdAt: TableReadRecord['createdAt'];
 }
 
@@ -195,41 +163,35 @@ export interface TimeSeryRecord {
 */
 export interface TimeSeryInsertRecord {
     /**
-    * Identifier of the sensor
     * @maxLen: 50
     */
     sensorId: TableInsertRecord['sensorId'];
     /**
-    * Timestamp of the reading
     */
     timestamp: TableInsertRecord['timestamp'];
     /**
-    * Temperature reading
+    * @maxLen: 327682
     */
     temperature?: TableInsertRecord['temperature'];
     /**
-    * Humidity reading
+    * @maxLen: 327682
     */
     humidity?: TableInsertRecord['humidity'];
     /**
-    * Pressure reading
+    * @maxLen: 458754
     */
     pressure?: TableInsertRecord['pressure'];
     /**
-    * Array of numeric readings
     */
     readings?: TableInsertRecord['readings'];
     /**
-    * Whether an anomaly was detected
     * @default: false
     */
     anomalyDetected?: TableInsertRecord['anomalyDetected'];
     /**
-    * Data quality score (1-10)
     */
     dataQuality?: TableInsertRecord['dataQuality'];
     /**
-    * Timestamp when record was created
     * @default: now()
     */
     createdAt?: TableInsertRecord['createdAt'];

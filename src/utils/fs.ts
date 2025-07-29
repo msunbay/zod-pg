@@ -2,7 +2,7 @@ import { existsSync, readdirSync, unlinkSync } from 'fs';
 import { mkdir } from 'fs/promises';
 import path from 'path';
 
-import { ZodPgTableInfo, ZodPgTableType } from '../types.js';
+import { ZodPgTableType } from '../types.js';
 import { logDebug } from './debug.js';
 
 /**

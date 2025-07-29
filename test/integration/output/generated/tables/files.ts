@@ -2,7 +2,6 @@
 
 import { z } from 'zod';
 
-
 export const FilesTableSchema = z.object({
     /**
     * dataType: uuid
@@ -84,6 +83,8 @@ export const FilesTableSchema = z.object({
     tags: data.tags ?? undefined,
     accessCount: data.access_count ?? undefined,
 }));
+
+type TableReadRecord = z.output<typeof FilesTableSchema>;
 
 const TableWriteSchema = z.object({
     /**
@@ -185,66 +186,24 @@ export const FilesTableUpdateSchema = TableWriteSchema.partial().transform(data 
     access_count: data.accessCount,
 }));
 
-type TableReadRecord = z.output<typeof FilesTableSchema>;
 type TableInsertRecord = z.input<typeof FilesTableInsertSchema>;
-
-
 
 /**
 * Represents a database record from the "public.files" table.
 */
 export interface FileRecord {
-    /**
-     * Primary key for files table
-     */
     id: TableReadRecord['id'];
-    /**
-     * Original filename
-     */
     filename: TableReadRecord['filename'];
-    /**
-     * Path to the file
-     */
     filePath: TableReadRecord['filePath'];
-    /**
-     * Size of the file in bytes
-     */
     fileSize: TableReadRecord['fileSize'];
-    /**
-     * MIME type of the file
-     */
     mimeType: TableReadRecord['mimeType'];
-    /**
-     * SHA-256 checksum of the file
-     */
     checksum: TableReadRecord['checksum'];
-    /**
-     * Binary data of the file
-     */
     binaryData: TableReadRecord['binaryData'];
-    /**
-     * Whether the file is encrypted
-     */
     isEncrypted: TableReadRecord['isEncrypted'];
-    /**
-     * Timestamp when file was uploaded
-     */
     uploadTime: TableReadRecord['uploadTime'];
-    /**
-     * Expiry date of the file
-     */
     expiryDate: TableReadRecord['expiryDate'];
-    /**
-     * File metadata in JSON format
-     */
     metadata: TableReadRecord['metadata'];
-    /**
-     * Array of file tags
-     */
     tags: TableReadRecord['tags'];
-    /**
-     * Number of times file was accessed
-     */
     accessCount: TableReadRecord['accessCount'];
 }
 
@@ -253,61 +212,48 @@ export interface FileRecord {
 */
 export interface FileInsertRecord {
     /**
-    * Primary key for files table
     * @default: gen_random_uuid()
     */
     id: TableInsertRecord['id'];
     /**
-    * Original filename
     * @maxLen: 255
     */
     filename: TableInsertRecord['filename'];
     /**
-    * Path to the file
     */
     filePath: TableInsertRecord['filePath'];
     /**
-    * Size of the file in bytes
     */
     fileSize: TableInsertRecord['fileSize'];
     /**
-    * MIME type of the file
     * @maxLen: 100
     */
     mimeType?: TableInsertRecord['mimeType'];
     /**
-    * SHA-256 checksum of the file
     * @maxLen: 64
     */
     checksum?: TableInsertRecord['checksum'];
     /**
-    * Binary data of the file
     */
     binaryData?: TableInsertRecord['binaryData'];
     /**
-    * Whether the file is encrypted
     * @default: false
     */
     isEncrypted?: TableInsertRecord['isEncrypted'];
     /**
-    * Timestamp when file was uploaded
     * @default: now()
     */
     uploadTime?: TableInsertRecord['uploadTime'];
     /**
-    * Expiry date of the file
     */
     expiryDate?: TableInsertRecord['expiryDate'];
     /**
-    * File metadata in JSON format
     */
     metadata?: TableInsertRecord['metadata'];
     /**
-    * Array of file tags
     */
     tags?: TableInsertRecord['tags'];
     /**
-    * Number of times file was accessed
     * @default: 0
     */
     accessCount?: TableInsertRecord['accessCount'];

@@ -2,7 +2,6 @@
 
 import { z } from 'zod';
 
-
 export const NetworkLogsTableSchema = z.object({
     /**
     * dataType: int8
@@ -78,6 +77,8 @@ export const NetworkLogsTableSchema = z.object({
     userAgent: data.user_agent ?? undefined,
     headers: data.headers ?? undefined,
 }));
+
+type TableReadRecord = z.output<typeof NetworkLogsTableSchema>;
 
 const TableWriteSchema = z.object({
     /**
@@ -165,62 +166,23 @@ export const NetworkLogsTableUpdateSchema = TableWriteSchema.partial().transform
     headers: (data.headers ? JSON.stringify(data.headers) : data.headers),
 }));
 
-type TableReadRecord = z.output<typeof NetworkLogsTableSchema>;
 type TableInsertRecord = z.input<typeof NetworkLogsTableInsertSchema>;
-
-
 
 /**
 * Represents a database record from the "public.network_logs" table.
 */
 export interface NetworkLogRecord {
-    /**
-     * Primary key for network logs table
-     */
     id: TableReadRecord['id'];
-    /**
-     * IP address of the request
-     */
     ipAddress: TableReadRecord['ipAddress'];
-    /**
-     * Port range used
-     */
     portRange: TableReadRecord['portRange'];
-    /**
-     * MAC address of the device
-     */
     macAddress: TableReadRecord['macAddress'];
-    /**
-     * Timestamp of the request
-     */
     requestTime: TableReadRecord['requestTime'];
-    /**
-     * Response time duration
-     */
     responseTime: TableReadRecord['responseTime'];
-    /**
-     * Number of bytes sent
-     */
     bytesSent: TableReadRecord['bytesSent'];
-    /**
-     * Number of bytes received
-     */
     bytesReceived: TableReadRecord['bytesReceived'];
-    /**
-     * Network protocol used
-     */
     protocol: TableReadRecord['protocol'];
-    /**
-     * HTTP status code
-     */
     statusCode: TableReadRecord['statusCode'];
-    /**
-     * User agent string
-     */
     userAgent: TableReadRecord['userAgent'];
-    /**
-     * Request headers in JSON format
-     */
     headers: TableReadRecord['headers'];
 }
 
@@ -229,51 +191,40 @@ export interface NetworkLogRecord {
 */
 export interface NetworkLogInsertRecord {
     /**
-    * IP address of the request
     */
     ipAddress: TableInsertRecord['ipAddress'];
     /**
-    * Port range used
     */
     portRange?: TableInsertRecord['portRange'];
     /**
-    * MAC address of the device
     */
     macAddress?: TableInsertRecord['macAddress'];
     /**
-    * Timestamp of the request
     * @default: now()
     */
     requestTime?: TableInsertRecord['requestTime'];
     /**
-    * Response time duration
     */
     responseTime?: TableInsertRecord['responseTime'];
     /**
-    * Number of bytes sent
     * @default: 0
     */
     bytesSent?: TableInsertRecord['bytesSent'];
     /**
-    * Number of bytes received
     * @default: 0
     */
     bytesReceived?: TableInsertRecord['bytesReceived'];
     /**
-    * Network protocol used
     * @maxLen: 10
     */
     protocol?: TableInsertRecord['protocol'];
     /**
-    * HTTP status code
     */
     statusCode?: TableInsertRecord['statusCode'];
     /**
-    * User agent string
     */
     userAgent?: TableInsertRecord['userAgent'];
     /**
-    * Request headers in JSON format
     */
     headers?: TableInsertRecord['headers'];
 }

@@ -2,7 +2,6 @@
 
 import { z } from 'zod';
 
-
 export const CommentsTableSchema = z.object({
     /**
     * dataType: int4
@@ -54,6 +53,8 @@ export const CommentsTableSchema = z.object({
     createdAt: data.created_at ?? undefined,
     updatedAt: data.updated_at ?? undefined,
 }));
+
+type TableReadRecord = z.output<typeof CommentsTableSchema>;
 
 const TableWriteSchema = z.object({
     /**
@@ -113,46 +114,19 @@ export const CommentsTableUpdateSchema = TableWriteSchema.partial().transform(da
     updated_at: data.updatedAt,
 }));
 
-type TableReadRecord = z.output<typeof CommentsTableSchema>;
 type TableInsertRecord = z.input<typeof CommentsTableInsertSchema>;
-
-
 
 /**
 * Represents a database record from the "public.comments" table.
 */
 export interface CommentRecord {
-    /**
-     * Primary key for comments table
-     */
     id: TableReadRecord['id'];
-    /**
-     * ID of the post this comment belongs to
-     */
     postId: TableReadRecord['postId'];
-    /**
-     * ID of the user who wrote the comment
-     */
     userId: TableReadRecord['userId'];
-    /**
-     * ID of the parent comment for nested comments
-     */
     parentId: TableReadRecord['parentId'];
-    /**
-     * Content of the comment
-     */
     content: TableReadRecord['content'];
-    /**
-     * Whether the comment has been approved by moderators
-     */
     isApproved: TableReadRecord['isApproved'];
-    /**
-     * Timestamp when the comment was created
-     */
     createdAt: TableReadRecord['createdAt'];
-    /**
-     * Timestamp when the comment was last updated
-     */
     updatedAt: TableReadRecord['updatedAt'];
 }
 
@@ -161,33 +135,26 @@ export interface CommentRecord {
 */
 export interface CommentInsertRecord {
     /**
-    * ID of the post this comment belongs to
     */
     postId?: TableInsertRecord['postId'];
     /**
-    * ID of the user who wrote the comment
     */
     userId?: TableInsertRecord['userId'];
     /**
-    * ID of the parent comment for nested comments
     */
     parentId?: TableInsertRecord['parentId'];
     /**
-    * Content of the comment
     */
     content: TableInsertRecord['content'];
     /**
-    * Whether the comment has been approved by moderators
     * @default: false
     */
     isApproved?: TableInsertRecord['isApproved'];
     /**
-    * Timestamp when the comment was created
     * @default: now()
     */
     createdAt?: TableInsertRecord['createdAt'];
     /**
-    * Timestamp when the comment was last updated
     * @default: now()
     */
     updatedAt?: TableInsertRecord['updatedAt'];
