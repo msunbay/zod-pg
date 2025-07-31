@@ -1,5 +1,4 @@
 import { Client } from 'pg';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { getEnumConstraints } from '../../../../src/database/enumConstraints.js';
 import { getSchemaInformation } from '../../../../src/database/schema.js';
