@@ -35,14 +35,17 @@ it('insert schema works', async () => {
 
   const parsedInsertRecord = UsersTableInsertSchema.parse(insertRecord);
 
-  await ctx.client.query(sql`
+  await ctx.client.query(
+    sql`
     INSERT INTO users ( name, email, profile, created_at)
-    VALUES ($1, $2, $3, $4)`, [
+    VALUES ($1, $2, $3, $4)`,
+    [
       parsedInsertRecord.name,
       parsedInsertRecord.email,
-      JSON.stringify(parsedInsertRecord.profile),
-      parsedInsertRecord.createdAt?.toISOString(),
-  ]);
+      parsedInsertRecord.profile,
+      parsedInsertRecord.created_at?.toISOString(),
+    ]
+  );
 
   const result = await ctx.client.query(sql`
       SELECT * FROM users`);
