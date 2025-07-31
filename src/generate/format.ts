@@ -10,6 +10,9 @@ import {
 } from '../utils/casing.js';
 import { singularize } from '../utils/singularize.js';
 
+const MVIEW_PREFIXES = ['mv_', 'mview_'];
+const VIEW_PREFIXES = ['v_', 'view_'];
+
 const getOperationSuffix = (type: 'read' | 'insert' | 'update'): string => {
   switch (type) {
     case 'insert':
@@ -21,16 +24,21 @@ const getOperationSuffix = (type: 'read' | 'insert' | 'update'): string => {
   }
 };
 
-export const getTableType = (tableInfo: ZodPgTableInfo): string => {
+export const getSchemaPrefix = (tableInfo: ZodPgTableInfo): string => {
   switch (tableInfo.type) {
     case 'table':
     case 'foreign_table':
       return 'Table';
     case 'materialized_view':
-      return tableInfo.name.startsWith(MATERIALIZED_VIEW_PREFIX) ? '' : 'Mv';
+      // If the table name starts with a known materialized view prefix, return an empty string
+      // to avoid adding 'Mv' prefix unnecessarily.
+      return MVIEW_PREFIXES.some((prefix) => tableInfo.name.startsWith(prefix))
+        ? ''
+        : 'Mv';
     case 'view':
-      return tableInfo.name.startsWith('v_') ||
-        tableInfo.name.startsWith('view_')
+      // If the table name starts with a known view prefix, return an empty string
+      // to avoid adding 'View' prefix unnecessarily.
+      return VIEW_PREFIXES.some((prefix) => tableInfo.name.startsWith(prefix))
         ? ''
         : 'View';
     default:
@@ -43,7 +51,7 @@ export const formatTableSchemaName = (
   type: 'read' | 'insert' | 'update',
   objectNameCasing: ZodPgCasing = 'PascalCase'
 ): string => {
-  return `${convertCaseFormat(tableInfo.name, objectNameCasing)}${getTableType(tableInfo)}${getOperationSuffix(type)}Schema`;
+  return `${convertCaseFormat(tableInfo.name, objectNameCasing)}${getSchemaPrefix(tableInfo)}${getOperationSuffix(type)}Schema`;
 };
 
 export const formatTableRecordName = (

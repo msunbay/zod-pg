@@ -5,7 +5,7 @@ import type { ZodPgSchemaInfo } from '../types.js';
 import { GENERATED_HEADER_COMMENT } from '../constants.js';
 import { ZodPgConfig } from '../types.js';
 import { logDebug } from '../utils/debug.js';
-import { getTableType } from './format.js';
+import { getSchemaPrefix } from './format.js';
 
 export const generateConstantsFile = async (
   schema: ZodPgSchemaInfo,
@@ -13,7 +13,7 @@ export const generateConstantsFile = async (
 ) => {
   const consts = schema.tables
     .map((info) => {
-      const prefix = getTableType(info).toUpperCase();
+      const prefix = getSchemaPrefix(info).toUpperCase();
       const upperName = info.name.toUpperCase();
       const constantName = prefix ? `${prefix}_${upperName}` : upperName;
 
