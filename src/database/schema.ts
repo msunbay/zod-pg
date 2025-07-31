@@ -39,7 +39,7 @@ export const getSchemaInformation = async (
         END AS "maxLen",
         t.typname AS "udtName",
         checks."checkConstraints",
-        obj_description(c.oid, 'pg_class') AS "description",
+        col_description(c.oid, a.attnum) AS "description",
         CASE 
           WHEN c.relkind = 'r' THEN 'table'
           WHEN c.relkind = 'v' THEN 'view'
