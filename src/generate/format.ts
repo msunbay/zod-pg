@@ -27,7 +27,7 @@ export const getTableType = (tableInfo: ZodPgTableInfo): string => {
     case 'foreign_table':
       return 'Table';
     case 'materialized_view':
-      return tableInfo.name.startsWith('mv_') ? '' : 'Mv';
+      return tableInfo.name.startsWith(MATERIALIZED_VIEW_PREFIX) ? '' : 'Mv';
     case 'view':
       return tableInfo.name.startsWith('v_') ||
         tableInfo.name.startsWith('view_')
