@@ -7,12 +7,12 @@ export const UserSessionsTableSchema = z.object({
     * dataType: uuid
     * defaultValue: gen_random_uuid()
     */
-    id: z.uuid(),
+    id: z.string().uuid(),
     /**
     * dataType: int4
     * defaultValue: 
     */
-    user_id: z.int().nullable(),
+    user_id: z.number().int().nullable(),
     /**
     * dataType: varchar
     * defaultValue: 
@@ -61,12 +61,12 @@ const TableWriteSchema = z.object({
     * dataType: uuid
     * defaultValue: gen_random_uuid()
     */
-    id: z.uuid(),
+    id: z.string().uuid(),
     /**
     * dataType: int4
     * defaultValue: 
     */
-    userId: z.int().nullish(),
+    userId: z.number().int().nullish(),
     /**
     * dataType: varchar
     * defaultValue: 

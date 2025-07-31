@@ -7,22 +7,22 @@ export const OrderItemsTableSchema = z.object({
     * dataType: int8
     * defaultValue: nextval('order_items_id_seq'::regclass)
     */
-    id: z.int(),
+    id: z.number().int(),
     /**
     * dataType: int8
     * defaultValue: 
     */
-    order_id: z.int().nullable(),
+    order_id: z.number().int().nullable(),
     /**
     * dataType: int4
     * defaultValue: 
     */
-    product_id: z.int().nullable(),
+    product_id: z.number().int().nullable(),
     /**
     * dataType: int2
     * defaultValue: 
     */
-    quantity: z.int(),
+    quantity: z.number().int(),
     /**
     * dataType: numeric
     * defaultValue: 
@@ -55,17 +55,17 @@ const TableWriteSchema = z.object({
     * dataType: int8
     * defaultValue: 
     */
-    orderId: z.int().nullish(),
+    orderId: z.number().int().nullish(),
     /**
     * dataType: int4
     * defaultValue: 
     */
-    productId: z.int().nullish(),
+    productId: z.number().int().nullish(),
     /**
     * dataType: int2
     * defaultValue: 
     */
-    quantity: z.int(),
+    quantity: z.number().int(),
     /**
     * dataType: numeric
     * defaultValue: 

@@ -7,12 +7,12 @@ export const AuditLogsTableSchema = z.object({
     * dataType: int8
     * defaultValue: nextval('audit_logs_id_seq'::regclass)
     */
-    id: z.int(),
+    id: z.number().int(),
     /**
     * dataType: int4
     * defaultValue: 
     */
-    user_id: z.int().nullable(),
+    user_id: z.number().int().nullable(),
     /**
     * dataType: varchar
     * defaultValue: 
@@ -27,17 +27,17 @@ export const AuditLogsTableSchema = z.object({
     * dataType: int4
     * defaultValue: 
     */
-    record_id: z.int().nullable(),
+    record_id: z.number().int().nullable(),
     /**
     * dataType: jsonb
     * defaultValue: 
     */
-    old_values: z.json().nullable(),
+    old_values: z.any().nullable(),
     /**
     * dataType: jsonb
     * defaultValue: 
     */
-    new_values: z.json().nullable(),
+    new_values: z.any().nullable(),
     /**
     * dataType: timestamptz
     * defaultValue: now()
@@ -61,7 +61,7 @@ const TableWriteSchema = z.object({
     * dataType: int4
     * defaultValue: 
     */
-    userId: z.int().nullish(),
+    userId: z.number().int().nullish(),
     /**
     * dataType: varchar
     * defaultValue: 
@@ -76,17 +76,17 @@ const TableWriteSchema = z.object({
     * dataType: int4
     * defaultValue: 
     */
-    recordId: z.int().nullish(),
+    recordId: z.number().int().nullish(),
     /**
     * dataType: jsonb
     * defaultValue: 
     */
-    oldValues: z.json().nullish(),
+    oldValues: z.any().nullish(),
     /**
     * dataType: jsonb
     * defaultValue: 
     */
-    newValues: z.json().nullish(),
+    newValues: z.any().nullish(),
     /**
     * dataType: timestamptz
     * defaultValue: now()

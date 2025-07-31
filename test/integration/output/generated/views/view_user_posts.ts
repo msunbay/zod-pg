@@ -7,7 +7,7 @@ export const ViewUserPostsSchema = z.object({
     * dataType: int4
     * defaultValue: 
     */
-    user_id: z.int().nullable(),
+    user_id: z.number().int().nullable(),
     /**
     * dataType: varchar
     * defaultValue: 
@@ -17,7 +17,7 @@ export const ViewUserPostsSchema = z.object({
     * dataType: int4
     * defaultValue: 
     */
-    post_id: z.int().nullable(),
+    post_id: z.number().int().nullable(),
     /**
     * dataType: text
     * defaultValue: 

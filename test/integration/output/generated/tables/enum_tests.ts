@@ -19,7 +19,7 @@ export const EnumTestsTableSchema = z.object({
     * dataType: int4
     * defaultValue: nextval('enum_tests_id_seq'::regclass)
     */
-    id: z.int(),
+    id: z.number().int(),
     /**
     * dataType: varchar
     * defaultValue: 

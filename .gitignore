@@ -3,4 +3,6 @@ node_modules/
 test/output/
 .env
 .generated/
+
 zod-schemas/
+test-output/

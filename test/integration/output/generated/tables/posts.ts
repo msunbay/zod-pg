@@ -8,12 +8,12 @@ export const PostsTableSchema = z.object({
     * dataType: int4
     * defaultValue: nextval('posts_id_seq'::regclass)
     */
-    id: z.int(),
+    id: z.number().int(),
     /**
     * dataType: int4
     * defaultValue: 
     */
-    user_id: z.int().nullable(),
+    user_id: z.number().int().nullable(),
     /**
     * dataType: text
     * defaultValue: 
@@ -38,7 +38,7 @@ export const PostsTableSchema = z.object({
     * dataType: int4
     * defaultValue: 0
     */
-    views: z.int().nullable(),
+    views: z.number().int().nullable(),
     /**
     * dataType: _text
     * defaultValue: 
@@ -48,7 +48,7 @@ export const PostsTableSchema = z.object({
     * dataType: jsonb
     * defaultValue: 
     */
-    metadata: z.json().nullable(),
+    metadata: z.any().nullable(),
     /**
     * dataType: timestamptz
     * defaultValue: 
@@ -80,7 +80,7 @@ const TableWriteSchema = z.object({
     * dataType: int4
     * defaultValue: 
     */
-    userId: z.int().nullish(),
+    userId: z.number().int().nullish(),
     /**
     * dataType: text
     * defaultValue: 
@@ -105,7 +105,7 @@ const TableWriteSchema = z.object({
     * dataType: int4
     * defaultValue: 0
     */
-    views: z.int().nullish(),
+    views: z.number().int().nullish(),
     /**
     * dataType: _text
     * defaultValue: 
@@ -115,7 +115,7 @@ const TableWriteSchema = z.object({
     * dataType: jsonb
     * defaultValue: 
     */
-    metadata: z.json().nullish(),
+    metadata: z.any().nullish(),
     /**
     * dataType: timestamptz
     * defaultValue: 

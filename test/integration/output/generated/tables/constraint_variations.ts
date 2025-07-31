@@ -12,7 +12,7 @@ export const ConstraintVariationsTableSchema = z.object({
     * dataType: int4
     * defaultValue: nextval('constraint_variations_id_seq'::regclass)
     */
-    id: z.int(),
+    id: z.number().int(),
     /**
     * dataType: varchar
     * defaultValue: 
@@ -37,7 +37,7 @@ export const ConstraintVariationsTableSchema = z.object({
     * dataType: int2
     * defaultValue: 
     */
-    rating: z.int().nullable(),
+    rating: z.number().int().nullable(),
     /**
     * dataType: bool
     * defaultValue: 
@@ -86,7 +86,7 @@ const TableWriteSchema = z.object({
     * dataType: int2
     * defaultValue: 
     */
-    rating: z.int().nullish(),
+    rating: z.number().int().nullish(),
     /**
     * dataType: bool
     * defaultValue: 

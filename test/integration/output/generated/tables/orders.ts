@@ -7,7 +7,7 @@ export const OrdersTableSchema = z.object({
     * dataType: int8
     * defaultValue: nextval('orders_id_seq'::regclass)
     */
-    id: z.int(),
+    id: z.number().int(),
     /**
     * dataType: varchar
     * defaultValue: 
@@ -17,7 +17,7 @@ export const OrdersTableSchema = z.object({
     * dataType: int4
     * defaultValue: 
     */
-    user_id: z.int().nullable(),
+    user_id: z.number().int().nullable(),
     /**
     * dataType: order_status
     * defaultValue: 'pending'::order_status
@@ -62,7 +62,7 @@ export const OrdersTableSchema = z.object({
     * dataType: jsonb
     * defaultValue: 
     */
-    metadata: z.json().nullable(),
+    metadata: z.any().nullable(),
     /**
     * dataType: timestamptz
     * defaultValue: now()
@@ -96,7 +96,7 @@ const TableWriteSchema = z.object({
     * dataType: int4
     * defaultValue: 
     */
-    userId: z.int().nullish(),
+    userId: z.number().int().nullish(),
     /**
     * dataType: order_status
     * defaultValue: 'pending'::order_status
@@ -141,7 +141,7 @@ const TableWriteSchema = z.object({
     * dataType: jsonb
     * defaultValue: 
     */
-    metadata: z.json().nullish(),
+    metadata: z.any().nullish(),
     /**
     * dataType: timestamptz
     * defaultValue: now()

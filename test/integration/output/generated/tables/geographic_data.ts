@@ -7,7 +7,7 @@ export const GeographicDataTableSchema = z.object({
     * dataType: int4
     * defaultValue: nextval('geographic_data_id_seq'::regclass)
     */
-    id: z.int(),
+    id: z.number().int(),
     /**
     * dataType: varchar
     * defaultValue: 
@@ -52,7 +52,7 @@ export const GeographicDataTableSchema = z.object({
     * dataType: int4
     * defaultValue: 
     */
-    population: z.int().nullable(),
+    population: z.number().int().nullable(),
     /**
     * dataType: date
     * defaultValue: 
@@ -125,7 +125,7 @@ const TableWriteSchema = z.object({
     * dataType: int4
     * defaultValue: 
     */
-    population: z.int().nullish(),
+    population: z.number().int().nullish(),
     /**
     * dataType: date
     * defaultValue: 

@@ -7,7 +7,7 @@ export const ProductsTableSchema = z.object({
     * dataType: int4
     * defaultValue: nextval('products_id_seq'::regclass)
     */
-    id: z.int(),
+    id: z.number().int(),
     /**
     * dataType: varchar
     * defaultValue: 

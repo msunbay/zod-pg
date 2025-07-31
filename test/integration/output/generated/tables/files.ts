@@ -7,7 +7,7 @@ export const FilesTableSchema = z.object({
     * dataType: uuid
     * defaultValue: gen_random_uuid()
     */
-    id: z.uuid(),
+    id: z.string().uuid(),
     /**
     * dataType: varchar
     * defaultValue: 
@@ -22,7 +22,7 @@ export const FilesTableSchema = z.object({
     * dataType: int8
     * defaultValue: 
     */
-    file_size: z.int(),
+    file_size: z.number().int(),
     /**
     * dataType: varchar
     * defaultValue: 
@@ -57,7 +57,7 @@ export const FilesTableSchema = z.object({
     * dataType: jsonb
     * defaultValue: 
     */
-    metadata: z.json().nullable(),
+    metadata: z.any().nullable(),
     /**
     * dataType: _text
     * defaultValue: 
@@ -67,7 +67,7 @@ export const FilesTableSchema = z.object({
     * dataType: int4
     * defaultValue: 0
     */
-    access_count: z.int().nullable(),
+    access_count: z.number().int().nullable(),
 }).transform(data => ({
     id: data.id,
     filename: data.filename,
@@ -91,7 +91,7 @@ const TableWriteSchema = z.object({
     * dataType: uuid
     * defaultValue: gen_random_uuid()
     */
-    id: z.uuid(),
+    id: z.string().uuid(),
     /**
     * dataType: varchar
     * defaultValue: 
@@ -106,7 +106,7 @@ const TableWriteSchema = z.object({
     * dataType: int8
     * defaultValue: 
     */
-    fileSize: z.int(),
+    fileSize: z.number().int(),
     /**
     * dataType: varchar
     * defaultValue: 
@@ -141,7 +141,7 @@ const TableWriteSchema = z.object({
     * dataType: jsonb
     * defaultValue: 
     */
-    metadata: z.json().nullish(),
+    metadata: z.any().nullish(),
     /**
     * dataType: _text
     * defaultValue: 
@@ -151,7 +151,7 @@ const TableWriteSchema = z.object({
     * dataType: int4
     * defaultValue: 0
     */
-    accessCount: z.int().nullish(),
+    accessCount: z.number().int().nullish(),
 });
 
 export const FilesTableInsertSchema = TableWriteSchema.transform(data => ({

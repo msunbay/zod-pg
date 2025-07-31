@@ -1,7 +1,7 @@
+import { execSync } from 'child_process';
 import fs from 'fs';
 import path from 'path';
 
-import { generateZodSchemas } from '../../../../src/generateZodSchemas.js';
 import {
   getClientConnectionString,
   getOutputFiles,
@@ -11,9 +11,10 @@ import {
   TestDbContext,
 } from '../../testDbUtils.js';
 
+const cliPath = path.resolve(__dirname, '../../../../index.js');
 let ctx: TestDbContext;
 
-describe('generateZodSchemas', () => {
+describe('CLI Tests', () => {
   beforeAll(async () => {
     ctx = await setupTestDb();
   });
@@ -22,22 +23,15 @@ describe('generateZodSchemas', () => {
     await teardownTestDb(ctx);
   });
 
-  it('generates correct zod schemas', async () => {
+  it('CLI generates correct zod schemas', async () => {
     const connectionString = getClientConnectionString();
 
-    await generateZodSchemas({
-      connection: {
-        connectionString,
-        ssl: false,
-      },
+    execSync(
+      `node ${cliPath} --connection-string "${connectionString}" --output "${outputDir}" --json-schema-import-location "../../json.js" --silent --module esm --schema public`,
+      { stdio: 'inherit' }
+    );
 
-      schemaName: 'public',
-      outputDir,
-      outputModule: 'esm',
-      zodVersion: 4,
-    });
-
-    const outputFiles = getOutputFiles();
+    const outputFiles = await getOutputFiles();
 
     for (const file of outputFiles) {
       const content = fs.readFileSync(file, 'utf8');

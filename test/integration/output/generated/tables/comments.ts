@@ -7,22 +7,22 @@ export const CommentsTableSchema = z.object({
     * dataType: int4
     * defaultValue: nextval('comments_id_seq'::regclass)
     */
-    id: z.int(),
+    id: z.number().int(),
     /**
     * dataType: int4
     * defaultValue: 
     */
-    post_id: z.int().nullable(),
+    post_id: z.number().int().nullable(),
     /**
     * dataType: int4
     * defaultValue: 
     */
-    user_id: z.int().nullable(),
+    user_id: z.number().int().nullable(),
     /**
     * dataType: int4
     * defaultValue: 
     */
-    parent_id: z.int().nullable(),
+    parent_id: z.number().int().nullable(),
     /**
     * dataType: text
     * defaultValue: 
@@ -61,17 +61,17 @@ const TableWriteSchema = z.object({
     * dataType: int4
     * defaultValue: 
     */
-    postId: z.int().nullish(),
+    postId: z.number().int().nullish(),
     /**
     * dataType: int4
     * defaultValue: 
     */
-    userId: z.int().nullish(),
+    userId: z.number().int().nullish(),
     /**
     * dataType: int4
     * defaultValue: 
     */
-    parentId: z.int().nullish(),
+    parentId: z.number().int().nullish(),
     /**
     * dataType: text
     * defaultValue: 

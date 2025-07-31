@@ -7,7 +7,7 @@ export const TimeSeriesTableSchema = z.object({
     * dataType: int8
     * defaultValue: nextval('time_series_id_seq'::regclass)
     */
-    id: z.int(),
+    id: z.number().int(),
     /**
     * dataType: varchar
     * defaultValue: 
@@ -47,7 +47,7 @@ export const TimeSeriesTableSchema = z.object({
     * dataType: int2
     * defaultValue: 
     */
-    data_quality: z.int().nullable(),
+    data_quality: z.number().int().nullable(),
     /**
     * dataType: timestamptz
     * defaultValue: now()
@@ -108,7 +108,7 @@ const TableWriteSchema = z.object({
     * dataType: int2
     * defaultValue: 
     */
-    dataQuality: z.int().nullish(),
+    dataQuality: z.number().int().nullish(),
     /**
     * dataType: timestamptz
     * defaultValue: now()

@@ -7,7 +7,7 @@ export const CategoriesTableSchema = z.object({
     * dataType: int4
     * defaultValue: nextval('categories_id_seq'::regclass)
     */
-    id: z.int(),
+    id: z.number().int(),
     /**
     * dataType: varchar
     * defaultValue: 

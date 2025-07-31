@@ -7,12 +7,12 @@ export const PostCategoriesTableSchema = z.object({
     * dataType: int4
     * defaultValue: 
     */
-    post_id: z.int(),
+    post_id: z.number().int(),
     /**
     * dataType: int4
     * defaultValue: 
     */
-    category_id: z.int(),
+    category_id: z.number().int(),
 }).transform(data => ({
     postId: data.post_id,
     categoryId: data.category_id,
@@ -25,12 +25,12 @@ const TableWriteSchema = z.object({
     * dataType: int4
     * defaultValue: 
     */
-    postId: z.int(),
+    postId: z.number().int(),
     /**
     * dataType: int4
     * defaultValue: 
     */
-    categoryId: z.int(),
+    categoryId: z.number().int(),
 });
 
 export const PostCategoriesTableInsertSchema = TableWriteSchema.transform(data => ({

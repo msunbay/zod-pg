@@ -1,4 +1,4 @@
-import fs from 'fs';
+import fs from 'fs/promises';
 import path from 'path';
 import {
   PostgreSqlContainer,
@@ -43,14 +43,10 @@ export async function setupTestDb(): Promise<TestDbContext> {
     password: container.getPassword(),
   });
 
-  console.log(
-    `Test database running on ${container.getHost()}:${container.getPort()}`
-  );
-
   await client.connect();
 
   // Create schema
-  const schemaSql = fs.readFileSync(schemaPath, 'utf8');
+  const schemaSql = await fs.readFile(schemaPath, 'utf8');
   await client.query(schemaSql);
 
   _clientInstance = client;
@@ -68,19 +64,23 @@ export const outputDir = path.resolve(
   './output/generated'
 );
 
-export function getOutputFiles(dir = outputDir): string[] {
+export async function getOutputFiles(dir = outputDir): Promise<string[]> {
   let results: string[] = [];
-  const list = fs.readdirSync(dir, { withFileTypes: true });
+  const list = await fs.readdir(dir, { withFileTypes: true });
 
   for (const file of list) {
     const filePath = path.join(dir, file.name);
 
     if (file.isDirectory()) {
-      results = results.concat(getOutputFiles(filePath));
+      results = results.concat(await getOutputFiles(filePath));
     } else {
       results.push(filePath);
     }
   }
 
   return results;
+}
+
+export async function deleteOutputFiles(dir: string): Promise<void> {
+  await fs.rm(dir, { recursive: true });
 }

@@ -7,7 +7,7 @@ export const NetworkLogsTableSchema = z.object({
     * dataType: int8
     * defaultValue: nextval('network_logs_id_seq'::regclass)
     */
-    id: z.int(),
+    id: z.number().int(),
     /**
     * dataType: inet
     * defaultValue: 
@@ -37,12 +37,12 @@ export const NetworkLogsTableSchema = z.object({
     * dataType: int8
     * defaultValue: 0
     */
-    bytes_sent: z.int().nullable(),
+    bytes_sent: z.number().int().nullable(),
     /**
     * dataType: int8
     * defaultValue: 0
     */
-    bytes_received: z.int().nullable(),
+    bytes_received: z.number().int().nullable(),
     /**
     * dataType: varchar
     * defaultValue: 
@@ -52,7 +52,7 @@ export const NetworkLogsTableSchema = z.object({
     * dataType: int2
     * defaultValue: 
     */
-    status_code: z.int().nullable(),
+    status_code: z.number().int().nullable(),
     /**
     * dataType: text
     * defaultValue: 
@@ -62,7 +62,7 @@ export const NetworkLogsTableSchema = z.object({
     * dataType: jsonb
     * defaultValue: 
     */
-    headers: z.json().nullable(),
+    headers: z.any().nullable(),
 }).transform(data => ({
     id: data.id,
     ipAddress: data.ip_address,
@@ -110,12 +110,12 @@ const TableWriteSchema = z.object({
     * dataType: int8
     * defaultValue: 0
     */
-    bytesSent: z.int().nullish(),
+    bytesSent: z.number().int().nullish(),
     /**
     * dataType: int8
     * defaultValue: 0
     */
-    bytesReceived: z.int().nullish(),
+    bytesReceived: z.number().int().nullish(),
     /**
     * dataType: varchar
     * defaultValue: 
@@ -125,7 +125,7 @@ const TableWriteSchema = z.object({
     * dataType: int2
     * defaultValue: 
     */
-    statusCode: z.int().nullish(),
+    statusCode: z.number().int().nullish(),
     /**
     * dataType: text
     * defaultValue: 
@@ -135,7 +135,7 @@ const TableWriteSchema = z.object({
     * dataType: jsonb
     * defaultValue: 
     */
-    headers: z.json().nullish(),
+    headers: z.any().nullish(),
 });
 
 export const NetworkLogsTableInsertSchema = TableWriteSchema.transform(data => ({

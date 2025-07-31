@@ -7,22 +7,22 @@ export const InventoryTableSchema = z.object({
     * dataType: int4
     * defaultValue: 
     */
-    product_id: z.int(),
+    product_id: z.number().int(),
     /**
     * dataType: int4
     * defaultValue: 0
     */
-    stock_quantity: z.int(),
+    stock_quantity: z.number().int(),
     /**
     * dataType: int4
     * defaultValue: 0
     */
-    reserved_quantity: z.int().nullable(),
+    reserved_quantity: z.number().int().nullable(),
     /**
     * dataType: int2
     * defaultValue: 10
     */
-    reorder_level: z.int().nullable(),
+    reorder_level: z.number().int().nullable(),
     /**
     * dataType: date
     * defaultValue: 
@@ -32,7 +32,7 @@ export const InventoryTableSchema = z.object({
     * dataType: jsonb
     * defaultValue: 
     */
-    supplier_info: z.json().nullable(),
+    supplier_info: z.any().nullable(),
     /**
     * dataType: _text
     * defaultValue: 
@@ -61,22 +61,22 @@ const TableWriteSchema = z.object({
     * dataType: int4
     * defaultValue: 
     */
-    productId: z.int(),
+    productId: z.number().int(),
     /**
     * dataType: int4
     * defaultValue: 0
     */
-    stockQuantity: z.int(),
+    stockQuantity: z.number().int(),
     /**
     * dataType: int4
     * defaultValue: 0
     */
-    reservedQuantity: z.int().nullish(),
+    reservedQuantity: z.number().int().nullish(),
     /**
     * dataType: int2
     * defaultValue: 10
     */
-    reorderLevel: z.int().nullish(),
+    reorderLevel: z.number().int().nullish(),
     /**
     * dataType: date
     * defaultValue: 
@@ -86,7 +86,7 @@ const TableWriteSchema = z.object({
     * dataType: jsonb
     * defaultValue: 
     */
-    supplierInfo: z.json().nullish(),
+    supplierInfo: z.any().nullish(),
     /**
     * dataType: _text
     * defaultValue: 
