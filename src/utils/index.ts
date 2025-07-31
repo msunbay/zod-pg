@@ -5,3 +5,5 @@ export * from './singularize.js';
 export * from './sql.js';
 export * from './logger.js';
 export * from './debug.js';
+export * from './progress.js';
+export * from './version.js';
