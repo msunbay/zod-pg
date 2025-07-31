@@ -2,7 +2,7 @@
 
 import { z } from 'zod';
 
-export const USER_ROLES = ['admin','editor','viewer',] as const;
+export const USER_ROLES = ['admin', 'editor', 'viewer'] as const;
 
 export const UsersTableSchema = z.object({
     /**

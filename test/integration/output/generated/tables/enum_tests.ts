@@ -2,29 +2,29 @@
 
 import { z } from 'zod';
 
-export const ENUM_TEST_PRIORITIES = ['low','medium','high','critical',] as const;
+export const ENUM_TEST_PRIORITIES = ['low', 'medium', 'high', 'critical'] as const;
 
-export const ENUM_TEST_COLORS = ['red','green','blue','yellow',] as const;
+export const ENUM_TEST_COLORS = ['red', 'green', 'blue', 'yellow'] as const;
 
-export const ENUM_TEST_SIZES = ['xs','s','m','l','xl','xxl',] as const;
+export const ENUM_TEST_SIZES = ['xs', 's', 'm', 'l', 'xl', 'xxl'] as const;
 
-export const ENUM_TEST_GRADES = ['A','B','C','D','F',] as const;
+export const ENUM_TEST_GRADES = ['A', 'B', 'C', 'D', 'F'] as const;
 
-export const ENUM_TEST_CATEGORIES = ['electronics','clothing','books','home-garden',] as const;
+export const ENUM_TEST_CATEGORIES = ['electronics', 'clothing', 'books', 'home-garden'] as const;
 
-export const ENUM_TEST_MOODS = ['happy','sad','angry','excited','calm',] as const;
+export const ENUM_TEST_MOODS = ['happy', 'sad', 'angry', 'excited', 'calm'] as const;
 
-export const ENUM_TEST_DIRECTIONS = ['north','south','east','west',] as const;
+export const ENUM_TEST_DIRECTIONS = ['north', 'south', 'east', 'west'] as const;
 
-export const ENUM_TEST_WEATHER_CONDITIONS = ['sunny','cloudy','rainy','snowy','foggy',] as const;
+export const ENUM_TEST_WEATHER_CONDITIONS = ['sunny', 'cloudy', 'rainy', 'snowy', 'foggy'] as const;
 
-export const ENUM_TEST_TASK_STATUSES = ['todo','in-progress','done','cancelled',] as const;
+export const ENUM_TEST_TASK_STATUSES = ['todo', 'in-progress', 'done', 'cancelled'] as const;
 
-export const ENUM_TEST_DIFFICULTIES = ['1','2','3','4','5',] as const;
+export const ENUM_TEST_DIFFICULTIES = ['1', '2', '3', '4', '5'] as const;
 
-export const ENUM_TEST_WEEKDAYS = ['monday','tuesday','wednesday','thursday','friday','saturday','sunday',] as const;
+export const ENUM_TEST_WEEKDAYS = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'] as const;
 
-export const ENUM_TEST_PAYMENT_METHODS = ['cash','credit-card','debit-card','paypal','bank-transfer',] as const;
+export const ENUM_TEST_PAYMENT_METHODS = ['cash', 'credit-card', 'debit-card', 'paypal', 'bank-transfer'] as const;
 
 export const EnumTestsTableSchema = z.object({
     /**

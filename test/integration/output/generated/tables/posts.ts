@@ -2,7 +2,7 @@
 
 import { z } from 'zod';
 
-export const POST_STATUSES = ['draft','published','archived',] as const;
+export const POST_STATUSES = ['draft', 'published', 'archived'] as const;
 
 export const PostsTableSchema = z.object({
     /**

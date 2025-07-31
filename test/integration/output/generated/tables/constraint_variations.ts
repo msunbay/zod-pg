@@ -2,15 +2,15 @@
 
 import { z } from 'zod';
 
-export const CONSTRAINT_VARIATION_ANIMALS = ['cat','dog','bird','fish',] as const;
+export const CONSTRAINT_VARIATION_ANIMALS = ['cat', 'dog', 'bird', 'fish'] as const;
 
-export const CONSTRAINT_VARIATION_FRUITS = ['apple','banana','orange','grape',] as const;
+export const CONSTRAINT_VARIATION_FRUITS = ['apple', 'banana', 'orange', 'grape'] as const;
 
-export const CONSTRAINT_VARIATION_VEHICLES = ['car','truck','motorcycle','bicycle',] as const;
+export const CONSTRAINT_VARIATION_VEHICLES = ['car', 'truck', 'motorcycle', 'bicycle'] as const;
 
-export const CONSTRAINT_VARIATION_LANGUAGES = ['en','es','fr','de','it',] as const;
+export const CONSTRAINT_VARIATION_LANGUAGES = ['en', 'es', 'fr', 'de', 'it'] as const;
 
-export const CONSTRAINT_VARIATION_ACTIVE_STATUSES = ['true','false',] as const;
+export const CONSTRAINT_VARIATION_ACTIVE_STATUSES = ['true', 'false'] as const;
 
 export const ConstraintVariationsTableSchema = z.object({
     /**

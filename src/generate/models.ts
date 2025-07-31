@@ -115,6 +115,8 @@ export const createTableModel = async (
   const enums = readableColumns
     .filter((column) => column.isEnum)
     .map((column) => {
+      const enumValues = column.enumValues || [];
+
       return {
         constantName: column.enumConstantName!,
         typeName:
@@ -124,7 +126,10 @@ export const createTableModel = async (
             column.name,
             config.objectNameCasing
           ),
-        values: column.enumValues || [],
+        values: enumValues.map((value, index) => ({
+          value,
+          last: index === enumValues.length - 1,
+        })),
       };
     });
 

@@ -104,10 +104,15 @@ export interface ZodPgColumn extends ZodPgColumnBaseModel {
   renderedWriteTransform: ZodPgTransform;
 }
 
+interface ZodPgEnumValue {
+  value: string;
+  last: boolean;
+}
+
 export interface ZodPgEnum {
   constantName: string;
   typeName: string;
-  values: string[];
+  values: ZodPgEnumValue[];
 }
 
 export interface ZodPgImport {

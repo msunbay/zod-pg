@@ -6,7 +6,7 @@ import { {{#jsonSchemaImports}}{{name}}{{^last}}, {{/last}}{{/jsonSchemaImports}
 {{/hasJsonSchemaImports}}
 {{#enums}}
 
-export const {{constantName}} = [{{#values}}'{{.}}',{{/values}}] as const;
+export const {{constantName}} = [{{#values}}'{{value}}'{{^last}}, {{/last}}{{/values}}] as const;
 {{/enums}}
 
 export const {{tableReadSchemaName}} = z.object({
