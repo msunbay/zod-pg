@@ -81,5 +81,6 @@ export function getOutputFiles(dir = outputDir): string[] {
       results.push(filePath);
     }
   }
+
   return results;
 }

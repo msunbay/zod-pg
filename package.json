@@ -17,6 +17,7 @@
   "scripts": {
     "build": "rm -rf ./dist && tsc --project tsconfig.build.json",
     "start": "npm run build && node index.js",
+    "dev": "tsx dev.ts",
     "test": "npm run build && npm run test:unit && npm run test:integration && npm run test:types",
     "test:unit": "vitest --project unit run",
     "test:integration": "npm run test:integration:generation && npm run test:integration:schema",
@@ -49,7 +50,7 @@
     "@types/debug": "^4.1.12",
     "@types/lodash": "^4.17.20",
     "@types/mustache": "^4.2.6",
-    "@types/node": "^22",
+    "@types/node": "^20",
     "@types/pg": "^8.15.4",
     "@types/pluralize": "^0.0.33",
     "dotenv-cli": "^8.0.0",

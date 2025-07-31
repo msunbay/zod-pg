@@ -6,9 +6,14 @@
 
 **zod-pg** is a tool that generates [Zod](https://github.com/colinhacks/zod) schemas and TypeScript types from PostgreSQL database schemas. It helps you keep your TypeScript types and validation schemas in sync with your database, reducing manual work and runtime errors.
 
+## Requirements
+
+- **PostgreSQL 9.3+**
+- **Node.js 20+**
+
 ## Features
 
-- Generate Zod schemas for your PostgreSQL tables
+- Generate Zod schemas for your PostgreSQL tables, views, materialized views and foreign tables.
 - Generate TypeScript types and constants
 - Supports enum constraints and json field schema mapping
 
