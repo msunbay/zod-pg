@@ -6,3 +6,4 @@ test/output/
 
 zod-schemas/
 test-output/
+coverage/
