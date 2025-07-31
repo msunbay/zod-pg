@@ -81,10 +81,25 @@ type TableInsertRecord = z.input<typeof CategoriesTableInsertSchema>;
 * Represents a database record from the "public.categories" table.
 */
 export interface CategoryRecord {
+    /**
+     * Primary key for categories table
+     */
     id: TableReadRecord['id'];
+    /**
+     * Name of the category
+     */
     name: TableReadRecord['name'];
+    /**
+     * Description of the category
+     */
     description: TableReadRecord['description'];
+    /**
+     * Hex color code for the category
+     */
     color: TableReadRecord['color'];
+    /**
+     * Timestamp when the category was created
+     */
     createdAt: TableReadRecord['createdAt'];
 }
 
@@ -93,17 +108,21 @@ export interface CategoryRecord {
 */
 export interface CategoryInsertRecord {
     /**
+    * Name of the category
     * @maxLen: 100
     */
     name: TableInsertRecord['name'];
     /**
+    * Description of the category
     */
     description?: TableInsertRecord['description'];
     /**
+    * Hex color code for the category
     * @maxLen: 7
     */
     color?: TableInsertRecord['color'];
     /**
+    * Timestamp when the category was created
     * @default: now()
     */
     createdAt?: TableInsertRecord['createdAt'];

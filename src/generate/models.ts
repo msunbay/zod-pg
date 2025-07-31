@@ -134,6 +134,7 @@ export const createTableModel = async (
     });
 
   const tableModel: ZodPgTable = {
+    type: tableInfo.type,
     tableName: tableInfo.name,
     schemaName: tableInfo.schemaName,
     tableSingularName: formatSingularString(

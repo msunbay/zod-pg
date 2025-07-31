@@ -39,7 +39,7 @@ export const MvUserPostsSchema = z.object({
 type TableReadRecord = z.output<typeof MvUserPostsSchema>;
 
 /**
-* Represents a database record from the "public.mv_user_posts" table.
+* Represents a database record from the "public.mv_user_posts" materialized_view.
 */
 export interface MvUserPostRecord {
     userId: TableReadRecord['userId'];

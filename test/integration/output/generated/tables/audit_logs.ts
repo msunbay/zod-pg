@@ -120,13 +120,37 @@ type TableInsertRecord = z.input<typeof AuditLogsTableInsertSchema>;
 * Represents a database record from the "public.audit_logs" table.
 */
 export interface AuditLogRecord {
+    /**
+     * Primary key for audit logs table
+     */
     id: TableReadRecord['id'];
+    /**
+     * ID of the user who performed the action
+     */
     userId: TableReadRecord['userId'];
+    /**
+     * Type of action performed
+     */
     action: TableReadRecord['action'];
+    /**
+     * Name of the table affected
+     */
     tableName: TableReadRecord['tableName'];
+    /**
+     * ID of the record affected
+     */
     recordId: TableReadRecord['recordId'];
+    /**
+     * Previous values before the change
+     */
     oldValues: TableReadRecord['oldValues'];
+    /**
+     * New values after the change
+     */
     newValues: TableReadRecord['newValues'];
+    /**
+     * Timestamp when the action was performed
+     */
     createdAt: TableReadRecord['createdAt'];
 }
 
@@ -135,26 +159,33 @@ export interface AuditLogRecord {
 */
 export interface AuditLogInsertRecord {
     /**
+    * ID of the user who performed the action
     */
     userId?: TableInsertRecord['userId'];
     /**
+    * Type of action performed
     * @maxLen: 50
     */
     action: TableInsertRecord['action'];
     /**
+    * Name of the table affected
     * @maxLen: 50
     */
     tableName?: TableInsertRecord['tableName'];
     /**
+    * ID of the record affected
     */
     recordId?: TableInsertRecord['recordId'];
     /**
+    * Previous values before the change
     */
     oldValues?: TableInsertRecord['oldValues'];
     /**
+    * New values after the change
     */
     newValues?: TableInsertRecord['newValues'];
     /**
+    * Timestamp when the action was performed
     * @default: now()
     */
     createdAt?: TableInsertRecord['createdAt'];

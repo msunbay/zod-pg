@@ -5,7 +5,6 @@ import { z } from 'zod';
 import { {{#jsonSchemaImports}}{{name}}{{^last}}, {{/last}}{{/jsonSchemaImports}} } from '{{{jsonSchemaImportLocation}}}';
 {{/hasJsonSchemaImports}}
 {{#enums}}
-
 export const {{constantName}} = [{{#values}}'{{value}}'{{^last}}, {{/last}}{{/values}}] as const;
 {{/enums}}
 
@@ -51,12 +50,11 @@ export const {{tableUpdateSchemaName}} = TableWriteSchema.partial().transform(da
 type TableInsertRecord = z.input<typeof {{tableInsertSchemaName}}>;
 {{/isWritable}}
 {{#enums}}
-
 export type {{typeName}} = (typeof {{constantName}})[number];
 {{/enums}}
 
 /**
-* Represents a database record from the "{{schemaName}}.{{tableName}}" table.
+* Represents a database record from the "{{schemaName}}.{{tableName}}" {{type}}.
 */
 export interface {{tableReadRecordName}} {
 {{#readableColumns}}

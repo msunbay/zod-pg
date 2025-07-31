@@ -122,6 +122,7 @@ export interface ZodPgImport {
 
 export interface ZodPgTable {
   schemaName: string;
+  type: ZodPgTableType;
   tableName: string;
   tableSingularName: string;
 

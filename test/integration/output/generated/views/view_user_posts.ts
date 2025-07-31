@@ -39,7 +39,7 @@ export const ViewUserPostsSchema = z.object({
 type TableReadRecord = z.output<typeof ViewUserPostsSchema>;
 
 /**
-* Represents a database record from the "public.view_user_posts" table.
+* Represents a database record from the "public.view_user_posts" view.
 */
 export interface ViewUserPostRecord {
     userId: TableReadRecord['userId'];

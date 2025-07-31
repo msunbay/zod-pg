@@ -30,7 +30,7 @@ export async function generateSchemaFile(
   await ensureFolder(folderPath);
 
   const fileName = `${folderPath}/${table.tableName}.ts`;
-  await promises.writeFile(fileName, output);
+  await promises.writeFile(fileName, output, 'utf8');
 
   logDebug(`Generated "${fileName}"`);
 }

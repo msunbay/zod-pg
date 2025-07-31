@@ -49,7 +49,13 @@ type TableInsertRecord = z.input<typeof PostCategoriesTableInsertSchema>;
 * Represents a database record from the "public.post_categories" table.
 */
 export interface PostCategoryRecord {
+    /**
+     * ID of the post
+     */
     postId: TableReadRecord['postId'];
+    /**
+     * ID of the category
+     */
     categoryId: TableReadRecord['categoryId'];
 }
 
@@ -58,9 +64,11 @@ export interface PostCategoryRecord {
 */
 export interface PostCategoryInsertRecord {
     /**
+    * ID of the post
     */
     postId: TableInsertRecord['postId'];
     /**
+    * ID of the category
     */
     categoryId: TableInsertRecord['categoryId'];
 }

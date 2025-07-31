@@ -1,36 +1,34 @@
 import { promises } from 'fs';
 
-import { GENERATED_HEADER_COMMENT } from '../constants.js';
 import { ZodPgConfig, ZodPgSchemaInfo, ZodPgTableType } from '../types.js';
 import { logDebug } from '../utils/debug.js';
 import { getOutputFolder } from '../utils/fs.js';
+import { renderTemplate } from './template.js';
 
 const generateSchemasIndexFile = async (
   schema: ZodPgSchemaInfo,
   type: ZodPgTableType,
   { outputDir, outputModule }: Pick<ZodPgConfig, 'outputDir' | 'outputModule'>
 ) => {
-  const indexContent = schema.tables
+  const exports = schema.tables
     .filter((table) => table.type === type)
-    .map(({ name }) => {
-      if (outputModule === 'esm') return `export * from './${name}.js';`;
-      else return `export * from './${name}';`;
-    })
-    .join('\n');
+    .map(({ name }) => ({
+      fileName: outputModule === 'esm' ? `${name}.js` : name,
+    }));
 
-  if (indexContent.length === 0) {
+  if (exports.length === 0) {
     logDebug(
       `No ${type} found in schema '${schema.name}' to generate index file.`
     );
+
     return;
   }
 
+  const content = await renderTemplate('index', { exports });
+
   const filePath = `${outputDir}/${getOutputFolder(type)}/index.ts`;
 
-  await promises.writeFile(
-    filePath,
-    `${GENERATED_HEADER_COMMENT}\n${indexContent}\n`
-  );
+  await promises.writeFile(filePath, content, 'utf8');
 
   logDebug(`Generated "${filePath}" file`);
 };

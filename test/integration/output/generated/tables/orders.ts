@@ -185,18 +185,57 @@ type TableInsertRecord = z.input<typeof OrdersTableInsertSchema>;
 * Represents a database record from the "public.orders" table.
 */
 export interface OrderRecord {
+    /**
+     * Primary key for orders table
+     */
     id: TableReadRecord['id'];
+    /**
+     * Unique order number
+     */
     orderNumber: TableReadRecord['orderNumber'];
+    /**
+     * ID of the user who placed the order
+     */
     userId: TableReadRecord['userId'];
+    /**
+     * Current status of the order
+     */
     status: TableReadRecord['status'];
+    /**
+     * Total order amount
+     */
     totalAmount: TableReadRecord['totalAmount'];
+    /**
+     * Tax amount for the order
+     */
     taxAmount: TableReadRecord['taxAmount'];
+    /**
+     * Shipping cost for the order
+     */
     shippingCost: TableReadRecord['shippingCost'];
+    /**
+     * Date when order was placed
+     */
     orderDate: TableReadRecord['orderDate'];
+    /**
+     * Date when order was shipped
+     */
     shippedDate: TableReadRecord['shippedDate'];
+    /**
+     * Expected delivery time
+     */
     deliveryTime: TableReadRecord['deliveryTime'];
+    /**
+     * Array of order notes
+     */
     notes: TableReadRecord['notes'];
+    /**
+     * Additional order metadata
+     */
     metadata: TableReadRecord['metadata'];
+    /**
+     * Timestamp when order was created
+     */
     createdAt: TableReadRecord['createdAt'];
 }
 
@@ -205,44 +244,56 @@ export interface OrderRecord {
 */
 export interface OrderInsertRecord {
     /**
+    * Unique order number
     * @maxLen: 20
     */
     orderNumber: TableInsertRecord['orderNumber'];
     /**
+    * ID of the user who placed the order
     */
     userId?: TableInsertRecord['userId'];
     /**
+    * Current status of the order
     * @default: 'pending'::order_status
     */
     status?: TableInsertRecord['status'];
     /**
+    * Total order amount
     */
     totalAmount: TableInsertRecord['totalAmount'];
     /**
+    * Tax amount for the order
     * @default: 0
     */
     taxAmount?: TableInsertRecord['taxAmount'];
     /**
+    * Shipping cost for the order
     * @default: 0
     */
     shippingCost?: TableInsertRecord['shippingCost'];
     /**
+    * Date when order was placed
     * @default: CURRENT_DATE
     */
     orderDate?: TableInsertRecord['orderDate'];
     /**
+    * Date when order was shipped
     */
     shippedDate?: TableInsertRecord['shippedDate'];
     /**
+    * Expected delivery time
     */
     deliveryTime?: TableInsertRecord['deliveryTime'];
     /**
+    * Array of order notes
     */
     notes?: TableInsertRecord['notes'];
     /**
+    * Additional order metadata
     */
     metadata?: TableInsertRecord['metadata'];
     /**
+    * Timestamp when order was created
     * @default: now()
     */
     createdAt?: TableInsertRecord['createdAt'];

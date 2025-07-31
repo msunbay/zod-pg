@@ -127,13 +127,37 @@ type TableInsertRecord = z.input<typeof UserSessionsTableInsertSchema>;
 * Represents a database record from the "public.user_sessions" table.
 */
 export interface UserSessionRecord {
+    /**
+     * Primary key for user sessions table
+     */
     id: TableReadRecord['id'];
+    /**
+     * ID of the user this session belongs to
+     */
     userId: TableReadRecord['userId'];
+    /**
+     * Hashed session token
+     */
     tokenHash: TableReadRecord['tokenHash'];
+    /**
+     * Timestamp when the session expires
+     */
     expiresAt: TableReadRecord['expiresAt'];
+    /**
+     * Timestamp when the session was created
+     */
     createdAt: TableReadRecord['createdAt'];
+    /**
+     * Timestamp when the session was last used
+     */
     lastUsedAt: TableReadRecord['lastUsedAt'];
+    /**
+     * IP address of the client
+     */
     ipAddress: TableReadRecord['ipAddress'];
+    /**
+     * User agent string of the client
+     */
     userAgent: TableReadRecord['userAgent'];
 }
 
@@ -142,31 +166,39 @@ export interface UserSessionRecord {
 */
 export interface UserSessionInsertRecord {
     /**
+    * Primary key for user sessions table
     * @default: gen_random_uuid()
     */
     id: TableInsertRecord['id'];
     /**
+    * ID of the user this session belongs to
     */
     userId?: TableInsertRecord['userId'];
     /**
+    * Hashed session token
     * @maxLen: 255
     */
     tokenHash: TableInsertRecord['tokenHash'];
     /**
+    * Timestamp when the session expires
     */
     expiresAt: TableInsertRecord['expiresAt'];
     /**
+    * Timestamp when the session was created
     * @default: now()
     */
     createdAt?: TableInsertRecord['createdAt'];
     /**
+    * Timestamp when the session was last used
     * @default: now()
     */
     lastUsedAt?: TableInsertRecord['lastUsedAt'];
     /**
+    * IP address of the client
     */
     ipAddress?: TableInsertRecord['ipAddress'];
     /**
+    * User agent string of the client
     */
     userAgent?: TableInsertRecord['userAgent'];
 }
