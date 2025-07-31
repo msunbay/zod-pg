@@ -79,6 +79,7 @@ export const getSchemaInformation = async (
 
     const parsedColumn: ZodPgColumnInfo = {
       ...column,
+      schemaName, // Include schemaName to satisfy the interface contract
       maxLen: column.maxLen ?? undefined,
       isEnum: false,
       isSerial: false,
