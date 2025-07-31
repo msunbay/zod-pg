@@ -1,11 +1,10 @@
 import { promises } from 'fs';
 import path from 'path';
-import { fileURLToPath } from 'url';
+
 import mustache from 'mustache';
 
 export const loadTemplate = async (templateName: string): Promise<string> => {
-  const __filename = fileURLToPath(import.meta.url);
-  const __dirname = path.dirname(__filename);
+  const __dirname = import.meta.dirname;
 
   const templatePath = path.join(
     __dirname,
