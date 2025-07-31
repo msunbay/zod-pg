@@ -8,7 +8,7 @@ import {
   singularUpperCase,
   snakeCase,
   upperFirst,
-} from '../../../src/utils/casing.js';
+} from '../../../../src/utils/casing.js';
 
 describe('casing utilities', () => {
   describe('camelCase', () => {

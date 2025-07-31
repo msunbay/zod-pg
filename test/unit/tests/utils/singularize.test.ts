@@ -1,4 +1,4 @@
-import { singularize } from '../../../src/utils/singularize.js';
+import { singularize } from '../../../../src/utils/singularize.js';
 
 describe('singularize', () => {
   it('should singularize words ending with "ies"', () => {

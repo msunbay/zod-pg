@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { enableDebug, logDebug } from '../../../src/utils/debug.js';
+import { enableDebug, logDebug } from '../../../../src/utils/debug.js';
 
 // Mock the debug package
 vi.mock('debug', () => {

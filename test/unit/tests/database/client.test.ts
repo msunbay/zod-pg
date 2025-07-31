@@ -1,4 +1,4 @@
-import { createClient } from '../../../src/database/client.js';
+import { createClient } from '../../../../src/database/client.js';
 
 describe('createClient', () => {
   it('should create a pg Client with correct config', () => {

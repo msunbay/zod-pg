@@ -1,11 +1,9 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest';
-
 import {
   logAppName,
   logError,
   logSetting,
   logWarning,
-} from '../../../src/utils/logger.js';
+} from '../../../../src/utils/logger.js';
 
 // Mock console methods
 const mockConsoleInfo = vi.spyOn(console, 'info').mockImplementation(() => {});

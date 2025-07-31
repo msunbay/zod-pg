@@ -1,4 +1,4 @@
-import { toError } from '../../../src/utils/error.js';
+import { toError } from '../../../../src/utils/error.js';
 
 describe('toError', () => {
   it('should return Error as-is when input is an Error', () => {
