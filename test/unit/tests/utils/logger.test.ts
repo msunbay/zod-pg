@@ -24,7 +24,7 @@ vi.mock('chalk', () => ({
 
 describe('logger utilities', () => {
   beforeEach(() => {
-    vi.resetAllMocks();
+    vi.clearAllMocks();
   });
 
   describe('logSetting', () => {
