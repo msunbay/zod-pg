@@ -45,6 +45,21 @@ export const main = async (port?: number) => {
     config.coerceDates
   );
   program.option(
+    '--stringify-json',
+    'Stringify JSON values in write schemas',
+    config.stringifyJson
+  );
+  program.option(
+    '--stringify-dates',
+    'Convert dates to ISO strings in write schemas',
+    config.stringifyDates
+  );
+  program.option(
+    '--default-empty-array',
+    'Provide empty arrays as defaults for nullable array fields',
+    config.defaultEmptyArray
+  );
+  program.option(
     '--exclude <regex>',
     'Exclude tables matching this regex',
     config.exclude
@@ -130,9 +145,6 @@ export const main = async (port?: number) => {
   }
 
   const cliConfig = {
-    defaultEmptyArray: true,
-    stringifyJson: true,
-
     ...config,
     connection: {
       connectionString,
@@ -142,6 +154,9 @@ export const main = async (port?: number) => {
     outputDir: options.output,
     cleanOutput: options.clean,
     coerceDates: options.coerceDates,
+    stringifyJson: options.stringifyJson ?? true,
+    stringifyDates: options.stringifyDates,
+    defaultEmptyArray: options.defaultEmptyArray ?? true,
     schemaName: options.schema,
     exclude: options.exclude,
     include: options.include,
@@ -156,6 +171,9 @@ export const main = async (port?: number) => {
     logSetting('output', cliConfig.outputDir);
     if (cliConfig.cleanOutput) logSetting('clean-output', 'true');
     if (cliConfig.coerceDates) logSetting('coerce-dates', 'true');
+    if (cliConfig.stringifyJson) logSetting('stringify-json', 'true');
+    if (cliConfig.stringifyDates) logSetting('stringify-dates', 'true');
+    if (cliConfig.defaultEmptyArray) logSetting('default-empty-array', 'true');
     logSetting('module', cliConfig.moduleResolution);
     logSetting('zod-version', cliConfig.zodVersion);
     logSetting(
