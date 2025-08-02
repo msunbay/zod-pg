@@ -24,10 +24,9 @@ describe('render', () => {
     name: 'test_column',
     dataType: 'text',
     isNullable: false,
-    udtName: 'text',
     tableName: 'test_table',
     schemaName: 'public',
-    zodType: 'string' as ZodPgColumnType,
+    type: 'string' as ZodPgColumnType,
     isEnum: false,
     isSerial: false,
     isArray: false,
@@ -43,10 +42,9 @@ describe('render', () => {
     propertyName: 'testColumn',
     dataType: 'text',
     isNullable: false,
-    udtName: 'text',
     tableName: 'test_table',
     schemaName: 'public',
-    zodType: 'string' as ZodPgColumnType,
+    type: 'string' as ZodPgColumnType,
     isEnum: false,
     isSerial: false,
     isArray: false,
@@ -127,7 +125,7 @@ describe('render', () => {
   describe('createRenderWriteTransform', () => {
     it('should return original text for non-json, non-date column', () => {
       const column = createMockColumnBaseModel({
-        zodType: 'string',
+        type: 'string',
         isNullable: false,
         isArray: false,
       });
@@ -140,7 +138,7 @@ describe('render', () => {
 
     it('should stringify JSON for non-nullable json column when stringifyJson is true', () => {
       const column = createMockColumnBaseModel({
-        zodType: 'json',
+        type: 'json',
         isNullable: false,
         isArray: false,
       });
@@ -157,7 +155,7 @@ describe('render', () => {
 
     it('should conditionally stringify JSON for nullable json column when stringifyJson is true', () => {
       const column = createMockColumnBaseModel({
-        zodType: 'json',
+        type: 'json',
         isNullable: true,
         isArray: false,
       });
@@ -174,7 +172,7 @@ describe('render', () => {
 
     it('should convert date to ISO string for non-nullable date column when stringifyDates is true', () => {
       const column = createMockColumnBaseModel({
-        zodType: 'date',
+        type: 'date',
         isNullable: false,
         isArray: false,
       });
@@ -191,7 +189,7 @@ describe('render', () => {
 
     it('should conditionally convert date to ISO string for nullable date column when stringifyDates is true', () => {
       const column = createMockColumnBaseModel({
-        zodType: 'date',
+        type: 'date',
         isNullable: true,
         isArray: false,
       });
@@ -208,7 +206,7 @@ describe('render', () => {
 
     it('should map date array to ISO strings for non-nullable date array when stringifyDates is true', () => {
       const column = createMockColumnBaseModel({
-        zodType: 'date',
+        type: 'date',
         isNullable: false,
         isArray: true,
       });
@@ -225,7 +223,7 @@ describe('render', () => {
 
     it('should conditionally map date array to ISO strings for nullable date array when stringifyDates is true', () => {
       const column = createMockColumnBaseModel({
-        zodType: 'date',
+        type: 'date',
         isNullable: true,
         isArray: true,
       });
@@ -246,7 +244,7 @@ describe('render', () => {
   describe('renderReadField', () => {
     it('should render basic string field', () => {
       const column = createMockColumnBaseModel({
-        zodType: 'string',
+        type: 'string',
         isNullable: false,
         isArray: false,
       });
@@ -257,7 +255,7 @@ describe('render', () => {
 
     it('should render nullable string field', () => {
       const column = createMockColumnBaseModel({
-        zodType: 'string',
+        type: 'string',
         isNullable: true,
         isArray: false,
       });
@@ -268,7 +266,7 @@ describe('render', () => {
 
     it('should render array field', () => {
       const column = createMockColumnBaseModel({
-        zodType: 'string',
+        type: 'string',
         isNullable: false,
         isArray: true,
       });
@@ -279,7 +277,7 @@ describe('render', () => {
 
     it('should render nullable array field', () => {
       const column = createMockColumnBaseModel({
-        zodType: 'string',
+        type: 'string',
         isNullable: true,
         isArray: true,
       });
@@ -290,7 +288,7 @@ describe('render', () => {
 
     it('should render enum field', () => {
       const column = createMockColumnBaseModel({
-        zodType: 'string',
+        type: 'string',
         isNullable: false,
         isArray: false,
         isEnum: true,
@@ -303,7 +301,7 @@ describe('render', () => {
 
     it('should render JSON field with schema import', () => {
       const column = createMockColumnBaseModel({
-        zodType: 'json',
+        type: 'json',
         isNullable: false,
         isArray: false,
         jsonSchemaName: 'CustomSchema',
@@ -321,7 +319,7 @@ describe('render', () => {
     describe('zodType rendering with different versions', () => {
       it('should render email field for zod v3', () => {
         const column = createMockColumnBaseModel({
-          zodType: 'email',
+          type: 'email',
           isNullable: false,
           isArray: false,
         });
@@ -332,7 +330,7 @@ describe('render', () => {
 
       it('should render email field for zod v4', () => {
         const column = createMockColumnBaseModel({
-          zodType: 'email',
+          type: 'email',
           isNullable: false,
           isArray: false,
         });
@@ -344,7 +342,7 @@ describe('render', () => {
 
       it('should render url field for zod v3', () => {
         const column = createMockColumnBaseModel({
-          zodType: 'url',
+          type: 'url',
           isNullable: false,
           isArray: false,
         });
@@ -355,7 +353,7 @@ describe('render', () => {
 
       it('should render url field for zod v4', () => {
         const column = createMockColumnBaseModel({
-          zodType: 'url',
+          type: 'url',
           isNullable: false,
           isArray: false,
         });
@@ -367,7 +365,7 @@ describe('render', () => {
 
       it('should render int field for zod v3', () => {
         const column = createMockColumnBaseModel({
-          zodType: 'int',
+          type: 'int',
           isNullable: false,
           isArray: false,
         });
@@ -378,7 +376,7 @@ describe('render', () => {
 
       it('should render int field for zod v4', () => {
         const column = createMockColumnBaseModel({
-          zodType: 'int',
+          type: 'int',
           isNullable: false,
           isArray: false,
         });
@@ -390,7 +388,7 @@ describe('render', () => {
 
       it('should render uuid field for zod v3', () => {
         const column = createMockColumnBaseModel({
-          zodType: 'uuid',
+          type: 'uuid',
           isNullable: false,
           isArray: false,
         });
@@ -401,7 +399,7 @@ describe('render', () => {
 
       it('should render uuid field for zod v4', () => {
         const column = createMockColumnBaseModel({
-          zodType: 'uuid',
+          type: 'uuid',
           isNullable: false,
           isArray: false,
         });
@@ -413,7 +411,7 @@ describe('render', () => {
 
       it('should render json field for zod v3', () => {
         const column = createMockColumnBaseModel({
-          zodType: 'json',
+          type: 'json',
           isNullable: false,
           isArray: false,
         });
@@ -424,7 +422,7 @@ describe('render', () => {
 
       it('should render json field for zod v4', () => {
         const column = createMockColumnBaseModel({
-          zodType: 'json',
+          type: 'json',
           isNullable: false,
           isArray: false,
         });
@@ -436,7 +434,7 @@ describe('render', () => {
 
       it('should render number field', () => {
         const column = createMockColumnBaseModel({
-          zodType: 'number',
+          type: 'number',
           isNullable: false,
           isArray: false,
         });
@@ -447,7 +445,7 @@ describe('render', () => {
 
       it('should render boolean field', () => {
         const column = createMockColumnBaseModel({
-          zodType: 'boolean',
+          type: 'boolean',
           isNullable: false,
           isArray: false,
         });
@@ -458,7 +456,7 @@ describe('render', () => {
 
       it('should render date field', () => {
         const column = createMockColumnBaseModel({
-          zodType: 'date',
+          type: 'date',
           isNullable: false,
           isArray: false,
         });
@@ -469,7 +467,7 @@ describe('render', () => {
 
       it('should render unknown type as z.any()', () => {
         const column = createMockColumnBaseModel({
-          zodType: 'any',
+          type: 'any',
           isNullable: false,
           isArray: false,
         });
@@ -483,7 +481,7 @@ describe('render', () => {
   describe('renderWriteField', () => {
     it('should render basic string field with nullish for nullable', () => {
       const column = createMockColumnBaseModel({
-        zodType: 'string',
+        type: 'string',
         isNullable: true,
         isArray: false,
       });
@@ -494,7 +492,7 @@ describe('render', () => {
 
     it('should render field with min length constraint', () => {
       const column = createMockColumnBaseModel({
-        zodType: 'string',
+        type: 'string',
         isNullable: false,
         isArray: false,
         minLen: 5,
@@ -506,7 +504,7 @@ describe('render', () => {
 
     it('should render field with max length constraint', () => {
       const column = createMockColumnBaseModel({
-        zodType: 'string',
+        type: 'string',
         isNullable: false,
         isArray: false,
         maxLen: 100,
@@ -518,7 +516,7 @@ describe('render', () => {
 
     it('should render field with both min and max length constraints', () => {
       const column = createMockColumnBaseModel({
-        zodType: 'string',
+        type: 'string',
         isNullable: false,
         isArray: false,
         minLen: 5,
@@ -531,7 +529,7 @@ describe('render', () => {
 
     it('should render nullable field with min/max and nullish', () => {
       const column = createMockColumnBaseModel({
-        zodType: 'string',
+        type: 'string',
         isNullable: true,
         isArray: false,
         minLen: 5,
@@ -544,7 +542,7 @@ describe('render', () => {
 
     it('should not apply min/max constraints to enum fields', () => {
       const column = createMockColumnBaseModel({
-        zodType: 'string',
+        type: 'string',
         isNullable: false,
         isArray: false,
         isEnum: true,
@@ -559,7 +557,7 @@ describe('render', () => {
 
     it('should handle zero as valid min length', () => {
       const column = createMockColumnBaseModel({
-        zodType: 'string',
+        type: 'string',
         isNullable: false,
         isArray: false,
         minLen: 0,
@@ -571,7 +569,7 @@ describe('render', () => {
 
     it('should handle undefined minLen/maxLen as no constraint', () => {
       const column = createMockColumnBaseModel({
-        zodType: 'string',
+        type: 'string',
         isNullable: false,
         isArray: false,
         minLen: undefined,

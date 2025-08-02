@@ -5,7 +5,7 @@ import type { ZodPgConfig, ZodPgProgress, ZodPgSchemaInfo } from './types.js';
 import { createClient } from './database/client.js';
 import { getSchemaInformation } from './database/schema.js';
 import { generateConstantsFile } from './generate/generateConstantsFile.js';
-import { generateSchemasIndexFiles } from './generate/generateIndexFile.js';
+import { generateIndexFiles } from './generate/generateIndexFiles.js';
 import { generateSchemaFile } from './generate/generateSchemaFile.js';
 import { generateTypesFile } from './generate/generateTypesFile.js';
 import { clearTablesDirectory, logDebug } from './utils/index.js';
@@ -21,7 +21,7 @@ const defaultConfig = {
   zodVersion: 3,
   fieldNameCasing: 'camelCase',
   objectNameCasing: 'PascalCase',
-  outputModule: 'commonjs',
+  moduleResolution: 'commonjs',
 } satisfies Partial<ZodPgGenerateConfig>;
 
 /**
@@ -74,7 +74,7 @@ export const generateZodSchemas = async ({
       await generateSchemaFile(tableInfo, generateConfig);
     }
 
-    await generateSchemasIndexFiles(schema, generateConfig);
+    await generateIndexFiles(schema, generateConfig);
     await generateConstantsFile(schema, generateConfig);
     await generateTypesFile(schema, generateConfig);
 

@@ -2,23 +2,23 @@ import { ZodPgColumnType, ZodPgRawColumnInfo } from '../types.js';
 
 export const isArrayType = (column: ZodPgRawColumnInfo): boolean => {
   // Check if the udtName starts with an underscore, indicating an array type
-  return column.udtName.startsWith('_');
+  return column.dataType.startsWith('_');
 };
 
 export const isSerialType = (column: ZodPgRawColumnInfo): boolean => {
   // Serial types in Postgres often have default values like nextval('sequence_name'::regclass)
   return (
     column.defaultValue?.toLowerCase().startsWith('nextval(') ||
-    column.udtName === 'serial' ||
-    column.udtName === 'serial4' ||
-    column.udtName === 'serial8' ||
-    column.udtName === 'bigserial'
+    column.dataType === 'serial' ||
+    column.dataType === 'serial4' ||
+    column.dataType === 'serial8' ||
+    column.dataType === 'bigserial'
   );
 };
 
 export const getZodType = (column: ZodPgRawColumnInfo): ZodPgColumnType => {
   // Normalize the udtName to handle variations
-  const lowerUdtName = column.udtName.toLowerCase();
+  const lowerUdtName = column.dataType.toLowerCase();
 
   const normalizedType = lowerUdtName.startsWith('_')
     ? lowerUdtName.slice(1) // Remove leading underscore for array types

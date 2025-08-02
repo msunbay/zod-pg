@@ -31,8 +31,8 @@ export const main = async (port?: number) => {
   program.option('--silent', 'Suppress all console output', config.silent);
   program.option(
     '--module <type>',
-    'Module type for generated files (commonjs or esm)',
-    config.outputModule || 'commonjs'
+    'Module resolution type for generated files (commonjs or esm)',
+    config.moduleResolution || 'commonjs'
   );
   program.option(
     '--clean',
@@ -140,7 +140,7 @@ export const main = async (port?: number) => {
     exclude: options.exclude,
     include: options.include,
     jsonSchemaImportLocation: options.jsonSchemaImportLocation,
-    outputModule: options.module,
+    moduleResolution: options.module,
     zodVersion: options.zodVersion,
   };
 
@@ -149,7 +149,7 @@ export const main = async (port?: number) => {
 
     logSetting('output', cliConfig.outputDir);
     if (cliConfig.cleanOutput) logSetting('clean-output', 'true');
-    logSetting('module', cliConfig.outputModule);
+    logSetting('module', cliConfig.moduleResolution);
     logSetting('zod-version', cliConfig.zodVersion);
     logSetting(
       'connection',

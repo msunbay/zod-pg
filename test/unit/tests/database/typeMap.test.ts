@@ -12,7 +12,6 @@ const createMockColumn = (
   name: 'test_column',
   dataType: 'text',
   isNullable: false,
-  udtName: 'text',
   tableName: 'test_table',
   schemaName: 'public',
   tableType: 'table' as ZodPgTableType,
@@ -22,7 +21,7 @@ const createMockColumn = (
 describe('typeMap', () => {
   describe('isArrayType', () => {
     it('should return true for array types (udtName starting with underscore)', () => {
-      const column = createMockColumn({ udtName: '_text' });
+      const column = createMockColumn({ dataType: '_text' });
       expect(isArrayType(column)).toBe(true);
     });
 
@@ -30,7 +29,7 @@ describe('typeMap', () => {
       const arrayTypes = ['_int4', '_varchar', '_numeric', '_bool', '_uuid'];
 
       arrayTypes.forEach((udtName) => {
-        const column = createMockColumn({ udtName });
+        const column = createMockColumn({ dataType: udtName });
         expect(isArrayType(column)).toBe(true);
       });
     });
@@ -46,18 +45,18 @@ describe('typeMap', () => {
       ];
 
       nonArrayTypes.forEach((udtName) => {
-        const column = createMockColumn({ udtName });
+        const column = createMockColumn({ dataType: udtName });
         expect(isArrayType(column)).toBe(false);
       });
     });
 
     it('should return false for empty string', () => {
-      const column = createMockColumn({ udtName: '' });
+      const column = createMockColumn({ dataType: '' });
       expect(isArrayType(column)).toBe(false);
     });
 
     it('should return false for udtName containing underscore but not at start', () => {
-      const column = createMockColumn({ udtName: 'test_type' });
+      const column = createMockColumn({ dataType: 'test_type' });
       expect(isArrayType(column)).toBe(false);
     });
   });
@@ -67,7 +66,7 @@ describe('typeMap', () => {
       const serialTypes = ['serial', 'serial4', 'serial8', 'bigserial'];
 
       serialTypes.forEach((udtName) => {
-        const column = createMockColumn({ udtName });
+        const column = createMockColumn({ dataType: udtName });
         expect(isSerialType(column)).toBe(true);
       });
     });
@@ -81,7 +80,7 @@ describe('typeMap', () => {
 
       defaultValues.forEach((defaultValue) => {
         const column = createMockColumn({
-          udtName: 'int4',
+          dataType: 'int4',
           defaultValue,
         });
         expect(isSerialType(column)).toBe(true);
@@ -92,7 +91,7 @@ describe('typeMap', () => {
       const nonSerialTypes = ['text', 'int4', 'varchar', 'numeric', 'bool'];
 
       nonSerialTypes.forEach((udtName) => {
-        const column = createMockColumn({ udtName });
+        const column = createMockColumn({ dataType: udtName });
         expect(isSerialType(column)).toBe(false);
       });
     });
@@ -108,7 +107,7 @@ describe('typeMap', () => {
 
       defaultValues.forEach((defaultValue) => {
         const column = createMockColumn({
-          udtName: 'text',
+          dataType: 'text',
           defaultValue,
         });
         expect(isSerialType(column)).toBe(false);
@@ -117,7 +116,7 @@ describe('typeMap', () => {
 
     it('should return false for undefined defaultValue', () => {
       const column = createMockColumn({
-        udtName: 'int4',
+        dataType: 'int4',
         defaultValue: undefined,
       });
       expect(isSerialType(column)).toBe(false);
@@ -125,7 +124,7 @@ describe('typeMap', () => {
 
     it('should handle case insensitive nextval matching', () => {
       const column = createMockColumn({
-        udtName: 'int4',
+        dataType: 'int4',
         defaultValue: "NEXTVAL('seq'::regclass)",
       });
       expect(isSerialType(column)).toBe(true);
@@ -152,18 +151,18 @@ describe('typeMap', () => {
         ];
 
         stringTypes.forEach((udtName) => {
-          const column = createMockColumn({ udtName });
+          const column = createMockColumn({ dataType: udtName });
           expect(getZodType(column)).toBe('string');
         });
       });
 
       it('should handle uppercase udtName for string types', () => {
-        const column = createMockColumn({ udtName: 'TEXT' });
+        const column = createMockColumn({ dataType: 'TEXT' });
         expect(getZodType(column)).toBe('string');
       });
 
       it('should handle mixed case udtName for string types', () => {
-        const column = createMockColumn({ udtName: 'VarChar' });
+        const column = createMockColumn({ dataType: 'VarChar' });
         expect(getZodType(column)).toBe('string');
       });
     });
@@ -181,13 +180,13 @@ describe('typeMap', () => {
         ];
 
         intTypes.forEach((udtName) => {
-          const column = createMockColumn({ udtName });
+          const column = createMockColumn({ dataType: udtName });
           expect(getZodType(column)).toBe('int');
         });
       });
 
       it('should handle uppercase udtName for integer types', () => {
-        const column = createMockColumn({ udtName: 'INT4' });
+        const column = createMockColumn({ dataType: 'INT4' });
         expect(getZodType(column)).toBe('int');
       });
     });
@@ -197,25 +196,25 @@ describe('typeMap', () => {
         const numberTypes = ['float4', 'float8', 'numeric', 'money'];
 
         numberTypes.forEach((udtName) => {
-          const column = createMockColumn({ udtName });
+          const column = createMockColumn({ dataType: udtName });
           expect(getZodType(column)).toBe('number');
         });
       });
 
       it('should handle uppercase udtName for number types', () => {
-        const column = createMockColumn({ udtName: 'NUMERIC' });
+        const column = createMockColumn({ dataType: 'NUMERIC' });
         expect(getZodType(column)).toBe('number');
       });
     });
 
     describe('boolean types', () => {
       it('should return "boolean" for bool type', () => {
-        const column = createMockColumn({ udtName: 'bool' });
+        const column = createMockColumn({ dataType: 'bool' });
         expect(getZodType(column)).toBe('boolean');
       });
 
       it('should handle uppercase udtName for boolean types', () => {
-        const column = createMockColumn({ udtName: 'BOOL' });
+        const column = createMockColumn({ dataType: 'BOOL' });
         expect(getZodType(column)).toBe('boolean');
       });
     });
@@ -225,25 +224,25 @@ describe('typeMap', () => {
         const dateTypes = ['timestamptz', 'timestamp', 'date'];
 
         dateTypes.forEach((udtName) => {
-          const column = createMockColumn({ udtName });
+          const column = createMockColumn({ dataType: udtName });
           expect(getZodType(column)).toBe('date');
         });
       });
 
       it('should handle uppercase udtName for date types', () => {
-        const column = createMockColumn({ udtName: 'TIMESTAMPTZ' });
+        const column = createMockColumn({ dataType: 'TIMESTAMPTZ' });
         expect(getZodType(column)).toBe('date');
       });
     });
 
     describe('uuid types', () => {
       it('should return "uuid" for uuid type', () => {
-        const column = createMockColumn({ udtName: 'uuid' });
+        const column = createMockColumn({ dataType: 'uuid' });
         expect(getZodType(column)).toBe('uuid');
       });
 
       it('should handle uppercase udtName for uuid types', () => {
-        const column = createMockColumn({ udtName: 'UUID' });
+        const column = createMockColumn({ dataType: 'UUID' });
         expect(getZodType(column)).toBe('uuid');
       });
     });
@@ -253,13 +252,13 @@ describe('typeMap', () => {
         const jsonTypes = ['jsonb', 'json'];
 
         jsonTypes.forEach((udtName) => {
-          const column = createMockColumn({ udtName });
+          const column = createMockColumn({ dataType: udtName });
           expect(getZodType(column)).toBe('json');
         });
       });
 
       it('should handle uppercase udtName for json types', () => {
-        const column = createMockColumn({ udtName: 'JSONB' });
+        const column = createMockColumn({ dataType: 'JSONB' });
         expect(getZodType(column)).toBe('json');
       });
     });
@@ -277,18 +276,18 @@ describe('typeMap', () => {
         ];
 
         arrayMappings.forEach(({ udtName, expected }) => {
-          const column = createMockColumn({ udtName });
+          const column = createMockColumn({ dataType: udtName });
           expect(getZodType(column)).toBe(expected);
         });
       });
 
       it('should handle uppercase array types', () => {
-        const column = createMockColumn({ udtName: '_TEXT' });
+        const column = createMockColumn({ dataType: '_TEXT' });
         expect(getZodType(column)).toBe('string');
       });
 
       it('should handle mixed case array types', () => {
-        const column = createMockColumn({ udtName: '_VarChar' });
+        const column = createMockColumn({ dataType: '_VarChar' });
         expect(getZodType(column)).toBe('string');
       });
     });
@@ -304,36 +303,36 @@ describe('typeMap', () => {
         ];
 
         unknownTypes.forEach((udtName) => {
-          const column = createMockColumn({ udtName });
+          const column = createMockColumn({ dataType: udtName });
           expect(getZodType(column)).toBe('any');
         });
       });
 
       it('should return "any" for empty string', () => {
-        const column = createMockColumn({ udtName: '' });
+        const column = createMockColumn({ dataType: '' });
         expect(getZodType(column)).toBe('any');
       });
 
       it('should return "any" for array of unknown types', () => {
-        const column = createMockColumn({ udtName: '_unknown_type' });
+        const column = createMockColumn({ dataType: '_unknown_type' });
         expect(getZodType(column)).toBe('any');
       });
     });
 
     describe('edge cases', () => {
       it('should handle types with special characters', () => {
-        const column = createMockColumn({ udtName: 'type-with-dash' });
+        const column = createMockColumn({ dataType: 'type-with-dash' });
         expect(getZodType(column)).toBe('any');
       });
 
       it('should handle very long type names', () => {
         const longTypeName = 'a'.repeat(100);
-        const column = createMockColumn({ udtName: longTypeName });
+        const column = createMockColumn({ dataType: longTypeName });
         expect(getZodType(column)).toBe('any');
       });
 
       it('should handle types with numbers', () => {
-        const column = createMockColumn({ udtName: 'type123' });
+        const column = createMockColumn({ dataType: 'type123' });
         expect(getZodType(column)).toBe('any');
       });
     });

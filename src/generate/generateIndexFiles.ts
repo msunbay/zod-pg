@@ -8,12 +8,15 @@ import { renderTemplate } from './template.js';
 const generateSchemasIndexFile = async (
   schema: ZodPgSchemaInfo,
   type: ZodPgTableType,
-  { outputDir, outputModule }: Pick<ZodPgConfig, 'outputDir' | 'outputModule'>
+  {
+    outputDir,
+    moduleResolution,
+  }: Pick<ZodPgConfig, 'outputDir' | 'moduleResolution'>
 ) => {
   const exports = schema.tables
     .filter((table) => table.type === type)
     .map(({ name }) => ({
-      fileName: outputModule === 'esm' ? `${name}.js` : name,
+      fileName: moduleResolution === 'esm' ? `${name}.js` : name,
     }));
 
   if (exports.length === 0) {
@@ -33,7 +36,7 @@ const generateSchemasIndexFile = async (
   logDebug(`Generated "${filePath}" file`);
 };
 
-export const generateSchemasIndexFiles = async (
+export const generateIndexFiles = async (
   schema: ZodPgSchemaInfo,
   config: ZodPgConfig
 ): Promise<void> => {

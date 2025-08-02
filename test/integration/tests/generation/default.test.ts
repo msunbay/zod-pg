@@ -31,7 +31,7 @@ it('generates correct zod schemas with default options', async () => {
     },
 
     outputDir,
-    outputModule: 'esm',
+    moduleResolution: 'esm',
   });
 
   const outputFiles = await getOutputFiles();

@@ -84,7 +84,7 @@ export const getSchemaInformation = async (
       isEnum: false,
       isSerial: false,
       isArray: false,
-      zodType: 'any', // Default type, will be updated later
+      type: 'any', // Default type, will be updated later
     };
 
     if (column.checkConstraints) {
@@ -98,7 +98,7 @@ export const getSchemaInformation = async (
       );
     }
 
-    parsedColumn.zodType = getZodType(column);
+    parsedColumn.type = getZodType(column);
     parsedColumn.isArray = isArrayType(column);
     parsedColumn.isSerial = isSerialType(column);
     parsedColumn.isEnum = !!parsedColumn.enumValues?.length;

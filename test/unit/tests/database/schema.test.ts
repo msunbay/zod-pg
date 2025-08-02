@@ -39,11 +39,10 @@ const createMockColumn = (
   overrides: Partial<ZodPgRawColumnInfo> = {}
 ): ZodPgRawColumnInfo => ({
   name: 'test_column',
-  dataType: 'text',
   defaultValue: undefined,
   isNullable: true,
   maxLen: undefined,
-  udtName: 'text',
+  dataType: 'text',
   tableName: 'test_table',
   schemaName: 'public',
   description: undefined,
@@ -77,12 +76,12 @@ describe('schema', () => {
         createMockColumn({
           tableName: 'users',
           name: 'id',
-          udtName: 'int4',
+          dataType: 'int4',
         }),
         createMockColumn({
           tableName: 'users',
           name: 'name',
-          udtName: 'text',
+          dataType: 'text',
         }),
       ];
 
@@ -247,7 +246,7 @@ describe('schema', () => {
         createMockColumn({
           tableName: 'users',
           name: 'id',
-          udtName: 'serial',
+          dataType: 'serial',
         }),
       ];
 
@@ -263,7 +262,7 @@ describe('schema', () => {
       expect(isArrayType).toHaveBeenCalledWith(mockColumns[0]);
       expect(isSerialType).toHaveBeenCalledWith(mockColumns[0]);
 
-      expect(result.tables[0].columns[0].zodType).toBe('int');
+      expect(result.tables[0].columns[0].type).toBe('int');
       expect(result.tables[0].columns[0].isArray).toBe(false);
       expect(result.tables[0].columns[0].isSerial).toBe(true);
     });
@@ -273,7 +272,7 @@ describe('schema', () => {
         createMockColumn({
           tableName: 'users',
           name: 'tags',
-          udtName: '_text',
+          dataType: '_text',
         }),
       ];
 

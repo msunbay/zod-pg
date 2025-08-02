@@ -33,7 +33,7 @@ it('generates schemas compatible with zod version 4', async () => {
       ssl: false,
     },
     outputDir,
-    outputModule: 'esm',
+    moduleResolution: 'esm',
     zodVersion: 4,
     include: ['users'],
   });

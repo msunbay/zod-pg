@@ -53,7 +53,7 @@ const createJsonSchemaImports = (
   if (!config.jsonSchemaImportLocation) return undefined;
 
   const jsonFields = columns.filter(
-    (col) => col.zodType === 'json' && col.jsonSchemaName
+    (col) => col.type === 'json' && col.jsonSchemaName
   );
 
   return jsonFields.map((col, index) => ({

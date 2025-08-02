@@ -54,13 +54,12 @@ const createMockColumn = (
   defaultValue: undefined,
   isNullable: true,
   maxLen: undefined,
-  udtName: 'text',
   tableName: 'test_table',
   schemaName: 'public',
   description: undefined,
   checkConstraints: undefined,
   tableType: 'table' as ZodPgTableType,
-  zodType: 'string',
+  type: 'string',
   isEnum: false,
   isSerial: false,
   isArray: false,
@@ -128,12 +127,12 @@ describe('models', () => {
         columns: [
           createMockColumn({
             name: 'id',
-            zodType: 'int',
+            type: 'int',
             isSerial: true,
           }),
           createMockColumn({
             name: 'name',
-            zodType: 'string',
+            type: 'string',
           }),
         ],
       });
@@ -261,15 +260,15 @@ describe('models', () => {
         columns: [
           createMockColumn({
             name: 'data',
-            zodType: 'json',
+            type: 'json',
           }),
           createMockColumn({
             name: 'metadata',
-            zodType: 'json',
+            type: 'json',
           }),
           createMockColumn({
             name: 'description',
-            zodType: 'string',
+            type: 'string',
           }),
         ],
       });
@@ -293,7 +292,7 @@ describe('models', () => {
         columns: [
           createMockColumn({
             name: 'data',
-            zodType: 'json',
+            type: 'json',
           }),
         ],
       });
@@ -564,23 +563,23 @@ describe('models', () => {
         columns: [
           createMockColumn({
             name: 'id',
-            zodType: 'int',
+            type: 'int',
           }),
           createMockColumn({
             name: 'name',
-            zodType: 'string',
+            type: 'string',
           }),
           createMockColumn({
             name: 'created_at',
-            zodType: 'date',
+            type: 'date',
           }),
           createMockColumn({
             name: 'is_active',
-            zodType: 'boolean',
+            type: 'boolean',
           }),
           createMockColumn({
             name: 'metadata',
-            zodType: 'json',
+            type: 'json',
           }),
         ],
       });

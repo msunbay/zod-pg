@@ -32,13 +32,13 @@ export const createRenderWriteTransform = (
   return () => (text: string, render: (text: string) => string) => {
     const innerText = render(text);
 
-    if (column.zodType === 'json' && config.stringifyJson) {
+    if (column.type === 'json' && config.stringifyJson) {
       if (!column.isNullable) return `JSON.stringify(${innerText})`;
 
       return `(${innerText} ? JSON.stringify(${innerText}) : ${innerText})`;
     }
 
-    if (column.zodType === 'date' && config.stringifyDates) {
+    if (column.type === 'date' && config.stringifyDates) {
       if (column.isArray) {
         if (!column.isNullable)
           return `${innerText}.map(date => date.toISOString())`;
@@ -85,14 +85,14 @@ const renderReadWriteField = (
   column: ZodPgColumnBaseModel,
   config: ZodPgConfig
 ) => {
-  let zodType = renderZodType(column.zodType, config.zodVersion);
+  let zodType = renderZodType(column.type, config.zodVersion);
 
   if (column.isEnum) zodType = `z.enum(${column.enumConstantName})`;
 
   if (column.isArray) zodType = `z.array(${zodType})`;
 
   if (
-    column.zodType === 'json' &&
+    column.type === 'json' &&
     config.jsonSchemaImportLocation &&
     column.jsonSchemaName
   ) {
