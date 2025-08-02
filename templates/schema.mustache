@@ -7,11 +7,16 @@ import { {{#jsonSchemaImports}}{{name}}{{^last}}, {{/last}}{{/jsonSchemaImports}
 {{#enums}}
 export const {{constantName}} = [{{#values}}'{{value}}'{{^last}}, {{/last}}{{/values}}] as const;
 {{/enums}}
+{{#description}}
 
+/**
+ * {{{description}}}
+ */
+{{/description}}
 export const {{tableReadSchemaName}} = z.object({
 {{#readableColumns}}
     /**
-    * dataType: {{udtName}}
+    * dataType: {{dataType}}
     * defaultValue: {{{defaultValue}}}
     */
     {{name}}: {{{renderedReadType}}},
@@ -24,23 +29,38 @@ export const {{tableReadSchemaName}} = z.object({
 
 type TableReadRecord = z.output<typeof {{tableReadSchemaName}}>;
 {{#isWritable}}
+{{#description}}
 
+/**
+ * {{{description}}} - Insert schema
+ */
+{{/description}}
 const TableWriteSchema = z.object({
 {{#writableColumns}}
     /**
-    * dataType: {{udtName}}
+    * dataType: {{dataType}}
     * defaultValue: {{{defaultValue}}}
     */
     {{propertyName}}: {{{renderedWriteType}}},
 {{/writableColumns}}
 });
+{{#description}}
 
+/**
+ * {{{description}}} - Insert schema
+ */
+{{/description}}
 export const {{tableInsertSchemaName}} = TableWriteSchema.transform(data => ({
 {{#writableColumns}}
     {{name}}: {{#renderedWriteTransform}}data.{{propertyName}}{{/renderedWriteTransform}},
 {{/writableColumns}}
 }));
+{{#description}}
 
+/**
+ * {{{description}}} - Update schema
+ */
+{{/description}}
 export const {{tableUpdateSchemaName}} = TableWriteSchema.partial().transform(data => ({
 {{#writableColumns}}
     {{name}}: {{#renderedWriteTransform}}data.{{propertyName}}{{/renderedWriteTransform}},

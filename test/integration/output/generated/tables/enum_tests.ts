@@ -13,7 +13,6 @@ export const ENUM_TEST_TASK_STATUSES = ['todo', 'in-progress', 'done', 'cancelle
 export const ENUM_TEST_DIFFICULTIES = ['1', '2', '3', '4', '5'] as const;
 export const ENUM_TEST_WEEKDAYS = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'] as const;
 export const ENUM_TEST_PAYMENT_METHODS = ['cash', 'credit-card', 'debit-card', 'paypal', 'bank-transfer'] as const;
-
 export const EnumTestsTableSchema = z.object({
     /**
     * dataType: int4
@@ -103,7 +102,6 @@ export const EnumTestsTableSchema = z.object({
 }));
 
 type TableReadRecord = z.output<typeof EnumTestsTableSchema>;
-
 const TableWriteSchema = z.object({
     /**
     * dataType: varchar
@@ -171,7 +169,6 @@ const TableWriteSchema = z.object({
     */
     createdAt: z.date().nullish(),
 });
-
 export const EnumTestsTableInsertSchema = TableWriteSchema.transform(data => ({
     priority: data.priority,
     color: data.color,
@@ -187,7 +184,6 @@ export const EnumTestsTableInsertSchema = TableWriteSchema.transform(data => ({
     payment_method: data.paymentMethod,
     created_at: data.createdAt,
 }));
-
 export const EnumTestsTableUpdateSchema = TableWriteSchema.partial().transform(data => ({
     priority: data.priority,
     color: data.color,

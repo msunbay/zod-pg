@@ -99,16 +99,16 @@ describe('schema', () => {
             columns: [
               expect.objectContaining({
                 name: 'id',
-                udtName: 'int4',
-                zodType: 'string',
+                dataType: 'int4',
+                type: 'string',
                 isEnum: false,
                 isSerial: false,
                 isArray: false,
               }),
               expect.objectContaining({
                 name: 'name',
-                udtName: 'text',
-                zodType: 'string',
+                dataType: 'text',
+                type: 'string',
                 isEnum: false,
                 isSerial: false,
                 isArray: false,

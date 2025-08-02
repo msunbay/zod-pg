@@ -37,7 +37,7 @@ export const getSchemaInformation = async (
           WHEN a.atttypmod > 0 THEN a.atttypmod - 4
           ELSE NULL
         END AS "maxLen",
-        t.typname AS "udtName",
+        t.typname AS "dataType",
         checks."checkConstraints",
         col_description(c.oid, a.attnum) AS "description",
         CASE 

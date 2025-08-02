@@ -2,7 +2,6 @@
 
 import { z } from 'zod';
 export const POST_STATUSES = ['draft', 'published', 'archived'] as const;
-
 export const PostsTableSchema = z.object({
     /**
     * dataType: int4
@@ -74,7 +73,6 @@ export const PostsTableSchema = z.object({
 }));
 
 type TableReadRecord = z.output<typeof PostsTableSchema>;
-
 const TableWriteSchema = z.object({
     /**
     * dataType: int4
@@ -127,7 +125,6 @@ const TableWriteSchema = z.object({
     */
     updatedAt: z.date().nullish(),
 });
-
 export const PostsTableInsertSchema = TableWriteSchema.transform(data => ({
     user_id: data.userId,
     title: data.title,
@@ -140,7 +137,6 @@ export const PostsTableInsertSchema = TableWriteSchema.transform(data => ({
     published_at: data.publishedAt,
     updated_at: data.updatedAt,
 }));
-
 export const PostsTableUpdateSchema = TableWriteSchema.partial().transform(data => ({
     user_id: data.userId,
     title: data.title,

@@ -2,7 +2,6 @@
 
 import { z } from 'zod';
 export const USER_ROLES = ['admin', 'editor', 'viewer'] as const;
-
 export const UsersTableSchema = z.object({
     /**
     * dataType: int4
@@ -56,7 +55,6 @@ export const UsersTableSchema = z.object({
 }));
 
 type TableReadRecord = z.output<typeof UsersTableSchema>;
-
 const TableWriteSchema = z.object({
     /**
     * dataType: varchar
@@ -94,7 +92,6 @@ const TableWriteSchema = z.object({
     */
     dates: z.array(z.date()).nullish(),
 });
-
 export const UsersTableInsertSchema = TableWriteSchema.transform(data => ({
     name: data.name,
     email: data.email,
@@ -104,7 +101,6 @@ export const UsersTableInsertSchema = TableWriteSchema.transform(data => ({
     roles: data.roles,
     dates: data.dates,
 }));
-
 export const UsersTableUpdateSchema = TableWriteSchema.partial().transform(data => ({
     name: data.name,
     email: data.email,

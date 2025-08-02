@@ -6,7 +6,6 @@ export const CONSTRAINT_VARIATION_FRUITS = ['apple', 'banana', 'orange', 'grape'
 export const CONSTRAINT_VARIATION_VEHICLES = ['car', 'truck', 'motorcycle', 'bicycle'] as const;
 export const CONSTRAINT_VARIATION_LANGUAGES = ['en', 'es', 'fr', 'de', 'it'] as const;
 export const CONSTRAINT_VARIATION_ACTIVE_STATUSES = ['true', 'false'] as const;
-
 export const ConstraintVariationsTableSchema = z.object({
     /**
     * dataType: int4
@@ -60,7 +59,6 @@ export const ConstraintVariationsTableSchema = z.object({
 }));
 
 type TableReadRecord = z.output<typeof ConstraintVariationsTableSchema>;
-
 const TableWriteSchema = z.object({
     /**
     * dataType: varchar
@@ -98,7 +96,6 @@ const TableWriteSchema = z.object({
     */
     createdAt: z.date().nullish(),
 });
-
 export const ConstraintVariationsTableInsertSchema = TableWriteSchema.transform(data => ({
     animal: data.animal,
     fruit: data.fruit,
@@ -108,7 +105,6 @@ export const ConstraintVariationsTableInsertSchema = TableWriteSchema.transform(
     active_status: data.activeStatus,
     created_at: data.createdAt,
 }));
-
 export const ConstraintVariationsTableUpdateSchema = TableWriteSchema.partial().transform(data => ({
     animal: data.animal,
     fruit: data.fruit,

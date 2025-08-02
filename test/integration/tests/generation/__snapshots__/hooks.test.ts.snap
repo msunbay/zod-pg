@@ -20,6 +20,9 @@ exports[`hook options > applies both column and table hooks together > combined-
 import { z } from 'zod';
 export const USER_ROLES = ['admin', 'editor', 'viewer'] as const;
 
+/**
+ * Table: users (8 columns)
+ */
 export const UsersTableSchema = z.object({
     /**
     * dataType: int4
@@ -74,6 +77,9 @@ export const UsersTableSchema = z.object({
 
 type TableReadRecord = z.output<typeof UsersTableSchema>;
 
+/**
+ * Table: users (8 columns) - Insert schema
+ */
 const TableWriteSchema = z.object({
     /**
     * dataType: varchar
@@ -112,6 +118,9 @@ const TableWriteSchema = z.object({
     dates: z.array(z.date()).nullish(),
 });
 
+/**
+ * Table: users (8 columns) - Insert schema
+ */
 export const UsersTableInsertSchema = TableWriteSchema.transform(data => ({
     name: data.name,
     email: data.email,
@@ -122,6 +131,9 @@ export const UsersTableInsertSchema = TableWriteSchema.transform(data => ({
     dates: data.dates,
 }));
 
+/**
+ * Table: users (8 columns) - Update schema
+ */
 export const UsersTableUpdateSchema = TableWriteSchema.partial().transform(data => ({
     name: data.name,
     email: data.email,
@@ -215,7 +227,6 @@ exports[`hook options > applies onColumnModelCreated hook to modify column schem
 
 import { z } from 'zod';
 export const USER_ROLES = ['admin', 'editor', 'viewer'] as const;
-
 export const UsersTableSchema = z.object({
     /**
     * dataType: int4
@@ -269,7 +280,6 @@ export const UsersTableSchema = z.object({
 }));
 
 type TableReadRecord = z.output<typeof UsersTableSchema>;
-
 const TableWriteSchema = z.object({
     /**
     * dataType: varchar
@@ -307,7 +317,6 @@ const TableWriteSchema = z.object({
     */
     dates: z.array(z.date()).nullish(),
 });
-
 export const UsersTableInsertSchema = TableWriteSchema.transform(data => ({
     name: data.name,
     email: data.email,
@@ -317,7 +326,6 @@ export const UsersTableInsertSchema = TableWriteSchema.transform(data => ({
     roles: data.roles,
     dates: data.dates,
 }));
-
 export const UsersTableUpdateSchema = TableWriteSchema.partial().transform(data => ({
     name: data.name,
     email: data.email,
@@ -412,6 +420,9 @@ exports[`hook options > applies onTableModelCreated hook to modify table schemas
 import { z } from 'zod';
 export const USER_ROLES = ['admin', 'editor', 'viewer'] as const;
 
+/**
+ * Generated schema for users table
+ */
 export const UsersTableSchema = z.object({
     /**
     * dataType: int4
@@ -466,6 +477,9 @@ export const UsersTableSchema = z.object({
 
 type TableReadRecord = z.output<typeof UsersTableSchema>;
 
+/**
+ * Generated schema for users table - Insert schema
+ */
 const TableWriteSchema = z.object({
     /**
     * dataType: varchar
@@ -504,6 +518,9 @@ const TableWriteSchema = z.object({
     dates: z.array(z.date()).nullish(),
 });
 
+/**
+ * Generated schema for users table - Insert schema
+ */
 export const UsersTableInsertSchema = TableWriteSchema.transform(data => ({
     name: data.name,
     email: data.email,
@@ -514,6 +531,9 @@ export const UsersTableInsertSchema = TableWriteSchema.transform(data => ({
     dates: data.dates,
 }));
 
+/**
+ * Generated schema for users table - Update schema
+ */
 export const UsersTableUpdateSchema = TableWriteSchema.partial().transform(data => ({
     name: data.name,
     email: data.email,

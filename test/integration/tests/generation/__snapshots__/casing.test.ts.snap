@@ -21,7 +21,6 @@ exports[`casing options > generates schemas with camelCase field names and Pasca
 
 import { z } from 'zod';
 export const POST_STATUSES = ['draft', 'published', 'archived'] as const;
-
 export const PostsTableSchema = z.object({
     /**
     * dataType: int4
@@ -93,7 +92,6 @@ export const PostsTableSchema = z.object({
 }));
 
 type TableReadRecord = z.output<typeof PostsTableSchema>;
-
 const TableWriteSchema = z.object({
     /**
     * dataType: int4
@@ -146,7 +144,6 @@ const TableWriteSchema = z.object({
     */
     updatedAt: z.date().nullish(),
 });
-
 export const PostsTableInsertSchema = TableWriteSchema.transform(data => ({
     user_id: data.userId,
     title: data.title,
@@ -159,7 +156,6 @@ export const PostsTableInsertSchema = TableWriteSchema.transform(data => ({
     published_at: data.publishedAt,
     updated_at: data.updatedAt,
 }));
-
 export const PostsTableUpdateSchema = TableWriteSchema.partial().transform(data => ({
     user_id: data.userId,
     title: data.title,
@@ -266,7 +262,6 @@ exports[`casing options > generates schemas with camelCase field names and Pasca
 
 import { z } from 'zod';
 export const USER_ROLES = ['admin', 'editor', 'viewer'] as const;
-
 export const UsersTableSchema = z.object({
     /**
     * dataType: int4
@@ -320,7 +315,6 @@ export const UsersTableSchema = z.object({
 }));
 
 type TableReadRecord = z.output<typeof UsersTableSchema>;
-
 const TableWriteSchema = z.object({
     /**
     * dataType: varchar
@@ -358,7 +352,6 @@ const TableWriteSchema = z.object({
     */
     dates: z.array(z.date()).nullish(),
 });
-
 export const UsersTableInsertSchema = TableWriteSchema.transform(data => ({
     name: data.name,
     email: data.email,
@@ -368,7 +361,6 @@ export const UsersTableInsertSchema = TableWriteSchema.transform(data => ({
     roles: data.roles,
     dates: data.dates,
 }));
-
 export const UsersTableUpdateSchema = TableWriteSchema.partial().transform(data => ({
     name: data.name,
     email: data.email,
@@ -463,7 +455,6 @@ exports[`casing options > generates schemas with kebab-case object names > kebab
 
 import { z } from 'zod';
 export const USER_ROLES = ['admin', 'editor', 'viewer'] as const;
-
 export const usersTableSchema = z.object({
     /**
     * dataType: int4
@@ -517,7 +508,6 @@ export const usersTableSchema = z.object({
 }));
 
 type TableReadRecord = z.output<typeof usersTableSchema>;
-
 const TableWriteSchema = z.object({
     /**
     * dataType: varchar
@@ -555,7 +545,6 @@ const TableWriteSchema = z.object({
     */
     dates: z.array(z.date()).nullish(),
 });
-
 export const usersTableInsertSchema = TableWriteSchema.transform(data => ({
     name: data.name,
     email: data.email,
@@ -565,7 +554,6 @@ export const usersTableInsertSchema = TableWriteSchema.transform(data => ({
     roles: data.roles,
     dates: data.dates,
 }));
-
 export const usersTableUpdateSchema = TableWriteSchema.partial().transform(data => ({
     name: data.name,
     email: data.email,
@@ -659,7 +647,6 @@ exports[`casing options > generates schemas with passthrough casing > passthroug
 
 import { z } from 'zod';
 export const USER_ROLES = ['admin', 'editor', 'viewer'] as const;
-
 export const usersTableSchema = z.object({
     /**
     * dataType: int4
@@ -713,7 +700,6 @@ export const usersTableSchema = z.object({
 }));
 
 type TableReadRecord = z.output<typeof usersTableSchema>;
-
 const TableWriteSchema = z.object({
     /**
     * dataType: varchar
@@ -751,7 +737,6 @@ const TableWriteSchema = z.object({
     */
     dates: z.array(z.date()).nullish(),
 });
-
 export const usersTableInsertSchema = TableWriteSchema.transform(data => ({
     name: data.name,
     email: data.email,
@@ -761,7 +746,6 @@ export const usersTableInsertSchema = TableWriteSchema.transform(data => ({
     roles: data.roles,
     dates: data.dates,
 }));
-
 export const usersTableUpdateSchema = TableWriteSchema.partial().transform(data => ({
     name: data.name,
     email: data.email,
@@ -855,7 +839,6 @@ exports[`casing options > generates schemas with snake_case field names > snake-
 
 import { z } from 'zod';
 export const USER_ROLES = ['admin', 'editor', 'viewer'] as const;
-
 export const UsersTableSchema = z.object({
     /**
     * dataType: int4
@@ -909,7 +892,6 @@ export const UsersTableSchema = z.object({
 }));
 
 type TableReadRecord = z.output<typeof UsersTableSchema>;
-
 const TableWriteSchema = z.object({
     /**
     * dataType: varchar
@@ -947,7 +929,6 @@ const TableWriteSchema = z.object({
     */
     dates: z.array(z.date()).nullish(),
 });
-
 export const UsersTableInsertSchema = TableWriteSchema.transform(data => ({
     name: data.name,
     email: data.email,
@@ -957,7 +938,6 @@ export const UsersTableInsertSchema = TableWriteSchema.transform(data => ({
     roles: data.roles,
     dates: data.dates,
 }));
-
 export const UsersTableUpdateSchema = TableWriteSchema.partial().transform(data => ({
     name: data.name,
     email: data.email,
