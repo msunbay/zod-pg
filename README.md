@@ -4,19 +4,62 @@
 ![license](https://img.shields.io/npm/l/zod-pg?style=flat-square)
 ![downloads](https://img.shields.io/npm/dm/zod-pg?style=flat-square)
 
-**zod-pg** is a powerful database-first development tool that automatically generates comprehensive [Zod](https://github.com/colinhacks/zod) schemas and TypeScript types from your PostgreSQL database schema. It bridges the gap between your database structure and type-safe TypeScript applications, ensuring your validation logic stays perfectly synchronized with your database schema.
+**zod-pg** is a database-first development tool that automatically generates comprehensive [Zod](https://github.com/colinhacks/zod) schemas and TypeScript types from your PostgreSQL database schema. It bridges the gap between your database structure and type-safe TypeScript applications, ensuring your validation logic stays perfectly synchronized with your database schema.
 
 Unlike manual schema writing, zod-pg deeply understands PostgreSQL's type system—from basic types to complex arrays, enums, and custom types—and generates production-ready validation schemas with full TypeScript integration.
 
+## Table of Contents
+
+- [Key Features](#key-features)
+- [Requirements](#requirements)
+- [Why zod-pg?](#why-zod-pg)
+  - [The Problem](#the-problem)
+  - [The zod-pg Solution](#the-zod-pg-solution)
+- [Advanced PostgreSQL Features](#advanced-postgresql-features)
+  - [Array Types](#array-types)
+  - [Enum Detection from Check Constraints](#enum-detection-from-check-constraints)
+  - [Complex JSON with Schema Integration](#complex-json-with-schema-integration)
+  - [Smart Serial Detection](#smart-serial-detection)
+  - [Views and Materialized Views](#views-and-materialized-views)
+  - [Constraint Detection](#constraint-detection)
+- [Date Handling Options](#date-handling-options)
+  - [Coerce Dates](#coerce-dates---coerce-dates)
+  - [Stringify Dates](#stringify-dates---stringify-dates)
+  - [Best Practices](#best-practices)
+- [When to Use zod-pg](#when-to-use-zod-pg)
+  - [Use Cases](#use-cases)
+- [Installation](#installation)
+- [Usage](#usage)
+  - [With connection string](#with-connection-string)
+  - [With options](#with-options)
+  - [With advanced options](#with-advanced-options)
+  - [With environment variables](#with-environment-variables)
+  - [Exclude / Include Tables](#exclude--include-tables)
+  - [All Options](#all-options)
+- [Configuration File](#configuration-file)
+  - [Example Configuration File](#example-configuration-file)
+- [Output File Structure](#output-file-structure)
+- [Schema Output](#schema-output)
+  - [The Read Schemas](#the-read-schemas)
+  - [The Write Schemas](#the-write-schemas)
+- [Customizing Generated Models with Hooks](#customizing-generated-models-with-hooks)
+  - [Available Hooks](#available-hooks)
+  - [Hook Usage Examples](#hook-usage-examples)
+  - [Column Model Properties](#column-model-properties)
+  - [Table Model Properties](#table-model-properties)
+- [JSON Schema Support](#json-schema-support)
+  - [Setting up JSON Schema Integration](#setting-up-json-schema-integration)
+- [Contributing](#contributing)
+
 ## Key Features
 
-🚀 **Database-First Development** - Your PostgreSQL schema becomes the single source of truth  
-🔄 **Three-Schema Generation** - Separate optimized schemas for reading, inserting, and updating data  
-🎯 **Advanced PostgreSQL Support** - Arrays, enums, custom types, materialized views, and foreign tables  
-🔍 **Smart Type Detection** - Automatically detects serials, arrays (underscore prefix), and enum constraints  
-🎨 **Flexible Customization** - Powerful hooks system and casing transformations  
-📦 **Production Ready** - Generates organized file structures with proper imports and TypeScript types  
-⚡ **Zero Runtime Dependencies** - Generated schemas are pure Zod with no additional runtime overhead
+- **Database-First Development** - Your PostgreSQL schema becomes the single source of truth
+- **Three-Schema Generation** - Separate optimized schemas for reading, inserting, and updating data
+- **Advanced PostgreSQL Support** - Arrays, enums, custom types, materialized views, and foreign tables
+- **Smart Type Detection** - Automatically detects serials, arrays (underscore prefix), and enum constraints
+- **Flexible Customization** - Hooks system and casing transformations
+- **Production Ready** - Generates organized file structures with proper imports and TypeScript types
+- **Zero Runtime Dependencies** - Generated schemas are pure Zod with no additional runtime overhead
 
 ## Requirements
 
@@ -89,7 +132,7 @@ export type UserUpdateRecord = z.input<typeof UserUpdateSchema>;
 
 zod-pg provides comprehensive support for PostgreSQL's advanced type system:
 
-### 🔢 **Array Types**
+### **Array Types**
 
 ```sql
 -- PostgreSQL
@@ -109,7 +152,7 @@ export const PostSchema = z.object({
 });
 ```
 
-### 🏷️ **Enum Detection from Check Constraints**
+### **Enum Detection from Check Constraints**
 
 ```sql
 -- PostgreSQL
@@ -128,7 +171,7 @@ export const UserSchema = z.object({
 });
 ```
 
-### 🗂️ **Complex JSON with Schema Integration**
+### **Complex JSON with Schema Integration**
 
 ```sql
 -- PostgreSQL
@@ -146,7 +189,9 @@ export const ProfileSchema = z.object({
 });
 ```
 
-### 🎯 **Smart Serial Detection**
+_See [JSON Schema Support](#json-schema-support) section for detailed configuration._
+
+### **Smart Serial Detection**
 
 ```sql
 -- PostgreSQL
@@ -171,7 +216,7 @@ export const ArticleInsertSchema = z.object({
 });
 ```
 
-### 🔍 **Views and Materialized Views**
+### **Views and Materialized Views**
 
 Supports all PostgreSQL relation types:
 
@@ -180,7 +225,7 @@ Supports all PostgreSQL relation types:
 - Materialized views
 - Foreign tables (via foreign data wrappers)
 
-### ⚙️ **Constraint Detection**
+### **Constraint Detection**
 
 - Length constraints (`VARCHAR(255)` → `z.string().max(255)`)
 - NOT NULL constraints
@@ -188,24 +233,100 @@ Supports all PostgreSQL relation types:
 - Check constraints for enum detection
 - Primary key detection (excluded from insert schemas)
 
+## **Date Handling Options**
+
+zod-pg provides flexible date handling to accommodate different application needs:
+
+### **Coerce Dates (`--coerce-dates`)**
+
+By default, date fields use `z.date()` which requires actual Date objects. Enable `--coerce-dates` to use `z.coerce.date()` in read schemas, allowing automatic string-to-date conversion:
+
+```sql
+-- PostgreSQL
+CREATE TABLE events (
+  id SERIAL PRIMARY KEY,
+  event_date TIMESTAMP,
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+```
+
+**Without `--coerce-dates` (default):**
+
+```typescript
+// Read schema - requires Date objects
+export const EventSchema = z.object({
+  id: z.number().int(),
+  eventDate: z.date(),
+  createdAt: z.date(),
+});
+
+// Insert schema - also requires Date objects
+export const EventInsertSchema = z.object({
+  eventDate: z.date(),
+});
+```
+
+**With `--coerce-dates`:**
+
+```typescript
+// Read schema - accepts strings or Date objects
+export const EventSchema = z.object({
+  id: z.number().int(),
+  eventDate: z.coerce.date(), // Converts strings to dates
+  createdAt: z.coerce.date(),
+});
+
+// Insert schema - still uses z.date() for strict validation
+export const EventInsertSchema = z.object({
+  eventDate: z.date(),
+});
+```
+
+### **Stringify Dates (`--stringify-dates`)**
+
+For APIs that need to serialize dates as ISO strings, use `--stringify-dates` to add automatic date-to-string transforms in write schemas:
+
+```typescript
+// With --stringify-dates
+export const EventInsertSchema = z
+  .object({
+    eventDate: z.date(),
+    metadata: z.object({
+      scheduledAt: z.date(),
+    }),
+  })
+  .transform((data) => ({
+    eventDate: data.eventDate.toISOString(),
+    metadata: {
+      scheduledAt: data.metadata.scheduledAt.toISOString(),
+    },
+  }));
+```
+
+### **Best Practices**
+
+- **Use `--coerce-dates`** when reading data from APIs or forms that provide date strings
+- **Use `--stringify-dates`** when your API needs to serialize dates as ISO strings
+- **Combine both options** for maximum flexibility in data processing pipelines
+
 ## When to Use zod-pg
 
 zod-pg is perfect for projects that:
 
-✅ **Use PostgreSQL as the primary database** - Takes full advantage of PostgreSQL's rich type system  
-✅ **Follow database-first development** - Database schema drives application structure  
-✅ **Need robust API validation** - Generate schemas for request/response validation  
-✅ **Want to eliminate manual schema maintenance** - Automatic synchronization with database changes  
-✅ **Use complex PostgreSQL features** - Arrays, enums, JSONB, custom types  
-✅ **Require type safety across the stack** - From database to frontend
+- **Use PostgreSQL as the primary database** - Takes full advantage of PostgreSQL's rich type system
+- **Follow database-first development** - Database schema drives application structure
+- **Need comprehensive API validation** - Generate schemas for request/response validation
+- **Want to eliminate manual schema maintenance** - Automatic synchronization with database changes
+- **Use complex PostgreSQL features** - Arrays, enums, JSONB, custom types
+- **Require type safety across the stack** - From database to frontend
 
 ### Use Cases
 
-🔗 **API Development** - Validate incoming requests against your exact database schema  
-🏗️ **Database-First Architecture** - Let your database design drive your application types  
-📊 **Data Processing Pipelines** - Type-safe data transformation and validation  
-🔄 **Schema Evolution** - Keep validation logic synchronized as your database evolves  
-🚀 **Rapid Prototyping** - Quickly generate type-safe schemas from database designs
+- **API Development** - Validate incoming requests against your exact database schema
+- **Database-First Architecture** - Let your database design drive your application types
+- **Data Processing Pipelines** - Type-safe data transformation and validation
+- **Schema Evolution** - Keep validation logic synchronized as your database evolves
+- **Rapid Prototyping** - Quickly generate type-safe schemas from database designs
 
 ## Installation
 
@@ -229,6 +350,26 @@ You can also specify options directly:
 
 ```sh
 npx zod-pg --user postgres --password secret --host localhost --port 5432 --database mydb --ssl --output ./src/output
+```
+
+### With advanced options
+
+**Enable date coercion and JSON stringification:**
+
+```sh
+npx zod-pg --connection "postgres://user:password@localhost:5432/dbname" --output ./src/schemas --coerce-dates --stringify-json
+```
+
+**Clean output directory and stringify dates:**
+
+```sh
+npx zod-pg --connection "postgres://user:password@localhost:5432/dbname" --output ./src/schemas --clean --stringify-dates
+```
+
+**Include only specific tables with date options:**
+
+```sh
+npx zod-pg --connection "postgres://user:password@localhost:5432/dbname" --output ./src/schemas --include "^(users|posts)$" --coerce-dates --default-empty-array
 ```
 
 ### With environment variables
@@ -279,6 +420,10 @@ Note that if you use both `--exclude` and `--include` options together, the `--i
 | `--connection`                  | Connection string for PostgreSQL.                                                               | false    |             |
 | `-o, --output`                  | Output directory for generated files.                                                           | true     |             |
 | `--clean`                       | Delete the output directory before generation.                                                  | false    | `false`     |
+| `--coerce-dates`                | Use `z.coerce.date()` for date fields in read schemas (allows string-to-date coercion).         | false    | `false`     |
+| `--stringify-json`              | Stringify JSON values in write schemas using `JSON.stringify()` transforms.                     | false    | `true`      |
+| `--stringify-dates`             | Convert dates to ISO strings in write schemas using `.toISOString()` transforms.                | false    | `false`     |
+| `--default-empty-array`         | Provide empty arrays as defaults for nullable array fields in write schemas.                    | false    | `true`      |
 | `--user`                        | PostgreSQL user name.                                                                           | false    | `postgres`  |
 | `--password`                    | PostgreSQL user password.                                                                       | false    |             |
 | `--host`                        | PostgreSQL host.                                                                                | false    | `localhost` |
@@ -330,8 +475,10 @@ const config: ZodPgConfig = {
   include: ['users', 'posts'],
   exclude: ['^temp_'],
   zodVersion: 4,
+  coerceDates: true,
   stringifyJson: true,
   stringifyDates: false,
+  defaultEmptyArray: true,
   fieldNameCasing: 'camelCase',
   objectNameCasing: 'PascalCase',
 
@@ -626,18 +773,24 @@ The `ZodPgTable` object passed to `onTableModelCreated` contains:
 - `tableInsertSchemaName?: string` - Generated insert schema name
 - `tableUpdateSchemaName?: string` - Generated update schema name
 
-## JSON Schema Support
+## **JSON Schema Support**
 
 zod-pg cannot know the structure of JSON fields in your database. To enable Zod schemas for your JSON fields, you can use the `--json-schema-import-location` option.
 When this option is provided, zod-pg will import Zod schemas from the specified location and use them for any JSON fields in your database.
 
-E.g., say you have a "user" table with a JSON field called "profile", and you want to use a Zod schema for that JSON field.
+### Setting up JSON Schema Integration
+
+Say you have a "user" table with a JSON field called "profile", and you want to use a Zod schema for that JSON field.
+
+**Step 1: Run zod-pg with JSON schema import location**
 
 Start by running, e.g.,
 
 ```sh
 npx zod-pg --json-schema-import-location '../../json' --output ./schema/generated
 ```
+
+**Step 2: Generated schema imports your JSON schemas**
 
 This will create a `./schema/generated/tables/user.ts` file looking similar to this:
 
@@ -655,6 +808,8 @@ export const UserSchema = z.object({
 
 The JSON Zod schema name is derived from `[tableName][FieldName]Schema`, so in this case, it will look for `UserProfileSchema` in the specified import location.
 
+**Step 3: Create your JSON schemas**
+
 Then you can create a Zod schema for the JSON field in your specified import location.
 
 e.g
@@ -669,10 +824,6 @@ export const UserProfileSchema = z.object({
   age: z.number().optional(),
 });
 ```
-
-## Date Handling
-
-zod-pg automatically converts PostgreSQL `timestamp` and `timestamptz` fields to Zod's `z.date()` schema. This means you can work with date fields directly in your TypeScript code without additional conversion.
 
 ## Contributing
 
