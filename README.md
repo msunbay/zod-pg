@@ -79,7 +79,7 @@ const UserSchema = z.object({
   email: z.string().email(),
   name: z.string(),
   tags: z.array(z.string()),
-  profile: z.object({...}), // How do you keep this in sync?
+  profile: z.object({...}),
   created_at: z.date(),
   updated_at: z.date(),
 });
@@ -118,14 +118,37 @@ export const UserInsertSchema = z.object({
   tags: z.array(z.string()).default([]),
   profile: json.UserProfileSchema,
   status: z.enum(['active', 'inactive']).default('active'),
+  created_at: z.date(), // DEFAULT values are included in write schemas
+  updated_at: z.date(), // Only SERIAL columns are excluded
 });
 
 export const UserUpdateSchema = UserInsertSchema.partial();
 
-// TypeScript types included
-export type UserRecord = z.infer<typeof UserSchema>;
-export type UserInsertRecord = z.input<typeof UserInsertSchema>;
-export type UserUpdateRecord = z.input<typeof UserUpdateSchema>;
+// TypeScript interfaces included
+export interface UserRecord {
+  id: number;
+  email: string;
+  name: string;
+  tags: string[];
+  profile: UserProfileSchema; // Custom JSON schema type when using --json-schema-import-location
+  status: 'active' | 'inactive';
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+// Write interface without primary key
+export interface UserInsertRecord {
+  email: string;
+  name: string;
+  tags?: string[];
+  profile: UserProfileSchema;
+  status?: 'active' | 'inactive';
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+// Update interface with optional props
+export type UserUpdateRecord = Partial<UserInsertRecord>;
 ```
 
 ## Advanced PostgreSQL Features
@@ -196,9 +219,9 @@ _See [JSON Schema Support](#json-schema-support) section for detailed configurat
 ```sql
 -- PostgreSQL
 CREATE TABLE articles (
-  id SERIAL PRIMARY KEY,        -- Excluded from insert schemas
+  id SERIAL PRIMARY KEY,        -- Excluded from insert schemas (SERIAL types only)
   title VARCHAR(255) NOT NULL,
-  created_at TIMESTAMP DEFAULT NOW() -- Excluded from insert schemas
+  created_at TIMESTAMP DEFAULT NOW() -- Included in insert schemas (has DEFAULT but not SERIAL)
 );
 ```
 
@@ -210,9 +233,10 @@ export const ArticleSchema = z.object({
   createdAt: z.date(),
 });
 
-// Insert schema automatically excludes serials and defaults
+// Insert schema excludes only SERIAL columns
 export const ArticleInsertSchema = z.object({
   title: z.string().max(255),
+  createdAt: z.date(), // DEFAULT NOW() columns are included
 });
 ```
 
@@ -279,6 +303,7 @@ export const EventSchema = z.object({
 // Insert schema - still uses z.date() for strict validation
 export const EventInsertSchema = z.object({
   eventDate: z.date(),
+  createdAt: z.date(),
 });
 ```
 
@@ -305,7 +330,7 @@ export const EventInsertSchema = z
 
 ### **Best Practices**
 
-- **Use `--coerce-dates`** when reading data from APIs or forms that provide date strings
+- **Use `--coerce-dates`** when reading data from APIs, forms and other sources that provide date strings
 - **Use `--stringify-dates`** when your API needs to serialize dates as ISO strings
 - **Combine both options** for maximum flexibility in data processing pipelines
 
@@ -481,24 +506,6 @@ const config: ZodPgConfig = {
   defaultEmptyArray: true,
   fieldNameCasing: 'camelCase',
   objectNameCasing: 'PascalCase',
-
-  // Hooks for customizing the generated models
-  onColumnModelCreated: async (column) => {
-    // Add .trim() to all string fields
-    if (column.renderedReadType === 'z.string()') {
-      column.renderedReadType = 'z.string().trim()';
-    }
-    if (column.renderedWriteType === 'z.string()') {
-      column.renderedWriteType = 'z.string().trim()';
-    }
-    return column;
-  },
-
-  onTableModelCreated: async (table) => {
-    // Add a description to the table schema
-    table.description = `Generated schema for ${table.tableName} table`;
-    return table;
-  },
 };
 
 export default config;
@@ -553,12 +560,18 @@ The generated Zod schemas will look like this: (example for a "user" table)
 import { z } from "zod";
 
 export const UserSchema = z.object({..});
-export const UserTableInsertSchema = z.object({..});
-export const UserTableUpdateSchema = UserTableInsertSchema.partial();
+export const UserInsertSchema = z.object({..});
+export const UserUpdateSchema = UserInsertSchema.partial();
 
-export type UserRecord = z.infer<typeof UserSchema>;
-export type UserInsertRecord = z.input<typeof UserTableInsertSchema>;
-export type UserUpdateRecord = z.input<typeof UserTableUpdateSchema>;
+export interface UserRecord {
+  // TypeScript interface with proper types
+}
+
+export interface UserInsertRecord {
+  // TypeScript interface for insert operations
+}
+
+export type UserUpdateRecord = Partial<UserInsertRecord>;
 ```
 
 Since reading and writing are two different operations, zod-pg generates separate schemas for reads, inserts and updates. The `UserTableInsertSchema` is used for creating new records, while the `UserTableUpdateSchema` is a partial version of the insert schema, allowing you to update only specific fields.
@@ -573,7 +586,8 @@ Since reading and writing are two different operations, zod-pg generates separat
 
 - Enforces field constraints such as max length, ensuring that your data adheres to the database schema.
 - Transforms `jsonb` fields to strings.
-- Excludes fields that are not writable, such as primary keys or auto-incrementing fields.
+- Excludes only SERIAL/auto-incrementing columns and columns from non-table relations (views, etc.).
+- Includes columns with DEFAULT values (like `DEFAULT NOW()`) since applications can still provide explicit values.
 
 ## Customizing Generated Models with Hooks
 
@@ -589,7 +603,6 @@ This hook is called for each column after its initial model is created, allowing
 onColumnModelCreated: async (column: ZodPgColumn) => {
   // Add email validation to email columns
   if (column.name === 'email') {
-    column.renderedReadType = 'z.string().email()';
     column.renderedWriteType = 'z.string().email()';
   }
 
@@ -627,7 +640,7 @@ onTableModelCreated: async (table: ZodPgTable) => {
 
 ### Hook Usage Examples
 
-#### Example 1: Adding Global String Transformations
+#### Example 1: Adding Global String validation for write schemas
 
 ```typescript
 // zod-pg.config.ts
@@ -635,16 +648,12 @@ export default {
   // ... other config
   onColumnModelCreated: async (column) => {
     // Trim all string fields
-    if (column.renderedReadType === 'z.string()') {
-      column.renderedReadType = 'z.string().trim()';
-    }
     if (column.renderedWriteType === 'z.string()') {
       column.renderedWriteType = 'z.string().trim()';
     }
 
     // Add email validation
     if (column.name.toLowerCase().includes('email')) {
-      column.renderedReadType = 'z.string().email().trim()';
       column.renderedWriteType = 'z.string().email().trim()';
     }
 
@@ -653,85 +662,16 @@ export default {
 };
 ```
 
-#### Example 2: Adding Conditional Validation
+#### Example 2: Renaming column properties
 
 ```typescript
 // zod-pg.config.ts
 export default {
   // ... other config
   onColumnModelCreated: async (column) => {
-    // Add URL validation for URL fields
-    if (
-      column.name.toLowerCase().includes('url') ||
-      column.name.toLowerCase().includes('link')
-    ) {
-      column.renderedReadType = 'z.string().url()';
-      column.renderedWriteType = 'z.string().url()';
+    if (column.tableName === 'users' && column.name === 'user') {
+      return { ...column, propertyName: 'userName' };
     }
-
-    // Add UUID validation for ID fields
-    if (column.name.toLowerCase().includes('uuid') || column.name === 'id') {
-      column.renderedReadType = 'z.string().uuid()';
-      column.renderedWriteType = 'z.string().uuid()';
-    }
-
-    return column;
-  },
-
-  onTableModelCreated: async (table) => {
-    // Add JSDoc comments to the generated schemas
-    table.description = `Schema for ${table.tableName} table`;
-
-    // Log generated tables
-    console.log(`Generated schema for table: ${table.tableName}`);
-
-    return table;
-  },
-};
-```
-
-#### Example 3: Complex Field Modifications
-
-```typescript
-// zod-pg.config.ts
-export default {
-  // ... other config
-  onColumnModelCreated: async (column) => {
-    // Handle different column types
-    switch (column.dataType) {
-      case 'varchar':
-      case 'text':
-        // Add min/max length based on constraints
-        if (column.maxLen) {
-          column.renderedWriteType = `z.string().max(${column.maxLen})`;
-        }
-        if (column.minLen) {
-          column.renderedWriteType = column.renderedWriteType.replace(
-            'z.string()',
-            `z.string().min(${column.minLen})`
-          );
-        }
-        break;
-
-      case 'numeric':
-      case 'decimal':
-        // Add decimal precision
-        column.renderedReadType = 'z.number().multipleOf(0.01)';
-        column.renderedWriteType = 'z.number().multipleOf(0.01)';
-        break;
-
-      case 'integer':
-        // Add integer validation
-        column.renderedReadType = 'z.number().int()';
-        column.renderedWriteType = 'z.number().int()';
-        if (column.name.toLowerCase().includes('positive')) {
-          column.renderedReadType = 'z.number().int().positive()';
-          column.renderedWriteType = 'z.number().int().positive()';
-        }
-        break;
-    }
-
-    return column;
   },
 };
 ```
@@ -797,12 +737,12 @@ This will create a `./schema/generated/tables/user.ts` file looking similar to t
 ```ts
 import { z } from 'zod';
 
-import * as json from '../../json';
+import { UserProfileSchema } from '../../json';
 
 export const UserSchema = z.object({
   id: z.number().int(),
   name: z.string(),
-  profile: json.UserProfileSchema,
+  profile: UserProfileSchema,
 });
 ```
 
