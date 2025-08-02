@@ -1,6 +1,6 @@
 {
   "name": "zod-pg",
-  "version": "0.2.3",
+  "version": "1.0.0",
   "description": "Opinionated Zod schema generator for PostgreSQL databases",
   "packageManager": "npm@10.8.2",
   "main": "./dist/index.js",
@@ -16,14 +16,18 @@
   },
   "scripts": {
     "build": "rm -rf ./dist && tsc --project tsconfig.build.json",
+    "start": "npm run build && node index.js",
+    "dev": "tsx dev.ts",
     "test": "npm run build && npm run test:unit && npm run test:integration && npm run test:types",
     "test:unit": "vitest --project unit run",
-    "test:integration": "vitest --project integration run",
-    "test:integration:update": "vitest --project integration run -u",
+    "test:integration": "npm run test:integration:cli && npm run test:integration:generate && npm run test:integration:schema",
+    "test:integration:cli": "vitest --project integration:cli run",
+    "test:integration:generate": "vitest --project integration:generate run",
+    "test:integration:schema": "vitest --project integration:schema run",
+    "test:integration:generate:update": "vitest --project integration:generate run -u",
     "test:types": "tsc --noEmit",
     "test:watch": "jest --watch",
-    "format": "prettier --write .",
-    "start": "dotenv -- npm run build && node index.js -o ./app/database/schema/generated --exclude '(knex|awsdms)_.*' --json-schema-import-location '../../json' --connection-string 'postgresql://postgres:postgres@localhost:5432/songwhip_api'"
+    "format": "prettier --write ."
   },
   "repository": {
     "type": "git",
@@ -45,11 +49,12 @@
     "@ianvs/prettier-plugin-sort-imports": "^4.5.1",
     "@testcontainers/postgresql": "^11.2.1",
     "@types/debug": "^4.1.12",
-    "@types/jest": "^30.0.0",
     "@types/lodash": "^4.17.20",
-    "@types/node": "^22",
+    "@types/mustache": "^4.2.6",
+    "@types/node": "^20",
     "@types/pg": "^8.15.4",
     "@types/pluralize": "^0.0.33",
+    "@vitest/coverage-v8": "^3.2.4",
     "dotenv-cli": "^8.0.0",
     "pg": "^8.16.3",
     "prettier": "^3.6.2",
@@ -66,6 +71,7 @@
     "commander": "^14.0.0",
     "cosmiconfig": "^9.0.0",
     "debug": "^4.4.1",
+    "mustache": "^4.2.0",
     "ora": "^8.2.0",
     "pluralize": "^8.0.0"
   }

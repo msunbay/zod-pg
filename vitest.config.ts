@@ -13,12 +13,30 @@ export default defineConfig({
       },
       {
         test: {
-          name: 'integration',
+          name: 'integration:cli',
           environment: 'node',
-          include: ['test/integration/**/*.test.ts'],
+          include: ['test/integration/tests/cli/**/*.test.ts'],
           globals: true,
           hookTimeout: 60000,
           testTimeout: 20000,
+        },
+      },
+      {
+        test: {
+          name: 'integration:generate',
+          environment: 'node',
+          include: ['test/integration/tests/generate/**/*.test.ts'],
+          globals: true,
+          hookTimeout: 60000,
+          testTimeout: 20000,
+        },
+      },
+      {
+        test: {
+          name: 'integration:schema',
+          environment: 'node',
+          include: ['test/integration/tests/schema/**/*.test.ts'],
+          globals: true,
         },
       },
     ],

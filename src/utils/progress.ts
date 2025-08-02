@@ -1,3 +1,4 @@
+import mustache from 'mustache';
 import ora from 'ora';
 
 import type { ZodPgProgress } from '../types.js';
@@ -5,7 +6,7 @@ import type { ZodPgProgress } from '../types.js';
 const PROGRESS_STATUS: Record<ZodPgProgress, string> = {
   connecting: 'Connecting to Postgres database...',
   fetchingSchema: 'Fetching schema information...',
-  generating: 'Generating Zod schemas for tables...',
+  generating: 'Generating {{total}} Zod schemas...',
   done: 'Zod schemas generated successfully.',
 };
 
@@ -21,9 +22,9 @@ export const createProgressHandler = (silent?: boolean) => {
   const spinner = ora();
 
   return {
-    onProgress: (status: ZodPgProgress) => {
+    onProgress: (status: ZodPgProgress, args?: unknown) => {
       if (spinner.isSpinning) spinner.succeed();
-      spinner.start(PROGRESS_STATUS[status] || status);
+      spinner.start(mustache.render(PROGRESS_STATUS[status] || status, args));
     },
     done: () => {
       spinner.succeed();

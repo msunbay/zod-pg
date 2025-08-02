@@ -2,15 +2,24 @@ import { program } from 'commander';
 
 import { getConfiguration } from './config.js';
 import { generateZodSchemas } from './generateZodSchemas.js';
-import { ZodPgParsedConfig } from './types.js';
-import { logAppName, logError, logSetting, toError } from './utils/index.js';
+import {
+  enableDebug,
+  logAppName,
+  logDebug,
+  logError,
+  logSetting,
+  toError,
+} from './utils/index.js';
+import { maskConnectionString } from './utils/mask.js';
 import { createProgressHandler } from './utils/progress.js';
+import { getAppVersion } from './utils/version.js';
 
 /**
  * Main entrypoint: connects to Postgres, cleans output, generates Zod schemas for all tables, and writes an index file.
  */
-export const main = async () => {
+export const main = async (port?: number) => {
   const config = await getConfiguration();
+  const appVersion = await getAppVersion();
 
   program.name('zod-pg');
   program.description('Generates Zod schemas from PostgreSQL database tables.');
@@ -19,30 +28,46 @@ export const main = async () => {
     'Output directory for generated schemas',
     config.outputDir
   );
-
   program.option('--silent', 'Suppress all console output', config.silent);
-
   program.option(
     '--module <type>',
-    'Module type for generated files (commonjs or esm)',
-    config.outputModule || 'commonjs'
+    'Module resolution type for generated files (commonjs or esm)',
+    config.moduleResolution || 'commonjs'
   );
-
   program.option(
     '--clean',
     'Clean output directory before generating schemas',
     config.cleanOutput
   );
-
+  program.option(
+    '--coerce-dates',
+    'Use z.coerce.date() for date fields in read schemas',
+    config.coerceDates
+  );
+  program.option(
+    '--stringify-json',
+    'Stringify JSON values in write schemas',
+    config.stringifyJson
+  );
+  program.option(
+    '--stringify-dates',
+    'Convert dates to ISO strings in write schemas',
+    config.stringifyDates
+  );
+  program.option(
+    '--default-empty-array',
+    'Provide empty arrays as defaults for nullable array fields',
+    config.defaultEmptyArray
+  );
   program.option(
     '--exclude <regex>',
     'Exclude tables matching this regex',
-    config.excludeRegex
+    config.exclude
   );
   program.option(
     '--include <regex>',
     'Include only tables matching this regex',
-    config.includeRegex
+    config.include
   );
   program.option(
     '--schema <name>',
@@ -54,13 +79,11 @@ export const main = async () => {
     'Path to import JSON schemas',
     config.jsonSchemaImportLocation
   );
-
   program.option(
     '--connection-string <string>',
     'Postgres connection string',
     config.connection.connectionString
   );
-
   program.option(
     '--password <string>',
     'Postgres password',
@@ -89,7 +112,25 @@ export const main = async () => {
   program.option(
     '--port <number>',
     'Postgres port',
-    config.connection.port || process.env.POSTGRES_PORT || '5432'
+    port?.toString() ||
+      config.connection.port ||
+      process.env.POSTGRES_PORT ||
+      '5432'
+  );
+  program.option(
+    '--zod-version <number>',
+    'Zod version to use (default: 3)',
+    (value) => parseInt(value, 10),
+    config.zodVersion || 3
+  );
+  program.option(
+    '--debug',
+    'Enable debug logging',
+    () => {
+      enableDebug();
+      return true;
+    },
+    false
   );
 
   program.parse();
@@ -103,7 +144,7 @@ export const main = async () => {
     connectionString = `postgresql://${user}:${password}@${host}:${port}/${database}`;
   }
 
-  const cliConfig: ZodPgParsedConfig = {
+  const cliConfig = {
     ...config,
     connection: {
       connectionString,
@@ -112,29 +153,40 @@ export const main = async () => {
     silent: options.silent,
     outputDir: options.output,
     cleanOutput: options.clean,
+    coerceDates: options.coerceDates,
+    stringifyJson: options.stringifyJson ?? true,
+    stringifyDates: options.stringifyDates,
+    defaultEmptyArray: options.defaultEmptyArray ?? true,
     schemaName: options.schema,
-    excludeRegex: options.exclude ? new RegExp(options.exclude) : undefined,
-    includeRegex: options.include ? new RegExp(options.include) : undefined,
+    exclude: options.exclude,
+    include: options.include,
     jsonSchemaImportLocation: options.jsonSchemaImportLocation,
-    outputModule: options.module,
+    moduleResolution: options.module,
+    zodVersion: options.zodVersion,
   };
 
-  // Mask password in connection string for logging
-  const maskedConnectionString = cliConfig.connection.connectionString.replace(
-    /(postgres(?:ql)?:\/\/[^:]+:)[^@]+(@)/,
-    '$1****$2'
-  );
-
   if (!cliConfig.silent) {
-    logAppName(`zod-pg CLI`);
+    logAppName(`zod-pg CLI v${appVersion}`);
 
     logSetting('output', cliConfig.outputDir);
-    logSetting('connection', maskedConnectionString);
-    logSetting('ssl', cliConfig.connection.ssl ? 'enabled' : 'disabled');
+    if (cliConfig.cleanOutput) logSetting('clean-output', 'true');
+    if (cliConfig.coerceDates) logSetting('coerce-dates', 'true');
+    if (cliConfig.stringifyJson) logSetting('stringify-json', 'true');
+    if (cliConfig.stringifyDates) logSetting('stringify-dates', 'true');
+    if (cliConfig.defaultEmptyArray) logSetting('default-empty-array', 'true');
+    logSetting('module', cliConfig.moduleResolution);
+    logSetting('zod-version', cliConfig.zodVersion);
+    logSetting(
+      'connection',
+      maskConnectionString(cliConfig.connection.connectionString)
+    );
+    logSetting('ssl', cliConfig.connection.ssl ? 'true' : 'false');
     logSetting('schema', cliConfig.schemaName);
 
-    if (cliConfig.includeRegex) logSetting('include', options.include);
-    if (cliConfig.excludeRegex) logSetting('exclude', options.exclude);
+    if (process.env.DEBUG) logSetting('debug', process.env.DEBUG);
+
+    if (cliConfig.include) logSetting('include', options.include);
+    if (cliConfig.exclude) logSetting('exclude', options.exclude);
 
     if (cliConfig.jsonSchemaImportLocation) {
       logSetting('json-import-location', cliConfig.jsonSchemaImportLocation);
@@ -156,6 +208,8 @@ export const main = async () => {
     spinner.fail();
 
     logError(toError(error).message);
+    logDebug(error);
+
     process.exit(1);
   }
 };
