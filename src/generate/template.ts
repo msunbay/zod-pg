@@ -1,6 +1,5 @@
 import { promises } from 'fs';
 import path from 'path';
-
 import mustache from 'mustache';
 
 export const loadTemplate = async (templateName: string): Promise<string> => {

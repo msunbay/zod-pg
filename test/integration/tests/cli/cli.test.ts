@@ -22,7 +22,7 @@ describe('CLI Tests', () => {
 
   afterAll(async () => {
     await teardownTestDb(ctx);
-    
+
     // Clean up all test output directories
     const testOutputDirs = [
       outputDir,
@@ -36,7 +36,7 @@ describe('CLI Tests', () => {
     ];
 
     await Promise.all(
-      testOutputDirs.map(dir => 
+      testOutputDirs.map((dir) =>
         deleteOutputFiles(dir).catch(() => {
           // Ignore errors if directory doesn't exist
         })
