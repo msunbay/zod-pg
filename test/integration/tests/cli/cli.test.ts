@@ -3,6 +3,7 @@ import fs from 'fs';
 import path from 'path';
 
 import {
+  deleteOutputFiles,
   getClientConnectionString,
   getOutputFiles,
   outputDir,
@@ -21,6 +22,26 @@ describe('CLI Tests', () => {
 
   afterAll(async () => {
     await teardownTestDb(ctx);
+    
+    // Clean up all test output directories
+    const testOutputDirs = [
+      outputDir,
+      `${outputDir}-coerce-dates`,
+      `${outputDir}-stringify-json`,
+      `${outputDir}-exclude`,
+      `${outputDir}-include`,
+      `${outputDir}-connection-params`,
+      `${outputDir}-clean`,
+      `${outputDir}-zod4`,
+    ];
+
+    await Promise.all(
+      testOutputDirs.map(dir => 
+        deleteOutputFiles(dir).catch(() => {
+          // Ignore errors if directory doesn't exist
+        })
+      )
+    );
   });
 
   it('CLI generates correct zod schemas with basic options', async () => {
