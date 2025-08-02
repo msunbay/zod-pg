@@ -23,9 +23,9 @@ export default defineConfig({
       },
       {
         test: {
-          name: 'integration:generation',
+          name: 'integration:generate',
           environment: 'node',
-          include: ['test/integration/tests/generation/**/*.test.ts'],
+          include: ['test/integration/tests/generate/**/*.test.ts'],
           globals: true,
           hookTimeout: 60000,
           testTimeout: 20000,

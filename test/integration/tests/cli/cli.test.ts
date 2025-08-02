@@ -6,13 +6,13 @@ import {
   deleteOutputFiles,
   getClientConnectionString,
   getOutputFiles,
-  outputDir,
   setupTestDb,
   teardownTestDb,
   TestDbContext,
 } from '../../testDbUtils.js';
 
 const cliPath = path.resolve(__dirname, '../../../../index.js');
+const outputDir = `${import.meta.dirname}/test-output/cli`;
 let ctx: TestDbContext;
 
 describe('CLI Tests', () => {
@@ -22,26 +22,7 @@ describe('CLI Tests', () => {
 
   afterAll(async () => {
     await teardownTestDb(ctx);
-
-    // Clean up all test output directories
-    const testOutputDirs = [
-      outputDir,
-      `${outputDir}-coerce-dates`,
-      `${outputDir}-stringify-json`,
-      `${outputDir}-exclude`,
-      `${outputDir}-include`,
-      `${outputDir}-connection-params`,
-      `${outputDir}-clean`,
-      `${outputDir}-zod4`,
-    ];
-
-    await Promise.all(
-      testOutputDirs.map((dir) =>
-        deleteOutputFiles(dir).catch(() => {
-          // Ignore errors if directory doesn't exist
-        })
-      )
-    );
+    await deleteOutputFiles(outputDir);
   });
 
   it('CLI generates correct zod schemas with basic options', async () => {
@@ -62,10 +43,10 @@ describe('CLI Tests', () => {
 
   it('CLI works with --coerce-dates option', async () => {
     const connectionString = getClientConnectionString();
-    const testOutputDir = `${outputDir}-coerce-dates`;
+    const testOutputDir = `${outputDir}/coerce-dates`;
 
     execSync(
-      `node ${cliPath} --connection-string "${connectionString}" --output "${testOutputDir}" --coerce-dates --silent --include users`,
+      `node ${cliPath} --connection-string "${connectionString}" --output "${testOutputDir}" --coerce-dates --silent --include users --module esm`,
       { stdio: 'inherit' }
     );
 
@@ -79,10 +60,10 @@ describe('CLI Tests', () => {
 
   it('CLI works with --stringify-json option', async () => {
     const connectionString = getClientConnectionString();
-    const testOutputDir = `${outputDir}-stringify-json`;
+    const testOutputDir = `${outputDir}/stringify-json`;
 
     execSync(
-      `node ${cliPath} --connection-string "${connectionString}" --output "${testOutputDir}" --stringify-json --silent --include "^posts$"`,
+      `node ${cliPath} --connection-string "${connectionString}" --output "${testOutputDir}" --stringify-json --silent --include "^posts$" --module esm`,
       { stdio: 'inherit' }
     );
 
@@ -101,10 +82,10 @@ describe('CLI Tests', () => {
 
   it('CLI works with --exclude option', async () => {
     const connectionString = getClientConnectionString();
-    const testOutputDir = `${outputDir}-exclude`;
+    const testOutputDir = `${outputDir}/exclude`;
 
     execSync(
-      `node ${cliPath} --connection-string "${connectionString}" --output "${testOutputDir}" --exclude "posts" --silent`,
+      `node ${cliPath} --connection-string "${connectionString}" --output "${testOutputDir}" --exclude "posts" --silent --module esm`,
       { stdio: 'inherit' }
     );
 
@@ -116,10 +97,10 @@ describe('CLI Tests', () => {
 
   it('CLI works with --include option', async () => {
     const connectionString = getClientConnectionString();
-    const testOutputDir = `${outputDir}-include`;
+    const testOutputDir = `${outputDir}/include`;
 
     execSync(
-      `node ${cliPath} --connection-string "${connectionString}" --output "${testOutputDir}" --include "users" --silent`,
+      `node ${cliPath} --connection-string "${connectionString}" --output "${testOutputDir}" --include "users" --silent --module esm`,
       { stdio: 'inherit' }
     );
 
@@ -132,14 +113,14 @@ describe('CLI Tests', () => {
   });
 
   it('CLI works with connection parameters instead of connection string', async () => {
-    const testOutputDir = `${outputDir}-connection-params`;
+    const testOutputDir = `${outputDir}/connection-params`;
 
     // Use the same connection details as the test database
     const connectionString = getClientConnectionString();
     const url = new URL(connectionString);
 
     execSync(
-      `node ${cliPath} --host ${url.hostname} --port ${url.port} --database ${url.pathname.slice(1)} --user ${url.username} --password ${url.password} --output "${testOutputDir}" --silent --include users`,
+      `node ${cliPath} --host ${url.hostname} --port ${url.port} --database ${url.pathname.slice(1)} --user ${url.username} --password ${url.password} --output "${testOutputDir}" --silent --include users --module esm`,
       { stdio: 'inherit' }
     );
 
@@ -148,7 +129,7 @@ describe('CLI Tests', () => {
   });
 
   it('CLI works with --clean option', async () => {
-    const testOutputDir = `${outputDir}-clean`;
+    const testOutputDir = `${outputDir}/clean`;
 
     // Create the directory with a dummy .ts file (clearTablesDirectory only removes .ts files)
     fs.mkdirSync(testOutputDir, { recursive: true });
@@ -161,7 +142,7 @@ describe('CLI Tests', () => {
     const connectionString = getClientConnectionString();
 
     execSync(
-      `node ${cliPath} --connection-string "${connectionString}" --output "${testOutputDir}" --clean --silent --include users`,
+      `node ${cliPath} --connection-string "${connectionString}" --output "${testOutputDir}" --clean --silent --include users --module esm`,
       { stdio: 'inherit' }
     );
 
@@ -176,10 +157,10 @@ describe('CLI Tests', () => {
 
   it('CLI works with --zod-version option', async () => {
     const connectionString = getClientConnectionString();
-    const testOutputDir = `${outputDir}-zod4`;
+    const testOutputDir = `${outputDir}/zod4`;
 
     execSync(
-      `node ${cliPath} --connection-string "${connectionString}" --output "${testOutputDir}" --zod-version 4 --silent --include users`,
+      `node ${cliPath} --connection-string "${connectionString}" --output "${testOutputDir}" --zod-version 4 --silent --include users --module esm`,
       { stdio: 'inherit' }
     );
 
