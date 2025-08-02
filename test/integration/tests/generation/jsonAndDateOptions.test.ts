@@ -122,4 +122,32 @@ describe('JSON and date handling options', () => {
       );
     }
   });
+
+  it('generates schemas with coerceDates enabled', async () => {
+    await generateZodSchemas({
+      connection: {
+        connectionString,
+        ssl: false,
+      },
+      outputDir: `${outputDir}/coerce-dates`,
+      coerceDates: true,
+      include: ['users'], // users table has date columns
+    });
+
+    const outputFiles = await getOutputFiles(`${outputDir}/coerce-dates`);
+
+    for (const file of outputFiles) {
+      const content = fs.readFileSync(file, 'utf8');
+
+      // Should use z.coerce.date() in read schemas for date columns
+      if (file.includes('users.ts')) {
+        expect(content).toMatch(/z\.coerce\.date\(\)/);
+      }
+
+      // Test captures the actual generated code
+      expect(content).toMatchSnapshot(
+        `coerce-dates/${path.relative(`${outputDir}/coerce-dates`, file)}`
+      );
+    }
+  });
 });

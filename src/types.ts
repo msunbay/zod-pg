@@ -350,6 +350,8 @@ export interface ZodPgConfig {
   stringifyJson?: boolean;
   /** Whether to convert dates to ISO strings in write schemas */
   stringifyDates?: boolean;
+  /** Whether to use z.coerce.date() instead of z.date() in read schemas */
+  coerceDates?: boolean;
   /** Whether to provide empty arrays as defaults for nullable array fields */
   defaultEmptyArray?: boolean;
 

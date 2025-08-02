@@ -3,7 +3,6 @@ import {
   ZodPgColumnInfo,
   ZodPgColumnType,
   ZodPgConfig,
-  ZodPgZodVersion,
 } from '../types.js';
 
 export const createRenderReadTransform = (
@@ -55,40 +54,42 @@ export const createRenderWriteTransform = (
 
 const renderZodType = (
   zodType: ZodPgColumnType,
-  version?: ZodPgZodVersion
+  config: ZodPgConfig,
+  isReadField: boolean = false
 ): string => {
+  const { zodVersion, coerceDates } = config;
+
   switch (zodType) {
     case 'string':
       return 'z.string()';
     case 'email':
-      return version === 4 ? 'z.email()' : 'z.string().email()';
+      return zodVersion === 4 ? 'z.email()' : 'z.string().email()';
     case 'url':
-      return version === 4 ? 'z.url()' : 'z.string().url()';
+      return zodVersion === 4 ? 'z.url()' : 'z.string().url()';
     case 'int':
-      return version === 4 ? 'z.int()' : 'z.number().int()';
+      return zodVersion === 4 ? 'z.int()' : 'z.number().int()';
     case 'number':
       return 'z.number()';
     case 'boolean':
       return 'z.boolean()';
     case 'date':
-      return 'z.date()';
+      return coerceDates && isReadField ? 'z.coerce.date()' : 'z.date()';
     case 'uuid':
-      return version === 4 ? 'z.uuid()' : 'z.string().uuid()';
+      return zodVersion === 4 ? 'z.uuid()' : 'z.string().uuid()';
     case 'json':
-      return version === 4 ? 'z.json()' : 'z.any()';
+      return zodVersion === 4 ? 'z.json()' : 'z.any()';
     default:
       return 'z.any()';
   }
 };
 
-const renderReadWriteField = (
+export const renderReadField = (
   column: ZodPgColumnBaseModel,
   config: ZodPgConfig
-) => {
-  let zodType = renderZodType(column.type, config.zodVersion);
+): string => {
+  let zodType = renderZodType(column.type, config, true);
 
   if (column.isEnum) zodType = `z.enum(${column.enumConstantName})`;
-
   if (column.isArray) zodType = `z.array(${zodType})`;
 
   if (
@@ -98,15 +99,6 @@ const renderReadWriteField = (
   ) {
     zodType = column.jsonSchemaName;
   }
-
-  return zodType;
-};
-
-export const renderReadField = (
-  column: ZodPgColumnBaseModel,
-  config: ZodPgConfig
-): string => {
-  let zodType = renderReadWriteField(column, config);
 
   if (column.isNullable) {
     zodType = `${zodType}.nullable()`;
@@ -119,7 +111,18 @@ export const renderWriteField = (
   column: ZodPgColumnBaseModel,
   config: ZodPgConfig
 ): string => {
-  let zodType = renderReadWriteField(column, config);
+  let zodType = renderZodType(column.type, config, false);
+
+  if (column.isEnum) zodType = `z.enum(${column.enumConstantName})`;
+  if (column.isArray) zodType = `z.array(${zodType})`;
+
+  if (
+    column.type === 'json' &&
+    config.jsonSchemaImportLocation &&
+    column.jsonSchemaName
+  ) {
+    zodType = column.jsonSchemaName;
+  }
 
   if (column.minLen !== undefined && column.minLen !== null && !column.isEnum) {
     zodType = `${zodType}.min(${column.minLen})`;

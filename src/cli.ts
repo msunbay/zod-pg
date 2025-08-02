@@ -40,6 +40,11 @@ export const main = async (port?: number) => {
     config.cleanOutput
   );
   program.option(
+    '--coerce-dates',
+    'Use z.coerce.date() for date fields in read schemas',
+    config.coerceDates
+  );
+  program.option(
     '--exclude <regex>',
     'Exclude tables matching this regex',
     config.exclude
@@ -136,6 +141,7 @@ export const main = async (port?: number) => {
     silent: options.silent,
     outputDir: options.output,
     cleanOutput: options.clean,
+    coerceDates: options.coerceDates,
     schemaName: options.schema,
     exclude: options.exclude,
     include: options.include,
@@ -149,6 +155,7 @@ export const main = async (port?: number) => {
 
     logSetting('output', cliConfig.outputDir);
     if (cliConfig.cleanOutput) logSetting('clean-output', 'true');
+    if (cliConfig.coerceDates) logSetting('coerce-dates', 'true');
     logSetting('module', cliConfig.moduleResolution);
     logSetting('zod-version', cliConfig.zodVersion);
     logSetting(
