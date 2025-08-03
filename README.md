@@ -17,7 +17,6 @@ zod-pg supports PostgreSQL's type system including arrays, enums, and custom typ
 - [Usage](#usage)
   - [With connection string](#with-connection-string)
   - [With options](#with-options)
-  - [With advanced options](#with-advanced-options)
   - [With environment variables](#with-environment-variables)
   - [Exclude / Include Tables](#exclude--include-tables)
   - [All Options](#all-options)
@@ -76,26 +75,6 @@ You can also specify options directly:
 
 ```sh
 npx zod-pg --user postgres --password secret --host localhost --port 5432 --database mydb --ssl --output ./src/output
-```
-
-### With advanced options
-
-**Enable date coercion and JSON stringification:**
-
-```sh
-npx zod-pg --connection "postgres://user:password@localhost:5432/dbname" --output ./src/schemas --coerce-dates --stringify-json
-```
-
-**Clean output directory and stringify dates:**
-
-```sh
-npx zod-pg --connection "postgres://user:password@localhost:5432/dbname" --output ./src/schemas --clean --stringify-dates
-```
-
-**Include only specific tables with date options:**
-
-```sh
-npx zod-pg --connection "postgres://user:password@localhost:5432/dbname" --output ./src/schemas --include "^(users|posts)$" --coerce-dates --default-empty-array
 ```
 
 ### With environment variables
