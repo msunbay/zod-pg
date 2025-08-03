@@ -1,6 +1,6 @@
 {
   "name": "zod-pg",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Opinionated Zod schema generator for PostgreSQL databases",
   "packageManager": "npm@10.8.2",
   "main": "./dist/index.js",
@@ -13,6 +13,9 @@
   },
   "bin": {
     "zod-pg": "index.js"
+  },
+  "engines": {
+    "node": ">=20.0.0"
   },
   "scripts": {
     "build": "rm -rf ./dist && tsc --project tsconfig.build.json",
@@ -61,7 +64,7 @@
     "testcontainers": "^11.2.1",
     "typescript": "^5.8.3",
     "vitest": "^3.2.4",
-    "zod": "^4.0.5"
+    "zod": "^4.0.14"
   },
   "peerDependencies": {
     "pg": ">=8.12.0"
