@@ -201,7 +201,6 @@ The generator creates the following files:
 - `output/views/index.ts` – Exports all view schemas
 - `output/materialized-views/` – Zod schemas for each mview (one file per view)
 - `output/materialized-views/index.ts` – Exports all mview schemas
-- `output/index.ts` – Exports all schemas and types
 
 ## Schema Output
 

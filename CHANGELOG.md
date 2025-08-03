@@ -1,5 +1,18 @@
 # Changelog
 
+### v1.0.1 (2025-08-03)
+
+- Added Node.js 20+ engine requirement to package.json
+
+### v1.0.0 (2025-08-03)
+
+- Improved postgresql type / zod mapping.
+- More options like `coerceDates`.
+- Uses mustache templates for rendering.
+- Model hook support.
+- Exports interfaces instead of types.
+- Comprehensive test coverage.
+
 ### v0.2.3 (2025-07-17)
 
 - Added support for Zod v4
