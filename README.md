@@ -4,9 +4,9 @@
 ![license](https://img.shields.io/npm/l/zod-pg?style=flat-square)
 ![downloads](https://img.shields.io/npm/dm/zod-pg?style=flat-square)
 
-**zod-pg** is a database-first development tool that automatically generates comprehensive [Zod](https://github.com/colinhacks/zod) schemas and TypeScript types from your PostgreSQL database schema. It bridges the gap between your database structure and type-safe TypeScript applications, ensuring your validation logic stays perfectly synchronized with your database schema.
+**zod-pg** is a code generation tool that creates [Zod](https://github.com/colinhacks/zod) schemas and TypeScript types from your PostgreSQL database schema. It generates validation schemas that match your database structure, helping keep your TypeScript types synchronized with your database schema.
 
-Unlike manual schema writing, zod-pg deeply understands PostgreSQL's type system—from basic types to complex arrays, enums, and custom types—and generates production-ready validation schemas with full TypeScript integration.
+zod-pg supports PostgreSQL's type system including arrays, enums, and custom types, and generates validation schemas with TypeScript integration.
 
 ## Table of Contents
 
@@ -53,13 +53,13 @@ Unlike manual schema writing, zod-pg deeply understands PostgreSQL's type system
 
 ## Key Features
 
-- **Database-First Development** - Your PostgreSQL schema becomes the single source of truth
-- **Three-Schema Generation** - Separate optimized schemas for reading, inserting, and updating data
-- **Advanced PostgreSQL Support** - Arrays, enums, custom types, materialized views, and foreign tables
-- **Smart Type Detection** - Automatically detects serials, arrays (underscore prefix), and enum constraints
-- **Flexible Customization** - Hooks system and casing transformations
-- **Production Ready** - Generates organized file structures with proper imports and TypeScript types
-- **Zero Runtime Dependencies** - Generated schemas are pure Zod with no additional runtime overhead
+- **Database-First Development** - Generate schemas from your PostgreSQL database
+- **Multiple Schema Types** - Separate schemas for reading, inserting, and updating data
+- **PostgreSQL Support** - Arrays, enums, custom types, materialized views, and foreign tables
+- **Type Detection** - Detects serials, arrays, and enum constraints automatically
+- **Customization** - Hooks system and casing transformations
+- **File Organization** - Generates organized file structures with imports and TypeScript types
+- **No Runtime Dependencies** - Generated schemas use only Zod
 
 ## Requirements
 
@@ -93,14 +93,14 @@ const UserUpdateSchema = UserInsertSchema.partial();
 
 ### The zod-pg Solution
 
-One command generates everything, perfectly synchronized with your database:
+Generate everything with one command:
 
 ```bash
 npx zod-pg --output ./src/schemas
 ```
 
 ```typescript
-// Generated automatically with full PostgreSQL type awareness
+// Generated from PostgreSQL schema
 export const UserSchema = z.object({
   id: z.number().int(),
   email: z.string().email(),
@@ -151,9 +151,9 @@ export interface UserInsertRecord {
 export type UserUpdateRecord = Partial<UserInsertRecord>;
 ```
 
-## Advanced PostgreSQL Features
+## PostgreSQL Features
 
-zod-pg provides comprehensive support for PostgreSQL's advanced type system:
+zod-pg supports PostgreSQL's type system:
 
 ### **Array Types**
 
@@ -185,7 +185,7 @@ CREATE TABLE users (
 ```
 
 ```typescript
-// Automatically detected and generated
+// Detected and generated from check constraints
 export const USER_STATUS_ENUM = ['active', 'inactive', 'pending'] as const;
 export type UserStatus = (typeof USER_STATUS_ENUM)[number];
 
@@ -214,7 +214,7 @@ export const ProfileSchema = z.object({
 
 _See [JSON Schema Support](#json-schema-support) section for detailed configuration._
 
-### **Smart Serial Detection**
+### **Serial Detection**
 
 ```sql
 -- PostgreSQL
@@ -257,9 +257,9 @@ Supports all PostgreSQL relation types:
 - Check constraints for enum detection
 - Primary key detection (excluded from insert schemas)
 
-## **Date Handling Options**
+## Date Handling Options
 
-zod-pg provides flexible date handling to accommodate different application needs:
+zod-pg provides date handling options:
 
 ### **Coerce Dates (`--coerce-dates`)**
 
@@ -330,28 +330,28 @@ export const EventInsertSchema = z
 
 ### **Best Practices**
 
-- **Use `--coerce-dates`** when reading data from APIs, forms and other sources that provide date strings
+- **Use `--coerce-dates`** when reading data from sources that provide date strings
 - **Use `--stringify-dates`** when your API needs to serialize dates as ISO strings
-- **Combine both options** for maximum flexibility in data processing pipelines
+- **Combine both options** for data processing pipelines that handle both formats
 
 ## When to Use zod-pg
 
-zod-pg is perfect for projects that:
+zod-pg works well for projects that:
 
-- **Use PostgreSQL as the primary database** - Takes full advantage of PostgreSQL's rich type system
+- **Use PostgreSQL** - Takes advantage of PostgreSQL's type system
 - **Follow database-first development** - Database schema drives application structure
-- **Need comprehensive API validation** - Generate schemas for request/response validation
-- **Want to eliminate manual schema maintenance** - Automatic synchronization with database changes
-- **Use complex PostgreSQL features** - Arrays, enums, JSONB, custom types
-- **Require type safety across the stack** - From database to frontend
+- **Need API validation** - Generate schemas for request/response validation
+- **Want to reduce manual schema maintenance** - Synchronize with database changes
+- **Use PostgreSQL features** - Arrays, enums, JSONB, custom types
+- **Need type safety** - From database to frontend
 
 ### Use Cases
 
-- **API Development** - Validate incoming requests against your exact database schema
-- **Database-First Architecture** - Let your database design drive your application types
-- **Data Processing Pipelines** - Type-safe data transformation and validation
-- **Schema Evolution** - Keep validation logic synchronized as your database evolves
-- **Rapid Prototyping** - Quickly generate type-safe schemas from database designs
+- **API Development** - Validate requests against your database schema
+- **Database-First Architecture** - Generate application types from database design
+- **Data Processing** - Type-safe data transformation and validation
+- **Schema Evolution** - Keep validation logic synchronized with database changes
+- **Prototyping** - Generate type-safe schemas from database designs
 
 ## Installation
 
@@ -591,7 +591,7 @@ Since reading and writing are two different operations, zod-pg generates separat
 
 ## Customizing Generated Models with Hooks
 
-zod-pg provides hooks that allow you to customize the generated models during the generation process. These hooks are useful for adding custom validation, transformations, or modifications to your schemas.
+zod-pg provides hooks to customize the generated models during generation. These hooks allow you to add custom validation, transformations, or modifications to your schemas.
 
 ### Available Hooks
 
@@ -713,10 +713,10 @@ The `ZodPgTable` object passed to `onTableModelCreated` contains:
 - `tableInsertSchemaName?: string` - Generated insert schema name
 - `tableUpdateSchemaName?: string` - Generated update schema name
 
-## **JSON Schema Support**
+## JSON Schema Support
 
-zod-pg cannot know the structure of JSON fields in your database. To enable Zod schemas for your JSON fields, you can use the `--json-schema-import-location` option.
-When this option is provided, zod-pg will import Zod schemas from the specified location and use them for any JSON fields in your database.
+zod-pg cannot determine the structure of JSON fields in your database. To use Zod schemas for JSON fields, you can use the `--json-schema-import-location` option.
+When this option is provided, zod-pg will import Zod schemas from the specified location for JSON fields in your database.
 
 ### Setting up JSON Schema Integration
 
