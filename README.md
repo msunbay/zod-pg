@@ -50,7 +50,7 @@ zod-pg supports PostgreSQL's type system including arrays, enums, and custom typ
 
 ## Why zod-pg?
 
-Manually writing and maintaining Zod schemas for database tables is time-consuming and error-prone.
+Manually writing and maintaining TypeScript types and Zod schemas for database tables is time-consuming and error-prone.
 
 zod-pg automates this process by generating type-safe validation schemas directly from your PostgreSQL database schema. This approach ensures your validation logic stays synchronized with your database structure, eliminating the manual work of writing and updating schemas when your database changes. Whether you're building APIs that need request validation, working with complex PostgreSQL features like arrays and enums, or maintaining type safety across your entire stack, zod-pg bridges the gap between your database and TypeScript application.
 
@@ -281,7 +281,7 @@ onColumnModelCreated: async (column: ZodPgColumn) => {
 
   // Add minimum length to password fields
   if (column.name === 'password') {
-    column.minLength = 8;
+    column.minLen = 8;
   }
 
   // Add custom transformations based on table name
