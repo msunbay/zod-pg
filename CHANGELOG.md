@@ -1,5 +1,9 @@
 # Changelog
 
+### v1.0.2 (2025-08-09)
+
+- Included missing templates directory in package files.
+
 ### v1.0.1 (2025-08-03)
 
 - Added Node.js 20+ engine requirement to package.json
