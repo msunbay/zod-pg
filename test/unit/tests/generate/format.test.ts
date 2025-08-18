@@ -14,7 +14,7 @@ describe('format', () => {
   const createMockTableInfo = (
     overrides: Partial<ZodPgTableInfo> = {}
   ): ZodPgTableInfo => ({
-    type: 'table',
+    type: 'table' as const,
     name: 'users',
     schemaName: 'public',
     columns: [],
@@ -208,7 +208,7 @@ describe('format', () => {
         type: 'table',
         name: 'user_posts',
       });
-      const result = formatTableRecordName(tableInfo, 'read');
+      const result = formatTableRecordName({ tableInfo, operation: 'read' });
       expect(result).toBe('UserPostReadRecord');
     });
 
@@ -217,7 +217,7 @@ describe('format', () => {
         type: 'table',
         name: 'user_posts',
       });
-      const result = formatTableRecordName(tableInfo, 'insert');
+      const result = formatTableRecordName({ tableInfo, operation: 'insert' });
       expect(result).toBe('UserPostInsertRecord');
     });
 
@@ -226,13 +226,13 @@ describe('format', () => {
         type: 'table',
         name: 'user_posts',
       });
-      const result = formatTableRecordName(tableInfo, 'update');
+      const result = formatTableRecordName({ tableInfo, operation: 'update' });
       expect(result).toBe('UserPostUpdateRecord');
     });
 
     it('should singularize plural table names', () => {
       const tableInfo = createMockTableInfo({ type: 'table', name: 'users' });
-      const result = formatTableRecordName(tableInfo, 'read');
+      const result = formatTableRecordName({ tableInfo, operation: 'read' });
       expect(result).toBe('UserReadRecord');
     });
 
@@ -241,7 +241,7 @@ describe('format', () => {
         type: 'table',
         name: 'user_profile',
       });
-      const result = formatTableRecordName(tableInfo, 'read');
+      const result = formatTableRecordName({ tableInfo, operation: 'read' });
       expect(result).toBe('UserProfileReadRecord');
     });
 
@@ -250,7 +250,11 @@ describe('format', () => {
         type: 'table',
         name: 'user_posts',
       });
-      const result = formatTableRecordName(tableInfo, 'read', 'camelCase');
+      const result = formatTableRecordName({
+        tableInfo,
+        operation: 'read',
+        casing: 'camelCase',
+      });
       expect(result).toBe('userPostReadRecord');
     });
 
@@ -259,7 +263,11 @@ describe('format', () => {
         type: 'table',
         name: 'UserPosts',
       });
-      const result = formatTableRecordName(tableInfo, 'read', 'snake_case');
+      const result = formatTableRecordName({
+        tableInfo,
+        operation: 'read',
+        casing: 'snake_case',
+      });
       expect(result).toBe('user_post_read_record');
     });
 
@@ -268,7 +276,7 @@ describe('format', () => {
         type: 'table',
         name: 'categories',
       });
-      const result = formatTableRecordName(tableInfo, 'read');
+      const result = formatTableRecordName({ tableInfo, operation: 'read' });
       expect(result).toBe('CategoryReadRecord');
     });
   });
