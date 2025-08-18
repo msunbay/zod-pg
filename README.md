@@ -30,6 +30,7 @@ zod-pg supports PostgreSQL's type system including arrays, enums, and custom typ
   - [Available Hooks](#available-hooks)
 - [JSON Schema Support](#json-schema-support)
   - [Setting up JSON Schema Integration](#setting-up-json-schema-integration)
+- [Extending schemas](#extending-schemas)
 - [Contributing](#contributing)
 
 ## Key Features
