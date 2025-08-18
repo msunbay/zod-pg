@@ -244,7 +244,7 @@ export interface ZodPgTable {
   /** Generated name for the read base schema (e.g., 'UserBaseSchema') */
   tableReadBaseSchemaName?: string;
   /** Generated name for the write base schema (e.g., 'UserWriteBaseSchema') */
-  tableWriteBaseSchemaName?: string;
+  tableInsertBaseSchemaName?: string;
   /** Generated name for the read transform function (e.g., 'transformUserReadRecord') */
   tableReadTransformName?: string;
   /** Generated name for the insert transform function (e.g., 'transformUserInsertRecord') */

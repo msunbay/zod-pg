@@ -107,8 +107,11 @@ describe('format', () => {
         type: 'table',
         name: 'user_posts',
       });
-      const result = formatTableSchemaName(tableInfo, 'read');
-      expect(result).toBe('UserPostsTableReadSchema');
+      const result = formatTableSchemaName({
+        tableInfo,
+        operation: 'read',
+      });
+      expect(result).toBe('UserPostsTableSchema');
     });
 
     it('should format insert schema name for table', () => {
@@ -116,7 +119,10 @@ describe('format', () => {
         type: 'table',
         name: 'user_posts',
       });
-      const result = formatTableSchemaName(tableInfo, 'insert');
+      const result = formatTableSchemaName({
+        tableInfo,
+        operation: 'insert',
+      });
       expect(result).toBe('UserPostsTableInsertSchema');
     });
 
@@ -125,7 +131,10 @@ describe('format', () => {
         type: 'table',
         name: 'user_posts',
       });
-      const result = formatTableSchemaName(tableInfo, 'update');
+      const result = formatTableSchemaName({
+        tableInfo,
+        operation: 'update',
+      });
       expect(result).toBe('UserPostsTableUpdateSchema');
     });
 
@@ -134,8 +143,11 @@ describe('format', () => {
         type: 'view',
         name: 'user_summary',
       });
-      const result = formatTableSchemaName(tableInfo, 'read');
-      expect(result).toBe('UserSummaryViewReadSchema');
+      const result = formatTableSchemaName({
+        tableInfo,
+        operation: 'read',
+      });
+      expect(result).toBe('UserSummaryViewSchema');
     });
 
     it('should format schema name for view with prefix', () => {
@@ -143,8 +155,11 @@ describe('format', () => {
         type: 'view',
         name: 'v_user_summary',
       });
-      const result = formatTableSchemaName(tableInfo, 'read');
-      expect(result).toBe('VUserSummaryReadSchema');
+      const result = formatTableSchemaName({
+        tableInfo,
+        operation: 'read',
+      });
+      expect(result).toBe('VUserSummarySchema');
     });
 
     it('should format schema name for materialized view', () => {
@@ -152,8 +167,11 @@ describe('format', () => {
         type: 'materialized_view',
         name: 'user_stats',
       });
-      const result = formatTableSchemaName(tableInfo, 'read');
-      expect(result).toBe('UserStatsMvReadSchema');
+      const result = formatTableSchemaName({
+        tableInfo,
+        operation: 'read',
+      });
+      expect(result).toBe('UserStatsMvSchema');
     });
 
     it('should format schema name for materialized view with prefix', () => {
@@ -161,8 +179,11 @@ describe('format', () => {
         type: 'materialized_view',
         name: 'mv_user_stats',
       });
-      const result = formatTableSchemaName(tableInfo, 'read');
-      expect(result).toBe('MvUserStatsReadSchema');
+      const result = formatTableSchemaName({
+        tableInfo,
+        operation: 'read',
+      });
+      expect(result).toBe('MvUserStatsSchema');
     });
 
     it('should respect camelCase casing', () => {
@@ -170,8 +191,12 @@ describe('format', () => {
         type: 'table',
         name: 'user_posts',
       });
-      const result = formatTableSchemaName(tableInfo, 'read', 'camelCase');
-      expect(result).toBe('userPostsTableReadSchema');
+      const result = formatTableSchemaName({
+        tableInfo,
+        operation: 'read',
+        casing: 'camelCase',
+      });
+      expect(result).toBe('userPostsTableSchema');
     });
 
     it('should respect snake_case casing', () => {
@@ -179,8 +204,12 @@ describe('format', () => {
         type: 'table',
         name: 'UserPosts',
       });
-      const result = formatTableSchemaName(tableInfo, 'read', 'snake_case');
-      expect(result).toBe('user_posts_table_read_schema');
+      const result = formatTableSchemaName({
+        tableInfo,
+        operation: 'read',
+        casing: 'snake_case',
+      });
+      expect(result).toBe('user_posts_table_schema');
     });
 
     it('should respect kebab-case casing', () => {
@@ -188,8 +217,12 @@ describe('format', () => {
         type: 'table',
         name: 'UserPosts',
       });
-      const result = formatTableSchemaName(tableInfo, 'read', 'kebab-case');
-      expect(result).toBe('user-posts-table-read-schema');
+      const result = formatTableSchemaName({
+        tableInfo,
+        operation: 'read',
+        casing: 'kebab-case',
+      });
+      expect(result).toBe('user-posts-table-schema');
     });
 
     it('should respect passthrough casing', () => {
@@ -197,8 +230,12 @@ describe('format', () => {
         type: 'table',
         name: 'UserPosts',
       });
-      const result = formatTableSchemaName(tableInfo, 'read', 'passthrough');
-      expect(result).toBe('UserPostsTableReadSchema');
+      const result = formatTableSchemaName({
+        tableInfo,
+        operation: 'read',
+        casing: 'passthrough',
+      });
+      expect(result).toBe('UserPostsTableSchema');
     });
   });
 
@@ -209,7 +246,7 @@ describe('format', () => {
         name: 'user_posts',
       });
       const result = formatTableRecordName({ tableInfo, operation: 'read' });
-      expect(result).toBe('UserPostReadRecord');
+      expect(result).toBe('UserPostRecord');
     });
 
     it('should format insert record name', () => {
@@ -233,7 +270,7 @@ describe('format', () => {
     it('should singularize plural table names', () => {
       const tableInfo = createMockTableInfo({ type: 'table', name: 'users' });
       const result = formatTableRecordName({ tableInfo, operation: 'read' });
-      expect(result).toBe('UserReadRecord');
+      expect(result).toBe('UserRecord');
     });
 
     it('should handle already singular table names', () => {
@@ -242,7 +279,7 @@ describe('format', () => {
         name: 'user_profile',
       });
       const result = formatTableRecordName({ tableInfo, operation: 'read' });
-      expect(result).toBe('UserProfileReadRecord');
+      expect(result).toBe('UserProfileRecord');
     });
 
     it('should respect camelCase casing', () => {
@@ -255,7 +292,7 @@ describe('format', () => {
         operation: 'read',
         casing: 'camelCase',
       });
-      expect(result).toBe('userPostReadRecord');
+      expect(result).toBe('userPostRecord');
     });
 
     it('should respect snake_case casing', () => {
@@ -268,7 +305,7 @@ describe('format', () => {
         operation: 'read',
         casing: 'snake_case',
       });
-      expect(result).toBe('user_post_read_record');
+      expect(result).toBe('user_post_record');
     });
 
     it('should handle complex plural forms', () => {
@@ -277,7 +314,7 @@ describe('format', () => {
         name: 'categories',
       });
       const result = formatTableRecordName({ tableInfo, operation: 'read' });
-      expect(result).toBe('CategoryReadRecord');
+      expect(result).toBe('CategoryRecord');
     });
   });
 

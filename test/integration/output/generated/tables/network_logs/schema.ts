@@ -4,95 +4,87 @@ import { z } from 'zod';
 
 
 /**
- * The base read schema for the "public.network_logs" table.
- * This schema is used to validate the data read from the database without any transformations.
+ * Base read schema for the "public.network_logs" table.
+ * Validates raw rows read from the database (no casing transforms applied yet).
  */
-export const NetworkLogsTableReadSchema = z.object({
-    /**
-    * dataType: int8
-    * defaultValue: nextval('network_logs_id_seq'::regclass)
-    */
+export const NetworkLogsTableBaseSchema = z.object({
+     /**
+      * dataType: int8
+      * defaultValue: nextval('network_logs_id_seq'::regclass)
+      */
     id: z.number().int(),
-    /**
-    * dataType: inet
-    * defaultValue: 
-    */
+     /**
+      * dataType: inet
+      */
     ip_address: z.string(),
-    /**
-    * dataType: int4range
-    * defaultValue: 
-    */
+     /**
+      * dataType: int4range
+      */
     port_range: z.any().nullish().transform((value) => value ?? undefined).optional(),
-    /**
-    * dataType: macaddr
-    * defaultValue: 
-    */
+     /**
+      * dataType: macaddr
+      */
     mac_address: z.string().nullish().transform((value) => value ?? undefined).optional(),
-    /**
-    * dataType: timestamptz
-    * defaultValue: now()
-    */
+     /**
+      * dataType: timestamptz
+      * defaultValue: now()
+      */
     request_time: z.date().nullish().transform((value) => value ?? undefined).optional(),
-    /**
-    * dataType: interval
-    * defaultValue: 
-    */
+     /**
+      * dataType: interval
+      */
     response_time: z.any().nullish().transform((value) => value ?? undefined).optional(),
-    /**
-    * dataType: int8
-    * defaultValue: 0
-    */
+     /**
+      * dataType: int8
+      * defaultValue: 0
+      */
     bytes_sent: z.number().int().nullish().transform((value) => value ?? undefined).optional(),
-    /**
-    * dataType: int8
-    * defaultValue: 0
-    */
+     /**
+      * dataType: int8
+      * defaultValue: 0
+      */
     bytes_received: z.number().int().nullish().transform((value) => value ?? undefined).optional(),
-    /**
-    * dataType: varchar
-    * defaultValue: 
-    */
+     /**
+      * dataType: varchar
+      */
     protocol: z.string().nullish().transform((value) => value ?? undefined).optional(),
-    /**
-    * dataType: int2
-    * defaultValue: 
-    */
+     /**
+      * dataType: int2
+      */
     status_code: z.number().int().nullish().transform((value) => value ?? undefined).optional(),
-    /**
-    * dataType: text
-    * defaultValue: 
-    */
+     /**
+      * dataType: text
+      */
     user_agent: z.string().nullish().transform((value) => value ?? undefined).optional(),
-    /**
-    * dataType: jsonb
-    * defaultValue: 
-    */
+     /**
+      * dataType: jsonb
+      */
     headers: z.any().nullish().transform((value) => value ?? undefined).optional(),
 });
 
 /**
  * The base record type for the "public.network_logs" table.
- * This type represents the raw database record without any transformations.
+ * This type represents the raw database record without case transforms.
  */
-export type NetworkLogReadBaseRecord = z.output<typeof NetworkLogsTableReadSchema>;
+export type NetworkLogBaseRecord = z.output<typeof NetworkLogsTableBaseSchema>;
 
 /**
-* The read transform function for the "public.network_logs" table.
-* Maps the raw database fields to expected property names. e.g snake_case to camelCase.
-*/
-export const transformNetworkLogReadRecord = (data: NetworkLogReadBaseRecord): {
-    id: NetworkLogReadBaseRecord['id'],
-    ipAddress: NetworkLogReadBaseRecord['ip_address'],
-    portRange?: NetworkLogReadBaseRecord['port_range'],
-    macAddress?: NetworkLogReadBaseRecord['mac_address'],
-    requestTime?: NetworkLogReadBaseRecord['request_time'],
-    responseTime?: NetworkLogReadBaseRecord['response_time'],
-    bytesSent?: NetworkLogReadBaseRecord['bytes_sent'],
-    bytesReceived?: NetworkLogReadBaseRecord['bytes_received'],
-    protocol?: NetworkLogReadBaseRecord['protocol'],
-    statusCode?: NetworkLogReadBaseRecord['status_code'],
-    userAgent?: NetworkLogReadBaseRecord['user_agent'],
-    headers?: NetworkLogReadBaseRecord['headers'],
+ * Read transform for the "public.network_logs" table.
+ * Maps raw database snake_case fields to camelCase properties.
+ */
+export const transformNetworkLogBaseRecord = (data: NetworkLogBaseRecord): {
+    id: NetworkLogBaseRecord['id'],
+    ipAddress: NetworkLogBaseRecord['ip_address'],
+    portRange?: NetworkLogBaseRecord['port_range'],
+    macAddress?: NetworkLogBaseRecord['mac_address'],
+    requestTime?: NetworkLogBaseRecord['request_time'],
+    responseTime?: NetworkLogBaseRecord['response_time'],
+    bytesSent?: NetworkLogBaseRecord['bytes_sent'],
+    bytesReceived?: NetworkLogBaseRecord['bytes_received'],
+    protocol?: NetworkLogBaseRecord['protocol'],
+    statusCode?: NetworkLogBaseRecord['status_code'],
+    userAgent?: NetworkLogBaseRecord['user_agent'],
+    headers?: NetworkLogBaseRecord['headers'],
 } => ({
     id: data.id,
     ipAddress: data.ip_address,
@@ -109,70 +101,60 @@ export const transformNetworkLogReadRecord = (data: NetworkLogReadBaseRecord): {
 });
 
 /**
- * The read schema for the "public.network_logs" table.
- * This schema is used to validate the data read from the database with transformations.
+ * Read schema for the "public.network_logs" table (after casing transform).
  */
-export const NetworkLogsTableSchema = NetworkLogsTableReadSchema.transform(transformNetworkLogReadRecord);
+export const NetworkLogsTableSchema = NetworkLogsTableBaseSchema.transform(transformNetworkLogBaseRecord);
 
 /**
- * The base write schema for the "public.network_logs" table.
- * This schema is used to validate the data before writing to the database without any transformations.
+ * Base insert/write schema for the "public.network_logs" table (no casing transforms).
  */
-export const NetworkLogsTableWriteSchema = z.object({
-    /**
-    * dataType: inet
-    * defaultValue: 
-    */
+export const NetworkLogsTableInsertBaseSchema = z.object({
+     /**
+      * dataType: inet
+      */
     ipAddress: z.string(),
-    /**
-    * dataType: int4range
-    * defaultValue: 
-    */
+     /**
+      * dataType: int4range
+      */
     portRange: z.any().nullish().optional(),
-    /**
-    * dataType: macaddr
-    * defaultValue: 
-    */
+     /**
+      * dataType: macaddr
+      */
     macAddress: z.string().nullish().optional(),
-    /**
-    * dataType: timestamptz
-    * defaultValue: now()
-    */
+     /**
+      * dataType: timestamptz
+      * defaultValue: now()
+      */
     requestTime: z.date().nullish().optional(),
-    /**
-    * dataType: interval
-    * defaultValue: 
-    */
+     /**
+      * dataType: interval
+      */
     responseTime: z.any().nullish().optional(),
-    /**
-    * dataType: int8
-    * defaultValue: 0
-    */
+     /**
+      * dataType: int8
+      * defaultValue: 0
+      */
     bytesSent: z.number().int().nullish().optional(),
-    /**
-    * dataType: int8
-    * defaultValue: 0
-    */
+     /**
+      * dataType: int8
+      * defaultValue: 0
+      */
     bytesReceived: z.number().int().nullish().optional(),
-    /**
-    * dataType: varchar
-    * defaultValue: 
-    */
+     /**
+      * dataType: varchar
+      */
     protocol: z.string().max(10).nullish().optional(),
-    /**
-    * dataType: int2
-    * defaultValue: 
-    */
+     /**
+      * dataType: int2
+      */
     statusCode: z.number().int().nullish().optional(),
-    /**
-    * dataType: text
-    * defaultValue: 
-    */
+     /**
+      * dataType: text
+      */
     userAgent: z.string().nullish().optional(),
-    /**
-    * dataType: jsonb
-    * defaultValue: 
-    */
+     /**
+      * dataType: jsonb
+      */
     headers: z.any().nullish().transform((value) => value ? JSON.stringify(value) : value).optional(),
 });
 
@@ -180,7 +162,7 @@ export const NetworkLogsTableWriteSchema = z.object({
  * The base record type for the "public.network_logs" table.
  * This type represents an insertable database record before casing transformations are applied.
  */
-export type NetworkLogInsertBaseRecord = z.output<typeof NetworkLogsTableWriteSchema>;
+export type NetworkLogInsertBaseRecord = z.output<typeof NetworkLogsTableInsertBaseSchema>;
 
 /**
  * The base record type for the "public.network_logs" table.
@@ -189,10 +171,10 @@ export type NetworkLogInsertBaseRecord = z.output<typeof NetworkLogsTableWriteSc
 export type NetworkLogUpdateBaseRecord = Partial<NetworkLogInsertBaseRecord>;
 
 /**
- * The insert transform function for the "public.network_logs" table.
- * Maps the expected property names to raw database fields. e.g camelCase to snake_case.
+ * Insert transform for the "public.network_logs" table.
+ * Maps camelCase properties to raw database snake_case fields.
  */
-export const transformNetworkLogInsertRecord = (data: NetworkLogInsertBaseRecord): {
+export const transformNetworkLogInsertBaseRecord = (data: NetworkLogInsertBaseRecord): {
     ip_address: NetworkLogInsertBaseRecord['ipAddress'],
     port_range?: NetworkLogInsertBaseRecord['portRange'],
     mac_address?: NetworkLogInsertBaseRecord['macAddress'],
@@ -219,10 +201,10 @@ export const transformNetworkLogInsertRecord = (data: NetworkLogInsertBaseRecord
 });
 
 /**
- * The update transform function for the "public.network_logs" table.
- * Maps the expected property names to raw database fields. e.g camelCase to snake_case.
+ * Update transform for the "public.network_logs" table.
+ * Maps camelCase properties to raw database snake_case fields.
  */
-export const transformNetworkLogUpdateRecord = (data: NetworkLogUpdateBaseRecord): {
+export const transformNetworkLogUpdateBaseRecord = (data: NetworkLogUpdateBaseRecord): {
     ip_address: NetworkLogUpdateBaseRecord['ipAddress'],
     port_range?: NetworkLogUpdateBaseRecord['portRange'],
     mac_address?: NetworkLogUpdateBaseRecord['macAddress'],
@@ -249,23 +231,21 @@ export const transformNetworkLogUpdateRecord = (data: NetworkLogUpdateBaseRecord
 });
 
 /**
- * The insert schema for the "public.network_logs" table.
- * This schema is used to validate and transform a record before inserting into the database.
+ * Insert schema for the "public.network_logs" table (after casing transform).
  */
-export const NetworkLogsTableInsertSchema = NetworkLogsTableWriteSchema.transform(transformNetworkLogInsertRecord);
+export const NetworkLogsTableInsertSchema = NetworkLogsTableInsertBaseSchema.transform(transformNetworkLogInsertBaseRecord);
 
 /**
- * The update schema for the "public.network_logs" table.
- * This schema is used to validate and transform a record before updating the database.
+ * Update schema for the "public.network_logs" table (after casing transform).
  */
-export const NetworkLogsTableUpdateSchema = NetworkLogsTableWriteSchema.partial().transform(transformNetworkLogUpdateRecord);
+export const NetworkLogsTableUpdateSchema = NetworkLogsTableInsertBaseSchema.partial().transform(transformNetworkLogUpdateBaseRecord);
 
 type TableInsertRecord = z.input<typeof NetworkLogsTableInsertSchema>;
 type TableReadRecord = z.output<typeof NetworkLogsTableSchema>;
 
 /**
-* Represents a database record from the "public.network_logs" table.
-*/
+ * Read record (casing transformed) for the "public.network_logs" table.
+ */
 export interface NetworkLogRecord {
     /**
     * Primary key for network logs table
@@ -318,8 +298,8 @@ export interface NetworkLogRecord {
 }
 
 /**
-* Represents an insertable database record from the "public.network_logs" table.
-*/
+ * Insert record (casing transformed) for the "public.network_logs" table.
+ */
 export interface NetworkLogInsertRecord {
     /**
     * IP address of the request
@@ -372,6 +352,7 @@ export interface NetworkLogInsertRecord {
 }
 
 /**
-* Represents an updateable database record from the "public.network_logs" table.
-*/
+ * Updatable record (casing transformed) for the "public.network_logs" table.
+ */
 export type NetworkLogUpdateRecord = Partial<NetworkLogInsertRecord>;
+

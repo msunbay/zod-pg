@@ -12,7 +12,7 @@ import {
 const MVIEW_PREFIXES = ['mv_', 'mview_'];
 const VIEW_PREFIXES = ['v_', 'view_'];
 
-export type Operation = 'read' | 'insert' | 'update' | 'write' | 'none';
+export type Operation = 'read' | 'insert' | 'update' | 'write';
 
 const getOperationSuffix = (type: Operation): string => {
   switch (type) {
@@ -23,7 +23,7 @@ const getOperationSuffix = (type: Operation): string => {
     case 'write':
       return 'Write';
     case 'read':
-      return 'Read';
+      return '';
     default:
       return '';
   }
@@ -51,30 +51,33 @@ export const getSchemaPrefix = (tableInfo: ZodPgTableInfo): string => {
   }
 };
 
-export const formaRecordTransformName = (
-  tableInfo: ZodPgTableInfo,
-  type: Operation,
-  casing: ZodPgCasing = 'camelCase'
-): string => {
-  const name = `transform${singularPascalCase(tableInfo.name)}${getOperationSuffix(type)}Record`;
+export const formatRecordTransformName = ({
+  tableInfo,
+  operation: type,
+  casing = 'camelCase',
+  suffix = 'BaseRecord',
+}: {
+  tableInfo: ZodPgTableInfo;
+  operation: Operation;
+  casing?: ZodPgCasing;
+  suffix?: string;
+}): string => {
+  const name = `transform${singularPascalCase(tableInfo.name)}${getOperationSuffix(type)}${suffix}`;
   return convertCaseFormat(name, casing);
 };
 
-export const formatTableSchemaBaseName = (
-  tableInfo: ZodPgTableInfo,
-  type: Operation,
-  casing: ZodPgCasing = 'PascalCase'
-): string => {
-  const name = `${convertCaseFormat(tableInfo.name, 'PascalCase')}${getSchemaPrefix(tableInfo)}Base${getOperationSuffix(type)}Schema`;
-  return convertCaseFormat(name, casing);
-};
-
-export const formatTableSchemaName = (
-  tableInfo: ZodPgTableInfo,
-  type: Operation,
-  casing: ZodPgCasing = 'PascalCase'
-): string => {
-  const name = `${convertCaseFormat(tableInfo.name, 'PascalCase')}${getSchemaPrefix(tableInfo)}${getOperationSuffix(type)}Schema`;
+export const formatTableSchemaName = ({
+  tableInfo,
+  operation: type,
+  casing = 'PascalCase',
+  suffix = 'Schema',
+}: {
+  tableInfo: ZodPgTableInfo;
+  operation: Operation;
+  casing?: ZodPgCasing;
+  suffix?: string;
+}): string => {
+  const name = `${convertCaseFormat(tableInfo.name, 'PascalCase')}${getSchemaPrefix(tableInfo)}${getOperationSuffix(type)}${suffix}`;
   return convertCaseFormat(name, casing);
 };
 

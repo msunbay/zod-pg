@@ -4,60 +4,54 @@ import { z } from 'zod';
 
 
 /**
- * The base read schema for the "public.post_categories" table.
- * This schema is used to validate the data read from the database without any transformations.
+ * Base read schema for the "public.post_categories" table.
+ * Validates raw rows read from the database (no casing transforms applied yet).
  */
-export const PostCategoriesTableReadSchema = z.object({
-    /**
-    * dataType: int4
-    * defaultValue: 
-    */
+export const PostCategoriesTableBaseSchema = z.object({
+     /**
+      * dataType: int4
+      */
     post_id: z.number().int(),
-    /**
-    * dataType: int4
-    * defaultValue: 
-    */
+     /**
+      * dataType: int4
+      */
     category_id: z.number().int(),
 });
 
 /**
  * The base record type for the "public.post_categories" table.
- * This type represents the raw database record without any transformations.
+ * This type represents the raw database record without case transforms.
  */
-export type PostCategoryReadBaseRecord = z.output<typeof PostCategoriesTableReadSchema>;
+export type PostCategoryBaseRecord = z.output<typeof PostCategoriesTableBaseSchema>;
 
 /**
-* The read transform function for the "public.post_categories" table.
-* Maps the raw database fields to expected property names. e.g snake_case to camelCase.
-*/
-export const transformPostCategoryReadRecord = (data: PostCategoryReadBaseRecord): {
-    postId: PostCategoryReadBaseRecord['post_id'],
-    categoryId: PostCategoryReadBaseRecord['category_id'],
+ * Read transform for the "public.post_categories" table.
+ * Maps raw database snake_case fields to camelCase properties.
+ */
+export const transformPostCategoryBaseRecord = (data: PostCategoryBaseRecord): {
+    postId: PostCategoryBaseRecord['post_id'],
+    categoryId: PostCategoryBaseRecord['category_id'],
 } => ({
     postId: data.post_id,
     categoryId: data.category_id,
 });
 
 /**
- * The read schema for the "public.post_categories" table.
- * This schema is used to validate the data read from the database with transformations.
+ * Read schema for the "public.post_categories" table (after casing transform).
  */
-export const PostCategoriesTableSchema = PostCategoriesTableReadSchema.transform(transformPostCategoryReadRecord);
+export const PostCategoriesTableSchema = PostCategoriesTableBaseSchema.transform(transformPostCategoryBaseRecord);
 
 /**
- * The base write schema for the "public.post_categories" table.
- * This schema is used to validate the data before writing to the database without any transformations.
+ * Base insert/write schema for the "public.post_categories" table (no casing transforms).
  */
-export const PostCategoriesTableWriteSchema = z.object({
-    /**
-    * dataType: int4
-    * defaultValue: 
-    */
+export const PostCategoriesTableInsertBaseSchema = z.object({
+     /**
+      * dataType: int4
+      */
     postId: z.number().int(),
-    /**
-    * dataType: int4
-    * defaultValue: 
-    */
+     /**
+      * dataType: int4
+      */
     categoryId: z.number().int(),
 });
 
@@ -65,7 +59,7 @@ export const PostCategoriesTableWriteSchema = z.object({
  * The base record type for the "public.post_categories" table.
  * This type represents an insertable database record before casing transformations are applied.
  */
-export type PostCategoryInsertBaseRecord = z.output<typeof PostCategoriesTableWriteSchema>;
+export type PostCategoryInsertBaseRecord = z.output<typeof PostCategoriesTableInsertBaseSchema>;
 
 /**
  * The base record type for the "public.post_categories" table.
@@ -74,10 +68,10 @@ export type PostCategoryInsertBaseRecord = z.output<typeof PostCategoriesTableWr
 export type PostCategoryUpdateBaseRecord = Partial<PostCategoryInsertBaseRecord>;
 
 /**
- * The insert transform function for the "public.post_categories" table.
- * Maps the expected property names to raw database fields. e.g camelCase to snake_case.
+ * Insert transform for the "public.post_categories" table.
+ * Maps camelCase properties to raw database snake_case fields.
  */
-export const transformPostCategoryInsertRecord = (data: PostCategoryInsertBaseRecord): {
+export const transformPostCategoryInsertBaseRecord = (data: PostCategoryInsertBaseRecord): {
     post_id: PostCategoryInsertBaseRecord['postId'],
     category_id: PostCategoryInsertBaseRecord['categoryId'],
 } => ({
@@ -86,10 +80,10 @@ export const transformPostCategoryInsertRecord = (data: PostCategoryInsertBaseRe
 });
 
 /**
- * The update transform function for the "public.post_categories" table.
- * Maps the expected property names to raw database fields. e.g camelCase to snake_case.
+ * Update transform for the "public.post_categories" table.
+ * Maps camelCase properties to raw database snake_case fields.
  */
-export const transformPostCategoryUpdateRecord = (data: PostCategoryUpdateBaseRecord): {
+export const transformPostCategoryUpdateBaseRecord = (data: PostCategoryUpdateBaseRecord): {
     post_id: PostCategoryUpdateBaseRecord['postId'],
     category_id: PostCategoryUpdateBaseRecord['categoryId'],
 } => ({
@@ -98,23 +92,21 @@ export const transformPostCategoryUpdateRecord = (data: PostCategoryUpdateBaseRe
 });
 
 /**
- * The insert schema for the "public.post_categories" table.
- * This schema is used to validate and transform a record before inserting into the database.
+ * Insert schema for the "public.post_categories" table (after casing transform).
  */
-export const PostCategoriesTableInsertSchema = PostCategoriesTableWriteSchema.transform(transformPostCategoryInsertRecord);
+export const PostCategoriesTableInsertSchema = PostCategoriesTableInsertBaseSchema.transform(transformPostCategoryInsertBaseRecord);
 
 /**
- * The update schema for the "public.post_categories" table.
- * This schema is used to validate and transform a record before updating the database.
+ * Update schema for the "public.post_categories" table (after casing transform).
  */
-export const PostCategoriesTableUpdateSchema = PostCategoriesTableWriteSchema.partial().transform(transformPostCategoryUpdateRecord);
+export const PostCategoriesTableUpdateSchema = PostCategoriesTableInsertBaseSchema.partial().transform(transformPostCategoryUpdateBaseRecord);
 
 type TableInsertRecord = z.input<typeof PostCategoriesTableInsertSchema>;
 type TableReadRecord = z.output<typeof PostCategoriesTableSchema>;
 
 /**
-* Represents a database record from the "public.post_categories" table.
-*/
+ * Read record (casing transformed) for the "public.post_categories" table.
+ */
 export interface PostCategoryRecord {
     /**
     * ID of the post
@@ -127,8 +119,8 @@ export interface PostCategoryRecord {
 }
 
 /**
-* Represents an insertable database record from the "public.post_categories" table.
-*/
+ * Insert record (casing transformed) for the "public.post_categories" table.
+ */
 export interface PostCategoryInsertRecord {
     /**
     * ID of the post
@@ -141,6 +133,7 @@ export interface PostCategoryInsertRecord {
 }
 
 /**
-* Represents an updateable database record from the "public.post_categories" table.
-*/
+ * Updatable record (casing transformed) for the "public.post_categories" table.
+ */
 export type PostCategoryUpdateRecord = Partial<PostCategoryInsertRecord>;
+

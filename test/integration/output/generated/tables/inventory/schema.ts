@@ -4,71 +4,67 @@ import { z } from 'zod';
 
 
 /**
- * The base read schema for the "public.inventory" table.
- * This schema is used to validate the data read from the database without any transformations.
+ * Base read schema for the "public.inventory" table.
+ * Validates raw rows read from the database (no casing transforms applied yet).
  */
-export const InventoryTableReadSchema = z.object({
-    /**
-    * dataType: int4
-    * defaultValue: 
-    */
+export const InventoryTableBaseSchema = z.object({
+     /**
+      * dataType: int4
+      */
     product_id: z.number().int(),
-    /**
-    * dataType: int4
-    * defaultValue: 0
-    */
+     /**
+      * dataType: int4
+      * defaultValue: 0
+      */
     stock_quantity: z.number().int(),
-    /**
-    * dataType: int4
-    * defaultValue: 0
-    */
+     /**
+      * dataType: int4
+      * defaultValue: 0
+      */
     reserved_quantity: z.number().int().nullish().transform((value) => value ?? undefined).optional(),
-    /**
-    * dataType: int2
-    * defaultValue: 10
-    */
+     /**
+      * dataType: int2
+      * defaultValue: 10
+      */
     reorder_level: z.number().int().nullish().transform((value) => value ?? undefined).optional(),
-    /**
-    * dataType: date
-    * defaultValue: 
-    */
+     /**
+      * dataType: date
+      */
     last_restocked: z.date().nullish().transform((value) => value ?? undefined).optional(),
-    /**
-    * dataType: jsonb
-    * defaultValue: 
-    */
+     /**
+      * dataType: jsonb
+      */
     supplier_info: z.any().nullish().transform((value) => value ?? undefined).optional(),
-    /**
-    * dataType: _text
-    * defaultValue: 
-    */
+     /**
+      * dataType: _text
+      */
     warehouse_locations: z.array(z.string()).nullish().transform((value) => value ?? undefined).optional(),
-    /**
-    * dataType: timestamptz
-    * defaultValue: now()
-    */
+     /**
+      * dataType: timestamptz
+      * defaultValue: now()
+      */
     updated_at: z.date().nullish().transform((value) => value ?? undefined).optional(),
 });
 
 /**
  * The base record type for the "public.inventory" table.
- * This type represents the raw database record without any transformations.
+ * This type represents the raw database record without case transforms.
  */
-export type InventoryReadBaseRecord = z.output<typeof InventoryTableReadSchema>;
+export type InventoryBaseRecord = z.output<typeof InventoryTableBaseSchema>;
 
 /**
-* The read transform function for the "public.inventory" table.
-* Maps the raw database fields to expected property names. e.g snake_case to camelCase.
-*/
-export const transformInventoryReadRecord = (data: InventoryReadBaseRecord): {
-    productId: InventoryReadBaseRecord['product_id'],
-    stockQuantity: InventoryReadBaseRecord['stock_quantity'],
-    reservedQuantity?: InventoryReadBaseRecord['reserved_quantity'],
-    reorderLevel?: InventoryReadBaseRecord['reorder_level'],
-    lastRestocked?: InventoryReadBaseRecord['last_restocked'],
-    supplierInfo?: InventoryReadBaseRecord['supplier_info'],
-    warehouseLocations?: InventoryReadBaseRecord['warehouse_locations'],
-    updatedAt?: InventoryReadBaseRecord['updated_at'],
+ * Read transform for the "public.inventory" table.
+ * Maps raw database snake_case fields to camelCase properties.
+ */
+export const transformInventoryBaseRecord = (data: InventoryBaseRecord): {
+    productId: InventoryBaseRecord['product_id'],
+    stockQuantity: InventoryBaseRecord['stock_quantity'],
+    reservedQuantity?: InventoryBaseRecord['reserved_quantity'],
+    reorderLevel?: InventoryBaseRecord['reorder_level'],
+    lastRestocked?: InventoryBaseRecord['last_restocked'],
+    supplierInfo?: InventoryBaseRecord['supplier_info'],
+    warehouseLocations?: InventoryBaseRecord['warehouse_locations'],
+    updatedAt?: InventoryBaseRecord['updated_at'],
 } => ({
     productId: data.product_id,
     stockQuantity: data.stock_quantity,
@@ -81,55 +77,49 @@ export const transformInventoryReadRecord = (data: InventoryReadBaseRecord): {
 });
 
 /**
- * The read schema for the "public.inventory" table.
- * This schema is used to validate the data read from the database with transformations.
+ * Read schema for the "public.inventory" table (after casing transform).
  */
-export const InventoryTableSchema = InventoryTableReadSchema.transform(transformInventoryReadRecord);
+export const InventoryTableSchema = InventoryTableBaseSchema.transform(transformInventoryBaseRecord);
 
 /**
- * The base write schema for the "public.inventory" table.
- * This schema is used to validate the data before writing to the database without any transformations.
+ * Base insert/write schema for the "public.inventory" table (no casing transforms).
  */
-export const InventoryTableWriteSchema = z.object({
-    /**
-    * dataType: int4
-    * defaultValue: 
-    */
+export const InventoryTableInsertBaseSchema = z.object({
+     /**
+      * dataType: int4
+      */
     productId: z.number().int(),
-    /**
-    * dataType: int4
-    * defaultValue: 0
-    */
+     /**
+      * dataType: int4
+      * defaultValue: 0
+      */
     stockQuantity: z.number().int(),
-    /**
-    * dataType: int4
-    * defaultValue: 0
-    */
+     /**
+      * dataType: int4
+      * defaultValue: 0
+      */
     reservedQuantity: z.number().int().nullish().optional(),
-    /**
-    * dataType: int2
-    * defaultValue: 10
-    */
+     /**
+      * dataType: int2
+      * defaultValue: 10
+      */
     reorderLevel: z.number().int().nullish().optional(),
-    /**
-    * dataType: date
-    * defaultValue: 
-    */
+     /**
+      * dataType: date
+      */
     lastRestocked: z.date().nullish().optional(),
-    /**
-    * dataType: jsonb
-    * defaultValue: 
-    */
+     /**
+      * dataType: jsonb
+      */
     supplierInfo: z.any().nullish().transform((value) => value ? JSON.stringify(value) : value).optional(),
-    /**
-    * dataType: _text
-    * defaultValue: 
-    */
+     /**
+      * dataType: _text
+      */
     warehouseLocations: z.array(z.string()).nullish().optional(),
-    /**
-    * dataType: timestamptz
-    * defaultValue: now()
-    */
+     /**
+      * dataType: timestamptz
+      * defaultValue: now()
+      */
     updatedAt: z.date().nullish().optional(),
 });
 
@@ -137,7 +127,7 @@ export const InventoryTableWriteSchema = z.object({
  * The base record type for the "public.inventory" table.
  * This type represents an insertable database record before casing transformations are applied.
  */
-export type InventoryInsertBaseRecord = z.output<typeof InventoryTableWriteSchema>;
+export type InventoryInsertBaseRecord = z.output<typeof InventoryTableInsertBaseSchema>;
 
 /**
  * The base record type for the "public.inventory" table.
@@ -146,10 +136,10 @@ export type InventoryInsertBaseRecord = z.output<typeof InventoryTableWriteSchem
 export type InventoryUpdateBaseRecord = Partial<InventoryInsertBaseRecord>;
 
 /**
- * The insert transform function for the "public.inventory" table.
- * Maps the expected property names to raw database fields. e.g camelCase to snake_case.
+ * Insert transform for the "public.inventory" table.
+ * Maps camelCase properties to raw database snake_case fields.
  */
-export const transformInventoryInsertRecord = (data: InventoryInsertBaseRecord): {
+export const transformInventoryInsertBaseRecord = (data: InventoryInsertBaseRecord): {
     product_id: InventoryInsertBaseRecord['productId'],
     stock_quantity: InventoryInsertBaseRecord['stockQuantity'],
     reserved_quantity?: InventoryInsertBaseRecord['reservedQuantity'],
@@ -170,10 +160,10 @@ export const transformInventoryInsertRecord = (data: InventoryInsertBaseRecord):
 });
 
 /**
- * The update transform function for the "public.inventory" table.
- * Maps the expected property names to raw database fields. e.g camelCase to snake_case.
+ * Update transform for the "public.inventory" table.
+ * Maps camelCase properties to raw database snake_case fields.
  */
-export const transformInventoryUpdateRecord = (data: InventoryUpdateBaseRecord): {
+export const transformInventoryUpdateBaseRecord = (data: InventoryUpdateBaseRecord): {
     product_id: InventoryUpdateBaseRecord['productId'],
     stock_quantity: InventoryUpdateBaseRecord['stockQuantity'],
     reserved_quantity?: InventoryUpdateBaseRecord['reservedQuantity'],
@@ -194,23 +184,21 @@ export const transformInventoryUpdateRecord = (data: InventoryUpdateBaseRecord):
 });
 
 /**
- * The insert schema for the "public.inventory" table.
- * This schema is used to validate and transform a record before inserting into the database.
+ * Insert schema for the "public.inventory" table (after casing transform).
  */
-export const InventoryTableInsertSchema = InventoryTableWriteSchema.transform(transformInventoryInsertRecord);
+export const InventoryTableInsertSchema = InventoryTableInsertBaseSchema.transform(transformInventoryInsertBaseRecord);
 
 /**
- * The update schema for the "public.inventory" table.
- * This schema is used to validate and transform a record before updating the database.
+ * Update schema for the "public.inventory" table (after casing transform).
  */
-export const InventoryTableUpdateSchema = InventoryTableWriteSchema.partial().transform(transformInventoryUpdateRecord);
+export const InventoryTableUpdateSchema = InventoryTableInsertBaseSchema.partial().transform(transformInventoryUpdateBaseRecord);
 
 type TableInsertRecord = z.input<typeof InventoryTableInsertSchema>;
 type TableReadRecord = z.output<typeof InventoryTableSchema>;
 
 /**
-* Represents a database record from the "public.inventory" table.
-*/
+ * Read record (casing transformed) for the "public.inventory" table.
+ */
 export interface InventoryRecord {
     /**
     * ID of the product
@@ -247,8 +235,8 @@ export interface InventoryRecord {
 }
 
 /**
-* Represents an insertable database record from the "public.inventory" table.
-*/
+ * Insert record (casing transformed) for the "public.inventory" table.
+ */
 export interface InventoryInsertRecord {
     /**
     * ID of the product
@@ -289,6 +277,7 @@ export interface InventoryInsertRecord {
 }
 
 /**
-* Represents an updateable database record from the "public.inventory" table.
-*/
+ * Updatable record (casing transformed) for the "public.inventory" table.
+ */
 export type InventoryUpdateRecord = Partial<InventoryInsertRecord>;
+

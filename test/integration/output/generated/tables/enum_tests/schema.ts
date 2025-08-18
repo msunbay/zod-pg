@@ -16,107 +16,95 @@ export const ENUM_TEST_WEEKDAYS = ['monday', 'tuesday', 'wednesday', 'thursday',
 export const ENUM_TEST_PAYMENT_METHODS = ['cash', 'credit-card', 'debit-card', 'paypal', 'bank-transfer'] as const;
 
 /**
- * The base read schema for the "public.enum_tests" table.
- * This schema is used to validate the data read from the database without any transformations.
+ * Base read schema for the "public.enum_tests" table.
+ * Validates raw rows read from the database (no casing transforms applied yet).
  */
-export const EnumTestsTableReadSchema = z.object({
-    /**
-    * dataType: int4
-    * defaultValue: nextval('enum_tests_id_seq'::regclass)
-    */
+export const EnumTestsTableBaseSchema = z.object({
+     /**
+      * dataType: int4
+      * defaultValue: nextval('enum_tests_id_seq'::regclass)
+      */
     id: z.number().int(),
-    /**
-    * dataType: varchar
-    * defaultValue: 
-    */
+     /**
+      * dataType: varchar
+      */
     priority: z.enum(ENUM_TEST_PRIORITIES).nullish().transform((value) => value ?? undefined).optional(),
-    /**
-    * dataType: varchar
-    * defaultValue: 
-    */
+     /**
+      * dataType: varchar
+      */
     color: z.enum(ENUM_TEST_COLORS).nullish().transform((value) => value ?? undefined).optional(),
-    /**
-    * dataType: text
-    * defaultValue: 
-    */
+     /**
+      * dataType: text
+      */
     size: z.enum(ENUM_TEST_SIZES).nullish().transform((value) => value ?? undefined).optional(),
-    /**
-    * dataType: bpchar
-    * defaultValue: 
-    */
+     /**
+      * dataType: bpchar
+      */
     grade: z.enum(ENUM_TEST_GRADES).nullish().transform((value) => value ?? undefined).optional(),
-    /**
-    * dataType: varchar
-    * defaultValue: 
-    */
+     /**
+      * dataType: varchar
+      */
     category: z.enum(ENUM_TEST_CATEGORIES).nullish().transform((value) => value ?? undefined).optional(),
-    /**
-    * dataType: text
-    * defaultValue: 
-    */
+     /**
+      * dataType: text
+      */
     mood: z.enum(ENUM_TEST_MOODS).nullish().transform((value) => value ?? undefined).optional(),
-    /**
-    * dataType: varchar
-    * defaultValue: 
-    */
+     /**
+      * dataType: varchar
+      */
     direction: z.enum(ENUM_TEST_DIRECTIONS).nullish().transform((value) => value ?? undefined).optional(),
-    /**
-    * dataType: text
-    * defaultValue: 
-    */
+     /**
+      * dataType: text
+      */
     weather_condition: z.enum(ENUM_TEST_WEATHER_CONDITIONS).nullish().transform((value) => value ?? undefined).optional(),
-    /**
-    * dataType: varchar
-    * defaultValue: 
-    */
+     /**
+      * dataType: varchar
+      */
     task_status: z.enum(ENUM_TEST_TASK_STATUSES).nullish().transform((value) => value ?? undefined).optional(),
-    /**
-    * dataType: int4
-    * defaultValue: 
-    */
+     /**
+      * dataType: int4
+      */
     difficulty: z.enum(ENUM_TEST_DIFFICULTIES).nullish().transform((value) => value ?? undefined).optional(),
-    /**
-    * dataType: varchar
-    * defaultValue: 
-    */
+     /**
+      * dataType: varchar
+      */
     weekday: z.enum(ENUM_TEST_WEEKDAYS).nullish().transform((value) => value ?? undefined).optional(),
-    /**
-    * dataType: text
-    * defaultValue: 
-    */
+     /**
+      * dataType: text
+      */
     payment_method: z.enum(ENUM_TEST_PAYMENT_METHODS).nullish().transform((value) => value ?? undefined).optional(),
-    /**
-    * dataType: timestamptz
-    * defaultValue: now()
-    */
+     /**
+      * dataType: timestamptz
+      * defaultValue: now()
+      */
     created_at: z.date().nullish().transform((value) => value ?? undefined).optional(),
 });
 
 /**
  * The base record type for the "public.enum_tests" table.
- * This type represents the raw database record without any transformations.
+ * This type represents the raw database record without case transforms.
  */
-export type EnumTestReadBaseRecord = z.output<typeof EnumTestsTableReadSchema>;
+export type EnumTestBaseRecord = z.output<typeof EnumTestsTableBaseSchema>;
 
 /**
-* The read transform function for the "public.enum_tests" table.
-* Maps the raw database fields to expected property names. e.g snake_case to camelCase.
-*/
-export const transformEnumTestReadRecord = (data: EnumTestReadBaseRecord): {
-    id: EnumTestReadBaseRecord['id'],
-    priority?: EnumTestReadBaseRecord['priority'],
-    color?: EnumTestReadBaseRecord['color'],
-    size?: EnumTestReadBaseRecord['size'],
-    grade?: EnumTestReadBaseRecord['grade'],
-    category?: EnumTestReadBaseRecord['category'],
-    mood?: EnumTestReadBaseRecord['mood'],
-    direction?: EnumTestReadBaseRecord['direction'],
-    weatherCondition?: EnumTestReadBaseRecord['weather_condition'],
-    taskStatus?: EnumTestReadBaseRecord['task_status'],
-    difficulty?: EnumTestReadBaseRecord['difficulty'],
-    weekday?: EnumTestReadBaseRecord['weekday'],
-    paymentMethod?: EnumTestReadBaseRecord['payment_method'],
-    createdAt?: EnumTestReadBaseRecord['created_at'],
+ * Read transform for the "public.enum_tests" table.
+ * Maps raw database snake_case fields to camelCase properties.
+ */
+export const transformEnumTestBaseRecord = (data: EnumTestBaseRecord): {
+    id: EnumTestBaseRecord['id'],
+    priority?: EnumTestBaseRecord['priority'],
+    color?: EnumTestBaseRecord['color'],
+    size?: EnumTestBaseRecord['size'],
+    grade?: EnumTestBaseRecord['grade'],
+    category?: EnumTestBaseRecord['category'],
+    mood?: EnumTestBaseRecord['mood'],
+    direction?: EnumTestBaseRecord['direction'],
+    weatherCondition?: EnumTestBaseRecord['weather_condition'],
+    taskStatus?: EnumTestBaseRecord['task_status'],
+    difficulty?: EnumTestBaseRecord['difficulty'],
+    weekday?: EnumTestBaseRecord['weekday'],
+    paymentMethod?: EnumTestBaseRecord['payment_method'],
+    createdAt?: EnumTestBaseRecord['created_at'],
 } => ({
     id: data.id,
     priority: data.priority,
@@ -135,80 +123,66 @@ export const transformEnumTestReadRecord = (data: EnumTestReadBaseRecord): {
 });
 
 /**
- * The read schema for the "public.enum_tests" table.
- * This schema is used to validate the data read from the database with transformations.
+ * Read schema for the "public.enum_tests" table (after casing transform).
  */
-export const EnumTestsTableSchema = EnumTestsTableReadSchema.transform(transformEnumTestReadRecord);
+export const EnumTestsTableSchema = EnumTestsTableBaseSchema.transform(transformEnumTestBaseRecord);
 
 /**
- * The base write schema for the "public.enum_tests" table.
- * This schema is used to validate the data before writing to the database without any transformations.
+ * Base insert/write schema for the "public.enum_tests" table (no casing transforms).
  */
-export const EnumTestsTableWriteSchema = z.object({
-    /**
-    * dataType: varchar
-    * defaultValue: 
-    */
+export const EnumTestsTableInsertBaseSchema = z.object({
+     /**
+      * dataType: varchar
+      */
     priority: z.enum(ENUM_TEST_PRIORITIES).nullish().optional(),
-    /**
-    * dataType: varchar
-    * defaultValue: 
-    */
+     /**
+      * dataType: varchar
+      */
     color: z.enum(ENUM_TEST_COLORS).nullish().optional(),
-    /**
-    * dataType: text
-    * defaultValue: 
-    */
+     /**
+      * dataType: text
+      */
     size: z.enum(ENUM_TEST_SIZES).nullish().optional(),
-    /**
-    * dataType: bpchar
-    * defaultValue: 
-    */
+     /**
+      * dataType: bpchar
+      */
     grade: z.enum(ENUM_TEST_GRADES).nullish().optional(),
-    /**
-    * dataType: varchar
-    * defaultValue: 
-    */
+     /**
+      * dataType: varchar
+      */
     category: z.enum(ENUM_TEST_CATEGORIES).nullish().optional(),
-    /**
-    * dataType: text
-    * defaultValue: 
-    */
+     /**
+      * dataType: text
+      */
     mood: z.enum(ENUM_TEST_MOODS).nullish().optional(),
-    /**
-    * dataType: varchar
-    * defaultValue: 
-    */
+     /**
+      * dataType: varchar
+      */
     direction: z.enum(ENUM_TEST_DIRECTIONS).nullish().optional(),
-    /**
-    * dataType: text
-    * defaultValue: 
-    */
+     /**
+      * dataType: text
+      */
     weatherCondition: z.enum(ENUM_TEST_WEATHER_CONDITIONS).nullish().optional(),
-    /**
-    * dataType: varchar
-    * defaultValue: 
-    */
+     /**
+      * dataType: varchar
+      */
     taskStatus: z.enum(ENUM_TEST_TASK_STATUSES).nullish().optional(),
-    /**
-    * dataType: int4
-    * defaultValue: 
-    */
+     /**
+      * dataType: int4
+      */
     difficulty: z.enum(ENUM_TEST_DIFFICULTIES).nullish().optional(),
-    /**
-    * dataType: varchar
-    * defaultValue: 
-    */
+     /**
+      * dataType: varchar
+      */
     weekday: z.enum(ENUM_TEST_WEEKDAYS).nullish().optional(),
-    /**
-    * dataType: text
-    * defaultValue: 
-    */
+     /**
+      * dataType: text
+      */
     paymentMethod: z.enum(ENUM_TEST_PAYMENT_METHODS).nullish().optional(),
-    /**
-    * dataType: timestamptz
-    * defaultValue: now()
-    */
+     /**
+      * dataType: timestamptz
+      * defaultValue: now()
+      */
     createdAt: z.date().nullish().optional(),
 });
 
@@ -216,7 +190,7 @@ export const EnumTestsTableWriteSchema = z.object({
  * The base record type for the "public.enum_tests" table.
  * This type represents an insertable database record before casing transformations are applied.
  */
-export type EnumTestInsertBaseRecord = z.output<typeof EnumTestsTableWriteSchema>;
+export type EnumTestInsertBaseRecord = z.output<typeof EnumTestsTableInsertBaseSchema>;
 
 /**
  * The base record type for the "public.enum_tests" table.
@@ -225,10 +199,10 @@ export type EnumTestInsertBaseRecord = z.output<typeof EnumTestsTableWriteSchema
 export type EnumTestUpdateBaseRecord = Partial<EnumTestInsertBaseRecord>;
 
 /**
- * The insert transform function for the "public.enum_tests" table.
- * Maps the expected property names to raw database fields. e.g camelCase to snake_case.
+ * Insert transform for the "public.enum_tests" table.
+ * Maps camelCase properties to raw database snake_case fields.
  */
-export const transformEnumTestInsertRecord = (data: EnumTestInsertBaseRecord): {
+export const transformEnumTestInsertBaseRecord = (data: EnumTestInsertBaseRecord): {
     priority?: EnumTestInsertBaseRecord['priority'],
     color?: EnumTestInsertBaseRecord['color'],
     size?: EnumTestInsertBaseRecord['size'],
@@ -259,10 +233,10 @@ export const transformEnumTestInsertRecord = (data: EnumTestInsertBaseRecord): {
 });
 
 /**
- * The update transform function for the "public.enum_tests" table.
- * Maps the expected property names to raw database fields. e.g camelCase to snake_case.
+ * Update transform for the "public.enum_tests" table.
+ * Maps camelCase properties to raw database snake_case fields.
  */
-export const transformEnumTestUpdateRecord = (data: EnumTestUpdateBaseRecord): {
+export const transformEnumTestUpdateBaseRecord = (data: EnumTestUpdateBaseRecord): {
     priority?: EnumTestUpdateBaseRecord['priority'],
     color?: EnumTestUpdateBaseRecord['color'],
     size?: EnumTestUpdateBaseRecord['size'],
@@ -293,35 +267,21 @@ export const transformEnumTestUpdateRecord = (data: EnumTestUpdateBaseRecord): {
 });
 
 /**
- * The insert schema for the "public.enum_tests" table.
- * This schema is used to validate and transform a record before inserting into the database.
+ * Insert schema for the "public.enum_tests" table (after casing transform).
  */
-export const EnumTestsTableInsertSchema = EnumTestsTableWriteSchema.transform(transformEnumTestInsertRecord);
+export const EnumTestsTableInsertSchema = EnumTestsTableInsertBaseSchema.transform(transformEnumTestInsertBaseRecord);
 
 /**
- * The update schema for the "public.enum_tests" table.
- * This schema is used to validate and transform a record before updating the database.
+ * Update schema for the "public.enum_tests" table (after casing transform).
  */
-export const EnumTestsTableUpdateSchema = EnumTestsTableWriteSchema.partial().transform(transformEnumTestUpdateRecord);
+export const EnumTestsTableUpdateSchema = EnumTestsTableInsertBaseSchema.partial().transform(transformEnumTestUpdateBaseRecord);
 
 type TableInsertRecord = z.input<typeof EnumTestsTableInsertSchema>;
 type TableReadRecord = z.output<typeof EnumTestsTableSchema>;
-export type EnumTestPriority = (typeof ENUM_TEST_PRIORITIES)[number];
-export type EnumTestColor = (typeof ENUM_TEST_COLORS)[number];
-export type EnumTestSize = (typeof ENUM_TEST_SIZES)[number];
-export type EnumTestGrade = (typeof ENUM_TEST_GRADES)[number];
-export type EnumTestCategory = (typeof ENUM_TEST_CATEGORIES)[number];
-export type EnumTestMood = (typeof ENUM_TEST_MOODS)[number];
-export type EnumTestDirection = (typeof ENUM_TEST_DIRECTIONS)[number];
-export type EnumTestWeatherCondition = (typeof ENUM_TEST_WEATHER_CONDITIONS)[number];
-export type EnumTestTaskStatus = (typeof ENUM_TEST_TASK_STATUSES)[number];
-export type EnumTestDifficulty = (typeof ENUM_TEST_DIFFICULTIES)[number];
-export type EnumTestWeekday = (typeof ENUM_TEST_WEEKDAYS)[number];
-export type EnumTestPaymentMethod = (typeof ENUM_TEST_PAYMENT_METHODS)[number];
 
 /**
-* Represents a database record from the "public.enum_tests" table.
-*/
+ * Read record (casing transformed) for the "public.enum_tests" table.
+ */
 export interface EnumTestRecord {
     /**
     * Primary key for enum tests table
@@ -382,8 +342,8 @@ export interface EnumTestRecord {
 }
 
 /**
-* Represents an insertable database record from the "public.enum_tests" table.
-*/
+ * Insert record (casing transformed) for the "public.enum_tests" table.
+ */
 export interface EnumTestInsertRecord {
     /**
     * Task priority level
@@ -448,6 +408,19 @@ export interface EnumTestInsertRecord {
 }
 
 /**
-* Represents an updateable database record from the "public.enum_tests" table.
-*/
+ * Updatable record (casing transformed) for the "public.enum_tests" table.
+ */
 export type EnumTestUpdateRecord = Partial<EnumTestInsertRecord>;
+
+export type EnumTestPriority = (typeof ENUM_TEST_PRIORITIES)[number];
+export type EnumTestColor = (typeof ENUM_TEST_COLORS)[number];
+export type EnumTestSize = (typeof ENUM_TEST_SIZES)[number];
+export type EnumTestGrade = (typeof ENUM_TEST_GRADES)[number];
+export type EnumTestCategory = (typeof ENUM_TEST_CATEGORIES)[number];
+export type EnumTestMood = (typeof ENUM_TEST_MOODS)[number];
+export type EnumTestDirection = (typeof ENUM_TEST_DIRECTIONS)[number];
+export type EnumTestWeatherCondition = (typeof ENUM_TEST_WEATHER_CONDITIONS)[number];
+export type EnumTestTaskStatus = (typeof ENUM_TEST_TASK_STATUSES)[number];
+export type EnumTestDifficulty = (typeof ENUM_TEST_DIFFICULTIES)[number];
+export type EnumTestWeekday = (typeof ENUM_TEST_WEEKDAYS)[number];
+export type EnumTestPaymentMethod = (typeof ENUM_TEST_PAYMENT_METHODS)[number];

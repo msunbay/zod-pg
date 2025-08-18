@@ -1,6 +1,7 @@
 import { program } from 'commander';
 
 import { getConfiguration } from './config.js';
+import { createConnectionString } from './database/client.js';
 import { generateZodSchemas } from './generateZodSchemas.js';
 import {
   enableDebug,
@@ -136,18 +137,15 @@ export const main = async (port?: number) => {
   program.parse();
   const options = program.opts();
 
-  let connectionString = options.connectionString;
-
-  if (!connectionString) {
-    const { user, password, host, port, database } = options;
-
-    connectionString = `postgresql://${user}:${password}@${host}:${port}/${database}`;
-  }
-
   const cliConfig = {
     ...config,
     connection: {
-      connectionString,
+      connectionString: options.connectionString,
+      database: options.database,
+      host: options.host,
+      port: options.port,
+      user: options.user,
+      password: options.password,
       ssl: options.ssl,
     },
     silent: options.silent,
@@ -178,7 +176,7 @@ export const main = async (port?: number) => {
     logSetting('zod-version', cliConfig.zodVersion);
     logSetting(
       'connection',
-      maskConnectionString(cliConfig.connection.connectionString)
+      maskConnectionString(createConnectionString(cliConfig.connection))
     );
     logSetting('ssl', cliConfig.connection.ssl ? 'true' : 'false');
     logSetting('schema', cliConfig.schemaName);

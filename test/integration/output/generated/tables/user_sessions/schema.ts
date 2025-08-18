@@ -4,71 +4,66 @@ import { z } from 'zod';
 
 
 /**
- * The base read schema for the "public.user_sessions" table.
- * This schema is used to validate the data read from the database without any transformations.
+ * Base read schema for the "public.user_sessions" table.
+ * Validates raw rows read from the database (no casing transforms applied yet).
  */
-export const UserSessionsTableReadSchema = z.object({
-    /**
-    * dataType: uuid
-    * defaultValue: gen_random_uuid()
-    */
+export const UserSessionsTableBaseSchema = z.object({
+     /**
+      * dataType: uuid
+      * defaultValue: gen_random_uuid()
+      */
     id: z.string().uuid(),
-    /**
-    * dataType: int4
-    * defaultValue: 
-    */
+     /**
+      * dataType: int4
+      */
     user_id: z.number().int().nullish().transform((value) => value ?? undefined).optional(),
-    /**
-    * dataType: varchar
-    * defaultValue: 
-    */
+     /**
+      * dataType: varchar
+      */
     token_hash: z.string(),
-    /**
-    * dataType: timestamptz
-    * defaultValue: 
-    */
+     /**
+      * dataType: timestamptz
+      */
     expires_at: z.date(),
-    /**
-    * dataType: timestamptz
-    * defaultValue: now()
-    */
+     /**
+      * dataType: timestamptz
+      * defaultValue: now()
+      */
     created_at: z.date().nullish().transform((value) => value ?? undefined).optional(),
-    /**
-    * dataType: timestamptz
-    * defaultValue: now()
-    */
+     /**
+      * dataType: timestamptz
+      * defaultValue: now()
+      */
     last_used_at: z.date().nullish().transform((value) => value ?? undefined).optional(),
-    /**
-    * dataType: inet
-    * defaultValue: 
-    */
+     /**
+      * dataType: inet
+      */
     ip_address: z.string().nullish().transform((value) => value ?? undefined).optional(),
-    /**
-    * dataType: text
-    * defaultValue: 
-    */
+     /**
+      * dataType: text
+      */
     user_agent: z.string().nullish().transform((value) => value ?? undefined).optional(),
 });
 
 /**
  * The base record type for the "public.user_sessions" table.
- * This type represents the raw database record without any transformations.
+ * This type represents the raw database record without case transforms.
  */
-export type UserSessionReadBaseRecord = z.output<typeof UserSessionsTableReadSchema>;
+export type UserSessionBaseRecord = z.output<typeof UserSessionsTableBaseSchema>;
 
 /**
-* The read transform function for the "public.user_sessions" table.
-* Maps the raw database fields to expected property names. e.g snake_case to camelCase.
-*/
-export const transformUserSessionReadRecord = (data: UserSessionReadBaseRecord): {
-    id: UserSessionReadBaseRecord['id'],
-    userId?: UserSessionReadBaseRecord['user_id'],
-    tokenHash: UserSessionReadBaseRecord['token_hash'],
-    expiresAt: UserSessionReadBaseRecord['expires_at'],
-    createdAt?: UserSessionReadBaseRecord['created_at'],
-    lastUsedAt?: UserSessionReadBaseRecord['last_used_at'],
-    ipAddress?: UserSessionReadBaseRecord['ip_address'],
-    userAgent?: UserSessionReadBaseRecord['user_agent'],
+ * Read transform for the "public.user_sessions" table.
+ * Maps raw database snake_case fields to camelCase properties.
+ */
+export const transformUserSessionBaseRecord = (data: UserSessionBaseRecord): {
+    id: UserSessionBaseRecord['id'],
+    userId?: UserSessionBaseRecord['user_id'],
+    tokenHash: UserSessionBaseRecord['token_hash'],
+    expiresAt: UserSessionBaseRecord['expires_at'],
+    createdAt?: UserSessionBaseRecord['created_at'],
+    lastUsedAt?: UserSessionBaseRecord['last_used_at'],
+    ipAddress?: UserSessionBaseRecord['ip_address'],
+    userAgent?: UserSessionBaseRecord['user_agent'],
 } => ({
     id: data.id,
     userId: data.user_id,
@@ -81,55 +76,48 @@ export const transformUserSessionReadRecord = (data: UserSessionReadBaseRecord):
 });
 
 /**
- * The read schema for the "public.user_sessions" table.
- * This schema is used to validate the data read from the database with transformations.
+ * Read schema for the "public.user_sessions" table (after casing transform).
  */
-export const UserSessionsTableSchema = UserSessionsTableReadSchema.transform(transformUserSessionReadRecord);
+export const UserSessionsTableSchema = UserSessionsTableBaseSchema.transform(transformUserSessionBaseRecord);
 
 /**
- * The base write schema for the "public.user_sessions" table.
- * This schema is used to validate the data before writing to the database without any transformations.
+ * Base insert/write schema for the "public.user_sessions" table (no casing transforms).
  */
-export const UserSessionsTableWriteSchema = z.object({
-    /**
-    * dataType: uuid
-    * defaultValue: gen_random_uuid()
-    */
+export const UserSessionsTableInsertBaseSchema = z.object({
+     /**
+      * dataType: uuid
+      * defaultValue: gen_random_uuid()
+      */
     id: z.string().uuid(),
-    /**
-    * dataType: int4
-    * defaultValue: 
-    */
+     /**
+      * dataType: int4
+      */
     userId: z.number().int().nullish().optional(),
-    /**
-    * dataType: varchar
-    * defaultValue: 
-    */
+     /**
+      * dataType: varchar
+      */
     tokenHash: z.string().max(255),
-    /**
-    * dataType: timestamptz
-    * defaultValue: 
-    */
+     /**
+      * dataType: timestamptz
+      */
     expiresAt: z.date(),
-    /**
-    * dataType: timestamptz
-    * defaultValue: now()
-    */
+     /**
+      * dataType: timestamptz
+      * defaultValue: now()
+      */
     createdAt: z.date().nullish().optional(),
-    /**
-    * dataType: timestamptz
-    * defaultValue: now()
-    */
+     /**
+      * dataType: timestamptz
+      * defaultValue: now()
+      */
     lastUsedAt: z.date().nullish().optional(),
-    /**
-    * dataType: inet
-    * defaultValue: 
-    */
+     /**
+      * dataType: inet
+      */
     ipAddress: z.string().nullish().optional(),
-    /**
-    * dataType: text
-    * defaultValue: 
-    */
+     /**
+      * dataType: text
+      */
     userAgent: z.string().nullish().optional(),
 });
 
@@ -137,7 +125,7 @@ export const UserSessionsTableWriteSchema = z.object({
  * The base record type for the "public.user_sessions" table.
  * This type represents an insertable database record before casing transformations are applied.
  */
-export type UserSessionInsertBaseRecord = z.output<typeof UserSessionsTableWriteSchema>;
+export type UserSessionInsertBaseRecord = z.output<typeof UserSessionsTableInsertBaseSchema>;
 
 /**
  * The base record type for the "public.user_sessions" table.
@@ -146,10 +134,10 @@ export type UserSessionInsertBaseRecord = z.output<typeof UserSessionsTableWrite
 export type UserSessionUpdateBaseRecord = Partial<UserSessionInsertBaseRecord>;
 
 /**
- * The insert transform function for the "public.user_sessions" table.
- * Maps the expected property names to raw database fields. e.g camelCase to snake_case.
+ * Insert transform for the "public.user_sessions" table.
+ * Maps camelCase properties to raw database snake_case fields.
  */
-export const transformUserSessionInsertRecord = (data: UserSessionInsertBaseRecord): {
+export const transformUserSessionInsertBaseRecord = (data: UserSessionInsertBaseRecord): {
     id: UserSessionInsertBaseRecord['id'],
     user_id?: UserSessionInsertBaseRecord['userId'],
     token_hash: UserSessionInsertBaseRecord['tokenHash'],
@@ -170,10 +158,10 @@ export const transformUserSessionInsertRecord = (data: UserSessionInsertBaseReco
 });
 
 /**
- * The update transform function for the "public.user_sessions" table.
- * Maps the expected property names to raw database fields. e.g camelCase to snake_case.
+ * Update transform for the "public.user_sessions" table.
+ * Maps camelCase properties to raw database snake_case fields.
  */
-export const transformUserSessionUpdateRecord = (data: UserSessionUpdateBaseRecord): {
+export const transformUserSessionUpdateBaseRecord = (data: UserSessionUpdateBaseRecord): {
     id: UserSessionUpdateBaseRecord['id'],
     user_id?: UserSessionUpdateBaseRecord['userId'],
     token_hash: UserSessionUpdateBaseRecord['tokenHash'],
@@ -194,23 +182,21 @@ export const transformUserSessionUpdateRecord = (data: UserSessionUpdateBaseReco
 });
 
 /**
- * The insert schema for the "public.user_sessions" table.
- * This schema is used to validate and transform a record before inserting into the database.
+ * Insert schema for the "public.user_sessions" table (after casing transform).
  */
-export const UserSessionsTableInsertSchema = UserSessionsTableWriteSchema.transform(transformUserSessionInsertRecord);
+export const UserSessionsTableInsertSchema = UserSessionsTableInsertBaseSchema.transform(transformUserSessionInsertBaseRecord);
 
 /**
- * The update schema for the "public.user_sessions" table.
- * This schema is used to validate and transform a record before updating the database.
+ * Update schema for the "public.user_sessions" table (after casing transform).
  */
-export const UserSessionsTableUpdateSchema = UserSessionsTableWriteSchema.partial().transform(transformUserSessionUpdateRecord);
+export const UserSessionsTableUpdateSchema = UserSessionsTableInsertBaseSchema.partial().transform(transformUserSessionUpdateBaseRecord);
 
 type TableInsertRecord = z.input<typeof UserSessionsTableInsertSchema>;
 type TableReadRecord = z.output<typeof UserSessionsTableSchema>;
 
 /**
-* Represents a database record from the "public.user_sessions" table.
-*/
+ * Read record (casing transformed) for the "public.user_sessions" table.
+ */
 export interface UserSessionRecord {
     /**
     * Primary key for user sessions table
@@ -247,8 +233,8 @@ export interface UserSessionRecord {
 }
 
 /**
-* Represents an insertable database record from the "public.user_sessions" table.
-*/
+ * Insert record (casing transformed) for the "public.user_sessions" table.
+ */
 export interface UserSessionInsertRecord {
     /**
     * Primary key for user sessions table
@@ -289,6 +275,7 @@ export interface UserSessionInsertRecord {
 }
 
 /**
-* Represents an updateable database record from the "public.user_sessions" table.
-*/
+ * Updatable record (casing transformed) for the "public.user_sessions" table.
+ */
 export type UserSessionUpdateRecord = Partial<UserSessionInsertRecord>;
+

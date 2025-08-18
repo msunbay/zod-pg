@@ -4,65 +4,61 @@ import { z } from 'zod';
 
 
 /**
- * The base read schema for the "public.order_items" table.
- * This schema is used to validate the data read from the database without any transformations.
+ * Base read schema for the "public.order_items" table.
+ * Validates raw rows read from the database (no casing transforms applied yet).
  */
-export const OrderItemsTableReadSchema = z.object({
-    /**
-    * dataType: int8
-    * defaultValue: nextval('order_items_id_seq'::regclass)
-    */
+export const OrderItemsTableBaseSchema = z.object({
+     /**
+      * dataType: int8
+      * defaultValue: nextval('order_items_id_seq'::regclass)
+      */
     id: z.number().int(),
-    /**
-    * dataType: int8
-    * defaultValue: 
-    */
+     /**
+      * dataType: int8
+      */
     order_id: z.number().int().nullish().transform((value) => value ?? undefined).optional(),
-    /**
-    * dataType: int4
-    * defaultValue: 
-    */
+     /**
+      * dataType: int4
+      */
     product_id: z.number().int().nullish().transform((value) => value ?? undefined).optional(),
-    /**
-    * dataType: int2
-    * defaultValue: 
-    */
+     /**
+      * dataType: int2
+      */
     quantity: z.number().int(),
-    /**
-    * dataType: numeric
-    * defaultValue: 
-    */
+     /**
+      * dataType: numeric
+      */
     unit_price: z.number(),
-    /**
-    * dataType: numeric
-    * defaultValue: 0
-    */
+     /**
+      * dataType: numeric
+      * defaultValue: 0
+      */
     discount_percent: z.number().nullish().transform((value) => value ?? undefined).optional(),
-    /**
-    * dataType: numeric
-    * defaultValue: (((quantity)::numeric * unit_price) * ((1)::numeric - (discount_percent / (100)::numeric)))
-    */
+     /**
+      * dataType: numeric
+      * defaultValue: (((quantity)::numeric * unit_price) * ((1)::numeric - (discount_percent / (100)::numeric)))
+      */
     line_total: z.number().nullish().transform((value) => value ?? undefined).optional(),
 });
 
 /**
  * The base record type for the "public.order_items" table.
- * This type represents the raw database record without any transformations.
+ * This type represents the raw database record without case transforms.
  */
-export type OrderItemReadBaseRecord = z.output<typeof OrderItemsTableReadSchema>;
+export type OrderItemBaseRecord = z.output<typeof OrderItemsTableBaseSchema>;
 
 /**
-* The read transform function for the "public.order_items" table.
-* Maps the raw database fields to expected property names. e.g snake_case to camelCase.
-*/
-export const transformOrderItemReadRecord = (data: OrderItemReadBaseRecord): {
-    id: OrderItemReadBaseRecord['id'],
-    orderId?: OrderItemReadBaseRecord['order_id'],
-    productId?: OrderItemReadBaseRecord['product_id'],
-    quantity: OrderItemReadBaseRecord['quantity'],
-    unitPrice: OrderItemReadBaseRecord['unit_price'],
-    discountPercent?: OrderItemReadBaseRecord['discount_percent'],
-    lineTotal?: OrderItemReadBaseRecord['line_total'],
+ * Read transform for the "public.order_items" table.
+ * Maps raw database snake_case fields to camelCase properties.
+ */
+export const transformOrderItemBaseRecord = (data: OrderItemBaseRecord): {
+    id: OrderItemBaseRecord['id'],
+    orderId?: OrderItemBaseRecord['order_id'],
+    productId?: OrderItemBaseRecord['product_id'],
+    quantity: OrderItemBaseRecord['quantity'],
+    unitPrice: OrderItemBaseRecord['unit_price'],
+    discountPercent?: OrderItemBaseRecord['discount_percent'],
+    lineTotal?: OrderItemBaseRecord['line_total'],
 } => ({
     id: data.id,
     orderId: data.order_id,
@@ -74,45 +70,39 @@ export const transformOrderItemReadRecord = (data: OrderItemReadBaseRecord): {
 });
 
 /**
- * The read schema for the "public.order_items" table.
- * This schema is used to validate the data read from the database with transformations.
+ * Read schema for the "public.order_items" table (after casing transform).
  */
-export const OrderItemsTableSchema = OrderItemsTableReadSchema.transform(transformOrderItemReadRecord);
+export const OrderItemsTableSchema = OrderItemsTableBaseSchema.transform(transformOrderItemBaseRecord);
 
 /**
- * The base write schema for the "public.order_items" table.
- * This schema is used to validate the data before writing to the database without any transformations.
+ * Base insert/write schema for the "public.order_items" table (no casing transforms).
  */
-export const OrderItemsTableWriteSchema = z.object({
-    /**
-    * dataType: int8
-    * defaultValue: 
-    */
+export const OrderItemsTableInsertBaseSchema = z.object({
+     /**
+      * dataType: int8
+      */
     orderId: z.number().int().nullish().optional(),
-    /**
-    * dataType: int4
-    * defaultValue: 
-    */
+     /**
+      * dataType: int4
+      */
     productId: z.number().int().nullish().optional(),
-    /**
-    * dataType: int2
-    * defaultValue: 
-    */
+     /**
+      * dataType: int2
+      */
     quantity: z.number().int(),
-    /**
-    * dataType: numeric
-    * defaultValue: 
-    */
+     /**
+      * dataType: numeric
+      */
     unitPrice: z.number().max(655362),
-    /**
-    * dataType: numeric
-    * defaultValue: 0
-    */
+     /**
+      * dataType: numeric
+      * defaultValue: 0
+      */
     discountPercent: z.number().max(327682).nullish().optional(),
-    /**
-    * dataType: numeric
-    * defaultValue: (((quantity)::numeric * unit_price) * ((1)::numeric - (discount_percent / (100)::numeric)))
-    */
+     /**
+      * dataType: numeric
+      * defaultValue: (((quantity)::numeric * unit_price) * ((1)::numeric - (discount_percent / (100)::numeric)))
+      */
     lineTotal: z.number().max(786434).nullish().optional(),
 });
 
@@ -120,7 +110,7 @@ export const OrderItemsTableWriteSchema = z.object({
  * The base record type for the "public.order_items" table.
  * This type represents an insertable database record before casing transformations are applied.
  */
-export type OrderItemInsertBaseRecord = z.output<typeof OrderItemsTableWriteSchema>;
+export type OrderItemInsertBaseRecord = z.output<typeof OrderItemsTableInsertBaseSchema>;
 
 /**
  * The base record type for the "public.order_items" table.
@@ -129,10 +119,10 @@ export type OrderItemInsertBaseRecord = z.output<typeof OrderItemsTableWriteSche
 export type OrderItemUpdateBaseRecord = Partial<OrderItemInsertBaseRecord>;
 
 /**
- * The insert transform function for the "public.order_items" table.
- * Maps the expected property names to raw database fields. e.g camelCase to snake_case.
+ * Insert transform for the "public.order_items" table.
+ * Maps camelCase properties to raw database snake_case fields.
  */
-export const transformOrderItemInsertRecord = (data: OrderItemInsertBaseRecord): {
+export const transformOrderItemInsertBaseRecord = (data: OrderItemInsertBaseRecord): {
     order_id?: OrderItemInsertBaseRecord['orderId'],
     product_id?: OrderItemInsertBaseRecord['productId'],
     quantity: OrderItemInsertBaseRecord['quantity'],
@@ -149,10 +139,10 @@ export const transformOrderItemInsertRecord = (data: OrderItemInsertBaseRecord):
 });
 
 /**
- * The update transform function for the "public.order_items" table.
- * Maps the expected property names to raw database fields. e.g camelCase to snake_case.
+ * Update transform for the "public.order_items" table.
+ * Maps camelCase properties to raw database snake_case fields.
  */
-export const transformOrderItemUpdateRecord = (data: OrderItemUpdateBaseRecord): {
+export const transformOrderItemUpdateBaseRecord = (data: OrderItemUpdateBaseRecord): {
     order_id?: OrderItemUpdateBaseRecord['orderId'],
     product_id?: OrderItemUpdateBaseRecord['productId'],
     quantity: OrderItemUpdateBaseRecord['quantity'],
@@ -169,23 +159,21 @@ export const transformOrderItemUpdateRecord = (data: OrderItemUpdateBaseRecord):
 });
 
 /**
- * The insert schema for the "public.order_items" table.
- * This schema is used to validate and transform a record before inserting into the database.
+ * Insert schema for the "public.order_items" table (after casing transform).
  */
-export const OrderItemsTableInsertSchema = OrderItemsTableWriteSchema.transform(transformOrderItemInsertRecord);
+export const OrderItemsTableInsertSchema = OrderItemsTableInsertBaseSchema.transform(transformOrderItemInsertBaseRecord);
 
 /**
- * The update schema for the "public.order_items" table.
- * This schema is used to validate and transform a record before updating the database.
+ * Update schema for the "public.order_items" table (after casing transform).
  */
-export const OrderItemsTableUpdateSchema = OrderItemsTableWriteSchema.partial().transform(transformOrderItemUpdateRecord);
+export const OrderItemsTableUpdateSchema = OrderItemsTableInsertBaseSchema.partial().transform(transformOrderItemUpdateBaseRecord);
 
 type TableInsertRecord = z.input<typeof OrderItemsTableInsertSchema>;
 type TableReadRecord = z.output<typeof OrderItemsTableSchema>;
 
 /**
-* Represents a database record from the "public.order_items" table.
-*/
+ * Read record (casing transformed) for the "public.order_items" table.
+ */
 export interface OrderItemRecord {
     /**
     * Primary key for order items table
@@ -218,8 +206,8 @@ export interface OrderItemRecord {
 }
 
 /**
-* Represents an insertable database record from the "public.order_items" table.
-*/
+ * Insert record (casing transformed) for the "public.order_items" table.
+ */
 export interface OrderItemInsertRecord {
     /**
     * ID of the order this item belongs to
@@ -253,6 +241,7 @@ export interface OrderItemInsertRecord {
 }
 
 /**
-* Represents an updateable database record from the "public.order_items" table.
-*/
+ * Updatable record (casing transformed) for the "public.order_items" table.
+ */
 export type OrderItemUpdateRecord = Partial<OrderItemInsertRecord>;
+

@@ -4,53 +4,50 @@ import { z } from 'zod';
 
 
 /**
- * The base read schema for the "public.categories" table.
- * This schema is used to validate the data read from the database without any transformations.
+ * Base read schema for the "public.categories" table.
+ * Validates raw rows read from the database (no casing transforms applied yet).
  */
-export const CategoriesTableReadSchema = z.object({
-    /**
-    * dataType: int4
-    * defaultValue: nextval('categories_id_seq'::regclass)
-    */
+export const CategoriesTableBaseSchema = z.object({
+     /**
+      * dataType: int4
+      * defaultValue: nextval('categories_id_seq'::regclass)
+      */
     id: z.number().int(),
-    /**
-    * dataType: varchar
-    * defaultValue: 
-    */
+     /**
+      * dataType: varchar
+      */
     name: z.string(),
-    /**
-    * dataType: text
-    * defaultValue: 
-    */
+     /**
+      * dataType: text
+      */
     description: z.string().nullish().transform((value) => value ?? undefined).optional(),
-    /**
-    * dataType: varchar
-    * defaultValue: 
-    */
+     /**
+      * dataType: varchar
+      */
     color: z.string().nullish().transform((value) => value ?? undefined).optional(),
-    /**
-    * dataType: timestamptz
-    * defaultValue: now()
-    */
+     /**
+      * dataType: timestamptz
+      * defaultValue: now()
+      */
     created_at: z.date().nullish().transform((value) => value ?? undefined).optional(),
 });
 
 /**
  * The base record type for the "public.categories" table.
- * This type represents the raw database record without any transformations.
+ * This type represents the raw database record without case transforms.
  */
-export type CategoryReadBaseRecord = z.output<typeof CategoriesTableReadSchema>;
+export type CategoryBaseRecord = z.output<typeof CategoriesTableBaseSchema>;
 
 /**
-* The read transform function for the "public.categories" table.
-* Maps the raw database fields to expected property names. e.g snake_case to camelCase.
-*/
-export const transformCategoryReadRecord = (data: CategoryReadBaseRecord): {
-    id: CategoryReadBaseRecord['id'],
-    name: CategoryReadBaseRecord['name'],
-    description?: CategoryReadBaseRecord['description'],
-    color?: CategoryReadBaseRecord['color'],
-    createdAt?: CategoryReadBaseRecord['created_at'],
+ * Read transform for the "public.categories" table.
+ * Maps raw database snake_case fields to camelCase properties.
+ */
+export const transformCategoryBaseRecord = (data: CategoryBaseRecord): {
+    id: CategoryBaseRecord['id'],
+    name: CategoryBaseRecord['name'],
+    description?: CategoryBaseRecord['description'],
+    color?: CategoryBaseRecord['color'],
+    createdAt?: CategoryBaseRecord['created_at'],
 } => ({
     id: data.id,
     name: data.name,
@@ -60,35 +57,30 @@ export const transformCategoryReadRecord = (data: CategoryReadBaseRecord): {
 });
 
 /**
- * The read schema for the "public.categories" table.
- * This schema is used to validate the data read from the database with transformations.
+ * Read schema for the "public.categories" table (after casing transform).
  */
-export const CategoriesTableSchema = CategoriesTableReadSchema.transform(transformCategoryReadRecord);
+export const CategoriesTableSchema = CategoriesTableBaseSchema.transform(transformCategoryBaseRecord);
 
 /**
- * The base write schema for the "public.categories" table.
- * This schema is used to validate the data before writing to the database without any transformations.
+ * Base insert/write schema for the "public.categories" table (no casing transforms).
  */
-export const CategoriesTableWriteSchema = z.object({
-    /**
-    * dataType: varchar
-    * defaultValue: 
-    */
+export const CategoriesTableInsertBaseSchema = z.object({
+     /**
+      * dataType: varchar
+      */
     name: z.string().max(100),
-    /**
-    * dataType: text
-    * defaultValue: 
-    */
+     /**
+      * dataType: text
+      */
     description: z.string().nullish().optional(),
-    /**
-    * dataType: varchar
-    * defaultValue: 
-    */
+     /**
+      * dataType: varchar
+      */
     color: z.string().max(7).nullish().optional(),
-    /**
-    * dataType: timestamptz
-    * defaultValue: now()
-    */
+     /**
+      * dataType: timestamptz
+      * defaultValue: now()
+      */
     createdAt: z.date().nullish().optional(),
 });
 
@@ -96,7 +88,7 @@ export const CategoriesTableWriteSchema = z.object({
  * The base record type for the "public.categories" table.
  * This type represents an insertable database record before casing transformations are applied.
  */
-export type CategoryInsertBaseRecord = z.output<typeof CategoriesTableWriteSchema>;
+export type CategoryInsertBaseRecord = z.output<typeof CategoriesTableInsertBaseSchema>;
 
 /**
  * The base record type for the "public.categories" table.
@@ -105,10 +97,10 @@ export type CategoryInsertBaseRecord = z.output<typeof CategoriesTableWriteSchem
 export type CategoryUpdateBaseRecord = Partial<CategoryInsertBaseRecord>;
 
 /**
- * The insert transform function for the "public.categories" table.
- * Maps the expected property names to raw database fields. e.g camelCase to snake_case.
+ * Insert transform for the "public.categories" table.
+ * Maps camelCase properties to raw database snake_case fields.
  */
-export const transformCategoryInsertRecord = (data: CategoryInsertBaseRecord): {
+export const transformCategoryInsertBaseRecord = (data: CategoryInsertBaseRecord): {
     name: CategoryInsertBaseRecord['name'],
     description?: CategoryInsertBaseRecord['description'],
     color?: CategoryInsertBaseRecord['color'],
@@ -121,10 +113,10 @@ export const transformCategoryInsertRecord = (data: CategoryInsertBaseRecord): {
 });
 
 /**
- * The update transform function for the "public.categories" table.
- * Maps the expected property names to raw database fields. e.g camelCase to snake_case.
+ * Update transform for the "public.categories" table.
+ * Maps camelCase properties to raw database snake_case fields.
  */
-export const transformCategoryUpdateRecord = (data: CategoryUpdateBaseRecord): {
+export const transformCategoryUpdateBaseRecord = (data: CategoryUpdateBaseRecord): {
     name: CategoryUpdateBaseRecord['name'],
     description?: CategoryUpdateBaseRecord['description'],
     color?: CategoryUpdateBaseRecord['color'],
@@ -137,23 +129,21 @@ export const transformCategoryUpdateRecord = (data: CategoryUpdateBaseRecord): {
 });
 
 /**
- * The insert schema for the "public.categories" table.
- * This schema is used to validate and transform a record before inserting into the database.
+ * Insert schema for the "public.categories" table (after casing transform).
  */
-export const CategoriesTableInsertSchema = CategoriesTableWriteSchema.transform(transformCategoryInsertRecord);
+export const CategoriesTableInsertSchema = CategoriesTableInsertBaseSchema.transform(transformCategoryInsertBaseRecord);
 
 /**
- * The update schema for the "public.categories" table.
- * This schema is used to validate and transform a record before updating the database.
+ * Update schema for the "public.categories" table (after casing transform).
  */
-export const CategoriesTableUpdateSchema = CategoriesTableWriteSchema.partial().transform(transformCategoryUpdateRecord);
+export const CategoriesTableUpdateSchema = CategoriesTableInsertBaseSchema.partial().transform(transformCategoryUpdateBaseRecord);
 
 type TableInsertRecord = z.input<typeof CategoriesTableInsertSchema>;
 type TableReadRecord = z.output<typeof CategoriesTableSchema>;
 
 /**
-* Represents a database record from the "public.categories" table.
-*/
+ * Read record (casing transformed) for the "public.categories" table.
+ */
 export interface CategoryRecord {
     /**
     * Primary key for categories table
@@ -178,8 +168,8 @@ export interface CategoryRecord {
 }
 
 /**
-* Represents an insertable database record from the "public.categories" table.
-*/
+ * Insert record (casing transformed) for the "public.categories" table.
+ */
 export interface CategoryInsertRecord {
     /**
     * Name of the category
@@ -203,6 +193,7 @@ export interface CategoryInsertRecord {
 }
 
 /**
-* Represents an updateable database record from the "public.categories" table.
-*/
+ * Updatable record (casing transformed) for the "public.categories" table.
+ */
 export type CategoryUpdateRecord = Partial<CategoryInsertRecord>;
+

@@ -4,71 +4,65 @@ import { z } from 'zod';
 
 
 /**
- * The base read schema for the "public.audit_logs" table.
- * This schema is used to validate the data read from the database without any transformations.
+ * Base read schema for the "public.audit_logs" table.
+ * Validates raw rows read from the database (no casing transforms applied yet).
  */
-export const AuditLogsTableReadSchema = z.object({
-    /**
-    * dataType: int8
-    * defaultValue: nextval('audit_logs_id_seq'::regclass)
-    */
+export const AuditLogsTableBaseSchema = z.object({
+     /**
+      * dataType: int8
+      * defaultValue: nextval('audit_logs_id_seq'::regclass)
+      */
     id: z.number().int(),
-    /**
-    * dataType: int4
-    * defaultValue: 
-    */
+     /**
+      * dataType: int4
+      */
     user_id: z.number().int().nullish().transform((value) => value ?? undefined).optional(),
-    /**
-    * dataType: varchar
-    * defaultValue: 
-    */
+     /**
+      * dataType: varchar
+      */
     action: z.string(),
-    /**
-    * dataType: varchar
-    * defaultValue: 
-    */
+     /**
+      * dataType: varchar
+      */
     table_name: z.string().nullish().transform((value) => value ?? undefined).optional(),
-    /**
-    * dataType: int4
-    * defaultValue: 
-    */
+     /**
+      * dataType: int4
+      */
     record_id: z.number().int().nullish().transform((value) => value ?? undefined).optional(),
-    /**
-    * dataType: jsonb
-    * defaultValue: 
-    */
+     /**
+      * dataType: jsonb
+      */
     old_values: z.any().nullish().transform((value) => value ?? undefined).optional(),
-    /**
-    * dataType: jsonb
-    * defaultValue: 
-    */
+     /**
+      * dataType: jsonb
+      */
     new_values: z.any().nullish().transform((value) => value ?? undefined).optional(),
-    /**
-    * dataType: timestamptz
-    * defaultValue: now()
-    */
+     /**
+      * dataType: timestamptz
+      * defaultValue: now()
+      */
     created_at: z.date().nullish().transform((value) => value ?? undefined).optional(),
 });
 
 /**
  * The base record type for the "public.audit_logs" table.
- * This type represents the raw database record without any transformations.
+ * This type represents the raw database record without case transforms.
  */
-export type AuditLogReadBaseRecord = z.output<typeof AuditLogsTableReadSchema>;
+export type AuditLogBaseRecord = z.output<typeof AuditLogsTableBaseSchema>;
 
 /**
-* The read transform function for the "public.audit_logs" table.
-* Maps the raw database fields to expected property names. e.g snake_case to camelCase.
-*/
-export const transformAuditLogReadRecord = (data: AuditLogReadBaseRecord): {
-    id: AuditLogReadBaseRecord['id'],
-    userId?: AuditLogReadBaseRecord['user_id'],
-    action: AuditLogReadBaseRecord['action'],
-    tableName?: AuditLogReadBaseRecord['table_name'],
-    recordId?: AuditLogReadBaseRecord['record_id'],
-    oldValues?: AuditLogReadBaseRecord['old_values'],
-    newValues?: AuditLogReadBaseRecord['new_values'],
-    createdAt?: AuditLogReadBaseRecord['created_at'],
+ * Read transform for the "public.audit_logs" table.
+ * Maps raw database snake_case fields to camelCase properties.
+ */
+export const transformAuditLogBaseRecord = (data: AuditLogBaseRecord): {
+    id: AuditLogBaseRecord['id'],
+    userId?: AuditLogBaseRecord['user_id'],
+    action: AuditLogBaseRecord['action'],
+    tableName?: AuditLogBaseRecord['table_name'],
+    recordId?: AuditLogBaseRecord['record_id'],
+    oldValues?: AuditLogBaseRecord['old_values'],
+    newValues?: AuditLogBaseRecord['new_values'],
+    createdAt?: AuditLogBaseRecord['created_at'],
 } => ({
     id: data.id,
     userId: data.user_id,
@@ -81,50 +75,42 @@ export const transformAuditLogReadRecord = (data: AuditLogReadBaseRecord): {
 });
 
 /**
- * The read schema for the "public.audit_logs" table.
- * This schema is used to validate the data read from the database with transformations.
+ * Read schema for the "public.audit_logs" table (after casing transform).
  */
-export const AuditLogsTableSchema = AuditLogsTableReadSchema.transform(transformAuditLogReadRecord);
+export const AuditLogsTableSchema = AuditLogsTableBaseSchema.transform(transformAuditLogBaseRecord);
 
 /**
- * The base write schema for the "public.audit_logs" table.
- * This schema is used to validate the data before writing to the database without any transformations.
+ * Base insert/write schema for the "public.audit_logs" table (no casing transforms).
  */
-export const AuditLogsTableWriteSchema = z.object({
-    /**
-    * dataType: int4
-    * defaultValue: 
-    */
+export const AuditLogsTableInsertBaseSchema = z.object({
+     /**
+      * dataType: int4
+      */
     userId: z.number().int().nullish().optional(),
-    /**
-    * dataType: varchar
-    * defaultValue: 
-    */
+     /**
+      * dataType: varchar
+      */
     action: z.string().max(50),
-    /**
-    * dataType: varchar
-    * defaultValue: 
-    */
+     /**
+      * dataType: varchar
+      */
     tableName: z.string().max(50).nullish().optional(),
-    /**
-    * dataType: int4
-    * defaultValue: 
-    */
+     /**
+      * dataType: int4
+      */
     recordId: z.number().int().nullish().optional(),
-    /**
-    * dataType: jsonb
-    * defaultValue: 
-    */
+     /**
+      * dataType: jsonb
+      */
     oldValues: z.any().nullish().transform((value) => value ? JSON.stringify(value) : value).optional(),
-    /**
-    * dataType: jsonb
-    * defaultValue: 
-    */
+     /**
+      * dataType: jsonb
+      */
     newValues: z.any().nullish().transform((value) => value ? JSON.stringify(value) : value).optional(),
-    /**
-    * dataType: timestamptz
-    * defaultValue: now()
-    */
+     /**
+      * dataType: timestamptz
+      * defaultValue: now()
+      */
     createdAt: z.date().nullish().optional(),
 });
 
@@ -132,7 +118,7 @@ export const AuditLogsTableWriteSchema = z.object({
  * The base record type for the "public.audit_logs" table.
  * This type represents an insertable database record before casing transformations are applied.
  */
-export type AuditLogInsertBaseRecord = z.output<typeof AuditLogsTableWriteSchema>;
+export type AuditLogInsertBaseRecord = z.output<typeof AuditLogsTableInsertBaseSchema>;
 
 /**
  * The base record type for the "public.audit_logs" table.
@@ -141,10 +127,10 @@ export type AuditLogInsertBaseRecord = z.output<typeof AuditLogsTableWriteSchema
 export type AuditLogUpdateBaseRecord = Partial<AuditLogInsertBaseRecord>;
 
 /**
- * The insert transform function for the "public.audit_logs" table.
- * Maps the expected property names to raw database fields. e.g camelCase to snake_case.
+ * Insert transform for the "public.audit_logs" table.
+ * Maps camelCase properties to raw database snake_case fields.
  */
-export const transformAuditLogInsertRecord = (data: AuditLogInsertBaseRecord): {
+export const transformAuditLogInsertBaseRecord = (data: AuditLogInsertBaseRecord): {
     user_id?: AuditLogInsertBaseRecord['userId'],
     action: AuditLogInsertBaseRecord['action'],
     table_name?: AuditLogInsertBaseRecord['tableName'],
@@ -163,10 +149,10 @@ export const transformAuditLogInsertRecord = (data: AuditLogInsertBaseRecord): {
 });
 
 /**
- * The update transform function for the "public.audit_logs" table.
- * Maps the expected property names to raw database fields. e.g camelCase to snake_case.
+ * Update transform for the "public.audit_logs" table.
+ * Maps camelCase properties to raw database snake_case fields.
  */
-export const transformAuditLogUpdateRecord = (data: AuditLogUpdateBaseRecord): {
+export const transformAuditLogUpdateBaseRecord = (data: AuditLogUpdateBaseRecord): {
     user_id?: AuditLogUpdateBaseRecord['userId'],
     action: AuditLogUpdateBaseRecord['action'],
     table_name?: AuditLogUpdateBaseRecord['tableName'],
@@ -185,23 +171,21 @@ export const transformAuditLogUpdateRecord = (data: AuditLogUpdateBaseRecord): {
 });
 
 /**
- * The insert schema for the "public.audit_logs" table.
- * This schema is used to validate and transform a record before inserting into the database.
+ * Insert schema for the "public.audit_logs" table (after casing transform).
  */
-export const AuditLogsTableInsertSchema = AuditLogsTableWriteSchema.transform(transformAuditLogInsertRecord);
+export const AuditLogsTableInsertSchema = AuditLogsTableInsertBaseSchema.transform(transformAuditLogInsertBaseRecord);
 
 /**
- * The update schema for the "public.audit_logs" table.
- * This schema is used to validate and transform a record before updating the database.
+ * Update schema for the "public.audit_logs" table (after casing transform).
  */
-export const AuditLogsTableUpdateSchema = AuditLogsTableWriteSchema.partial().transform(transformAuditLogUpdateRecord);
+export const AuditLogsTableUpdateSchema = AuditLogsTableInsertBaseSchema.partial().transform(transformAuditLogUpdateBaseRecord);
 
 type TableInsertRecord = z.input<typeof AuditLogsTableInsertSchema>;
 type TableReadRecord = z.output<typeof AuditLogsTableSchema>;
 
 /**
-* Represents a database record from the "public.audit_logs" table.
-*/
+ * Read record (casing transformed) for the "public.audit_logs" table.
+ */
 export interface AuditLogRecord {
     /**
     * Primary key for audit logs table
@@ -238,8 +222,8 @@ export interface AuditLogRecord {
 }
 
 /**
-* Represents an insertable database record from the "public.audit_logs" table.
-*/
+ * Insert record (casing transformed) for the "public.audit_logs" table.
+ */
 export interface AuditLogInsertRecord {
     /**
     * ID of the user who performed the action
@@ -275,6 +259,7 @@ export interface AuditLogInsertRecord {
 }
 
 /**
-* Represents an updateable database record from the "public.audit_logs" table.
-*/
+ * Updatable record (casing transformed) for the "public.audit_logs" table.
+ */
 export type AuditLogUpdateRecord = Partial<AuditLogInsertRecord>;
+

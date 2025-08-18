@@ -4,53 +4,48 @@ import { z } from 'zod';
 
 
 /**
- * The base read schema for the "public.view_user_posts" table.
- * This schema is used to validate the data read from the database without any transformations.
+ * Base read schema for the "public.view_user_posts" table.
+ * Validates raw rows read from the database (no casing transforms applied yet).
  */
-export const ViewUserPostsReadSchema = z.object({
-    /**
-    * dataType: int4
-    * defaultValue: 
-    */
+export const ViewUserPostsBaseSchema = z.object({
+     /**
+      * dataType: int4
+      */
     user_id: z.number().int().nullish().transform((value) => value ?? undefined).optional(),
-    /**
-    * dataType: varchar
-    * defaultValue: 
-    */
+     /**
+      * dataType: varchar
+      */
     user_name: z.string().nullish().transform((value) => value ?? undefined).optional(),
-    /**
-    * dataType: int4
-    * defaultValue: 
-    */
+     /**
+      * dataType: int4
+      */
     post_id: z.number().int().nullish().transform((value) => value ?? undefined).optional(),
-    /**
-    * dataType: text
-    * defaultValue: 
-    */
+     /**
+      * dataType: text
+      */
     post_title: z.string().nullish().transform((value) => value ?? undefined).optional(),
-    /**
-    * dataType: text
-    * defaultValue: 
-    */
+     /**
+      * dataType: text
+      */
     post_content: z.string().nullish().transform((value) => value ?? undefined).optional(),
 });
 
 /**
  * The base record type for the "public.view_user_posts" table.
- * This type represents the raw database record without any transformations.
+ * This type represents the raw database record without case transforms.
  */
-export type ViewUserPostReadBaseRecord = z.output<typeof ViewUserPostsReadSchema>;
+export type ViewUserPostBaseRecord = z.output<typeof ViewUserPostsBaseSchema>;
 
 /**
-* The read transform function for the "public.view_user_posts" table.
-* Maps the raw database fields to expected property names. e.g snake_case to camelCase.
-*/
-export const transformViewUserPostReadRecord = (data: ViewUserPostReadBaseRecord): {
-    userId?: ViewUserPostReadBaseRecord['user_id'],
-    userName?: ViewUserPostReadBaseRecord['user_name'],
-    postId?: ViewUserPostReadBaseRecord['post_id'],
-    postTitle?: ViewUserPostReadBaseRecord['post_title'],
-    postContent?: ViewUserPostReadBaseRecord['post_content'],
+ * Read transform for the "public.view_user_posts" table.
+ * Maps raw database snake_case fields to camelCase properties.
+ */
+export const transformViewUserPostBaseRecord = (data: ViewUserPostBaseRecord): {
+    userId?: ViewUserPostBaseRecord['user_id'],
+    userName?: ViewUserPostBaseRecord['user_name'],
+    postId?: ViewUserPostBaseRecord['post_id'],
+    postTitle?: ViewUserPostBaseRecord['post_title'],
+    postContent?: ViewUserPostBaseRecord['post_content'],
 } => ({
     userId: data.user_id,
     userName: data.user_name,
@@ -60,16 +55,15 @@ export const transformViewUserPostReadRecord = (data: ViewUserPostReadBaseRecord
 });
 
 /**
- * The read schema for the "public.view_user_posts" table.
- * This schema is used to validate the data read from the database with transformations.
+ * Read schema for the "public.view_user_posts" table (after casing transform).
  */
-export const ViewUserPostsSchema = ViewUserPostsReadSchema.transform(transformViewUserPostReadRecord);
+export const ViewUserPostsSchema = ViewUserPostsBaseSchema.transform(transformViewUserPostBaseRecord);
 
 type TableReadRecord = z.output<typeof ViewUserPostsSchema>;
 
 /**
-* Represents a database record from the "public.view_user_posts" view.
-*/
+ * Read record (casing transformed) for the "public.view_user_posts" view.
+ */
 export interface ViewUserPostRecord {
     /**
     */
@@ -87,3 +81,4 @@ export interface ViewUserPostRecord {
     */
     postContent?: TableReadRecord['postContent'];
 }
+

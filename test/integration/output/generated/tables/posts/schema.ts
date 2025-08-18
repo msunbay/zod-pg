@@ -5,89 +5,83 @@ import { z } from 'zod';
 export const POST_STATUSES = ['draft', 'published', 'archived'] as const;
 
 /**
- * The base read schema for the "public.posts" table.
- * This schema is used to validate the data read from the database without any transformations.
+ * Base read schema for the "public.posts" table.
+ * Validates raw rows read from the database (no casing transforms applied yet).
  */
-export const PostsTableReadSchema = z.object({
-    /**
-    * dataType: int4
-    * defaultValue: nextval('posts_id_seq'::regclass)
-    */
+export const PostsTableBaseSchema = z.object({
+     /**
+      * dataType: int4
+      * defaultValue: nextval('posts_id_seq'::regclass)
+      */
     id: z.number().int(),
-    /**
-    * dataType: int4
-    * defaultValue: 
-    */
+     /**
+      * dataType: int4
+      */
     user_id: z.number().int().nullish().transform((value) => value ?? undefined).optional(),
-    /**
-    * dataType: text
-    * defaultValue: 
-    */
+     /**
+      * dataType: text
+      */
     title: z.string(),
-    /**
-    * dataType: text
-    * defaultValue: 
-    */
+     /**
+      * dataType: text
+      */
     content: z.string().nullish().transform((value) => value ?? undefined).optional(),
-    /**
-    * dataType: bool
-    * defaultValue: false
-    */
+     /**
+      * dataType: bool
+      * defaultValue: false
+      */
     published: z.boolean().nullish().transform((value) => value ?? undefined).optional(),
-    /**
-    * dataType: varchar
-    * defaultValue: 'draft'::character varying
-    */
+     /**
+      * dataType: varchar
+      * defaultValue: 'draft'::character varying
+      */
     status: z.enum(POST_STATUSES).nullish().transform((value) => value ?? undefined).optional(),
-    /**
-    * dataType: int4
-    * defaultValue: 0
-    */
+     /**
+      * dataType: int4
+      * defaultValue: 0
+      */
     views: z.number().int().nullish().transform((value) => value ?? undefined).optional(),
-    /**
-    * dataType: _text
-    * defaultValue: 
-    */
+     /**
+      * dataType: _text
+      */
     tags: z.array(z.string()).nullish().transform((value) => value ?? undefined).optional(),
-    /**
-    * dataType: jsonb
-    * defaultValue: 
-    */
+     /**
+      * dataType: jsonb
+      */
     metadata: z.any().nullish().transform((value) => value ?? undefined).optional(),
-    /**
-    * dataType: timestamptz
-    * defaultValue: 
-    */
+     /**
+      * dataType: timestamptz
+      */
     published_at: z.date().nullish().transform((value) => value ?? undefined).optional(),
-    /**
-    * dataType: timestamptz
-    * defaultValue: now()
-    */
+     /**
+      * dataType: timestamptz
+      * defaultValue: now()
+      */
     updated_at: z.date().nullish().transform((value) => value ?? undefined).optional(),
 });
 
 /**
  * The base record type for the "public.posts" table.
- * This type represents the raw database record without any transformations.
+ * This type represents the raw database record without case transforms.
  */
-export type PostReadBaseRecord = z.output<typeof PostsTableReadSchema>;
+export type PostBaseRecord = z.output<typeof PostsTableBaseSchema>;
 
 /**
-* The read transform function for the "public.posts" table.
-* Maps the raw database fields to expected property names. e.g snake_case to camelCase.
-*/
-export const transformPostReadRecord = (data: PostReadBaseRecord): {
-    id: PostReadBaseRecord['id'],
-    userId?: PostReadBaseRecord['user_id'],
-    title: PostReadBaseRecord['title'],
-    content?: PostReadBaseRecord['content'],
-    published?: PostReadBaseRecord['published'],
-    status?: PostReadBaseRecord['status'],
-    views?: PostReadBaseRecord['views'],
-    tags?: PostReadBaseRecord['tags'],
-    metadata?: PostReadBaseRecord['metadata'],
-    publishedAt?: PostReadBaseRecord['published_at'],
-    updatedAt?: PostReadBaseRecord['updated_at'],
+ * Read transform for the "public.posts" table.
+ * Maps raw database snake_case fields to camelCase properties.
+ */
+export const transformPostBaseRecord = (data: PostBaseRecord): {
+    id: PostBaseRecord['id'],
+    userId?: PostBaseRecord['user_id'],
+    title: PostBaseRecord['title'],
+    content?: PostBaseRecord['content'],
+    published?: PostBaseRecord['published'],
+    status?: PostBaseRecord['status'],
+    views?: PostBaseRecord['views'],
+    tags?: PostBaseRecord['tags'],
+    metadata?: PostBaseRecord['metadata'],
+    publishedAt?: PostBaseRecord['published_at'],
+    updatedAt?: PostBaseRecord['updated_at'],
 } => ({
     id: data.id,
     userId: data.user_id,
@@ -103,65 +97,57 @@ export const transformPostReadRecord = (data: PostReadBaseRecord): {
 });
 
 /**
- * The read schema for the "public.posts" table.
- * This schema is used to validate the data read from the database with transformations.
+ * Read schema for the "public.posts" table (after casing transform).
  */
-export const PostsTableSchema = PostsTableReadSchema.transform(transformPostReadRecord);
+export const PostsTableSchema = PostsTableBaseSchema.transform(transformPostBaseRecord);
 
 /**
- * The base write schema for the "public.posts" table.
- * This schema is used to validate the data before writing to the database without any transformations.
+ * Base insert/write schema for the "public.posts" table (no casing transforms).
  */
-export const PostsTableWriteSchema = z.object({
-    /**
-    * dataType: int4
-    * defaultValue: 
-    */
+export const PostsTableInsertBaseSchema = z.object({
+     /**
+      * dataType: int4
+      */
     userId: z.number().int().nullish().optional(),
-    /**
-    * dataType: text
-    * defaultValue: 
-    */
+     /**
+      * dataType: text
+      */
     title: z.string(),
-    /**
-    * dataType: text
-    * defaultValue: 
-    */
+     /**
+      * dataType: text
+      */
     content: z.string().nullish().optional(),
-    /**
-    * dataType: bool
-    * defaultValue: false
-    */
+     /**
+      * dataType: bool
+      * defaultValue: false
+      */
     published: z.boolean().nullish().optional(),
-    /**
-    * dataType: varchar
-    * defaultValue: 'draft'::character varying
-    */
+     /**
+      * dataType: varchar
+      * defaultValue: 'draft'::character varying
+      */
     status: z.enum(POST_STATUSES).nullish().optional(),
-    /**
-    * dataType: int4
-    * defaultValue: 0
-    */
+     /**
+      * dataType: int4
+      * defaultValue: 0
+      */
     views: z.number().int().nullish().optional(),
-    /**
-    * dataType: _text
-    * defaultValue: 
-    */
+     /**
+      * dataType: _text
+      */
     tags: z.array(z.string()).nullish().optional(),
-    /**
-    * dataType: jsonb
-    * defaultValue: 
-    */
+     /**
+      * dataType: jsonb
+      */
     metadata: z.any().nullish().transform((value) => value ? JSON.stringify(value) : value).optional(),
-    /**
-    * dataType: timestamptz
-    * defaultValue: 
-    */
+     /**
+      * dataType: timestamptz
+      */
     publishedAt: z.date().nullish().optional(),
-    /**
-    * dataType: timestamptz
-    * defaultValue: now()
-    */
+     /**
+      * dataType: timestamptz
+      * defaultValue: now()
+      */
     updatedAt: z.date().nullish().optional(),
 });
 
@@ -169,7 +155,7 @@ export const PostsTableWriteSchema = z.object({
  * The base record type for the "public.posts" table.
  * This type represents an insertable database record before casing transformations are applied.
  */
-export type PostInsertBaseRecord = z.output<typeof PostsTableWriteSchema>;
+export type PostInsertBaseRecord = z.output<typeof PostsTableInsertBaseSchema>;
 
 /**
  * The base record type for the "public.posts" table.
@@ -178,10 +164,10 @@ export type PostInsertBaseRecord = z.output<typeof PostsTableWriteSchema>;
 export type PostUpdateBaseRecord = Partial<PostInsertBaseRecord>;
 
 /**
- * The insert transform function for the "public.posts" table.
- * Maps the expected property names to raw database fields. e.g camelCase to snake_case.
+ * Insert transform for the "public.posts" table.
+ * Maps camelCase properties to raw database snake_case fields.
  */
-export const transformPostInsertRecord = (data: PostInsertBaseRecord): {
+export const transformPostInsertBaseRecord = (data: PostInsertBaseRecord): {
     user_id?: PostInsertBaseRecord['userId'],
     title: PostInsertBaseRecord['title'],
     content?: PostInsertBaseRecord['content'],
@@ -206,10 +192,10 @@ export const transformPostInsertRecord = (data: PostInsertBaseRecord): {
 });
 
 /**
- * The update transform function for the "public.posts" table.
- * Maps the expected property names to raw database fields. e.g camelCase to snake_case.
+ * Update transform for the "public.posts" table.
+ * Maps camelCase properties to raw database snake_case fields.
  */
-export const transformPostUpdateRecord = (data: PostUpdateBaseRecord): {
+export const transformPostUpdateBaseRecord = (data: PostUpdateBaseRecord): {
     user_id?: PostUpdateBaseRecord['userId'],
     title: PostUpdateBaseRecord['title'],
     content?: PostUpdateBaseRecord['content'],
@@ -234,24 +220,21 @@ export const transformPostUpdateRecord = (data: PostUpdateBaseRecord): {
 });
 
 /**
- * The insert schema for the "public.posts" table.
- * This schema is used to validate and transform a record before inserting into the database.
+ * Insert schema for the "public.posts" table (after casing transform).
  */
-export const PostsTableInsertSchema = PostsTableWriteSchema.transform(transformPostInsertRecord);
+export const PostsTableInsertSchema = PostsTableInsertBaseSchema.transform(transformPostInsertBaseRecord);
 
 /**
- * The update schema for the "public.posts" table.
- * This schema is used to validate and transform a record before updating the database.
+ * Update schema for the "public.posts" table (after casing transform).
  */
-export const PostsTableUpdateSchema = PostsTableWriteSchema.partial().transform(transformPostUpdateRecord);
+export const PostsTableUpdateSchema = PostsTableInsertBaseSchema.partial().transform(transformPostUpdateBaseRecord);
 
 type TableInsertRecord = z.input<typeof PostsTableInsertSchema>;
 type TableReadRecord = z.output<typeof PostsTableSchema>;
-export type PostStatus = (typeof POST_STATUSES)[number];
 
 /**
-* Represents a database record from the "public.posts" table.
-*/
+ * Read record (casing transformed) for the "public.posts" table.
+ */
 export interface PostRecord {
     /**
     */
@@ -294,8 +277,8 @@ export interface PostRecord {
 }
 
 /**
-* Represents an insertable database record from the "public.posts" table.
-*/
+ * Insert record (casing transformed) for the "public.posts" table.
+ */
 export interface PostInsertRecord {
     /**
     */
@@ -340,6 +323,8 @@ export interface PostInsertRecord {
 }
 
 /**
-* Represents an updateable database record from the "public.posts" table.
-*/
+ * Updatable record (casing transformed) for the "public.posts" table.
+ */
 export type PostUpdateRecord = Partial<PostInsertRecord>;
+
+export type PostStatus = (typeof POST_STATUSES)[number];

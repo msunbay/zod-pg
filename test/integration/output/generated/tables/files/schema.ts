@@ -4,101 +4,92 @@ import { z } from 'zod';
 
 
 /**
- * The base read schema for the "public.files" table.
- * This schema is used to validate the data read from the database without any transformations.
+ * Base read schema for the "public.files" table.
+ * Validates raw rows read from the database (no casing transforms applied yet).
  */
-export const FilesTableReadSchema = z.object({
-    /**
-    * dataType: uuid
-    * defaultValue: gen_random_uuid()
-    */
+export const FilesTableBaseSchema = z.object({
+     /**
+      * dataType: uuid
+      * defaultValue: gen_random_uuid()
+      */
     id: z.string().uuid(),
-    /**
-    * dataType: varchar
-    * defaultValue: 
-    */
+     /**
+      * dataType: varchar
+      */
     filename: z.string(),
-    /**
-    * dataType: text
-    * defaultValue: 
-    */
+     /**
+      * dataType: text
+      */
     file_path: z.string(),
-    /**
-    * dataType: int8
-    * defaultValue: 
-    */
+     /**
+      * dataType: int8
+      */
     file_size: z.number().int(),
-    /**
-    * dataType: varchar
-    * defaultValue: 
-    */
+     /**
+      * dataType: varchar
+      */
     mime_type: z.string().nullish().transform((value) => value ?? undefined).optional(),
-    /**
-    * dataType: bpchar
-    * defaultValue: 
-    */
+     /**
+      * dataType: bpchar
+      */
     checksum: z.string().nullish().transform((value) => value ?? undefined).optional(),
-    /**
-    * dataType: bytea
-    * defaultValue: 
-    */
+     /**
+      * dataType: bytea
+      */
     binary_data: z.string().nullish().transform((value) => value ?? undefined).optional(),
-    /**
-    * dataType: bool
-    * defaultValue: false
-    */
+     /**
+      * dataType: bool
+      * defaultValue: false
+      */
     is_encrypted: z.boolean().nullish().transform((value) => value ?? undefined).optional(),
-    /**
-    * dataType: timestamptz
-    * defaultValue: now()
-    */
+     /**
+      * dataType: timestamptz
+      * defaultValue: now()
+      */
     upload_time: z.date().nullish().transform((value) => value ?? undefined).optional(),
-    /**
-    * dataType: timestamptz
-    * defaultValue: 
-    */
+     /**
+      * dataType: timestamptz
+      */
     expiry_date: z.date().nullish().transform((value) => value ?? undefined).optional(),
-    /**
-    * dataType: jsonb
-    * defaultValue: 
-    */
+     /**
+      * dataType: jsonb
+      */
     metadata: z.any().nullish().transform((value) => value ?? undefined).optional(),
-    /**
-    * dataType: _text
-    * defaultValue: 
-    */
+     /**
+      * dataType: _text
+      */
     tags: z.array(z.string()).nullish().transform((value) => value ?? undefined).optional(),
-    /**
-    * dataType: int4
-    * defaultValue: 0
-    */
+     /**
+      * dataType: int4
+      * defaultValue: 0
+      */
     access_count: z.number().int().nullish().transform((value) => value ?? undefined).optional(),
 });
 
 /**
  * The base record type for the "public.files" table.
- * This type represents the raw database record without any transformations.
+ * This type represents the raw database record without case transforms.
  */
-export type FileReadBaseRecord = z.output<typeof FilesTableReadSchema>;
+export type FileBaseRecord = z.output<typeof FilesTableBaseSchema>;
 
 /**
-* The read transform function for the "public.files" table.
-* Maps the raw database fields to expected property names. e.g snake_case to camelCase.
-*/
-export const transformFileReadRecord = (data: FileReadBaseRecord): {
-    id: FileReadBaseRecord['id'],
-    filename: FileReadBaseRecord['filename'],
-    filePath: FileReadBaseRecord['file_path'],
-    fileSize: FileReadBaseRecord['file_size'],
-    mimeType?: FileReadBaseRecord['mime_type'],
-    checksum?: FileReadBaseRecord['checksum'],
-    binaryData?: FileReadBaseRecord['binary_data'],
-    isEncrypted?: FileReadBaseRecord['is_encrypted'],
-    uploadTime?: FileReadBaseRecord['upload_time'],
-    expiryDate?: FileReadBaseRecord['expiry_date'],
-    metadata?: FileReadBaseRecord['metadata'],
-    tags?: FileReadBaseRecord['tags'],
-    accessCount?: FileReadBaseRecord['access_count'],
+ * Read transform for the "public.files" table.
+ * Maps raw database snake_case fields to camelCase properties.
+ */
+export const transformFileBaseRecord = (data: FileBaseRecord): {
+    id: FileBaseRecord['id'],
+    filename: FileBaseRecord['filename'],
+    filePath: FileBaseRecord['file_path'],
+    fileSize: FileBaseRecord['file_size'],
+    mimeType?: FileBaseRecord['mime_type'],
+    checksum?: FileBaseRecord['checksum'],
+    binaryData?: FileBaseRecord['binary_data'],
+    isEncrypted?: FileBaseRecord['is_encrypted'],
+    uploadTime?: FileBaseRecord['upload_time'],
+    expiryDate?: FileBaseRecord['expiry_date'],
+    metadata?: FileBaseRecord['metadata'],
+    tags?: FileBaseRecord['tags'],
+    accessCount?: FileBaseRecord['access_count'],
 } => ({
     id: data.id,
     filename: data.filename,
@@ -116,80 +107,69 @@ export const transformFileReadRecord = (data: FileReadBaseRecord): {
 });
 
 /**
- * The read schema for the "public.files" table.
- * This schema is used to validate the data read from the database with transformations.
+ * Read schema for the "public.files" table (after casing transform).
  */
-export const FilesTableSchema = FilesTableReadSchema.transform(transformFileReadRecord);
+export const FilesTableSchema = FilesTableBaseSchema.transform(transformFileBaseRecord);
 
 /**
- * The base write schema for the "public.files" table.
- * This schema is used to validate the data before writing to the database without any transformations.
+ * Base insert/write schema for the "public.files" table (no casing transforms).
  */
-export const FilesTableWriteSchema = z.object({
-    /**
-    * dataType: uuid
-    * defaultValue: gen_random_uuid()
-    */
+export const FilesTableInsertBaseSchema = z.object({
+     /**
+      * dataType: uuid
+      * defaultValue: gen_random_uuid()
+      */
     id: z.string().uuid(),
-    /**
-    * dataType: varchar
-    * defaultValue: 
-    */
+     /**
+      * dataType: varchar
+      */
     filename: z.string().max(255),
-    /**
-    * dataType: text
-    * defaultValue: 
-    */
+     /**
+      * dataType: text
+      */
     filePath: z.string(),
-    /**
-    * dataType: int8
-    * defaultValue: 
-    */
+     /**
+      * dataType: int8
+      */
     fileSize: z.number().int(),
-    /**
-    * dataType: varchar
-    * defaultValue: 
-    */
+     /**
+      * dataType: varchar
+      */
     mimeType: z.string().max(100).nullish().optional(),
-    /**
-    * dataType: bpchar
-    * defaultValue: 
-    */
+     /**
+      * dataType: bpchar
+      */
     checksum: z.string().max(64).nullish().optional(),
-    /**
-    * dataType: bytea
-    * defaultValue: 
-    */
+     /**
+      * dataType: bytea
+      */
     binaryData: z.string().nullish().optional(),
-    /**
-    * dataType: bool
-    * defaultValue: false
-    */
+     /**
+      * dataType: bool
+      * defaultValue: false
+      */
     isEncrypted: z.boolean().nullish().optional(),
-    /**
-    * dataType: timestamptz
-    * defaultValue: now()
-    */
+     /**
+      * dataType: timestamptz
+      * defaultValue: now()
+      */
     uploadTime: z.date().nullish().optional(),
-    /**
-    * dataType: timestamptz
-    * defaultValue: 
-    */
+     /**
+      * dataType: timestamptz
+      */
     expiryDate: z.date().nullish().optional(),
-    /**
-    * dataType: jsonb
-    * defaultValue: 
-    */
+     /**
+      * dataType: jsonb
+      */
     metadata: z.any().nullish().transform((value) => value ? JSON.stringify(value) : value).optional(),
-    /**
-    * dataType: _text
-    * defaultValue: 
-    */
+     /**
+      * dataType: _text
+      */
     tags: z.array(z.string()).nullish().optional(),
-    /**
-    * dataType: int4
-    * defaultValue: 0
-    */
+     /**
+      * dataType: int4
+      * defaultValue: 0
+      */
     accessCount: z.number().int().nullish().optional(),
 });
 
@@ -197,7 +177,7 @@ export const FilesTableWriteSchema = z.object({
  * The base record type for the "public.files" table.
  * This type represents an insertable database record before casing transformations are applied.
  */
-export type FileInsertBaseRecord = z.output<typeof FilesTableWriteSchema>;
+export type FileInsertBaseRecord = z.output<typeof FilesTableInsertBaseSchema>;
 
 /**
  * The base record type for the "public.files" table.
@@ -206,10 +186,10 @@ export type FileInsertBaseRecord = z.output<typeof FilesTableWriteSchema>;
 export type FileUpdateBaseRecord = Partial<FileInsertBaseRecord>;
 
 /**
- * The insert transform function for the "public.files" table.
- * Maps the expected property names to raw database fields. e.g camelCase to snake_case.
+ * Insert transform for the "public.files" table.
+ * Maps camelCase properties to raw database snake_case fields.
  */
-export const transformFileInsertRecord = (data: FileInsertBaseRecord): {
+export const transformFileInsertBaseRecord = (data: FileInsertBaseRecord): {
     id: FileInsertBaseRecord['id'],
     filename: FileInsertBaseRecord['filename'],
     file_path: FileInsertBaseRecord['filePath'],
@@ -240,10 +220,10 @@ export const transformFileInsertRecord = (data: FileInsertBaseRecord): {
 });
 
 /**
- * The update transform function for the "public.files" table.
- * Maps the expected property names to raw database fields. e.g camelCase to snake_case.
+ * Update transform for the "public.files" table.
+ * Maps camelCase properties to raw database snake_case fields.
  */
-export const transformFileUpdateRecord = (data: FileUpdateBaseRecord): {
+export const transformFileUpdateBaseRecord = (data: FileUpdateBaseRecord): {
     id: FileUpdateBaseRecord['id'],
     filename: FileUpdateBaseRecord['filename'],
     file_path: FileUpdateBaseRecord['filePath'],
@@ -274,23 +254,21 @@ export const transformFileUpdateRecord = (data: FileUpdateBaseRecord): {
 });
 
 /**
- * The insert schema for the "public.files" table.
- * This schema is used to validate and transform a record before inserting into the database.
+ * Insert schema for the "public.files" table (after casing transform).
  */
-export const FilesTableInsertSchema = FilesTableWriteSchema.transform(transformFileInsertRecord);
+export const FilesTableInsertSchema = FilesTableInsertBaseSchema.transform(transformFileInsertBaseRecord);
 
 /**
- * The update schema for the "public.files" table.
- * This schema is used to validate and transform a record before updating the database.
+ * Update schema for the "public.files" table (after casing transform).
  */
-export const FilesTableUpdateSchema = FilesTableWriteSchema.partial().transform(transformFileUpdateRecord);
+export const FilesTableUpdateSchema = FilesTableInsertBaseSchema.partial().transform(transformFileUpdateBaseRecord);
 
 type TableInsertRecord = z.input<typeof FilesTableInsertSchema>;
 type TableReadRecord = z.output<typeof FilesTableSchema>;
 
 /**
-* Represents a database record from the "public.files" table.
-*/
+ * Read record (casing transformed) for the "public.files" table.
+ */
 export interface FileRecord {
     /**
     * Primary key for files table
@@ -347,8 +325,8 @@ export interface FileRecord {
 }
 
 /**
-* Represents an insertable database record from the "public.files" table.
-*/
+ * Insert record (casing transformed) for the "public.files" table.
+ */
 export interface FileInsertRecord {
     /**
     * Primary key for files table
@@ -412,6 +390,7 @@ export interface FileInsertRecord {
 }
 
 /**
-* Represents an updateable database record from the "public.files" table.
-*/
+ * Updatable record (casing transformed) for the "public.files" table.
+ */
 export type FileUpdateRecord = Partial<FileInsertRecord>;
+

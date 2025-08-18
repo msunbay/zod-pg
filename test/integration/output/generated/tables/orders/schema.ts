@@ -4,101 +4,94 @@ import { z } from 'zod';
 
 
 /**
- * The base read schema for the "public.orders" table.
- * This schema is used to validate the data read from the database without any transformations.
+ * Base read schema for the "public.orders" table.
+ * Validates raw rows read from the database (no casing transforms applied yet).
  */
-export const OrdersTableReadSchema = z.object({
-    /**
-    * dataType: int8
-    * defaultValue: nextval('orders_id_seq'::regclass)
-    */
+export const OrdersTableBaseSchema = z.object({
+     /**
+      * dataType: int8
+      * defaultValue: nextval('orders_id_seq'::regclass)
+      */
     id: z.number().int(),
-    /**
-    * dataType: varchar
-    * defaultValue: 
-    */
+     /**
+      * dataType: varchar
+      */
     order_number: z.string(),
-    /**
-    * dataType: int4
-    * defaultValue: 
-    */
+     /**
+      * dataType: int4
+      */
     user_id: z.number().int().nullish().transform((value) => value ?? undefined).optional(),
-    /**
-    * dataType: order_status
-    * defaultValue: 'pending'::order_status
-    */
+     /**
+      * dataType: order_status
+      * defaultValue: 'pending'::order_status
+      */
     status: z.any().nullish().transform((value) => value ?? undefined).optional(),
-    /**
-    * dataType: money
-    * defaultValue: 
-    */
+     /**
+      * dataType: money
+      */
     total_amount: z.number(),
-    /**
-    * dataType: money
-    * defaultValue: 0
-    */
+     /**
+      * dataType: money
+      * defaultValue: 0
+      */
     tax_amount: z.number().nullish().transform((value) => value ?? undefined).optional(),
-    /**
-    * dataType: money
-    * defaultValue: 0
-    */
+     /**
+      * dataType: money
+      * defaultValue: 0
+      */
     shipping_cost: z.number().nullish().transform((value) => value ?? undefined).optional(),
-    /**
-    * dataType: date
-    * defaultValue: CURRENT_DATE
-    */
+     /**
+      * dataType: date
+      * defaultValue: CURRENT_DATE
+      */
     order_date: z.date().nullish().transform((value) => value ?? undefined).optional(),
-    /**
-    * dataType: date
-    * defaultValue: 
-    */
+     /**
+      * dataType: date
+      */
     shipped_date: z.date().nullish().transform((value) => value ?? undefined).optional(),
-    /**
-    * dataType: time
-    * defaultValue: 
-    */
+     /**
+      * dataType: time
+      */
     delivery_time: z.string().nullish().transform((value) => value ?? undefined).optional(),
-    /**
-    * dataType: _text
-    * defaultValue: 
-    */
+     /**
+      * dataType: _text
+      */
     notes: z.array(z.string()).nullish().transform((value) => value ?? undefined).optional(),
-    /**
-    * dataType: jsonb
-    * defaultValue: 
-    */
+     /**
+      * dataType: jsonb
+      */
     metadata: z.any().nullish().transform((value) => value ?? undefined).optional(),
-    /**
-    * dataType: timestamptz
-    * defaultValue: now()
-    */
+     /**
+      * dataType: timestamptz
+      * defaultValue: now()
+      */
     created_at: z.date().nullish().transform((value) => value ?? undefined).optional(),
 });
 
 /**
  * The base record type for the "public.orders" table.
- * This type represents the raw database record without any transformations.
+ * This type represents the raw database record without case transforms.
  */
-export type OrderReadBaseRecord = z.output<typeof OrdersTableReadSchema>;
+export type OrderBaseRecord = z.output<typeof OrdersTableBaseSchema>;
 
 /**
-* The read transform function for the "public.orders" table.
-* Maps the raw database fields to expected property names. e.g snake_case to camelCase.
-*/
-export const transformOrderReadRecord = (data: OrderReadBaseRecord): {
-    id: OrderReadBaseRecord['id'],
-    orderNumber: OrderReadBaseRecord['order_number'],
-    userId?: OrderReadBaseRecord['user_id'],
-    status?: OrderReadBaseRecord['status'],
-    totalAmount: OrderReadBaseRecord['total_amount'],
-    taxAmount?: OrderReadBaseRecord['tax_amount'],
-    shippingCost?: OrderReadBaseRecord['shipping_cost'],
-    orderDate?: OrderReadBaseRecord['order_date'],
-    shippedDate?: OrderReadBaseRecord['shipped_date'],
-    deliveryTime?: OrderReadBaseRecord['delivery_time'],
-    notes?: OrderReadBaseRecord['notes'],
-    metadata?: OrderReadBaseRecord['metadata'],
-    createdAt?: OrderReadBaseRecord['created_at'],
+ * Read transform for the "public.orders" table.
+ * Maps raw database snake_case fields to camelCase properties.
+ */
+export const transformOrderBaseRecord = (data: OrderBaseRecord): {
+    id: OrderBaseRecord['id'],
+    orderNumber: OrderBaseRecord['order_number'],
+    userId?: OrderBaseRecord['user_id'],
+    status?: OrderBaseRecord['status'],
+    totalAmount: OrderBaseRecord['total_amount'],
+    taxAmount?: OrderBaseRecord['tax_amount'],
+    shippingCost?: OrderBaseRecord['shipping_cost'],
+    orderDate?: OrderBaseRecord['order_date'],
+    shippedDate?: OrderBaseRecord['shipped_date'],
+    deliveryTime?: OrderBaseRecord['delivery_time'],
+    notes?: OrderBaseRecord['notes'],
+    metadata?: OrderBaseRecord['metadata'],
+    createdAt?: OrderBaseRecord['created_at'],
 } => ({
     id: data.id,
     orderNumber: data.order_number,
@@ -116,75 +109,66 @@ export const transformOrderReadRecord = (data: OrderReadBaseRecord): {
 });
 
 /**
- * The read schema for the "public.orders" table.
- * This schema is used to validate the data read from the database with transformations.
+ * Read schema for the "public.orders" table (after casing transform).
  */
-export const OrdersTableSchema = OrdersTableReadSchema.transform(transformOrderReadRecord);
+export const OrdersTableSchema = OrdersTableBaseSchema.transform(transformOrderBaseRecord);
 
 /**
- * The base write schema for the "public.orders" table.
- * This schema is used to validate the data before writing to the database without any transformations.
+ * Base insert/write schema for the "public.orders" table (no casing transforms).
  */
-export const OrdersTableWriteSchema = z.object({
-    /**
-    * dataType: varchar
-    * defaultValue: 
-    */
+export const OrdersTableInsertBaseSchema = z.object({
+     /**
+      * dataType: varchar
+      */
     orderNumber: z.string().max(20),
-    /**
-    * dataType: int4
-    * defaultValue: 
-    */
+     /**
+      * dataType: int4
+      */
     userId: z.number().int().nullish().optional(),
-    /**
-    * dataType: order_status
-    * defaultValue: 'pending'::order_status
-    */
+     /**
+      * dataType: order_status
+      * defaultValue: 'pending'::order_status
+      */
     status: z.any().nullish().optional(),
-    /**
-    * dataType: money
-    * defaultValue: 
-    */
+     /**
+      * dataType: money
+      */
     totalAmount: z.number(),
-    /**
-    * dataType: money
-    * defaultValue: 0
-    */
+     /**
+      * dataType: money
+      * defaultValue: 0
+      */
     taxAmount: z.number().nullish().optional(),
-    /**
-    * dataType: money
-    * defaultValue: 0
-    */
+     /**
+      * dataType: money
+      * defaultValue: 0
+      */
     shippingCost: z.number().nullish().optional(),
-    /**
-    * dataType: date
-    * defaultValue: CURRENT_DATE
-    */
+     /**
+      * dataType: date
+      * defaultValue: CURRENT_DATE
+      */
     orderDate: z.date().nullish().optional(),
-    /**
-    * dataType: date
-    * defaultValue: 
-    */
+     /**
+      * dataType: date
+      */
     shippedDate: z.date().nullish().optional(),
-    /**
-    * dataType: time
-    * defaultValue: 
-    */
+     /**
+      * dataType: time
+      */
     deliveryTime: z.string().nullish().optional(),
-    /**
-    * dataType: _text
-    * defaultValue: 
-    */
+     /**
+      * dataType: _text
+      */
     notes: z.array(z.string()).nullish().optional(),
-    /**
-    * dataType: jsonb
-    * defaultValue: 
-    */
+     /**
+      * dataType: jsonb
+      */
     metadata: z.any().nullish().transform((value) => value ? JSON.stringify(value) : value).optional(),
-    /**
-    * dataType: timestamptz
-    * defaultValue: now()
-    */
+     /**
+      * dataType: timestamptz
+      * defaultValue: now()
+      */
     createdAt: z.date().nullish().optional(),
 });
 
@@ -192,7 +176,7 @@ export const OrdersTableWriteSchema = z.object({
  * The base record type for the "public.orders" table.
  * This type represents an insertable database record before casing transformations are applied.
  */
-export type OrderInsertBaseRecord = z.output<typeof OrdersTableWriteSchema>;
+export type OrderInsertBaseRecord = z.output<typeof OrdersTableInsertBaseSchema>;
 
 /**
  * The base record type for the "public.orders" table.
@@ -201,10 +185,10 @@ export type OrderInsertBaseRecord = z.output<typeof OrdersTableWriteSchema>;
 export type OrderUpdateBaseRecord = Partial<OrderInsertBaseRecord>;
 
 /**
- * The insert transform function for the "public.orders" table.
- * Maps the expected property names to raw database fields. e.g camelCase to snake_case.
+ * Insert transform for the "public.orders" table.
+ * Maps camelCase properties to raw database snake_case fields.
  */
-export const transformOrderInsertRecord = (data: OrderInsertBaseRecord): {
+export const transformOrderInsertBaseRecord = (data: OrderInsertBaseRecord): {
     order_number: OrderInsertBaseRecord['orderNumber'],
     user_id?: OrderInsertBaseRecord['userId'],
     status?: OrderInsertBaseRecord['status'],
@@ -233,10 +217,10 @@ export const transformOrderInsertRecord = (data: OrderInsertBaseRecord): {
 });
 
 /**
- * The update transform function for the "public.orders" table.
- * Maps the expected property names to raw database fields. e.g camelCase to snake_case.
+ * Update transform for the "public.orders" table.
+ * Maps camelCase properties to raw database snake_case fields.
  */
-export const transformOrderUpdateRecord = (data: OrderUpdateBaseRecord): {
+export const transformOrderUpdateBaseRecord = (data: OrderUpdateBaseRecord): {
     order_number: OrderUpdateBaseRecord['orderNumber'],
     user_id?: OrderUpdateBaseRecord['userId'],
     status?: OrderUpdateBaseRecord['status'],
@@ -265,23 +249,21 @@ export const transformOrderUpdateRecord = (data: OrderUpdateBaseRecord): {
 });
 
 /**
- * The insert schema for the "public.orders" table.
- * This schema is used to validate and transform a record before inserting into the database.
+ * Insert schema for the "public.orders" table (after casing transform).
  */
-export const OrdersTableInsertSchema = OrdersTableWriteSchema.transform(transformOrderInsertRecord);
+export const OrdersTableInsertSchema = OrdersTableInsertBaseSchema.transform(transformOrderInsertBaseRecord);
 
 /**
- * The update schema for the "public.orders" table.
- * This schema is used to validate and transform a record before updating the database.
+ * Update schema for the "public.orders" table (after casing transform).
  */
-export const OrdersTableUpdateSchema = OrdersTableWriteSchema.partial().transform(transformOrderUpdateRecord);
+export const OrdersTableUpdateSchema = OrdersTableInsertBaseSchema.partial().transform(transformOrderUpdateBaseRecord);
 
 type TableInsertRecord = z.input<typeof OrdersTableInsertSchema>;
 type TableReadRecord = z.output<typeof OrdersTableSchema>;
 
 /**
-* Represents a database record from the "public.orders" table.
-*/
+ * Read record (casing transformed) for the "public.orders" table.
+ */
 export interface OrderRecord {
     /**
     * Primary key for orders table
@@ -338,8 +320,8 @@ export interface OrderRecord {
 }
 
 /**
-* Represents an insertable database record from the "public.orders" table.
-*/
+ * Insert record (casing transformed) for the "public.orders" table.
+ */
 export interface OrderInsertRecord {
     /**
     * Unique order number
@@ -398,6 +380,7 @@ export interface OrderInsertRecord {
 }
 
 /**
-* Represents an updateable database record from the "public.orders" table.
-*/
+ * Updatable record (casing transformed) for the "public.orders" table.
+ */
 export type OrderUpdateRecord = Partial<OrderInsertRecord>;
+

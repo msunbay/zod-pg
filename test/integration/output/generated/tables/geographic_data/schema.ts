@@ -4,95 +4,85 @@ import { z } from 'zod';
 
 
 /**
- * The base read schema for the "public.geographic_data" table.
- * This schema is used to validate the data read from the database without any transformations.
+ * Base read schema for the "public.geographic_data" table.
+ * Validates raw rows read from the database (no casing transforms applied yet).
  */
-export const GeographicDataTableReadSchema = z.object({
-    /**
-    * dataType: int4
-    * defaultValue: nextval('geographic_data_id_seq'::regclass)
-    */
+export const GeographicDataTableBaseSchema = z.object({
+     /**
+      * dataType: int4
+      * defaultValue: nextval('geographic_data_id_seq'::regclass)
+      */
     id: z.number().int(),
-    /**
-    * dataType: varchar
-    * defaultValue: 
-    */
+     /**
+      * dataType: varchar
+      */
     location_name: z.string(),
-    /**
-    * dataType: point
-    * defaultValue: 
-    */
+     /**
+      * dataType: point
+      */
     coordinates: z.string(),
-    /**
-    * dataType: polygon
-    * defaultValue: 
-    */
+     /**
+      * dataType: polygon
+      */
     boundary: z.string().nullish().transform((value) => value ?? undefined).optional(),
-    /**
-    * dataType: circle
-    * defaultValue: 
-    */
+     /**
+      * dataType: circle
+      */
     area_circle: z.string().nullish().transform((value) => value ?? undefined).optional(),
-    /**
-    * dataType: float4
-    * defaultValue: 
-    */
+     /**
+      * dataType: float4
+      */
     elevation: z.number().nullish().transform((value) => value ?? undefined).optional(),
-    /**
-    * dataType: varchar
-    * defaultValue: 
-    */
+     /**
+      * dataType: varchar
+      */
     timezone: z.string().nullish().transform((value) => value ?? undefined).optional(),
-    /**
-    * dataType: bpchar
-    * defaultValue: 
-    */
+     /**
+      * dataType: bpchar
+      */
     country_code: z.string().nullish().transform((value) => value ?? undefined).optional(),
-    /**
-    * dataType: _text
-    * defaultValue: 
-    */
+     /**
+      * dataType: _text
+      */
     postal_codes: z.array(z.string()).nullish().transform((value) => value ?? undefined).optional(),
-    /**
-    * dataType: int4
-    * defaultValue: 
-    */
+     /**
+      * dataType: int4
+      */
     population: z.number().int().nullish().transform((value) => value ?? undefined).optional(),
-    /**
-    * dataType: date
-    * defaultValue: 
-    */
+     /**
+      * dataType: date
+      */
     established_date: z.date().nullish().transform((value) => value ?? undefined).optional(),
-    /**
-    * dataType: timestamptz
-    * defaultValue: now()
-    */
+     /**
+      * dataType: timestamptz
+      * defaultValue: now()
+      */
     last_updated: z.date().nullish().transform((value) => value ?? undefined).optional(),
 });
 
 /**
  * The base record type for the "public.geographic_data" table.
- * This type represents the raw database record without any transformations.
+ * This type represents the raw database record without case transforms.
  */
-export type GeographicDataReadBaseRecord = z.output<typeof GeographicDataTableReadSchema>;
+export type GeographicDataBaseRecord = z.output<typeof GeographicDataTableBaseSchema>;
 
 /**
-* The read transform function for the "public.geographic_data" table.
-* Maps the raw database fields to expected property names. e.g snake_case to camelCase.
-*/
-export const transformGeographicDataReadRecord = (data: GeographicDataReadBaseRecord): {
-    id: GeographicDataReadBaseRecord['id'],
-    locationName: GeographicDataReadBaseRecord['location_name'],
-    coordinates: GeographicDataReadBaseRecord['coordinates'],
-    boundary?: GeographicDataReadBaseRecord['boundary'],
-    areaCircle?: GeographicDataReadBaseRecord['area_circle'],
-    elevation?: GeographicDataReadBaseRecord['elevation'],
-    timezone?: GeographicDataReadBaseRecord['timezone'],
-    countryCode?: GeographicDataReadBaseRecord['country_code'],
-    postalCodes?: GeographicDataReadBaseRecord['postal_codes'],
-    population?: GeographicDataReadBaseRecord['population'],
-    establishedDate?: GeographicDataReadBaseRecord['established_date'],
-    lastUpdated?: GeographicDataReadBaseRecord['last_updated'],
+ * Read transform for the "public.geographic_data" table.
+ * Maps raw database snake_case fields to camelCase properties.
+ */
+export const transformGeographicDataBaseRecord = (data: GeographicDataBaseRecord): {
+    id: GeographicDataBaseRecord['id'],
+    locationName: GeographicDataBaseRecord['location_name'],
+    coordinates: GeographicDataBaseRecord['coordinates'],
+    boundary?: GeographicDataBaseRecord['boundary'],
+    areaCircle?: GeographicDataBaseRecord['area_circle'],
+    elevation?: GeographicDataBaseRecord['elevation'],
+    timezone?: GeographicDataBaseRecord['timezone'],
+    countryCode?: GeographicDataBaseRecord['country_code'],
+    postalCodes?: GeographicDataBaseRecord['postal_codes'],
+    population?: GeographicDataBaseRecord['population'],
+    establishedDate?: GeographicDataBaseRecord['established_date'],
+    lastUpdated?: GeographicDataBaseRecord['last_updated'],
 } => ({
     id: data.id,
     locationName: data.location_name,
@@ -109,70 +99,58 @@ export const transformGeographicDataReadRecord = (data: GeographicDataReadBaseRe
 });
 
 /**
- * The read schema for the "public.geographic_data" table.
- * This schema is used to validate the data read from the database with transformations.
+ * Read schema for the "public.geographic_data" table (after casing transform).
  */
-export const GeographicDataTableSchema = GeographicDataTableReadSchema.transform(transformGeographicDataReadRecord);
+export const GeographicDataTableSchema = GeographicDataTableBaseSchema.transform(transformGeographicDataBaseRecord);
 
 /**
- * The base write schema for the "public.geographic_data" table.
- * This schema is used to validate the data before writing to the database without any transformations.
+ * Base insert/write schema for the "public.geographic_data" table (no casing transforms).
  */
-export const GeographicDataTableWriteSchema = z.object({
-    /**
-    * dataType: varchar
-    * defaultValue: 
-    */
+export const GeographicDataTableInsertBaseSchema = z.object({
+     /**
+      * dataType: varchar
+      */
     locationName: z.string().max(255),
-    /**
-    * dataType: point
-    * defaultValue: 
-    */
+     /**
+      * dataType: point
+      */
     coordinates: z.string(),
-    /**
-    * dataType: polygon
-    * defaultValue: 
-    */
+     /**
+      * dataType: polygon
+      */
     boundary: z.string().nullish().optional(),
-    /**
-    * dataType: circle
-    * defaultValue: 
-    */
+     /**
+      * dataType: circle
+      */
     areaCircle: z.string().nullish().optional(),
-    /**
-    * dataType: float4
-    * defaultValue: 
-    */
+     /**
+      * dataType: float4
+      */
     elevation: z.number().nullish().optional(),
-    /**
-    * dataType: varchar
-    * defaultValue: 
-    */
+     /**
+      * dataType: varchar
+      */
     timezone: z.string().max(50).nullish().optional(),
-    /**
-    * dataType: bpchar
-    * defaultValue: 
-    */
+     /**
+      * dataType: bpchar
+      */
     countryCode: z.string().max(2).nullish().optional(),
-    /**
-    * dataType: _text
-    * defaultValue: 
-    */
+     /**
+      * dataType: _text
+      */
     postalCodes: z.array(z.string()).nullish().optional(),
-    /**
-    * dataType: int4
-    * defaultValue: 
-    */
+     /**
+      * dataType: int4
+      */
     population: z.number().int().nullish().optional(),
-    /**
-    * dataType: date
-    * defaultValue: 
-    */
+     /**
+      * dataType: date
+      */
     establishedDate: z.date().nullish().optional(),
-    /**
-    * dataType: timestamptz
-    * defaultValue: now()
-    */
+     /**
+      * dataType: timestamptz
+      * defaultValue: now()
+      */
     lastUpdated: z.date().nullish().optional(),
 });
 
@@ -180,7 +158,7 @@ export const GeographicDataTableWriteSchema = z.object({
  * The base record type for the "public.geographic_data" table.
  * This type represents an insertable database record before casing transformations are applied.
  */
-export type GeographicDataInsertBaseRecord = z.output<typeof GeographicDataTableWriteSchema>;
+export type GeographicDataInsertBaseRecord = z.output<typeof GeographicDataTableInsertBaseSchema>;
 
 /**
  * The base record type for the "public.geographic_data" table.
@@ -189,10 +167,10 @@ export type GeographicDataInsertBaseRecord = z.output<typeof GeographicDataTable
 export type GeographicDataUpdateBaseRecord = Partial<GeographicDataInsertBaseRecord>;
 
 /**
- * The insert transform function for the "public.geographic_data" table.
- * Maps the expected property names to raw database fields. e.g camelCase to snake_case.
+ * Insert transform for the "public.geographic_data" table.
+ * Maps camelCase properties to raw database snake_case fields.
  */
-export const transformGeographicDataInsertRecord = (data: GeographicDataInsertBaseRecord): {
+export const transformGeographicDataInsertBaseRecord = (data: GeographicDataInsertBaseRecord): {
     location_name: GeographicDataInsertBaseRecord['locationName'],
     coordinates: GeographicDataInsertBaseRecord['coordinates'],
     boundary?: GeographicDataInsertBaseRecord['boundary'],
@@ -219,10 +197,10 @@ export const transformGeographicDataInsertRecord = (data: GeographicDataInsertBa
 });
 
 /**
- * The update transform function for the "public.geographic_data" table.
- * Maps the expected property names to raw database fields. e.g camelCase to snake_case.
+ * Update transform for the "public.geographic_data" table.
+ * Maps camelCase properties to raw database snake_case fields.
  */
-export const transformGeographicDataUpdateRecord = (data: GeographicDataUpdateBaseRecord): {
+export const transformGeographicDataUpdateBaseRecord = (data: GeographicDataUpdateBaseRecord): {
     location_name: GeographicDataUpdateBaseRecord['locationName'],
     coordinates: GeographicDataUpdateBaseRecord['coordinates'],
     boundary?: GeographicDataUpdateBaseRecord['boundary'],
@@ -249,23 +227,21 @@ export const transformGeographicDataUpdateRecord = (data: GeographicDataUpdateBa
 });
 
 /**
- * The insert schema for the "public.geographic_data" table.
- * This schema is used to validate and transform a record before inserting into the database.
+ * Insert schema for the "public.geographic_data" table (after casing transform).
  */
-export const GeographicDataTableInsertSchema = GeographicDataTableWriteSchema.transform(transformGeographicDataInsertRecord);
+export const GeographicDataTableInsertSchema = GeographicDataTableInsertBaseSchema.transform(transformGeographicDataInsertBaseRecord);
 
 /**
- * The update schema for the "public.geographic_data" table.
- * This schema is used to validate and transform a record before updating the database.
+ * Update schema for the "public.geographic_data" table (after casing transform).
  */
-export const GeographicDataTableUpdateSchema = GeographicDataTableWriteSchema.partial().transform(transformGeographicDataUpdateRecord);
+export const GeographicDataTableUpdateSchema = GeographicDataTableInsertBaseSchema.partial().transform(transformGeographicDataUpdateBaseRecord);
 
 type TableInsertRecord = z.input<typeof GeographicDataTableInsertSchema>;
 type TableReadRecord = z.output<typeof GeographicDataTableSchema>;
 
 /**
-* Represents a database record from the "public.geographic_data" table.
-*/
+ * Read record (casing transformed) for the "public.geographic_data" table.
+ */
 export interface GeographicDataRecord {
     /**
     * Primary key for geographic data table
@@ -318,8 +294,8 @@ export interface GeographicDataRecord {
 }
 
 /**
-* Represents an insertable database record from the "public.geographic_data" table.
-*/
+ * Insert record (casing transformed) for the "public.geographic_data" table.
+ */
 export interface GeographicDataInsertRecord {
     /**
     * Name of the location
@@ -372,6 +348,7 @@ export interface GeographicDataInsertRecord {
 }
 
 /**
-* Represents an updateable database record from the "public.geographic_data" table.
-*/
+ * Updatable record (casing transformed) for the "public.geographic_data" table.
+ */
 export type GeographicDataUpdateRecord = Partial<GeographicDataInsertRecord>;
+

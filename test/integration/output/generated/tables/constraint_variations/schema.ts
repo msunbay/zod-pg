@@ -9,71 +9,65 @@ export const CONSTRAINT_VARIATION_LANGUAGES = ['en', 'es', 'fr', 'de', 'it'] as 
 export const CONSTRAINT_VARIATION_ACTIVE_STATUSES = ['true', 'false'] as const;
 
 /**
- * The base read schema for the "public.constraint_variations" table.
- * This schema is used to validate the data read from the database without any transformations.
+ * Base read schema for the "public.constraint_variations" table.
+ * Validates raw rows read from the database (no casing transforms applied yet).
  */
-export const ConstraintVariationsTableReadSchema = z.object({
-    /**
-    * dataType: int4
-    * defaultValue: nextval('constraint_variations_id_seq'::regclass)
-    */
+export const ConstraintVariationsTableBaseSchema = z.object({
+     /**
+      * dataType: int4
+      * defaultValue: nextval('constraint_variations_id_seq'::regclass)
+      */
     id: z.number().int(),
-    /**
-    * dataType: varchar
-    * defaultValue: 
-    */
+     /**
+      * dataType: varchar
+      */
     animal: z.enum(CONSTRAINT_VARIATION_ANIMALS).nullish().transform((value) => value ?? undefined).optional(),
-    /**
-    * dataType: text
-    * defaultValue: 
-    */
+     /**
+      * dataType: text
+      */
     fruit: z.enum(CONSTRAINT_VARIATION_FRUITS).nullish().transform((value) => value ?? undefined).optional(),
-    /**
-    * dataType: varchar
-    * defaultValue: 
-    */
+     /**
+      * dataType: varchar
+      */
     vehicle: z.enum(CONSTRAINT_VARIATION_VEHICLES).nullish().transform((value) => value ?? undefined).optional(),
-    /**
-    * dataType: bpchar
-    * defaultValue: 
-    */
+     /**
+      * dataType: bpchar
+      */
     language: z.enum(CONSTRAINT_VARIATION_LANGUAGES).nullish().transform((value) => value ?? undefined).optional(),
-    /**
-    * dataType: int2
-    * defaultValue: 
-    */
+     /**
+      * dataType: int2
+      */
     rating: z.number().int().nullish().transform((value) => value ?? undefined).optional(),
-    /**
-    * dataType: bool
-    * defaultValue: 
-    */
+     /**
+      * dataType: bool
+      */
     active_status: z.enum(CONSTRAINT_VARIATION_ACTIVE_STATUSES).nullish().transform((value) => value ?? undefined).optional(),
-    /**
-    * dataType: timestamptz
-    * defaultValue: now()
-    */
+     /**
+      * dataType: timestamptz
+      * defaultValue: now()
+      */
     created_at: z.date().nullish().transform((value) => value ?? undefined).optional(),
 });
 
 /**
  * The base record type for the "public.constraint_variations" table.
- * This type represents the raw database record without any transformations.
+ * This type represents the raw database record without case transforms.
  */
-export type ConstraintVariationReadBaseRecord = z.output<typeof ConstraintVariationsTableReadSchema>;
+export type ConstraintVariationBaseRecord = z.output<typeof ConstraintVariationsTableBaseSchema>;
 
 /**
-* The read transform function for the "public.constraint_variations" table.
-* Maps the raw database fields to expected property names. e.g snake_case to camelCase.
-*/
-export const transformConstraintVariationReadRecord = (data: ConstraintVariationReadBaseRecord): {
-    id: ConstraintVariationReadBaseRecord['id'],
-    animal?: ConstraintVariationReadBaseRecord['animal'],
-    fruit?: ConstraintVariationReadBaseRecord['fruit'],
-    vehicle?: ConstraintVariationReadBaseRecord['vehicle'],
-    language?: ConstraintVariationReadBaseRecord['language'],
-    rating?: ConstraintVariationReadBaseRecord['rating'],
-    activeStatus?: ConstraintVariationReadBaseRecord['active_status'],
-    createdAt?: ConstraintVariationReadBaseRecord['created_at'],
+ * Read transform for the "public.constraint_variations" table.
+ * Maps raw database snake_case fields to camelCase properties.
+ */
+export const transformConstraintVariationBaseRecord = (data: ConstraintVariationBaseRecord): {
+    id: ConstraintVariationBaseRecord['id'],
+    animal?: ConstraintVariationBaseRecord['animal'],
+    fruit?: ConstraintVariationBaseRecord['fruit'],
+    vehicle?: ConstraintVariationBaseRecord['vehicle'],
+    language?: ConstraintVariationBaseRecord['language'],
+    rating?: ConstraintVariationBaseRecord['rating'],
+    activeStatus?: ConstraintVariationBaseRecord['active_status'],
+    createdAt?: ConstraintVariationBaseRecord['created_at'],
 } => ({
     id: data.id,
     animal: data.animal,
@@ -86,50 +80,42 @@ export const transformConstraintVariationReadRecord = (data: ConstraintVariation
 });
 
 /**
- * The read schema for the "public.constraint_variations" table.
- * This schema is used to validate the data read from the database with transformations.
+ * Read schema for the "public.constraint_variations" table (after casing transform).
  */
-export const ConstraintVariationsTableSchema = ConstraintVariationsTableReadSchema.transform(transformConstraintVariationReadRecord);
+export const ConstraintVariationsTableSchema = ConstraintVariationsTableBaseSchema.transform(transformConstraintVariationBaseRecord);
 
 /**
- * The base write schema for the "public.constraint_variations" table.
- * This schema is used to validate the data before writing to the database without any transformations.
+ * Base insert/write schema for the "public.constraint_variations" table (no casing transforms).
  */
-export const ConstraintVariationsTableWriteSchema = z.object({
-    /**
-    * dataType: varchar
-    * defaultValue: 
-    */
+export const ConstraintVariationsTableInsertBaseSchema = z.object({
+     /**
+      * dataType: varchar
+      */
     animal: z.enum(CONSTRAINT_VARIATION_ANIMALS).nullish().optional(),
-    /**
-    * dataType: text
-    * defaultValue: 
-    */
+     /**
+      * dataType: text
+      */
     fruit: z.enum(CONSTRAINT_VARIATION_FRUITS).nullish().optional(),
-    /**
-    * dataType: varchar
-    * defaultValue: 
-    */
+     /**
+      * dataType: varchar
+      */
     vehicle: z.enum(CONSTRAINT_VARIATION_VEHICLES).nullish().optional(),
-    /**
-    * dataType: bpchar
-    * defaultValue: 
-    */
+     /**
+      * dataType: bpchar
+      */
     language: z.enum(CONSTRAINT_VARIATION_LANGUAGES).nullish().optional(),
-    /**
-    * dataType: int2
-    * defaultValue: 
-    */
+     /**
+      * dataType: int2
+      */
     rating: z.number().int().nullish().optional(),
-    /**
-    * dataType: bool
-    * defaultValue: 
-    */
+     /**
+      * dataType: bool
+      */
     activeStatus: z.enum(CONSTRAINT_VARIATION_ACTIVE_STATUSES).nullish().optional(),
-    /**
-    * dataType: timestamptz
-    * defaultValue: now()
-    */
+     /**
+      * dataType: timestamptz
+      * defaultValue: now()
+      */
     createdAt: z.date().nullish().optional(),
 });
 
@@ -137,7 +123,7 @@ export const ConstraintVariationsTableWriteSchema = z.object({
  * The base record type for the "public.constraint_variations" table.
  * This type represents an insertable database record before casing transformations are applied.
  */
-export type ConstraintVariationInsertBaseRecord = z.output<typeof ConstraintVariationsTableWriteSchema>;
+export type ConstraintVariationInsertBaseRecord = z.output<typeof ConstraintVariationsTableInsertBaseSchema>;
 
 /**
  * The base record type for the "public.constraint_variations" table.
@@ -146,10 +132,10 @@ export type ConstraintVariationInsertBaseRecord = z.output<typeof ConstraintVari
 export type ConstraintVariationUpdateBaseRecord = Partial<ConstraintVariationInsertBaseRecord>;
 
 /**
- * The insert transform function for the "public.constraint_variations" table.
- * Maps the expected property names to raw database fields. e.g camelCase to snake_case.
+ * Insert transform for the "public.constraint_variations" table.
+ * Maps camelCase properties to raw database snake_case fields.
  */
-export const transformConstraintVariationInsertRecord = (data: ConstraintVariationInsertBaseRecord): {
+export const transformConstraintVariationInsertBaseRecord = (data: ConstraintVariationInsertBaseRecord): {
     animal?: ConstraintVariationInsertBaseRecord['animal'],
     fruit?: ConstraintVariationInsertBaseRecord['fruit'],
     vehicle?: ConstraintVariationInsertBaseRecord['vehicle'],
@@ -168,10 +154,10 @@ export const transformConstraintVariationInsertRecord = (data: ConstraintVariati
 });
 
 /**
- * The update transform function for the "public.constraint_variations" table.
- * Maps the expected property names to raw database fields. e.g camelCase to snake_case.
+ * Update transform for the "public.constraint_variations" table.
+ * Maps camelCase properties to raw database snake_case fields.
  */
-export const transformConstraintVariationUpdateRecord = (data: ConstraintVariationUpdateBaseRecord): {
+export const transformConstraintVariationUpdateBaseRecord = (data: ConstraintVariationUpdateBaseRecord): {
     animal?: ConstraintVariationUpdateBaseRecord['animal'],
     fruit?: ConstraintVariationUpdateBaseRecord['fruit'],
     vehicle?: ConstraintVariationUpdateBaseRecord['vehicle'],
@@ -190,28 +176,21 @@ export const transformConstraintVariationUpdateRecord = (data: ConstraintVariati
 });
 
 /**
- * The insert schema for the "public.constraint_variations" table.
- * This schema is used to validate and transform a record before inserting into the database.
+ * Insert schema for the "public.constraint_variations" table (after casing transform).
  */
-export const ConstraintVariationsTableInsertSchema = ConstraintVariationsTableWriteSchema.transform(transformConstraintVariationInsertRecord);
+export const ConstraintVariationsTableInsertSchema = ConstraintVariationsTableInsertBaseSchema.transform(transformConstraintVariationInsertBaseRecord);
 
 /**
- * The update schema for the "public.constraint_variations" table.
- * This schema is used to validate and transform a record before updating the database.
+ * Update schema for the "public.constraint_variations" table (after casing transform).
  */
-export const ConstraintVariationsTableUpdateSchema = ConstraintVariationsTableWriteSchema.partial().transform(transformConstraintVariationUpdateRecord);
+export const ConstraintVariationsTableUpdateSchema = ConstraintVariationsTableInsertBaseSchema.partial().transform(transformConstraintVariationUpdateBaseRecord);
 
 type TableInsertRecord = z.input<typeof ConstraintVariationsTableInsertSchema>;
 type TableReadRecord = z.output<typeof ConstraintVariationsTableSchema>;
-export type ConstraintVariationAnimal = (typeof CONSTRAINT_VARIATION_ANIMALS)[number];
-export type ConstraintVariationFruit = (typeof CONSTRAINT_VARIATION_FRUITS)[number];
-export type ConstraintVariationVehicle = (typeof CONSTRAINT_VARIATION_VEHICLES)[number];
-export type ConstraintVariationLanguage = (typeof CONSTRAINT_VARIATION_LANGUAGES)[number];
-export type ConstraintVariationActiveStatus = (typeof CONSTRAINT_VARIATION_ACTIVE_STATUSES)[number];
 
 /**
-* Represents a database record from the "public.constraint_variations" table.
-*/
+ * Read record (casing transformed) for the "public.constraint_variations" table.
+ */
 export interface ConstraintVariationRecord {
     /**
     * Primary key for constraint variations table
@@ -248,8 +227,8 @@ export interface ConstraintVariationRecord {
 }
 
 /**
-* Represents an insertable database record from the "public.constraint_variations" table.
-*/
+ * Insert record (casing transformed) for the "public.constraint_variations" table.
+ */
 export interface ConstraintVariationInsertRecord {
     /**
     * Type of animal
@@ -286,6 +265,12 @@ export interface ConstraintVariationInsertRecord {
 }
 
 /**
-* Represents an updateable database record from the "public.constraint_variations" table.
-*/
+ * Updatable record (casing transformed) for the "public.constraint_variations" table.
+ */
 export type ConstraintVariationUpdateRecord = Partial<ConstraintVariationInsertRecord>;
+
+export type ConstraintVariationAnimal = (typeof CONSTRAINT_VARIATION_ANIMALS)[number];
+export type ConstraintVariationFruit = (typeof CONSTRAINT_VARIATION_FRUITS)[number];
+export type ConstraintVariationVehicle = (typeof CONSTRAINT_VARIATION_VEHICLES)[number];
+export type ConstraintVariationLanguage = (typeof CONSTRAINT_VARIATION_LANGUAGES)[number];
+export type ConstraintVariationActiveStatus = (typeof CONSTRAINT_VARIATION_ACTIVE_STATUSES)[number];

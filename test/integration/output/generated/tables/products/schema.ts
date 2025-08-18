@@ -4,89 +4,81 @@ import { z } from 'zod';
 
 
 /**
- * The base read schema for the "public.products" table.
- * This schema is used to validate the data read from the database without any transformations.
+ * Base read schema for the "public.products" table.
+ * Validates raw rows read from the database (no casing transforms applied yet).
  */
-export const ProductsTableReadSchema = z.object({
-    /**
-    * dataType: int4
-    * defaultValue: nextval('products_id_seq'::regclass)
-    */
+export const ProductsTableBaseSchema = z.object({
+     /**
+      * dataType: int4
+      * defaultValue: nextval('products_id_seq'::regclass)
+      */
     id: z.number().int(),
-    /**
-    * dataType: varchar
-    * defaultValue: 
-    */
+     /**
+      * dataType: varchar
+      */
     name: z.string(),
-    /**
-    * dataType: varchar
-    * defaultValue: 
-    */
+     /**
+      * dataType: varchar
+      */
     sku: z.string(),
-    /**
-    * dataType: numeric
-    * defaultValue: 
-    */
+     /**
+      * dataType: numeric
+      */
     price: z.number(),
-    /**
-    * dataType: numeric
-    * defaultValue: 
-    */
+     /**
+      * dataType: numeric
+      */
     cost: z.number().nullish().transform((value) => value ?? undefined).optional(),
-    /**
-    * dataType: float4
-    * defaultValue: 
-    */
+     /**
+      * dataType: float4
+      */
     weight: z.number().nullish().transform((value) => value ?? undefined).optional(),
-    /**
-    * dataType: point
-    * defaultValue: 
-    */
+     /**
+      * dataType: point
+      */
     dimensions: z.string().nullish().transform((value) => value ?? undefined).optional(),
-    /**
-    * dataType: bool
-    * defaultValue: true
-    */
+     /**
+      * dataType: bool
+      * defaultValue: true
+      */
     is_active: z.boolean().nullish().transform((value) => value ?? undefined).optional(),
-    /**
-    * dataType: bpchar
-    * defaultValue: 
-    */
+     /**
+      * dataType: bpchar
+      */
     barcode: z.string().nullish().transform((value) => value ?? undefined).optional(),
-    /**
-    * dataType: text
-    * defaultValue: 
-    */
+     /**
+      * dataType: text
+      */
     description: z.string().nullish().transform((value) => value ?? undefined).optional(),
-    /**
-    * dataType: timestamptz
-    * defaultValue: now()
-    */
+     /**
+      * dataType: timestamptz
+      * defaultValue: now()
+      */
     created_at: z.date().nullish().transform((value) => value ?? undefined).optional(),
 });
 
 /**
  * The base record type for the "public.products" table.
- * This type represents the raw database record without any transformations.
+ * This type represents the raw database record without case transforms.
  */
-export type ProductReadBaseRecord = z.output<typeof ProductsTableReadSchema>;
+export type ProductBaseRecord = z.output<typeof ProductsTableBaseSchema>;
 
 /**
-* The read transform function for the "public.products" table.
-* Maps the raw database fields to expected property names. e.g snake_case to camelCase.
-*/
-export const transformProductReadRecord = (data: ProductReadBaseRecord): {
-    id: ProductReadBaseRecord['id'],
-    name: ProductReadBaseRecord['name'],
-    sku: ProductReadBaseRecord['sku'],
-    price: ProductReadBaseRecord['price'],
-    cost?: ProductReadBaseRecord['cost'],
-    weight?: ProductReadBaseRecord['weight'],
-    dimensions?: ProductReadBaseRecord['dimensions'],
-    isActive?: ProductReadBaseRecord['is_active'],
-    barcode?: ProductReadBaseRecord['barcode'],
-    description?: ProductReadBaseRecord['description'],
-    createdAt?: ProductReadBaseRecord['created_at'],
+ * Read transform for the "public.products" table.
+ * Maps raw database snake_case fields to camelCase properties.
+ */
+export const transformProductBaseRecord = (data: ProductBaseRecord): {
+    id: ProductBaseRecord['id'],
+    name: ProductBaseRecord['name'],
+    sku: ProductBaseRecord['sku'],
+    price: ProductBaseRecord['price'],
+    cost?: ProductBaseRecord['cost'],
+    weight?: ProductBaseRecord['weight'],
+    dimensions?: ProductBaseRecord['dimensions'],
+    isActive?: ProductBaseRecord['is_active'],
+    barcode?: ProductBaseRecord['barcode'],
+    description?: ProductBaseRecord['description'],
+    createdAt?: ProductBaseRecord['created_at'],
 } => ({
     id: data.id,
     name: data.name,
@@ -102,65 +94,55 @@ export const transformProductReadRecord = (data: ProductReadBaseRecord): {
 });
 
 /**
- * The read schema for the "public.products" table.
- * This schema is used to validate the data read from the database with transformations.
+ * Read schema for the "public.products" table (after casing transform).
  */
-export const ProductsTableSchema = ProductsTableReadSchema.transform(transformProductReadRecord);
+export const ProductsTableSchema = ProductsTableBaseSchema.transform(transformProductBaseRecord);
 
 /**
- * The base write schema for the "public.products" table.
- * This schema is used to validate the data before writing to the database without any transformations.
+ * Base insert/write schema for the "public.products" table (no casing transforms).
  */
-export const ProductsTableWriteSchema = z.object({
-    /**
-    * dataType: varchar
-    * defaultValue: 
-    */
+export const ProductsTableInsertBaseSchema = z.object({
+     /**
+      * dataType: varchar
+      */
     name: z.string().max(255),
-    /**
-    * dataType: varchar
-    * defaultValue: 
-    */
+     /**
+      * dataType: varchar
+      */
     sku: z.string().max(50),
-    /**
-    * dataType: numeric
-    * defaultValue: 
-    */
+     /**
+      * dataType: numeric
+      */
     price: z.number().max(655362),
-    /**
-    * dataType: numeric
-    * defaultValue: 
-    */
+     /**
+      * dataType: numeric
+      */
     cost: z.number().max(655362).nullish().optional(),
-    /**
-    * dataType: float4
-    * defaultValue: 
-    */
+     /**
+      * dataType: float4
+      */
     weight: z.number().nullish().optional(),
-    /**
-    * dataType: point
-    * defaultValue: 
-    */
+     /**
+      * dataType: point
+      */
     dimensions: z.string().nullish().optional(),
-    /**
-    * dataType: bool
-    * defaultValue: true
-    */
+     /**
+      * dataType: bool
+      * defaultValue: true
+      */
     isActive: z.boolean().nullish().optional(),
-    /**
-    * dataType: bpchar
-    * defaultValue: 
-    */
+     /**
+      * dataType: bpchar
+      */
     barcode: z.string().max(13).nullish().optional(),
-    /**
-    * dataType: text
-    * defaultValue: 
-    */
+     /**
+      * dataType: text
+      */
     description: z.string().nullish().optional(),
-    /**
-    * dataType: timestamptz
-    * defaultValue: now()
-    */
+     /**
+      * dataType: timestamptz
+      * defaultValue: now()
+      */
     createdAt: z.date().nullish().optional(),
 });
 
@@ -168,7 +150,7 @@ export const ProductsTableWriteSchema = z.object({
  * The base record type for the "public.products" table.
  * This type represents an insertable database record before casing transformations are applied.
  */
-export type ProductInsertBaseRecord = z.output<typeof ProductsTableWriteSchema>;
+export type ProductInsertBaseRecord = z.output<typeof ProductsTableInsertBaseSchema>;
 
 /**
  * The base record type for the "public.products" table.
@@ -177,10 +159,10 @@ export type ProductInsertBaseRecord = z.output<typeof ProductsTableWriteSchema>;
 export type ProductUpdateBaseRecord = Partial<ProductInsertBaseRecord>;
 
 /**
- * The insert transform function for the "public.products" table.
- * Maps the expected property names to raw database fields. e.g camelCase to snake_case.
+ * Insert transform for the "public.products" table.
+ * Maps camelCase properties to raw database snake_case fields.
  */
-export const transformProductInsertRecord = (data: ProductInsertBaseRecord): {
+export const transformProductInsertBaseRecord = (data: ProductInsertBaseRecord): {
     name: ProductInsertBaseRecord['name'],
     sku: ProductInsertBaseRecord['sku'],
     price: ProductInsertBaseRecord['price'],
@@ -205,10 +187,10 @@ export const transformProductInsertRecord = (data: ProductInsertBaseRecord): {
 });
 
 /**
- * The update transform function for the "public.products" table.
- * Maps the expected property names to raw database fields. e.g camelCase to snake_case.
+ * Update transform for the "public.products" table.
+ * Maps camelCase properties to raw database snake_case fields.
  */
-export const transformProductUpdateRecord = (data: ProductUpdateBaseRecord): {
+export const transformProductUpdateBaseRecord = (data: ProductUpdateBaseRecord): {
     name: ProductUpdateBaseRecord['name'],
     sku: ProductUpdateBaseRecord['sku'],
     price: ProductUpdateBaseRecord['price'],
@@ -233,23 +215,21 @@ export const transformProductUpdateRecord = (data: ProductUpdateBaseRecord): {
 });
 
 /**
- * The insert schema for the "public.products" table.
- * This schema is used to validate and transform a record before inserting into the database.
+ * Insert schema for the "public.products" table (after casing transform).
  */
-export const ProductsTableInsertSchema = ProductsTableWriteSchema.transform(transformProductInsertRecord);
+export const ProductsTableInsertSchema = ProductsTableInsertBaseSchema.transform(transformProductInsertBaseRecord);
 
 /**
- * The update schema for the "public.products" table.
- * This schema is used to validate and transform a record before updating the database.
+ * Update schema for the "public.products" table (after casing transform).
  */
-export const ProductsTableUpdateSchema = ProductsTableWriteSchema.partial().transform(transformProductUpdateRecord);
+export const ProductsTableUpdateSchema = ProductsTableInsertBaseSchema.partial().transform(transformProductUpdateBaseRecord);
 
 type TableInsertRecord = z.input<typeof ProductsTableInsertSchema>;
 type TableReadRecord = z.output<typeof ProductsTableSchema>;
 
 /**
-* Represents a database record from the "public.products" table.
-*/
+ * Read record (casing transformed) for the "public.products" table.
+ */
 export interface ProductRecord {
     /**
     * Primary key for products table
@@ -298,8 +278,8 @@ export interface ProductRecord {
 }
 
 /**
-* Represents an insertable database record from the "public.products" table.
-*/
+ * Insert record (casing transformed) for the "public.products" table.
+ */
 export interface ProductInsertRecord {
     /**
     * Product name
@@ -351,6 +331,7 @@ export interface ProductInsertRecord {
 }
 
 /**
-* Represents an updateable database record from the "public.products" table.
-*/
+ * Updatable record (casing transformed) for the "public.products" table.
+ */
 export type ProductUpdateRecord = Partial<ProductInsertRecord>;
+

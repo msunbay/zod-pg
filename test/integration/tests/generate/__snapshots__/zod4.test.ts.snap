@@ -29,71 +29,66 @@ import { z } from 'zod';
 export const USER_ROLES = ['admin', 'editor', 'viewer'] as const;
 
 /**
- * The base read schema for the "public.users" table.
- * This schema is used to validate the data read from the database without any transformations.
+ * Base read schema for the "public.users" table.
+ * Validates raw rows read from the database (no casing transforms applied yet).
  */
-export const UsersTableReadSchema = z.object({
-    /**
-    * dataType: int4
-    * defaultValue: nextval('users_id_seq'::regclass)
-    */
+export const UsersTableBaseSchema = z.object({
+     /**
+      * dataType: int4
+      * defaultValue: nextval('users_id_seq'::regclass)
+      */
     id: z.int(),
-    /**
-    * dataType: varchar
-    * defaultValue: 
-    */
+     /**
+      * dataType: varchar
+      */
     name: z.string(),
-    /**
-    * dataType: varchar
-    * defaultValue: 
-    */
+     /**
+      * dataType: varchar
+      */
     email: z.string().nullish().transform((value) => value ?? undefined).optional(),
-    /**
-    * dataType: varchar
-    * defaultValue: 'active'::character varying
-    */
+     /**
+      * dataType: varchar
+      * defaultValue: 'active'::character varying
+      */
     status: z.string().nullish().transform((value) => value ?? undefined).optional(),
-    /**
-    * dataType: jsonb
-    * defaultValue: 
-    */
+     /**
+      * dataType: jsonb
+      */
     profile: z.json().nullish().transform((value) => value ?? undefined).optional(),
-    /**
-    * dataType: timestamptz
-    * defaultValue: now()
-    */
+     /**
+      * dataType: timestamptz
+      * defaultValue: now()
+      */
     created_at: z.date().nullish().transform((value) => value ?? undefined).optional(),
-    /**
-    * dataType: _text
-    * defaultValue: 
-    */
+     /**
+      * dataType: _text
+      */
     roles: z.array(z.enum(USER_ROLES)).nullish().transform((value) => value ?? undefined).optional(),
-    /**
-    * dataType: _timestamp
-    * defaultValue: 
-    */
+     /**
+      * dataType: _timestamp
+      */
     dates: z.array(z.date()).nullish().transform((value) => value ?? undefined).optional(),
 });
 
 /**
  * The base record type for the "public.users" table.
- * This type represents the raw database record without any transformations.
+ * This type represents the raw database record without case transforms.
  */
-export type UserReadBaseRecord = z.output<typeof UsersTableReadSchema>;
+export type UserBaseRecord = z.output<typeof UsersTableBaseSchema>;
 
 /**
-* The read transform function for the "public.users" table.
-* Maps the raw database fields to expected property names. e.g snake_case to camelCase.
-*/
-export const transformUserReadRecord = (data: UserReadBaseRecord): {
-    id: UserReadBaseRecord['id'],
-    name: UserReadBaseRecord['name'],
-    email?: UserReadBaseRecord['email'],
-    status?: UserReadBaseRecord['status'],
-    profile?: UserReadBaseRecord['profile'],
-    createdAt?: UserReadBaseRecord['created_at'],
-    roles?: UserReadBaseRecord['roles'],
-    dates?: UserReadBaseRecord['dates'],
+ * Read transform for the "public.users" table.
+ * Maps raw database snake_case fields to camelCase properties.
+ */
+export const transformUserBaseRecord = (data: UserBaseRecord): {
+    id: UserBaseRecord['id'],
+    name: UserBaseRecord['name'],
+    email?: UserBaseRecord['email'],
+    status?: UserBaseRecord['status'],
+    profile?: UserBaseRecord['profile'],
+    createdAt?: UserBaseRecord['created_at'],
+    roles?: UserBaseRecord['roles'],
+    dates?: UserBaseRecord['dates'],
 } => ({
     id: data.id,
     name: data.name,
@@ -106,50 +101,43 @@ export const transformUserReadRecord = (data: UserReadBaseRecord): {
 });
 
 /**
- * The read schema for the "public.users" table.
- * This schema is used to validate the data read from the database with transformations.
+ * Read schema for the "public.users" table (after casing transform).
  */
-export const UsersTableSchema = UsersTableReadSchema.transform(transformUserReadRecord);
+export const UsersTableSchema = UsersTableBaseSchema.transform(transformUserBaseRecord);
 
 /**
- * The base write schema for the "public.users" table.
- * This schema is used to validate the data before writing to the database without any transformations.
+ * Base insert/write schema for the "public.users" table (no casing transforms).
  */
-export const UsersTableWriteSchema = z.object({
-    /**
-    * dataType: varchar
-    * defaultValue: 
-    */
+export const UsersTableInsertBaseSchema = z.object({
+     /**
+      * dataType: varchar
+      */
     name: z.string().max(100),
-    /**
-    * dataType: varchar
-    * defaultValue: 
-    */
+     /**
+      * dataType: varchar
+      */
     email: z.string().max(255).nullish().optional(),
-    /**
-    * dataType: varchar
-    * defaultValue: 'active'::character varying
-    */
+     /**
+      * dataType: varchar
+      * defaultValue: 'active'::character varying
+      */
     status: z.string().max(20).nullish().optional(),
-    /**
-    * dataType: jsonb
-    * defaultValue: 
-    */
+     /**
+      * dataType: jsonb
+      */
     profile: z.json().nullish().transform((value) => value ? JSON.stringify(value) : value).optional(),
-    /**
-    * dataType: timestamptz
-    * defaultValue: now()
-    */
+     /**
+      * dataType: timestamptz
+      * defaultValue: now()
+      */
     createdAt: z.date().nullish().optional(),
-    /**
-    * dataType: _text
-    * defaultValue: 
-    */
+     /**
+      * dataType: _text
+      */
     roles: z.array(z.enum(USER_ROLES)).nullish().optional(),
-    /**
-    * dataType: _timestamp
-    * defaultValue: 
-    */
+     /**
+      * dataType: _timestamp
+      */
     dates: z.array(z.date()).nullish().optional(),
 });
 
@@ -157,7 +145,7 @@ export const UsersTableWriteSchema = z.object({
  * The base record type for the "public.users" table.
  * This type represents an insertable database record before casing transformations are applied.
  */
-export type UserInsertBaseRecord = z.output<typeof UsersTableWriteSchema>;
+export type UserInsertBaseRecord = z.output<typeof UsersTableInsertBaseSchema>;
 
 /**
  * The base record type for the "public.users" table.
@@ -166,10 +154,10 @@ export type UserInsertBaseRecord = z.output<typeof UsersTableWriteSchema>;
 export type UserUpdateBaseRecord = Partial<UserInsertBaseRecord>;
 
 /**
- * The insert transform function for the "public.users" table.
- * Maps the expected property names to raw database fields. e.g camelCase to snake_case.
+ * Insert transform for the "public.users" table.
+ * Maps camelCase properties to raw database snake_case fields.
  */
-export const transformUserInsertRecord = (data: UserInsertBaseRecord): {
+export const transformUserInsertBaseRecord = (data: UserInsertBaseRecord): {
     name: UserInsertBaseRecord['name'],
     email?: UserInsertBaseRecord['email'],
     status?: UserInsertBaseRecord['status'],
@@ -188,10 +176,10 @@ export const transformUserInsertRecord = (data: UserInsertBaseRecord): {
 });
 
 /**
- * The update transform function for the "public.users" table.
- * Maps the expected property names to raw database fields. e.g camelCase to snake_case.
+ * Update transform for the "public.users" table.
+ * Maps camelCase properties to raw database snake_case fields.
  */
-export const transformUserUpdateRecord = (data: UserUpdateBaseRecord): {
+export const transformUserUpdateBaseRecord = (data: UserUpdateBaseRecord): {
     name: UserUpdateBaseRecord['name'],
     email?: UserUpdateBaseRecord['email'],
     status?: UserUpdateBaseRecord['status'],
@@ -210,24 +198,21 @@ export const transformUserUpdateRecord = (data: UserUpdateBaseRecord): {
 });
 
 /**
- * The insert schema for the "public.users" table.
- * This schema is used to validate and transform a record before inserting into the database.
+ * Insert schema for the "public.users" table (after casing transform).
  */
-export const UsersTableInsertSchema = UsersTableWriteSchema.transform(transformUserInsertRecord);
+export const UsersTableInsertSchema = UsersTableInsertBaseSchema.transform(transformUserInsertBaseRecord);
 
 /**
- * The update schema for the "public.users" table.
- * This schema is used to validate and transform a record before updating the database.
+ * Update schema for the "public.users" table (after casing transform).
  */
-export const UsersTableUpdateSchema = UsersTableWriteSchema.partial().transform(transformUserUpdateRecord);
+export const UsersTableUpdateSchema = UsersTableInsertBaseSchema.partial().transform(transformUserUpdateBaseRecord);
 
 type TableInsertRecord = z.input<typeof UsersTableInsertSchema>;
 type TableReadRecord = z.output<typeof UsersTableSchema>;
-export type UserRole = (typeof USER_ROLES)[number];
 
 /**
-* Represents a database record from the "public.users" table.
-*/
+ * Read record (casing transformed) for the "public.users" table.
+ */
 export interface UserRecord {
     /**
     */
@@ -256,8 +241,8 @@ export interface UserRecord {
 }
 
 /**
-* Represents an insertable database record from the "public.users" table.
-*/
+ * Insert record (casing transformed) for the "public.users" table.
+ */
 export interface UserInsertRecord {
     /**
     * @maxLen: 100
@@ -288,9 +273,11 @@ export interface UserInsertRecord {
 }
 
 /**
-* Represents an updateable database record from the "public.users" table.
-*/
+ * Updatable record (casing transformed) for the "public.users" table.
+ */
 export type UserUpdateRecord = Partial<UserInsertRecord>;
+
+export type UserRole = (typeof USER_ROLES)[number];
 "
 `;
 

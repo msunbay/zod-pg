@@ -1,12 +1,12 @@
 # Changelog
 
-### v1.1.0 (2025-08-15)
+### v2.0.0 (2025-08-18)
 
-- Moved generated schema files to separate named folders. Prevents collision with tables/views named "index".
+- Moved generated schema files to separate named folders.
+- Moved field transforms into base schemas.
 - Added more exports from the generated files to allow extending the read/write Zod schemas.
-- Marked optional properties with `?` in exported interfaces.
-
-### v1.0.0 (2025-08-03)hangelog
+- Marked optional properties with `?` in exported interfaces / types.
+- Fixed casing and singularize issues.
 
 ### v1.0.2 (2025-08-09)
 

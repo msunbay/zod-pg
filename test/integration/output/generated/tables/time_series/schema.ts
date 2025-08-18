@@ -4,83 +4,76 @@ import { z } from 'zod';
 
 
 /**
- * The base read schema for the "public.time_series" table.
- * This schema is used to validate the data read from the database without any transformations.
+ * Base read schema for the "public.time_series" table.
+ * Validates raw rows read from the database (no casing transforms applied yet).
  */
-export const TimeSeriesTableReadSchema = z.object({
-    /**
-    * dataType: int8
-    * defaultValue: nextval('time_series_id_seq'::regclass)
-    */
+export const TimeSeriesTableBaseSchema = z.object({
+     /**
+      * dataType: int8
+      * defaultValue: nextval('time_series_id_seq'::regclass)
+      */
     id: z.number().int(),
-    /**
-    * dataType: varchar
-    * defaultValue: 
-    */
+     /**
+      * dataType: varchar
+      */
     sensor_id: z.string(),
-    /**
-    * dataType: timestamptz
-    * defaultValue: 
-    */
+     /**
+      * dataType: timestamptz
+      */
     timestamp: z.date(),
-    /**
-    * dataType: numeric
-    * defaultValue: 
-    */
+     /**
+      * dataType: numeric
+      */
     temperature: z.number().nullish().transform((value) => value ?? undefined).optional(),
-    /**
-    * dataType: numeric
-    * defaultValue: 
-    */
+     /**
+      * dataType: numeric
+      */
     humidity: z.number().nullish().transform((value) => value ?? undefined).optional(),
-    /**
-    * dataType: numeric
-    * defaultValue: 
-    */
+     /**
+      * dataType: numeric
+      */
     pressure: z.number().nullish().transform((value) => value ?? undefined).optional(),
-    /**
-    * dataType: _numeric
-    * defaultValue: 
-    */
+     /**
+      * dataType: _numeric
+      */
     readings: z.array(z.number()).nullish().transform((value) => value ?? undefined).optional(),
-    /**
-    * dataType: bool
-    * defaultValue: false
-    */
+     /**
+      * dataType: bool
+      * defaultValue: false
+      */
     anomaly_detected: z.boolean().nullish().transform((value) => value ?? undefined).optional(),
-    /**
-    * dataType: int2
-    * defaultValue: 
-    */
+     /**
+      * dataType: int2
+      */
     data_quality: z.number().int().nullish().transform((value) => value ?? undefined).optional(),
-    /**
-    * dataType: timestamptz
-    * defaultValue: now()
-    */
+     /**
+      * dataType: timestamptz
+      * defaultValue: now()
+      */
     created_at: z.date().nullish().transform((value) => value ?? undefined).optional(),
 });
 
 /**
  * The base record type for the "public.time_series" table.
- * This type represents the raw database record without any transformations.
+ * This type represents the raw database record without case transforms.
  */
-export type TimeSeriesReadBaseRecord = z.output<typeof TimeSeriesTableReadSchema>;
+export type TimeSeriesBaseRecord = z.output<typeof TimeSeriesTableBaseSchema>;
 
 /**
-* The read transform function for the "public.time_series" table.
-* Maps the raw database fields to expected property names. e.g snake_case to camelCase.
-*/
-export const transformTimeSeriesReadRecord = (data: TimeSeriesReadBaseRecord): {
-    id: TimeSeriesReadBaseRecord['id'],
-    sensorId: TimeSeriesReadBaseRecord['sensor_id'],
-    timestamp: TimeSeriesReadBaseRecord['timestamp'],
-    temperature?: TimeSeriesReadBaseRecord['temperature'],
-    humidity?: TimeSeriesReadBaseRecord['humidity'],
-    pressure?: TimeSeriesReadBaseRecord['pressure'],
-    readings?: TimeSeriesReadBaseRecord['readings'],
-    anomalyDetected?: TimeSeriesReadBaseRecord['anomaly_detected'],
-    dataQuality?: TimeSeriesReadBaseRecord['data_quality'],
-    createdAt?: TimeSeriesReadBaseRecord['created_at'],
+ * Read transform for the "public.time_series" table.
+ * Maps raw database snake_case fields to camelCase properties.
+ */
+export const transformTimeSeriesBaseRecord = (data: TimeSeriesBaseRecord): {
+    id: TimeSeriesBaseRecord['id'],
+    sensorId: TimeSeriesBaseRecord['sensor_id'],
+    timestamp: TimeSeriesBaseRecord['timestamp'],
+    temperature?: TimeSeriesBaseRecord['temperature'],
+    humidity?: TimeSeriesBaseRecord['humidity'],
+    pressure?: TimeSeriesBaseRecord['pressure'],
+    readings?: TimeSeriesBaseRecord['readings'],
+    anomalyDetected?: TimeSeriesBaseRecord['anomaly_detected'],
+    dataQuality?: TimeSeriesBaseRecord['data_quality'],
+    createdAt?: TimeSeriesBaseRecord['created_at'],
 } => ({
     id: data.id,
     sensorId: data.sensor_id,
@@ -95,60 +88,51 @@ export const transformTimeSeriesReadRecord = (data: TimeSeriesReadBaseRecord): {
 });
 
 /**
- * The read schema for the "public.time_series" table.
- * This schema is used to validate the data read from the database with transformations.
+ * Read schema for the "public.time_series" table (after casing transform).
  */
-export const TimeSeriesTableSchema = TimeSeriesTableReadSchema.transform(transformTimeSeriesReadRecord);
+export const TimeSeriesTableSchema = TimeSeriesTableBaseSchema.transform(transformTimeSeriesBaseRecord);
 
 /**
- * The base write schema for the "public.time_series" table.
- * This schema is used to validate the data before writing to the database without any transformations.
+ * Base insert/write schema for the "public.time_series" table (no casing transforms).
  */
-export const TimeSeriesTableWriteSchema = z.object({
-    /**
-    * dataType: varchar
-    * defaultValue: 
-    */
+export const TimeSeriesTableInsertBaseSchema = z.object({
+     /**
+      * dataType: varchar
+      */
     sensorId: z.string().max(50),
-    /**
-    * dataType: timestamptz
-    * defaultValue: 
-    */
+     /**
+      * dataType: timestamptz
+      */
     timestamp: z.date(),
-    /**
-    * dataType: numeric
-    * defaultValue: 
-    */
+     /**
+      * dataType: numeric
+      */
     temperature: z.number().max(327682).nullish().optional(),
-    /**
-    * dataType: numeric
-    * defaultValue: 
-    */
+     /**
+      * dataType: numeric
+      */
     humidity: z.number().max(327682).nullish().optional(),
-    /**
-    * dataType: numeric
-    * defaultValue: 
-    */
+     /**
+      * dataType: numeric
+      */
     pressure: z.number().max(458754).nullish().optional(),
-    /**
-    * dataType: _numeric
-    * defaultValue: 
-    */
+     /**
+      * dataType: _numeric
+      */
     readings: z.array(z.number()).nullish().optional(),
-    /**
-    * dataType: bool
-    * defaultValue: false
-    */
+     /**
+      * dataType: bool
+      * defaultValue: false
+      */
     anomalyDetected: z.boolean().nullish().optional(),
-    /**
-    * dataType: int2
-    * defaultValue: 
-    */
+     /**
+      * dataType: int2
+      */
     dataQuality: z.number().int().nullish().optional(),
-    /**
-    * dataType: timestamptz
-    * defaultValue: now()
-    */
+     /**
+      * dataType: timestamptz
+      * defaultValue: now()
+      */
     createdAt: z.date().nullish().optional(),
 });
 
@@ -156,7 +140,7 @@ export const TimeSeriesTableWriteSchema = z.object({
  * The base record type for the "public.time_series" table.
  * This type represents an insertable database record before casing transformations are applied.
  */
-export type TimeSeriesInsertBaseRecord = z.output<typeof TimeSeriesTableWriteSchema>;
+export type TimeSeriesInsertBaseRecord = z.output<typeof TimeSeriesTableInsertBaseSchema>;
 
 /**
  * The base record type for the "public.time_series" table.
@@ -165,10 +149,10 @@ export type TimeSeriesInsertBaseRecord = z.output<typeof TimeSeriesTableWriteSch
 export type TimeSeriesUpdateBaseRecord = Partial<TimeSeriesInsertBaseRecord>;
 
 /**
- * The insert transform function for the "public.time_series" table.
- * Maps the expected property names to raw database fields. e.g camelCase to snake_case.
+ * Insert transform for the "public.time_series" table.
+ * Maps camelCase properties to raw database snake_case fields.
  */
-export const transformTimeSeriesInsertRecord = (data: TimeSeriesInsertBaseRecord): {
+export const transformTimeSeriesInsertBaseRecord = (data: TimeSeriesInsertBaseRecord): {
     sensor_id: TimeSeriesInsertBaseRecord['sensorId'],
     timestamp: TimeSeriesInsertBaseRecord['timestamp'],
     temperature?: TimeSeriesInsertBaseRecord['temperature'],
@@ -191,10 +175,10 @@ export const transformTimeSeriesInsertRecord = (data: TimeSeriesInsertBaseRecord
 });
 
 /**
- * The update transform function for the "public.time_series" table.
- * Maps the expected property names to raw database fields. e.g camelCase to snake_case.
+ * Update transform for the "public.time_series" table.
+ * Maps camelCase properties to raw database snake_case fields.
  */
-export const transformTimeSeriesUpdateRecord = (data: TimeSeriesUpdateBaseRecord): {
+export const transformTimeSeriesUpdateBaseRecord = (data: TimeSeriesUpdateBaseRecord): {
     sensor_id: TimeSeriesUpdateBaseRecord['sensorId'],
     timestamp: TimeSeriesUpdateBaseRecord['timestamp'],
     temperature?: TimeSeriesUpdateBaseRecord['temperature'],
@@ -217,23 +201,21 @@ export const transformTimeSeriesUpdateRecord = (data: TimeSeriesUpdateBaseRecord
 });
 
 /**
- * The insert schema for the "public.time_series" table.
- * This schema is used to validate and transform a record before inserting into the database.
+ * Insert schema for the "public.time_series" table (after casing transform).
  */
-export const TimeSeriesTableInsertSchema = TimeSeriesTableWriteSchema.transform(transformTimeSeriesInsertRecord);
+export const TimeSeriesTableInsertSchema = TimeSeriesTableInsertBaseSchema.transform(transformTimeSeriesInsertBaseRecord);
 
 /**
- * The update schema for the "public.time_series" table.
- * This schema is used to validate and transform a record before updating the database.
+ * Update schema for the "public.time_series" table (after casing transform).
  */
-export const TimeSeriesTableUpdateSchema = TimeSeriesTableWriteSchema.partial().transform(transformTimeSeriesUpdateRecord);
+export const TimeSeriesTableUpdateSchema = TimeSeriesTableInsertBaseSchema.partial().transform(transformTimeSeriesUpdateBaseRecord);
 
 type TableInsertRecord = z.input<typeof TimeSeriesTableInsertSchema>;
 type TableReadRecord = z.output<typeof TimeSeriesTableSchema>;
 
 /**
-* Represents a database record from the "public.time_series" table.
-*/
+ * Read record (casing transformed) for the "public.time_series" table.
+ */
 export interface TimeSeriesRecord {
     /**
     * Primary key for time series table
@@ -278,8 +260,8 @@ export interface TimeSeriesRecord {
 }
 
 /**
-* Represents an insertable database record from the "public.time_series" table.
-*/
+ * Insert record (casing transformed) for the "public.time_series" table.
+ */
 export interface TimeSeriesInsertRecord {
     /**
     * Identifier of the sensor
@@ -326,6 +308,7 @@ export interface TimeSeriesInsertRecord {
 }
 
 /**
-* Represents an updateable database record from the "public.time_series" table.
-*/
+ * Updatable record (casing transformed) for the "public.time_series" table.
+ */
 export type TimeSeriesUpdateRecord = Partial<TimeSeriesInsertRecord>;
+

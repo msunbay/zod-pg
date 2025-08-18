@@ -4,71 +4,67 @@ import { z } from 'zod';
 
 
 /**
- * The base read schema for the "public.comments" table.
- * This schema is used to validate the data read from the database without any transformations.
+ * Base read schema for the "public.comments" table.
+ * Validates raw rows read from the database (no casing transforms applied yet).
  */
-export const CommentsTableReadSchema = z.object({
-    /**
-    * dataType: int4
-    * defaultValue: nextval('comments_id_seq'::regclass)
-    */
+export const CommentsTableBaseSchema = z.object({
+     /**
+      * dataType: int4
+      * defaultValue: nextval('comments_id_seq'::regclass)
+      */
     id: z.number().int(),
-    /**
-    * dataType: int4
-    * defaultValue: 
-    */
+     /**
+      * dataType: int4
+      */
     post_id: z.number().int().nullish().transform((value) => value ?? undefined).optional(),
-    /**
-    * dataType: int4
-    * defaultValue: 
-    */
+     /**
+      * dataType: int4
+      */
     user_id: z.number().int().nullish().transform((value) => value ?? undefined).optional(),
-    /**
-    * dataType: int4
-    * defaultValue: 
-    */
+     /**
+      * dataType: int4
+      */
     parent_id: z.number().int().nullish().transform((value) => value ?? undefined).optional(),
-    /**
-    * dataType: text
-    * defaultValue: 
-    */
+     /**
+      * dataType: text
+      */
     content: z.string(),
-    /**
-    * dataType: bool
-    * defaultValue: false
-    */
+     /**
+      * dataType: bool
+      * defaultValue: false
+      */
     is_approved: z.boolean().nullish().transform((value) => value ?? undefined).optional(),
-    /**
-    * dataType: timestamptz
-    * defaultValue: now()
-    */
+     /**
+      * dataType: timestamptz
+      * defaultValue: now()
+      */
     created_at: z.date().nullish().transform((value) => value ?? undefined).optional(),
-    /**
-    * dataType: timestamptz
-    * defaultValue: now()
-    */
+     /**
+      * dataType: timestamptz
+      * defaultValue: now()
+      */
     updated_at: z.date().nullish().transform((value) => value ?? undefined).optional(),
 });
 
 /**
  * The base record type for the "public.comments" table.
- * This type represents the raw database record without any transformations.
+ * This type represents the raw database record without case transforms.
  */
-export type CommentReadBaseRecord = z.output<typeof CommentsTableReadSchema>;
+export type CommentBaseRecord = z.output<typeof CommentsTableBaseSchema>;
 
 /**
-* The read transform function for the "public.comments" table.
-* Maps the raw database fields to expected property names. e.g snake_case to camelCase.
-*/
-export const transformCommentReadRecord = (data: CommentReadBaseRecord): {
-    id: CommentReadBaseRecord['id'],
-    postId?: CommentReadBaseRecord['post_id'],
-    userId?: CommentReadBaseRecord['user_id'],
-    parentId?: CommentReadBaseRecord['parent_id'],
-    content: CommentReadBaseRecord['content'],
-    isApproved?: CommentReadBaseRecord['is_approved'],
-    createdAt?: CommentReadBaseRecord['created_at'],
-    updatedAt?: CommentReadBaseRecord['updated_at'],
+ * Read transform for the "public.comments" table.
+ * Maps raw database snake_case fields to camelCase properties.
+ */
+export const transformCommentBaseRecord = (data: CommentBaseRecord): {
+    id: CommentBaseRecord['id'],
+    postId?: CommentBaseRecord['post_id'],
+    userId?: CommentBaseRecord['user_id'],
+    parentId?: CommentBaseRecord['parent_id'],
+    content: CommentBaseRecord['content'],
+    isApproved?: CommentBaseRecord['is_approved'],
+    createdAt?: CommentBaseRecord['created_at'],
+    updatedAt?: CommentBaseRecord['updated_at'],
 } => ({
     id: data.id,
     postId: data.post_id,
@@ -81,50 +77,44 @@ export const transformCommentReadRecord = (data: CommentReadBaseRecord): {
 });
 
 /**
- * The read schema for the "public.comments" table.
- * This schema is used to validate the data read from the database with transformations.
+ * Read schema for the "public.comments" table (after casing transform).
  */
-export const CommentsTableSchema = CommentsTableReadSchema.transform(transformCommentReadRecord);
+export const CommentsTableSchema = CommentsTableBaseSchema.transform(transformCommentBaseRecord);
 
 /**
- * The base write schema for the "public.comments" table.
- * This schema is used to validate the data before writing to the database without any transformations.
+ * Base insert/write schema for the "public.comments" table (no casing transforms).
  */
-export const CommentsTableWriteSchema = z.object({
-    /**
-    * dataType: int4
-    * defaultValue: 
-    */
+export const CommentsTableInsertBaseSchema = z.object({
+     /**
+      * dataType: int4
+      */
     postId: z.number().int().nullish().optional(),
-    /**
-    * dataType: int4
-    * defaultValue: 
-    */
+     /**
+      * dataType: int4
+      */
     userId: z.number().int().nullish().optional(),
-    /**
-    * dataType: int4
-    * defaultValue: 
-    */
+     /**
+      * dataType: int4
+      */
     parentId: z.number().int().nullish().optional(),
-    /**
-    * dataType: text
-    * defaultValue: 
-    */
+     /**
+      * dataType: text
+      */
     content: z.string(),
-    /**
-    * dataType: bool
-    * defaultValue: false
-    */
+     /**
+      * dataType: bool
+      * defaultValue: false
+      */
     isApproved: z.boolean().nullish().optional(),
-    /**
-    * dataType: timestamptz
-    * defaultValue: now()
-    */
+     /**
+      * dataType: timestamptz
+      * defaultValue: now()
+      */
     createdAt: z.date().nullish().optional(),
-    /**
-    * dataType: timestamptz
-    * defaultValue: now()
-    */
+     /**
+      * dataType: timestamptz
+      * defaultValue: now()
+      */
     updatedAt: z.date().nullish().optional(),
 });
 
@@ -132,7 +122,7 @@ export const CommentsTableWriteSchema = z.object({
  * The base record type for the "public.comments" table.
  * This type represents an insertable database record before casing transformations are applied.
  */
-export type CommentInsertBaseRecord = z.output<typeof CommentsTableWriteSchema>;
+export type CommentInsertBaseRecord = z.output<typeof CommentsTableInsertBaseSchema>;
 
 /**
  * The base record type for the "public.comments" table.
@@ -141,10 +131,10 @@ export type CommentInsertBaseRecord = z.output<typeof CommentsTableWriteSchema>;
 export type CommentUpdateBaseRecord = Partial<CommentInsertBaseRecord>;
 
 /**
- * The insert transform function for the "public.comments" table.
- * Maps the expected property names to raw database fields. e.g camelCase to snake_case.
+ * Insert transform for the "public.comments" table.
+ * Maps camelCase properties to raw database snake_case fields.
  */
-export const transformCommentInsertRecord = (data: CommentInsertBaseRecord): {
+export const transformCommentInsertBaseRecord = (data: CommentInsertBaseRecord): {
     post_id?: CommentInsertBaseRecord['postId'],
     user_id?: CommentInsertBaseRecord['userId'],
     parent_id?: CommentInsertBaseRecord['parentId'],
@@ -163,10 +153,10 @@ export const transformCommentInsertRecord = (data: CommentInsertBaseRecord): {
 });
 
 /**
- * The update transform function for the "public.comments" table.
- * Maps the expected property names to raw database fields. e.g camelCase to snake_case.
+ * Update transform for the "public.comments" table.
+ * Maps camelCase properties to raw database snake_case fields.
  */
-export const transformCommentUpdateRecord = (data: CommentUpdateBaseRecord): {
+export const transformCommentUpdateBaseRecord = (data: CommentUpdateBaseRecord): {
     post_id?: CommentUpdateBaseRecord['postId'],
     user_id?: CommentUpdateBaseRecord['userId'],
     parent_id?: CommentUpdateBaseRecord['parentId'],
@@ -185,23 +175,21 @@ export const transformCommentUpdateRecord = (data: CommentUpdateBaseRecord): {
 });
 
 /**
- * The insert schema for the "public.comments" table.
- * This schema is used to validate and transform a record before inserting into the database.
+ * Insert schema for the "public.comments" table (after casing transform).
  */
-export const CommentsTableInsertSchema = CommentsTableWriteSchema.transform(transformCommentInsertRecord);
+export const CommentsTableInsertSchema = CommentsTableInsertBaseSchema.transform(transformCommentInsertBaseRecord);
 
 /**
- * The update schema for the "public.comments" table.
- * This schema is used to validate and transform a record before updating the database.
+ * Update schema for the "public.comments" table (after casing transform).
  */
-export const CommentsTableUpdateSchema = CommentsTableWriteSchema.partial().transform(transformCommentUpdateRecord);
+export const CommentsTableUpdateSchema = CommentsTableInsertBaseSchema.partial().transform(transformCommentUpdateBaseRecord);
 
 type TableInsertRecord = z.input<typeof CommentsTableInsertSchema>;
 type TableReadRecord = z.output<typeof CommentsTableSchema>;
 
 /**
-* Represents a database record from the "public.comments" table.
-*/
+ * Read record (casing transformed) for the "public.comments" table.
+ */
 export interface CommentRecord {
     /**
     * Primary key for comments table
@@ -238,8 +226,8 @@ export interface CommentRecord {
 }
 
 /**
-* Represents an insertable database record from the "public.comments" table.
-*/
+ * Insert record (casing transformed) for the "public.comments" table.
+ */
 export interface CommentInsertRecord {
     /**
     * ID of the post this comment belongs to
@@ -275,6 +263,7 @@ export interface CommentInsertRecord {
 }
 
 /**
-* Represents an updateable database record from the "public.comments" table.
-*/
+ * Updatable record (casing transformed) for the "public.comments" table.
+ */
 export type CommentUpdateRecord = Partial<CommentInsertRecord>;
+
