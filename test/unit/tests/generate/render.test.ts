@@ -476,6 +476,40 @@ describe('render', () => {
         expect(result).toBe('z.any()');
       });
     });
+
+    describe('optional & defaultEmptyArray handling', () => {
+      it('should render optional (non-nullable) string field with transform to undefined and optional', () => {
+        const column = createMockColumnBaseModel({
+          type: 'string',
+          isNullable: false,
+          isOptional: true,
+        });
+
+        const result = renderReadField(column, mockConfig);
+        expect(result).toBe(
+          'z.string().transform((value) => value ?? undefined).optional()'
+        );
+      });
+
+      it('should render optional array field with defaultEmptyArray transform to []', () => {
+        const column = createMockColumnBaseModel({
+          type: 'string',
+          isArray: true,
+          isNullable: false,
+          isOptional: true,
+        });
+
+        const configWithEmptyArray: ZodPgConfig = {
+          ...mockConfig,
+          defaultEmptyArray: true,
+        };
+
+        const result = renderReadField(column, configWithEmptyArray);
+        expect(result).toBe(
+          'z.array(z.string()).transform((value) => value ?? []).optional()'
+        );
+      });
+    });
   });
 
   describe('renderWriteField', () => {
@@ -578,6 +612,110 @@ describe('render', () => {
 
       const result = renderWriteField(column, mockConfig);
       expect(result).toBe('z.string()');
+    });
+
+    it('should render optional string write field', () => {
+      const column = createMockColumnBaseModel({
+        type: 'string',
+        isOptional: true,
+      });
+
+      const result = renderWriteField(column, mockConfig);
+      expect(result).toBe('z.string().optional()');
+    });
+
+    it('should stringify non-nullable json write field when configured', () => {
+      const column = createMockColumnBaseModel({
+        type: 'json',
+      });
+      const configWithStringify: ZodPgConfig = {
+        ...mockConfig,
+        stringifyJson: true,
+      };
+
+      const result = renderWriteField(column, configWithStringify);
+      // zod v3 uses z.any() for json
+      expect(result).toBe(
+        'z.any().transform((value) => JSON.stringify(value))'
+      );
+    });
+
+    it('should conditionally stringify nullable json write field when configured', () => {
+      const column = createMockColumnBaseModel({
+        type: 'json',
+        isNullable: true,
+      });
+      const configWithStringify: ZodPgConfig = {
+        ...mockConfig,
+        stringifyJson: true,
+      };
+
+      const result = renderWriteField(column, configWithStringify);
+      expect(result).toBe(
+        'z.any().nullish().transform((value) => value ? JSON.stringify(value) : value)'
+      );
+    });
+
+    it('should convert non-nullable date write field to ISO string when configured', () => {
+      const column = createMockColumnBaseModel({
+        type: 'date',
+      });
+      const configWithDates: ZodPgConfig = {
+        ...mockConfig,
+        stringifyDates: true,
+      };
+
+      const result = renderWriteField(column, configWithDates);
+      expect(result).toBe('z.date().transform((value) => value.toISOString())');
+    });
+
+    it('should conditionally convert nullable date write field to ISO string when configured', () => {
+      const column = createMockColumnBaseModel({
+        type: 'date',
+        isNullable: true,
+      });
+      const configWithDates: ZodPgConfig = {
+        ...mockConfig,
+        stringifyDates: true,
+      };
+
+      const result = renderWriteField(column, configWithDates);
+      expect(result).toBe(
+        'z.date().nullish().transform((value) => value ? value.toISOString() : value)'
+      );
+    });
+
+    it('should map non-nullable date array write field to ISO string array when configured', () => {
+      const column = createMockColumnBaseModel({
+        type: 'date',
+        isArray: true,
+      });
+      const configWithDates: ZodPgConfig = {
+        ...mockConfig,
+        stringifyDates: true,
+      };
+
+      const result = renderWriteField(column, configWithDates);
+      expect(result).toBe(
+        'z.array(z.date()).transform((value) => value.map(date => date.toISOString()))'
+      );
+    });
+
+    it('should conditionally map nullable date array write field to ISO string array when configured', () => {
+      const column = createMockColumnBaseModel({
+        type: 'date',
+        isArray: true,
+        isNullable: true,
+      });
+      const configWithDates: ZodPgConfig = {
+        ...mockConfig,
+        stringifyDates: true,
+      };
+
+      const result = renderWriteField(column, configWithDates);
+      expect(result).toBe(
+        'z.array(z.date()).nullish().transform((value) => value ? value.map(date => date.toISOString()) : value)'
+      );
     });
   });
 });

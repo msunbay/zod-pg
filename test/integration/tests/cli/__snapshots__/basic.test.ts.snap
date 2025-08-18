@@ -54,51 +54,51 @@ export const MvUserPostsReadSchema = z.object({
     * dataType: int4
     * defaultValue: 
     */
-    user_id: z.number().int().nullable().optional(),
+    user_id: z.number().int().nullish().transform((value) => value ?? undefined).optional(),
     /**
     * dataType: varchar
     * defaultValue: 
     */
-    user_name: z.string().nullable().optional(),
+    user_name: z.string().nullish().transform((value) => value ?? undefined).optional(),
     /**
     * dataType: int4
     * defaultValue: 
     */
-    post_id: z.number().int().nullable().optional(),
+    post_id: z.number().int().nullish().transform((value) => value ?? undefined).optional(),
     /**
     * dataType: text
     * defaultValue: 
     */
-    post_title: z.string().nullable().optional(),
+    post_title: z.string().nullish().transform((value) => value ?? undefined).optional(),
     /**
     * dataType: text
     * defaultValue: 
     */
-    post_content: z.string().nullable().optional(),
+    post_content: z.string().nullish().transform((value) => value ?? undefined).optional(),
 });
 
 /**
  * The base record type for the "public.mv_user_posts" table.
  * This type represents the raw database record without any transformations.
  */
-export type MvUserPostReadRecord = z.output<typeof MvUserPostsReadSchema>;
+export type MvUserPostReadBaseRecord = z.output<typeof MvUserPostsReadSchema>;
 
 /**
 * The read transform function for the "public.mv_user_posts" table.
 * Maps the raw database fields to expected property names. e.g snake_case to camelCase.
 */
-export const transformMvUserPostReadRecord = (data: MvUserPostReadRecord): {
-    userId?: MvUserPostReadRecord['user_id'],
-    userName?: MvUserPostReadRecord['user_name'],
-    postId?: MvUserPostReadRecord['post_id'],
-    postTitle?: MvUserPostReadRecord['post_title'],
-    postContent?: MvUserPostReadRecord['post_content'],
+export const transformMvUserPostReadRecord = (data: MvUserPostReadBaseRecord): {
+    userId?: MvUserPostReadBaseRecord['user_id'],
+    userName?: MvUserPostReadBaseRecord['user_name'],
+    postId?: MvUserPostReadBaseRecord['post_id'],
+    postTitle?: MvUserPostReadBaseRecord['post_title'],
+    postContent?: MvUserPostReadBaseRecord['post_content'],
 } => ({
-    userId: data.user_id ?? undefined,
-    userName: data.user_name ?? undefined,
-    postId: data.post_id ?? undefined,
-    postTitle: data.post_title ?? undefined,
-    postContent: data.post_content ?? undefined,
+    userId: data.user_id,
+    userName: data.user_name,
+    postId: data.post_id,
+    postTitle: data.post_title,
+    postContent: data.post_content,
 });
 
 /**
@@ -160,7 +160,7 @@ export const AuditLogsTableReadSchema = z.object({
     * dataType: int4
     * defaultValue: 
     */
-    user_id: z.number().int().nullable().optional(),
+    user_id: z.number().int().nullish().transform((value) => value ?? undefined).optional(),
     /**
     * dataType: varchar
     * defaultValue: 
@@ -170,57 +170,57 @@ export const AuditLogsTableReadSchema = z.object({
     * dataType: varchar
     * defaultValue: 
     */
-    table_name: z.string().nullable().optional(),
+    table_name: z.string().nullish().transform((value) => value ?? undefined).optional(),
     /**
     * dataType: int4
     * defaultValue: 
     */
-    record_id: z.number().int().nullable().optional(),
+    record_id: z.number().int().nullish().transform((value) => value ?? undefined).optional(),
     /**
     * dataType: jsonb
     * defaultValue: 
     */
-    old_values: AuditLogOldValuesSchema.nullable().optional(),
+    old_values: AuditLogOldValuesSchema.nullish().transform((value) => value ?? undefined).optional(),
     /**
     * dataType: jsonb
     * defaultValue: 
     */
-    new_values: AuditLogNewValuesSchema.nullable().optional(),
+    new_values: AuditLogNewValuesSchema.nullish().transform((value) => value ?? undefined).optional(),
     /**
     * dataType: timestamptz
     * defaultValue: now()
     */
-    created_at: z.date().nullable().optional(),
+    created_at: z.date().nullish().transform((value) => value ?? undefined).optional(),
 });
 
 /**
  * The base record type for the "public.audit_logs" table.
  * This type represents the raw database record without any transformations.
  */
-export type AuditLogReadRecord = z.output<typeof AuditLogsTableReadSchema>;
+export type AuditLogReadBaseRecord = z.output<typeof AuditLogsTableReadSchema>;
 
 /**
 * The read transform function for the "public.audit_logs" table.
 * Maps the raw database fields to expected property names. e.g snake_case to camelCase.
 */
-export const transformAuditLogReadRecord = (data: AuditLogReadRecord): {
-    id: AuditLogReadRecord['id'],
-    userId?: AuditLogReadRecord['user_id'],
-    action: AuditLogReadRecord['action'],
-    tableName?: AuditLogReadRecord['table_name'],
-    recordId?: AuditLogReadRecord['record_id'],
-    oldValues?: AuditLogReadRecord['old_values'],
-    newValues?: AuditLogReadRecord['new_values'],
-    createdAt?: AuditLogReadRecord['created_at'],
+export const transformAuditLogReadRecord = (data: AuditLogReadBaseRecord): {
+    id: AuditLogReadBaseRecord['id'],
+    userId?: AuditLogReadBaseRecord['user_id'],
+    action: AuditLogReadBaseRecord['action'],
+    tableName?: AuditLogReadBaseRecord['table_name'],
+    recordId?: AuditLogReadBaseRecord['record_id'],
+    oldValues?: AuditLogReadBaseRecord['old_values'],
+    newValues?: AuditLogReadBaseRecord['new_values'],
+    createdAt?: AuditLogReadBaseRecord['created_at'],
 } => ({
     id: data.id,
-    userId: data.user_id ?? undefined,
+    userId: data.user_id,
     action: data.action,
-    tableName: data.table_name ?? undefined,
-    recordId: data.record_id ?? undefined,
-    oldValues: data.old_values ?? undefined,
-    newValues: data.new_values ?? undefined,
-    createdAt: data.created_at ?? undefined,
+    tableName: data.table_name,
+    recordId: data.record_id,
+    oldValues: data.old_values,
+    newValues: data.new_values,
+    createdAt: data.created_at,
 });
 
 /**
@@ -258,12 +258,12 @@ export const AuditLogsTableWriteSchema = z.object({
     * dataType: jsonb
     * defaultValue: 
     */
-    oldValues: AuditLogOldValuesSchema.nullish().optional(),
+    oldValues: AuditLogOldValuesSchema.nullish().transform((value) => value ? JSON.stringify(value) : value).optional(),
     /**
     * dataType: jsonb
     * defaultValue: 
     */
-    newValues: AuditLogNewValuesSchema.nullish().optional(),
+    newValues: AuditLogNewValuesSchema.nullish().transform((value) => value ? JSON.stringify(value) : value).optional(),
     /**
     * dataType: timestamptz
     * defaultValue: now()
@@ -275,33 +275,33 @@ export const AuditLogsTableWriteSchema = z.object({
  * The base record type for the "public.audit_logs" table.
  * This type represents an insertable database record before casing transformations are applied.
  */
-export type  = z.output<typeof AuditLogsTableWriteSchema>;
+export type AuditLogInsertBaseRecord = z.output<typeof AuditLogsTableWriteSchema>;
 
 /**
  * The base record type for the "public.audit_logs" table.
  * This type represents an updatable database record before casing transformations are applied.
  */
-export type  = Partial<>;
+export type AuditLogUpdateBaseRecord = Partial<AuditLogInsertBaseRecord>;
 
 /**
  * The insert transform function for the "public.audit_logs" table.
  * Maps the expected property names to raw database fields. e.g camelCase to snake_case.
  */
-export const transformAuditLogInsertRecord = (data: ): {
-    user_id?: ['userId'],
-    action: ['action'],
-    table_name?: ['tableName'],
-    record_id?: ['recordId'],
-    old_values?: ['oldValues'],
-    new_values?: ['newValues'],
-    created_at?: ['createdAt'],
+export const transformAuditLogInsertRecord = (data: AuditLogInsertBaseRecord): {
+    user_id?: AuditLogInsertBaseRecord['userId'],
+    action: AuditLogInsertBaseRecord['action'],
+    table_name?: AuditLogInsertBaseRecord['tableName'],
+    record_id?: AuditLogInsertBaseRecord['recordId'],
+    old_values?: AuditLogInsertBaseRecord['oldValues'],
+    new_values?: AuditLogInsertBaseRecord['newValues'],
+    created_at?: AuditLogInsertBaseRecord['createdAt'],
 } => ({
     user_id: data.userId,
     action: data.action,
     table_name: data.tableName,
     record_id: data.recordId,
-    old_values: (data.oldValues ? JSON.stringify(data.oldValues) : data.oldValues),
-    new_values: (data.newValues ? JSON.stringify(data.newValues) : data.newValues),
+    old_values: data.oldValues,
+    new_values: data.newValues,
     created_at: data.createdAt,
 });
 
@@ -309,21 +309,21 @@ export const transformAuditLogInsertRecord = (data: ): {
  * The update transform function for the "public.audit_logs" table.
  * Maps the expected property names to raw database fields. e.g camelCase to snake_case.
  */
-export const transformAuditLogUpdateRecord = (data: ): {
-    user_id?: ['userId'],
-    action: ['action'],
-    table_name?: ['tableName'],
-    record_id?: ['recordId'],
-    old_values?: ['oldValues'],
-    new_values?: ['newValues'],
-    created_at?: ['createdAt'],
+export const transformAuditLogUpdateRecord = (data: AuditLogUpdateBaseRecord): {
+    user_id?: AuditLogUpdateBaseRecord['userId'],
+    action: AuditLogUpdateBaseRecord['action'],
+    table_name?: AuditLogUpdateBaseRecord['tableName'],
+    record_id?: AuditLogUpdateBaseRecord['recordId'],
+    old_values?: AuditLogUpdateBaseRecord['oldValues'],
+    new_values?: AuditLogUpdateBaseRecord['newValues'],
+    created_at?: AuditLogUpdateBaseRecord['createdAt'],
 } => ({
     user_id: data.userId,
     action: data.action,
     table_name: data.tableName,
     record_id: data.recordId,
-    old_values: (data.oldValues ? JSON.stringify(data.oldValues) : data.oldValues),
-    new_values: (data.newValues ? JSON.stringify(data.newValues) : data.newValues),
+    old_values: data.oldValues,
+    new_values: data.newValues,
     created_at: data.createdAt,
 });
 
@@ -456,41 +456,41 @@ export const CategoriesTableReadSchema = z.object({
     * dataType: text
     * defaultValue: 
     */
-    description: z.string().nullable().optional(),
+    description: z.string().nullish().transform((value) => value ?? undefined).optional(),
     /**
     * dataType: varchar
     * defaultValue: 
     */
-    color: z.string().nullable().optional(),
+    color: z.string().nullish().transform((value) => value ?? undefined).optional(),
     /**
     * dataType: timestamptz
     * defaultValue: now()
     */
-    created_at: z.date().nullable().optional(),
+    created_at: z.date().nullish().transform((value) => value ?? undefined).optional(),
 });
 
 /**
  * The base record type for the "public.categories" table.
  * This type represents the raw database record without any transformations.
  */
-export type CategoryReadRecord = z.output<typeof CategoriesTableReadSchema>;
+export type CategoryReadBaseRecord = z.output<typeof CategoriesTableReadSchema>;
 
 /**
 * The read transform function for the "public.categories" table.
 * Maps the raw database fields to expected property names. e.g snake_case to camelCase.
 */
-export const transformCategoryReadRecord = (data: CategoryReadRecord): {
-    id: CategoryReadRecord['id'],
-    name: CategoryReadRecord['name'],
-    description?: CategoryReadRecord['description'],
-    color?: CategoryReadRecord['color'],
-    createdAt?: CategoryReadRecord['created_at'],
+export const transformCategoryReadRecord = (data: CategoryReadBaseRecord): {
+    id: CategoryReadBaseRecord['id'],
+    name: CategoryReadBaseRecord['name'],
+    description?: CategoryReadBaseRecord['description'],
+    color?: CategoryReadBaseRecord['color'],
+    createdAt?: CategoryReadBaseRecord['created_at'],
 } => ({
     id: data.id,
     name: data.name,
-    description: data.description ?? undefined,
-    color: data.color ?? undefined,
-    createdAt: data.created_at ?? undefined,
+    description: data.description,
+    color: data.color,
+    createdAt: data.created_at,
 });
 
 /**
@@ -530,23 +530,23 @@ export const CategoriesTableWriteSchema = z.object({
  * The base record type for the "public.categories" table.
  * This type represents an insertable database record before casing transformations are applied.
  */
-export type  = z.output<typeof CategoriesTableWriteSchema>;
+export type CategoryInsertBaseRecord = z.output<typeof CategoriesTableWriteSchema>;
 
 /**
  * The base record type for the "public.categories" table.
  * This type represents an updatable database record before casing transformations are applied.
  */
-export type  = Partial<>;
+export type CategoryUpdateBaseRecord = Partial<CategoryInsertBaseRecord>;
 
 /**
  * The insert transform function for the "public.categories" table.
  * Maps the expected property names to raw database fields. e.g camelCase to snake_case.
  */
-export const transformCategoryInsertRecord = (data: ): {
-    name: ['name'],
-    description?: ['description'],
-    color?: ['color'],
-    created_at?: ['createdAt'],
+export const transformCategoryInsertRecord = (data: CategoryInsertBaseRecord): {
+    name: CategoryInsertBaseRecord['name'],
+    description?: CategoryInsertBaseRecord['description'],
+    color?: CategoryInsertBaseRecord['color'],
+    created_at?: CategoryInsertBaseRecord['createdAt'],
 } => ({
     name: data.name,
     description: data.description,
@@ -558,11 +558,11 @@ export const transformCategoryInsertRecord = (data: ): {
  * The update transform function for the "public.categories" table.
  * Maps the expected property names to raw database fields. e.g camelCase to snake_case.
  */
-export const transformCategoryUpdateRecord = (data: ): {
-    name: ['name'],
-    description?: ['description'],
-    color?: ['color'],
-    created_at?: ['createdAt'],
+export const transformCategoryUpdateRecord = (data: CategoryUpdateBaseRecord): {
+    name: CategoryUpdateBaseRecord['name'],
+    description?: CategoryUpdateBaseRecord['description'],
+    color?: CategoryUpdateBaseRecord['color'],
+    created_at?: CategoryUpdateBaseRecord['createdAt'],
 } => ({
     name: data.name,
     description: data.description,
@@ -670,17 +670,17 @@ export const CommentsTableReadSchema = z.object({
     * dataType: int4
     * defaultValue: 
     */
-    post_id: z.number().int().nullable().optional(),
+    post_id: z.number().int().nullish().transform((value) => value ?? undefined).optional(),
     /**
     * dataType: int4
     * defaultValue: 
     */
-    user_id: z.number().int().nullable().optional(),
+    user_id: z.number().int().nullish().transform((value) => value ?? undefined).optional(),
     /**
     * dataType: int4
     * defaultValue: 
     */
-    parent_id: z.number().int().nullable().optional(),
+    parent_id: z.number().int().nullish().transform((value) => value ?? undefined).optional(),
     /**
     * dataType: text
     * defaultValue: 
@@ -690,47 +690,47 @@ export const CommentsTableReadSchema = z.object({
     * dataType: bool
     * defaultValue: false
     */
-    is_approved: z.boolean().nullable().optional(),
+    is_approved: z.boolean().nullish().transform((value) => value ?? undefined).optional(),
     /**
     * dataType: timestamptz
     * defaultValue: now()
     */
-    created_at: z.date().nullable().optional(),
+    created_at: z.date().nullish().transform((value) => value ?? undefined).optional(),
     /**
     * dataType: timestamptz
     * defaultValue: now()
     */
-    updated_at: z.date().nullable().optional(),
+    updated_at: z.date().nullish().transform((value) => value ?? undefined).optional(),
 });
 
 /**
  * The base record type for the "public.comments" table.
  * This type represents the raw database record without any transformations.
  */
-export type CommentReadRecord = z.output<typeof CommentsTableReadSchema>;
+export type CommentReadBaseRecord = z.output<typeof CommentsTableReadSchema>;
 
 /**
 * The read transform function for the "public.comments" table.
 * Maps the raw database fields to expected property names. e.g snake_case to camelCase.
 */
-export const transformCommentReadRecord = (data: CommentReadRecord): {
-    id: CommentReadRecord['id'],
-    postId?: CommentReadRecord['post_id'],
-    userId?: CommentReadRecord['user_id'],
-    parentId?: CommentReadRecord['parent_id'],
-    content: CommentReadRecord['content'],
-    isApproved?: CommentReadRecord['is_approved'],
-    createdAt?: CommentReadRecord['created_at'],
-    updatedAt?: CommentReadRecord['updated_at'],
+export const transformCommentReadRecord = (data: CommentReadBaseRecord): {
+    id: CommentReadBaseRecord['id'],
+    postId?: CommentReadBaseRecord['post_id'],
+    userId?: CommentReadBaseRecord['user_id'],
+    parentId?: CommentReadBaseRecord['parent_id'],
+    content: CommentReadBaseRecord['content'],
+    isApproved?: CommentReadBaseRecord['is_approved'],
+    createdAt?: CommentReadBaseRecord['created_at'],
+    updatedAt?: CommentReadBaseRecord['updated_at'],
 } => ({
     id: data.id,
-    postId: data.post_id ?? undefined,
-    userId: data.user_id ?? undefined,
-    parentId: data.parent_id ?? undefined,
+    postId: data.post_id,
+    userId: data.user_id,
+    parentId: data.parent_id,
     content: data.content,
-    isApproved: data.is_approved ?? undefined,
-    createdAt: data.created_at ?? undefined,
-    updatedAt: data.updated_at ?? undefined,
+    isApproved: data.is_approved,
+    createdAt: data.created_at,
+    updatedAt: data.updated_at,
 });
 
 /**
@@ -785,26 +785,26 @@ export const CommentsTableWriteSchema = z.object({
  * The base record type for the "public.comments" table.
  * This type represents an insertable database record before casing transformations are applied.
  */
-export type  = z.output<typeof CommentsTableWriteSchema>;
+export type CommentInsertBaseRecord = z.output<typeof CommentsTableWriteSchema>;
 
 /**
  * The base record type for the "public.comments" table.
  * This type represents an updatable database record before casing transformations are applied.
  */
-export type  = Partial<>;
+export type CommentUpdateBaseRecord = Partial<CommentInsertBaseRecord>;
 
 /**
  * The insert transform function for the "public.comments" table.
  * Maps the expected property names to raw database fields. e.g camelCase to snake_case.
  */
-export const transformCommentInsertRecord = (data: ): {
-    post_id?: ['postId'],
-    user_id?: ['userId'],
-    parent_id?: ['parentId'],
-    content: ['content'],
-    is_approved?: ['isApproved'],
-    created_at?: ['createdAt'],
-    updated_at?: ['updatedAt'],
+export const transformCommentInsertRecord = (data: CommentInsertBaseRecord): {
+    post_id?: CommentInsertBaseRecord['postId'],
+    user_id?: CommentInsertBaseRecord['userId'],
+    parent_id?: CommentInsertBaseRecord['parentId'],
+    content: CommentInsertBaseRecord['content'],
+    is_approved?: CommentInsertBaseRecord['isApproved'],
+    created_at?: CommentInsertBaseRecord['createdAt'],
+    updated_at?: CommentInsertBaseRecord['updatedAt'],
 } => ({
     post_id: data.postId,
     user_id: data.userId,
@@ -819,14 +819,14 @@ export const transformCommentInsertRecord = (data: ): {
  * The update transform function for the "public.comments" table.
  * Maps the expected property names to raw database fields. e.g camelCase to snake_case.
  */
-export const transformCommentUpdateRecord = (data: ): {
-    post_id?: ['postId'],
-    user_id?: ['userId'],
-    parent_id?: ['parentId'],
-    content: ['content'],
-    is_approved?: ['isApproved'],
-    created_at?: ['createdAt'],
-    updated_at?: ['updatedAt'],
+export const transformCommentUpdateRecord = (data: CommentUpdateBaseRecord): {
+    post_id?: CommentUpdateBaseRecord['postId'],
+    user_id?: CommentUpdateBaseRecord['userId'],
+    parent_id?: CommentUpdateBaseRecord['parentId'],
+    content: CommentUpdateBaseRecord['content'],
+    is_approved?: CommentUpdateBaseRecord['isApproved'],
+    created_at?: CommentUpdateBaseRecord['createdAt'],
+    updated_at?: CommentUpdateBaseRecord['updatedAt'],
 } => ({
     post_id: data.postId,
     user_id: data.userId,
@@ -966,67 +966,67 @@ export const ConstraintVariationsTableReadSchema = z.object({
     * dataType: varchar
     * defaultValue: 
     */
-    animal: z.enum(CONSTRAINT_VARIATION_ANIMALS).nullable().optional(),
+    animal: z.enum(CONSTRAINT_VARIATION_ANIMALS).nullish().transform((value) => value ?? undefined).optional(),
     /**
     * dataType: text
     * defaultValue: 
     */
-    fruit: z.enum(CONSTRAINT_VARIATION_FRUITS).nullable().optional(),
+    fruit: z.enum(CONSTRAINT_VARIATION_FRUITS).nullish().transform((value) => value ?? undefined).optional(),
     /**
     * dataType: varchar
     * defaultValue: 
     */
-    vehicle: z.enum(CONSTRAINT_VARIATION_VEHICLES).nullable().optional(),
+    vehicle: z.enum(CONSTRAINT_VARIATION_VEHICLES).nullish().transform((value) => value ?? undefined).optional(),
     /**
     * dataType: bpchar
     * defaultValue: 
     */
-    language: z.enum(CONSTRAINT_VARIATION_LANGUAGES).nullable().optional(),
+    language: z.enum(CONSTRAINT_VARIATION_LANGUAGES).nullish().transform((value) => value ?? undefined).optional(),
     /**
     * dataType: int2
     * defaultValue: 
     */
-    rating: z.number().int().nullable().optional(),
+    rating: z.number().int().nullish().transform((value) => value ?? undefined).optional(),
     /**
     * dataType: bool
     * defaultValue: 
     */
-    active_status: z.enum(CONSTRAINT_VARIATION_ACTIVE_STATUSES).nullable().optional(),
+    active_status: z.enum(CONSTRAINT_VARIATION_ACTIVE_STATUSES).nullish().transform((value) => value ?? undefined).optional(),
     /**
     * dataType: timestamptz
     * defaultValue: now()
     */
-    created_at: z.date().nullable().optional(),
+    created_at: z.date().nullish().transform((value) => value ?? undefined).optional(),
 });
 
 /**
  * The base record type for the "public.constraint_variations" table.
  * This type represents the raw database record without any transformations.
  */
-export type ConstraintVariationReadRecord = z.output<typeof ConstraintVariationsTableReadSchema>;
+export type ConstraintVariationReadBaseRecord = z.output<typeof ConstraintVariationsTableReadSchema>;
 
 /**
 * The read transform function for the "public.constraint_variations" table.
 * Maps the raw database fields to expected property names. e.g snake_case to camelCase.
 */
-export const transformConstraintVariationReadRecord = (data: ConstraintVariationReadRecord): {
-    id: ConstraintVariationReadRecord['id'],
-    animal?: ConstraintVariationReadRecord['animal'],
-    fruit?: ConstraintVariationReadRecord['fruit'],
-    vehicle?: ConstraintVariationReadRecord['vehicle'],
-    language?: ConstraintVariationReadRecord['language'],
-    rating?: ConstraintVariationReadRecord['rating'],
-    activeStatus?: ConstraintVariationReadRecord['active_status'],
-    createdAt?: ConstraintVariationReadRecord['created_at'],
+export const transformConstraintVariationReadRecord = (data: ConstraintVariationReadBaseRecord): {
+    id: ConstraintVariationReadBaseRecord['id'],
+    animal?: ConstraintVariationReadBaseRecord['animal'],
+    fruit?: ConstraintVariationReadBaseRecord['fruit'],
+    vehicle?: ConstraintVariationReadBaseRecord['vehicle'],
+    language?: ConstraintVariationReadBaseRecord['language'],
+    rating?: ConstraintVariationReadBaseRecord['rating'],
+    activeStatus?: ConstraintVariationReadBaseRecord['active_status'],
+    createdAt?: ConstraintVariationReadBaseRecord['created_at'],
 } => ({
     id: data.id,
-    animal: data.animal ?? undefined,
-    fruit: data.fruit ?? undefined,
-    vehicle: data.vehicle ?? undefined,
-    language: data.language ?? undefined,
-    rating: data.rating ?? undefined,
-    activeStatus: data.active_status ?? undefined,
-    createdAt: data.created_at ?? undefined,
+    animal: data.animal,
+    fruit: data.fruit,
+    vehicle: data.vehicle,
+    language: data.language,
+    rating: data.rating,
+    activeStatus: data.active_status,
+    createdAt: data.created_at,
 });
 
 /**
@@ -1081,26 +1081,26 @@ export const ConstraintVariationsTableWriteSchema = z.object({
  * The base record type for the "public.constraint_variations" table.
  * This type represents an insertable database record before casing transformations are applied.
  */
-export type  = z.output<typeof ConstraintVariationsTableWriteSchema>;
+export type ConstraintVariationInsertBaseRecord = z.output<typeof ConstraintVariationsTableWriteSchema>;
 
 /**
  * The base record type for the "public.constraint_variations" table.
  * This type represents an updatable database record before casing transformations are applied.
  */
-export type  = Partial<>;
+export type ConstraintVariationUpdateBaseRecord = Partial<ConstraintVariationInsertBaseRecord>;
 
 /**
  * The insert transform function for the "public.constraint_variations" table.
  * Maps the expected property names to raw database fields. e.g camelCase to snake_case.
  */
-export const transformConstraintVariationInsertRecord = (data: ): {
-    animal?: ['animal'],
-    fruit?: ['fruit'],
-    vehicle?: ['vehicle'],
-    language?: ['language'],
-    rating?: ['rating'],
-    active_status?: ['activeStatus'],
-    created_at?: ['createdAt'],
+export const transformConstraintVariationInsertRecord = (data: ConstraintVariationInsertBaseRecord): {
+    animal?: ConstraintVariationInsertBaseRecord['animal'],
+    fruit?: ConstraintVariationInsertBaseRecord['fruit'],
+    vehicle?: ConstraintVariationInsertBaseRecord['vehicle'],
+    language?: ConstraintVariationInsertBaseRecord['language'],
+    rating?: ConstraintVariationInsertBaseRecord['rating'],
+    active_status?: ConstraintVariationInsertBaseRecord['activeStatus'],
+    created_at?: ConstraintVariationInsertBaseRecord['createdAt'],
 } => ({
     animal: data.animal,
     fruit: data.fruit,
@@ -1115,14 +1115,14 @@ export const transformConstraintVariationInsertRecord = (data: ): {
  * The update transform function for the "public.constraint_variations" table.
  * Maps the expected property names to raw database fields. e.g camelCase to snake_case.
  */
-export const transformConstraintVariationUpdateRecord = (data: ): {
-    animal?: ['animal'],
-    fruit?: ['fruit'],
-    vehicle?: ['vehicle'],
-    language?: ['language'],
-    rating?: ['rating'],
-    active_status?: ['activeStatus'],
-    created_at?: ['createdAt'],
+export const transformConstraintVariationUpdateRecord = (data: ConstraintVariationUpdateBaseRecord): {
+    animal?: ConstraintVariationUpdateBaseRecord['animal'],
+    fruit?: ConstraintVariationUpdateBaseRecord['fruit'],
+    vehicle?: ConstraintVariationUpdateBaseRecord['vehicle'],
+    language?: ConstraintVariationUpdateBaseRecord['language'],
+    rating?: ConstraintVariationUpdateBaseRecord['rating'],
+    active_status?: ConstraintVariationUpdateBaseRecord['activeStatus'],
+    created_at?: ConstraintVariationUpdateBaseRecord['createdAt'],
 } => ({
     animal: data.animal,
     fruit: data.fruit,
@@ -1275,109 +1275,109 @@ export const EnumTestsTableReadSchema = z.object({
     * dataType: varchar
     * defaultValue: 
     */
-    priority: z.enum(ENUM_TEST_PRIORITIES).nullable().optional(),
+    priority: z.enum(ENUM_TEST_PRIORITIES).nullish().transform((value) => value ?? undefined).optional(),
     /**
     * dataType: varchar
     * defaultValue: 
     */
-    color: z.enum(ENUM_TEST_COLORS).nullable().optional(),
+    color: z.enum(ENUM_TEST_COLORS).nullish().transform((value) => value ?? undefined).optional(),
     /**
     * dataType: text
     * defaultValue: 
     */
-    size: z.enum(ENUM_TEST_SIZES).nullable().optional(),
+    size: z.enum(ENUM_TEST_SIZES).nullish().transform((value) => value ?? undefined).optional(),
     /**
     * dataType: bpchar
     * defaultValue: 
     */
-    grade: z.enum(ENUM_TEST_GRADES).nullable().optional(),
+    grade: z.enum(ENUM_TEST_GRADES).nullish().transform((value) => value ?? undefined).optional(),
     /**
     * dataType: varchar
     * defaultValue: 
     */
-    category: z.enum(ENUM_TEST_CATEGORIES).nullable().optional(),
+    category: z.enum(ENUM_TEST_CATEGORIES).nullish().transform((value) => value ?? undefined).optional(),
     /**
     * dataType: text
     * defaultValue: 
     */
-    mood: z.enum(ENUM_TEST_MOODS).nullable().optional(),
+    mood: z.enum(ENUM_TEST_MOODS).nullish().transform((value) => value ?? undefined).optional(),
     /**
     * dataType: varchar
     * defaultValue: 
     */
-    direction: z.enum(ENUM_TEST_DIRECTIONS).nullable().optional(),
+    direction: z.enum(ENUM_TEST_DIRECTIONS).nullish().transform((value) => value ?? undefined).optional(),
     /**
     * dataType: text
     * defaultValue: 
     */
-    weather_condition: z.enum(ENUM_TEST_WEATHER_CONDITIONS).nullable().optional(),
+    weather_condition: z.enum(ENUM_TEST_WEATHER_CONDITIONS).nullish().transform((value) => value ?? undefined).optional(),
     /**
     * dataType: varchar
     * defaultValue: 
     */
-    task_status: z.enum(ENUM_TEST_TASK_STATUSES).nullable().optional(),
+    task_status: z.enum(ENUM_TEST_TASK_STATUSES).nullish().transform((value) => value ?? undefined).optional(),
     /**
     * dataType: int4
     * defaultValue: 
     */
-    difficulty: z.enum(ENUM_TEST_DIFFICULTIES).nullable().optional(),
+    difficulty: z.enum(ENUM_TEST_DIFFICULTIES).nullish().transform((value) => value ?? undefined).optional(),
     /**
     * dataType: varchar
     * defaultValue: 
     */
-    weekday: z.enum(ENUM_TEST_WEEKDAYS).nullable().optional(),
+    weekday: z.enum(ENUM_TEST_WEEKDAYS).nullish().transform((value) => value ?? undefined).optional(),
     /**
     * dataType: text
     * defaultValue: 
     */
-    payment_method: z.enum(ENUM_TEST_PAYMENT_METHODS).nullable().optional(),
+    payment_method: z.enum(ENUM_TEST_PAYMENT_METHODS).nullish().transform((value) => value ?? undefined).optional(),
     /**
     * dataType: timestamptz
     * defaultValue: now()
     */
-    created_at: z.date().nullable().optional(),
+    created_at: z.date().nullish().transform((value) => value ?? undefined).optional(),
 });
 
 /**
  * The base record type for the "public.enum_tests" table.
  * This type represents the raw database record without any transformations.
  */
-export type EnumTestReadRecord = z.output<typeof EnumTestsTableReadSchema>;
+export type EnumTestReadBaseRecord = z.output<typeof EnumTestsTableReadSchema>;
 
 /**
 * The read transform function for the "public.enum_tests" table.
 * Maps the raw database fields to expected property names. e.g snake_case to camelCase.
 */
-export const transformEnumTestReadRecord = (data: EnumTestReadRecord): {
-    id: EnumTestReadRecord['id'],
-    priority?: EnumTestReadRecord['priority'],
-    color?: EnumTestReadRecord['color'],
-    size?: EnumTestReadRecord['size'],
-    grade?: EnumTestReadRecord['grade'],
-    category?: EnumTestReadRecord['category'],
-    mood?: EnumTestReadRecord['mood'],
-    direction?: EnumTestReadRecord['direction'],
-    weatherCondition?: EnumTestReadRecord['weather_condition'],
-    taskStatus?: EnumTestReadRecord['task_status'],
-    difficulty?: EnumTestReadRecord['difficulty'],
-    weekday?: EnumTestReadRecord['weekday'],
-    paymentMethod?: EnumTestReadRecord['payment_method'],
-    createdAt?: EnumTestReadRecord['created_at'],
+export const transformEnumTestReadRecord = (data: EnumTestReadBaseRecord): {
+    id: EnumTestReadBaseRecord['id'],
+    priority?: EnumTestReadBaseRecord['priority'],
+    color?: EnumTestReadBaseRecord['color'],
+    size?: EnumTestReadBaseRecord['size'],
+    grade?: EnumTestReadBaseRecord['grade'],
+    category?: EnumTestReadBaseRecord['category'],
+    mood?: EnumTestReadBaseRecord['mood'],
+    direction?: EnumTestReadBaseRecord['direction'],
+    weatherCondition?: EnumTestReadBaseRecord['weather_condition'],
+    taskStatus?: EnumTestReadBaseRecord['task_status'],
+    difficulty?: EnumTestReadBaseRecord['difficulty'],
+    weekday?: EnumTestReadBaseRecord['weekday'],
+    paymentMethod?: EnumTestReadBaseRecord['payment_method'],
+    createdAt?: EnumTestReadBaseRecord['created_at'],
 } => ({
     id: data.id,
-    priority: data.priority ?? undefined,
-    color: data.color ?? undefined,
-    size: data.size ?? undefined,
-    grade: data.grade ?? undefined,
-    category: data.category ?? undefined,
-    mood: data.mood ?? undefined,
-    direction: data.direction ?? undefined,
-    weatherCondition: data.weather_condition ?? undefined,
-    taskStatus: data.task_status ?? undefined,
-    difficulty: data.difficulty ?? undefined,
-    weekday: data.weekday ?? undefined,
-    paymentMethod: data.payment_method ?? undefined,
-    createdAt: data.created_at ?? undefined,
+    priority: data.priority,
+    color: data.color,
+    size: data.size,
+    grade: data.grade,
+    category: data.category,
+    mood: data.mood,
+    direction: data.direction,
+    weatherCondition: data.weather_condition,
+    taskStatus: data.task_status,
+    difficulty: data.difficulty,
+    weekday: data.weekday,
+    paymentMethod: data.payment_method,
+    createdAt: data.created_at,
 });
 
 /**
@@ -1462,32 +1462,32 @@ export const EnumTestsTableWriteSchema = z.object({
  * The base record type for the "public.enum_tests" table.
  * This type represents an insertable database record before casing transformations are applied.
  */
-export type  = z.output<typeof EnumTestsTableWriteSchema>;
+export type EnumTestInsertBaseRecord = z.output<typeof EnumTestsTableWriteSchema>;
 
 /**
  * The base record type for the "public.enum_tests" table.
  * This type represents an updatable database record before casing transformations are applied.
  */
-export type  = Partial<>;
+export type EnumTestUpdateBaseRecord = Partial<EnumTestInsertBaseRecord>;
 
 /**
  * The insert transform function for the "public.enum_tests" table.
  * Maps the expected property names to raw database fields. e.g camelCase to snake_case.
  */
-export const transformEnumTestInsertRecord = (data: ): {
-    priority?: ['priority'],
-    color?: ['color'],
-    size?: ['size'],
-    grade?: ['grade'],
-    category?: ['category'],
-    mood?: ['mood'],
-    direction?: ['direction'],
-    weather_condition?: ['weatherCondition'],
-    task_status?: ['taskStatus'],
-    difficulty?: ['difficulty'],
-    weekday?: ['weekday'],
-    payment_method?: ['paymentMethod'],
-    created_at?: ['createdAt'],
+export const transformEnumTestInsertRecord = (data: EnumTestInsertBaseRecord): {
+    priority?: EnumTestInsertBaseRecord['priority'],
+    color?: EnumTestInsertBaseRecord['color'],
+    size?: EnumTestInsertBaseRecord['size'],
+    grade?: EnumTestInsertBaseRecord['grade'],
+    category?: EnumTestInsertBaseRecord['category'],
+    mood?: EnumTestInsertBaseRecord['mood'],
+    direction?: EnumTestInsertBaseRecord['direction'],
+    weather_condition?: EnumTestInsertBaseRecord['weatherCondition'],
+    task_status?: EnumTestInsertBaseRecord['taskStatus'],
+    difficulty?: EnumTestInsertBaseRecord['difficulty'],
+    weekday?: EnumTestInsertBaseRecord['weekday'],
+    payment_method?: EnumTestInsertBaseRecord['paymentMethod'],
+    created_at?: EnumTestInsertBaseRecord['createdAt'],
 } => ({
     priority: data.priority,
     color: data.color,
@@ -1508,20 +1508,20 @@ export const transformEnumTestInsertRecord = (data: ): {
  * The update transform function for the "public.enum_tests" table.
  * Maps the expected property names to raw database fields. e.g camelCase to snake_case.
  */
-export const transformEnumTestUpdateRecord = (data: ): {
-    priority?: ['priority'],
-    color?: ['color'],
-    size?: ['size'],
-    grade?: ['grade'],
-    category?: ['category'],
-    mood?: ['mood'],
-    direction?: ['direction'],
-    weather_condition?: ['weatherCondition'],
-    task_status?: ['taskStatus'],
-    difficulty?: ['difficulty'],
-    weekday?: ['weekday'],
-    payment_method?: ['paymentMethod'],
-    created_at?: ['createdAt'],
+export const transformEnumTestUpdateRecord = (data: EnumTestUpdateBaseRecord): {
+    priority?: EnumTestUpdateBaseRecord['priority'],
+    color?: EnumTestUpdateBaseRecord['color'],
+    size?: EnumTestUpdateBaseRecord['size'],
+    grade?: EnumTestUpdateBaseRecord['grade'],
+    category?: EnumTestUpdateBaseRecord['category'],
+    mood?: EnumTestUpdateBaseRecord['mood'],
+    direction?: EnumTestUpdateBaseRecord['direction'],
+    weather_condition?: EnumTestUpdateBaseRecord['weatherCondition'],
+    task_status?: EnumTestUpdateBaseRecord['taskStatus'],
+    difficulty?: EnumTestUpdateBaseRecord['difficulty'],
+    weekday?: EnumTestUpdateBaseRecord['weekday'],
+    payment_method?: EnumTestUpdateBaseRecord['paymentMethod'],
+    created_at?: EnumTestUpdateBaseRecord['createdAt'],
 } => ({
     priority: data.priority,
     color: data.color,
@@ -1743,87 +1743,87 @@ export const FilesTableReadSchema = z.object({
     * dataType: varchar
     * defaultValue: 
     */
-    mime_type: z.string().nullable().optional(),
+    mime_type: z.string().nullish().transform((value) => value ?? undefined).optional(),
     /**
     * dataType: bpchar
     * defaultValue: 
     */
-    checksum: z.string().nullable().optional(),
+    checksum: z.string().nullish().transform((value) => value ?? undefined).optional(),
     /**
     * dataType: bytea
     * defaultValue: 
     */
-    binary_data: z.string().nullable().optional(),
+    binary_data: z.string().nullish().transform((value) => value ?? undefined).optional(),
     /**
     * dataType: bool
     * defaultValue: false
     */
-    is_encrypted: z.boolean().nullable().optional(),
+    is_encrypted: z.boolean().nullish().transform((value) => value ?? undefined).optional(),
     /**
     * dataType: timestamptz
     * defaultValue: now()
     */
-    upload_time: z.date().nullable().optional(),
+    upload_time: z.date().nullish().transform((value) => value ?? undefined).optional(),
     /**
     * dataType: timestamptz
     * defaultValue: 
     */
-    expiry_date: z.date().nullable().optional(),
+    expiry_date: z.date().nullish().transform((value) => value ?? undefined).optional(),
     /**
     * dataType: jsonb
     * defaultValue: 
     */
-    metadata: FileMetadataSchema.nullable().optional(),
+    metadata: FileMetadataSchema.nullish().transform((value) => value ?? undefined).optional(),
     /**
     * dataType: _text
     * defaultValue: 
     */
-    tags: z.array(z.string()).nullable().optional(),
+    tags: z.array(z.string()).nullish().transform((value) => value ?? []).optional(),
     /**
     * dataType: int4
     * defaultValue: 0
     */
-    access_count: z.number().int().nullable().optional(),
+    access_count: z.number().int().nullish().transform((value) => value ?? undefined).optional(),
 });
 
 /**
  * The base record type for the "public.files" table.
  * This type represents the raw database record without any transformations.
  */
-export type FileReadRecord = z.output<typeof FilesTableReadSchema>;
+export type FileReadBaseRecord = z.output<typeof FilesTableReadSchema>;
 
 /**
 * The read transform function for the "public.files" table.
 * Maps the raw database fields to expected property names. e.g snake_case to camelCase.
 */
-export const transformFileReadRecord = (data: FileReadRecord): {
-    id: FileReadRecord['id'],
-    filename: FileReadRecord['filename'],
-    filePath: FileReadRecord['file_path'],
-    fileSize: FileReadRecord['file_size'],
-    mimeType?: FileReadRecord['mime_type'],
-    checksum?: FileReadRecord['checksum'],
-    binaryData?: FileReadRecord['binary_data'],
-    isEncrypted?: FileReadRecord['is_encrypted'],
-    uploadTime?: FileReadRecord['upload_time'],
-    expiryDate?: FileReadRecord['expiry_date'],
-    metadata?: FileReadRecord['metadata'],
-    tags?: FileReadRecord['tags'],
-    accessCount?: FileReadRecord['access_count'],
+export const transformFileReadRecord = (data: FileReadBaseRecord): {
+    id: FileReadBaseRecord['id'],
+    filename: FileReadBaseRecord['filename'],
+    filePath: FileReadBaseRecord['file_path'],
+    fileSize: FileReadBaseRecord['file_size'],
+    mimeType?: FileReadBaseRecord['mime_type'],
+    checksum?: FileReadBaseRecord['checksum'],
+    binaryData?: FileReadBaseRecord['binary_data'],
+    isEncrypted?: FileReadBaseRecord['is_encrypted'],
+    uploadTime?: FileReadBaseRecord['upload_time'],
+    expiryDate?: FileReadBaseRecord['expiry_date'],
+    metadata?: FileReadBaseRecord['metadata'],
+    tags?: FileReadBaseRecord['tags'],
+    accessCount?: FileReadBaseRecord['access_count'],
 } => ({
     id: data.id,
     filename: data.filename,
     filePath: data.file_path,
     fileSize: data.file_size,
-    mimeType: data.mime_type ?? undefined,
-    checksum: data.checksum ?? undefined,
-    binaryData: data.binary_data ?? undefined,
-    isEncrypted: data.is_encrypted ?? undefined,
-    uploadTime: data.upload_time ?? undefined,
-    expiryDate: data.expiry_date ?? undefined,
-    metadata: data.metadata ?? undefined,
-    tags: data.tags ?? [],
-    accessCount: data.access_count ?? undefined,
+    mimeType: data.mime_type,
+    checksum: data.checksum,
+    binaryData: data.binary_data,
+    isEncrypted: data.is_encrypted,
+    uploadTime: data.upload_time,
+    expiryDate: data.expiry_date,
+    metadata: data.metadata,
+    tags: data.tags,
+    accessCount: data.access_count,
 });
 
 /**
@@ -1891,7 +1891,7 @@ export const FilesTableWriteSchema = z.object({
     * dataType: jsonb
     * defaultValue: 
     */
-    metadata: FileMetadataSchema.nullish().optional(),
+    metadata: FileMetadataSchema.nullish().transform((value) => value ? JSON.stringify(value) : value).optional(),
     /**
     * dataType: _text
     * defaultValue: 
@@ -1908,32 +1908,32 @@ export const FilesTableWriteSchema = z.object({
  * The base record type for the "public.files" table.
  * This type represents an insertable database record before casing transformations are applied.
  */
-export type  = z.output<typeof FilesTableWriteSchema>;
+export type FileInsertBaseRecord = z.output<typeof FilesTableWriteSchema>;
 
 /**
  * The base record type for the "public.files" table.
  * This type represents an updatable database record before casing transformations are applied.
  */
-export type  = Partial<>;
+export type FileUpdateBaseRecord = Partial<FileInsertBaseRecord>;
 
 /**
  * The insert transform function for the "public.files" table.
  * Maps the expected property names to raw database fields. e.g camelCase to snake_case.
  */
-export const transformFileInsertRecord = (data: ): {
-    id: ['id'],
-    filename: ['filename'],
-    file_path: ['filePath'],
-    file_size: ['fileSize'],
-    mime_type?: ['mimeType'],
-    checksum?: ['checksum'],
-    binary_data?: ['binaryData'],
-    is_encrypted?: ['isEncrypted'],
-    upload_time?: ['uploadTime'],
-    expiry_date?: ['expiryDate'],
-    metadata?: ['metadata'],
-    tags?: ['tags'],
-    access_count?: ['accessCount'],
+export const transformFileInsertRecord = (data: FileInsertBaseRecord): {
+    id: FileInsertBaseRecord['id'],
+    filename: FileInsertBaseRecord['filename'],
+    file_path: FileInsertBaseRecord['filePath'],
+    file_size: FileInsertBaseRecord['fileSize'],
+    mime_type?: FileInsertBaseRecord['mimeType'],
+    checksum?: FileInsertBaseRecord['checksum'],
+    binary_data?: FileInsertBaseRecord['binaryData'],
+    is_encrypted?: FileInsertBaseRecord['isEncrypted'],
+    upload_time?: FileInsertBaseRecord['uploadTime'],
+    expiry_date?: FileInsertBaseRecord['expiryDate'],
+    metadata?: FileInsertBaseRecord['metadata'],
+    tags?: FileInsertBaseRecord['tags'],
+    access_count?: FileInsertBaseRecord['accessCount'],
 } => ({
     id: data.id,
     filename: data.filename,
@@ -1945,7 +1945,7 @@ export const transformFileInsertRecord = (data: ): {
     is_encrypted: data.isEncrypted,
     upload_time: data.uploadTime,
     expiry_date: data.expiryDate,
-    metadata: (data.metadata ? JSON.stringify(data.metadata) : data.metadata),
+    metadata: data.metadata,
     tags: data.tags,
     access_count: data.accessCount,
 });
@@ -1954,20 +1954,20 @@ export const transformFileInsertRecord = (data: ): {
  * The update transform function for the "public.files" table.
  * Maps the expected property names to raw database fields. e.g camelCase to snake_case.
  */
-export const transformFileUpdateRecord = (data: ): {
-    id: ['id'],
-    filename: ['filename'],
-    file_path: ['filePath'],
-    file_size: ['fileSize'],
-    mime_type?: ['mimeType'],
-    checksum?: ['checksum'],
-    binary_data?: ['binaryData'],
-    is_encrypted?: ['isEncrypted'],
-    upload_time?: ['uploadTime'],
-    expiry_date?: ['expiryDate'],
-    metadata?: ['metadata'],
-    tags?: ['tags'],
-    access_count?: ['accessCount'],
+export const transformFileUpdateRecord = (data: FileUpdateBaseRecord): {
+    id: FileUpdateBaseRecord['id'],
+    filename: FileUpdateBaseRecord['filename'],
+    file_path: FileUpdateBaseRecord['filePath'],
+    file_size: FileUpdateBaseRecord['fileSize'],
+    mime_type?: FileUpdateBaseRecord['mimeType'],
+    checksum?: FileUpdateBaseRecord['checksum'],
+    binary_data?: FileUpdateBaseRecord['binaryData'],
+    is_encrypted?: FileUpdateBaseRecord['isEncrypted'],
+    upload_time?: FileUpdateBaseRecord['uploadTime'],
+    expiry_date?: FileUpdateBaseRecord['expiryDate'],
+    metadata?: FileUpdateBaseRecord['metadata'],
+    tags?: FileUpdateBaseRecord['tags'],
+    access_count?: FileUpdateBaseRecord['accessCount'],
 } => ({
     id: data.id,
     filename: data.filename,
@@ -1979,7 +1979,7 @@ export const transformFileUpdateRecord = (data: ): {
     is_encrypted: data.isEncrypted,
     upload_time: data.uploadTime,
     expiry_date: data.expiryDate,
-    metadata: (data.metadata ? JSON.stringify(data.metadata) : data.metadata),
+    metadata: data.metadata,
     tags: data.tags,
     access_count: data.accessCount,
 });
@@ -2166,85 +2166,85 @@ export const GeographicDataTableReadSchema = z.object({
     * dataType: polygon
     * defaultValue: 
     */
-    boundary: z.string().nullable().optional(),
+    boundary: z.string().nullish().transform((value) => value ?? undefined).optional(),
     /**
     * dataType: circle
     * defaultValue: 
     */
-    area_circle: z.string().nullable().optional(),
+    area_circle: z.string().nullish().transform((value) => value ?? undefined).optional(),
     /**
     * dataType: float4
     * defaultValue: 
     */
-    elevation: z.number().nullable().optional(),
+    elevation: z.number().nullish().transform((value) => value ?? undefined).optional(),
     /**
     * dataType: varchar
     * defaultValue: 
     */
-    timezone: z.string().nullable().optional(),
+    timezone: z.string().nullish().transform((value) => value ?? undefined).optional(),
     /**
     * dataType: bpchar
     * defaultValue: 
     */
-    country_code: z.string().nullable().optional(),
+    country_code: z.string().nullish().transform((value) => value ?? undefined).optional(),
     /**
     * dataType: _text
     * defaultValue: 
     */
-    postal_codes: z.array(z.string()).nullable().optional(),
+    postal_codes: z.array(z.string()).nullish().transform((value) => value ?? []).optional(),
     /**
     * dataType: int4
     * defaultValue: 
     */
-    population: z.number().int().nullable().optional(),
+    population: z.number().int().nullish().transform((value) => value ?? undefined).optional(),
     /**
     * dataType: date
     * defaultValue: 
     */
-    established_date: z.date().nullable().optional(),
+    established_date: z.date().nullish().transform((value) => value ?? undefined).optional(),
     /**
     * dataType: timestamptz
     * defaultValue: now()
     */
-    last_updated: z.date().nullable().optional(),
+    last_updated: z.date().nullish().transform((value) => value ?? undefined).optional(),
 });
 
 /**
  * The base record type for the "public.geographic_data" table.
  * This type represents the raw database record without any transformations.
  */
-export type GeographicDataReadRecord = z.output<typeof GeographicDataTableReadSchema>;
+export type GeographicDataReadBaseRecord = z.output<typeof GeographicDataTableReadSchema>;
 
 /**
 * The read transform function for the "public.geographic_data" table.
 * Maps the raw database fields to expected property names. e.g snake_case to camelCase.
 */
-export const transformGeographicDataReadRecord = (data: GeographicDataReadRecord): {
-    id: GeographicDataReadRecord['id'],
-    locationName: GeographicDataReadRecord['location_name'],
-    coordinates: GeographicDataReadRecord['coordinates'],
-    boundary?: GeographicDataReadRecord['boundary'],
-    areaCircle?: GeographicDataReadRecord['area_circle'],
-    elevation?: GeographicDataReadRecord['elevation'],
-    timezone?: GeographicDataReadRecord['timezone'],
-    countryCode?: GeographicDataReadRecord['country_code'],
-    postalCodes?: GeographicDataReadRecord['postal_codes'],
-    population?: GeographicDataReadRecord['population'],
-    establishedDate?: GeographicDataReadRecord['established_date'],
-    lastUpdated?: GeographicDataReadRecord['last_updated'],
+export const transformGeographicDataReadRecord = (data: GeographicDataReadBaseRecord): {
+    id: GeographicDataReadBaseRecord['id'],
+    locationName: GeographicDataReadBaseRecord['location_name'],
+    coordinates: GeographicDataReadBaseRecord['coordinates'],
+    boundary?: GeographicDataReadBaseRecord['boundary'],
+    areaCircle?: GeographicDataReadBaseRecord['area_circle'],
+    elevation?: GeographicDataReadBaseRecord['elevation'],
+    timezone?: GeographicDataReadBaseRecord['timezone'],
+    countryCode?: GeographicDataReadBaseRecord['country_code'],
+    postalCodes?: GeographicDataReadBaseRecord['postal_codes'],
+    population?: GeographicDataReadBaseRecord['population'],
+    establishedDate?: GeographicDataReadBaseRecord['established_date'],
+    lastUpdated?: GeographicDataReadBaseRecord['last_updated'],
 } => ({
     id: data.id,
     locationName: data.location_name,
     coordinates: data.coordinates,
-    boundary: data.boundary ?? undefined,
-    areaCircle: data.area_circle ?? undefined,
-    elevation: data.elevation ?? undefined,
-    timezone: data.timezone ?? undefined,
-    countryCode: data.country_code ?? undefined,
-    postalCodes: data.postal_codes ?? [],
-    population: data.population ?? undefined,
-    establishedDate: data.established_date ?? undefined,
-    lastUpdated: data.last_updated ?? undefined,
+    boundary: data.boundary,
+    areaCircle: data.area_circle,
+    elevation: data.elevation,
+    timezone: data.timezone,
+    countryCode: data.country_code,
+    postalCodes: data.postal_codes,
+    population: data.population,
+    establishedDate: data.established_date,
+    lastUpdated: data.last_updated,
 });
 
 /**
@@ -2319,30 +2319,30 @@ export const GeographicDataTableWriteSchema = z.object({
  * The base record type for the "public.geographic_data" table.
  * This type represents an insertable database record before casing transformations are applied.
  */
-export type  = z.output<typeof GeographicDataTableWriteSchema>;
+export type GeographicDataInsertBaseRecord = z.output<typeof GeographicDataTableWriteSchema>;
 
 /**
  * The base record type for the "public.geographic_data" table.
  * This type represents an updatable database record before casing transformations are applied.
  */
-export type  = Partial<>;
+export type GeographicDataUpdateBaseRecord = Partial<GeographicDataInsertBaseRecord>;
 
 /**
  * The insert transform function for the "public.geographic_data" table.
  * Maps the expected property names to raw database fields. e.g camelCase to snake_case.
  */
-export const transformGeographicDataInsertRecord = (data: ): {
-    location_name: ['locationName'],
-    coordinates: ['coordinates'],
-    boundary?: ['boundary'],
-    area_circle?: ['areaCircle'],
-    elevation?: ['elevation'],
-    timezone?: ['timezone'],
-    country_code?: ['countryCode'],
-    postal_codes?: ['postalCodes'],
-    population?: ['population'],
-    established_date?: ['establishedDate'],
-    last_updated?: ['lastUpdated'],
+export const transformGeographicDataInsertRecord = (data: GeographicDataInsertBaseRecord): {
+    location_name: GeographicDataInsertBaseRecord['locationName'],
+    coordinates: GeographicDataInsertBaseRecord['coordinates'],
+    boundary?: GeographicDataInsertBaseRecord['boundary'],
+    area_circle?: GeographicDataInsertBaseRecord['areaCircle'],
+    elevation?: GeographicDataInsertBaseRecord['elevation'],
+    timezone?: GeographicDataInsertBaseRecord['timezone'],
+    country_code?: GeographicDataInsertBaseRecord['countryCode'],
+    postal_codes?: GeographicDataInsertBaseRecord['postalCodes'],
+    population?: GeographicDataInsertBaseRecord['population'],
+    established_date?: GeographicDataInsertBaseRecord['establishedDate'],
+    last_updated?: GeographicDataInsertBaseRecord['lastUpdated'],
 } => ({
     location_name: data.locationName,
     coordinates: data.coordinates,
@@ -2361,18 +2361,18 @@ export const transformGeographicDataInsertRecord = (data: ): {
  * The update transform function for the "public.geographic_data" table.
  * Maps the expected property names to raw database fields. e.g camelCase to snake_case.
  */
-export const transformGeographicDataUpdateRecord = (data: ): {
-    location_name: ['locationName'],
-    coordinates: ['coordinates'],
-    boundary?: ['boundary'],
-    area_circle?: ['areaCircle'],
-    elevation?: ['elevation'],
-    timezone?: ['timezone'],
-    country_code?: ['countryCode'],
-    postal_codes?: ['postalCodes'],
-    population?: ['population'],
-    established_date?: ['establishedDate'],
-    last_updated?: ['lastUpdated'],
+export const transformGeographicDataUpdateRecord = (data: GeographicDataUpdateBaseRecord): {
+    location_name: GeographicDataUpdateBaseRecord['locationName'],
+    coordinates: GeographicDataUpdateBaseRecord['coordinates'],
+    boundary?: GeographicDataUpdateBaseRecord['boundary'],
+    area_circle?: GeographicDataUpdateBaseRecord['areaCircle'],
+    elevation?: GeographicDataUpdateBaseRecord['elevation'],
+    timezone?: GeographicDataUpdateBaseRecord['timezone'],
+    country_code?: GeographicDataUpdateBaseRecord['countryCode'],
+    postal_codes?: GeographicDataUpdateBaseRecord['postalCodes'],
+    population?: GeographicDataUpdateBaseRecord['population'],
+    established_date?: GeographicDataUpdateBaseRecord['establishedDate'],
+    last_updated?: GeographicDataUpdateBaseRecord['lastUpdated'],
 } => ({
     location_name: data.locationName,
     coordinates: data.coordinates,
@@ -2573,62 +2573,62 @@ export const InventoryTableReadSchema = z.object({
     * dataType: int4
     * defaultValue: 0
     */
-    reserved_quantity: z.number().int().nullable().optional(),
+    reserved_quantity: z.number().int().nullish().transform((value) => value ?? undefined).optional(),
     /**
     * dataType: int2
     * defaultValue: 10
     */
-    reorder_level: z.number().int().nullable().optional(),
+    reorder_level: z.number().int().nullish().transform((value) => value ?? undefined).optional(),
     /**
     * dataType: date
     * defaultValue: 
     */
-    last_restocked: z.date().nullable().optional(),
+    last_restocked: z.date().nullish().transform((value) => value ?? undefined).optional(),
     /**
     * dataType: jsonb
     * defaultValue: 
     */
-    supplier_info: InventorySupplierInfoSchema.nullable().optional(),
+    supplier_info: InventorySupplierInfoSchema.nullish().transform((value) => value ?? undefined).optional(),
     /**
     * dataType: _text
     * defaultValue: 
     */
-    warehouse_locations: z.array(z.string()).nullable().optional(),
+    warehouse_locations: z.array(z.string()).nullish().transform((value) => value ?? []).optional(),
     /**
     * dataType: timestamptz
     * defaultValue: now()
     */
-    updated_at: z.date().nullable().optional(),
+    updated_at: z.date().nullish().transform((value) => value ?? undefined).optional(),
 });
 
 /**
  * The base record type for the "public.inventory" table.
  * This type represents the raw database record without any transformations.
  */
-export type InventoryReadRecord = z.output<typeof InventoryTableReadSchema>;
+export type InventoryReadBaseRecord = z.output<typeof InventoryTableReadSchema>;
 
 /**
 * The read transform function for the "public.inventory" table.
 * Maps the raw database fields to expected property names. e.g snake_case to camelCase.
 */
-export const transformInventoryReadRecord = (data: InventoryReadRecord): {
-    productId: InventoryReadRecord['product_id'],
-    stockQuantity: InventoryReadRecord['stock_quantity'],
-    reservedQuantity?: InventoryReadRecord['reserved_quantity'],
-    reorderLevel?: InventoryReadRecord['reorder_level'],
-    lastRestocked?: InventoryReadRecord['last_restocked'],
-    supplierInfo?: InventoryReadRecord['supplier_info'],
-    warehouseLocations?: InventoryReadRecord['warehouse_locations'],
-    updatedAt?: InventoryReadRecord['updated_at'],
+export const transformInventoryReadRecord = (data: InventoryReadBaseRecord): {
+    productId: InventoryReadBaseRecord['product_id'],
+    stockQuantity: InventoryReadBaseRecord['stock_quantity'],
+    reservedQuantity?: InventoryReadBaseRecord['reserved_quantity'],
+    reorderLevel?: InventoryReadBaseRecord['reorder_level'],
+    lastRestocked?: InventoryReadBaseRecord['last_restocked'],
+    supplierInfo?: InventoryReadBaseRecord['supplier_info'],
+    warehouseLocations?: InventoryReadBaseRecord['warehouse_locations'],
+    updatedAt?: InventoryReadBaseRecord['updated_at'],
 } => ({
     productId: data.product_id,
     stockQuantity: data.stock_quantity,
-    reservedQuantity: data.reserved_quantity ?? undefined,
-    reorderLevel: data.reorder_level ?? undefined,
-    lastRestocked: data.last_restocked ?? undefined,
-    supplierInfo: data.supplier_info ?? undefined,
-    warehouseLocations: data.warehouse_locations ?? [],
-    updatedAt: data.updated_at ?? undefined,
+    reservedQuantity: data.reserved_quantity,
+    reorderLevel: data.reorder_level,
+    lastRestocked: data.last_restocked,
+    supplierInfo: data.supplier_info,
+    warehouseLocations: data.warehouse_locations,
+    updatedAt: data.updated_at,
 });
 
 /**
@@ -2671,7 +2671,7 @@ export const InventoryTableWriteSchema = z.object({
     * dataType: jsonb
     * defaultValue: 
     */
-    supplierInfo: InventorySupplierInfoSchema.nullish().optional(),
+    supplierInfo: InventorySupplierInfoSchema.nullish().transform((value) => value ? JSON.stringify(value) : value).optional(),
     /**
     * dataType: _text
     * defaultValue: 
@@ -2688,34 +2688,34 @@ export const InventoryTableWriteSchema = z.object({
  * The base record type for the "public.inventory" table.
  * This type represents an insertable database record before casing transformations are applied.
  */
-export type  = z.output<typeof InventoryTableWriteSchema>;
+export type InventoryInsertBaseRecord = z.output<typeof InventoryTableWriteSchema>;
 
 /**
  * The base record type for the "public.inventory" table.
  * This type represents an updatable database record before casing transformations are applied.
  */
-export type  = Partial<>;
+export type InventoryUpdateBaseRecord = Partial<InventoryInsertBaseRecord>;
 
 /**
  * The insert transform function for the "public.inventory" table.
  * Maps the expected property names to raw database fields. e.g camelCase to snake_case.
  */
-export const transformInventoryInsertRecord = (data: ): {
-    product_id: ['productId'],
-    stock_quantity: ['stockQuantity'],
-    reserved_quantity?: ['reservedQuantity'],
-    reorder_level?: ['reorderLevel'],
-    last_restocked?: ['lastRestocked'],
-    supplier_info?: ['supplierInfo'],
-    warehouse_locations?: ['warehouseLocations'],
-    updated_at?: ['updatedAt'],
+export const transformInventoryInsertRecord = (data: InventoryInsertBaseRecord): {
+    product_id: InventoryInsertBaseRecord['productId'],
+    stock_quantity: InventoryInsertBaseRecord['stockQuantity'],
+    reserved_quantity?: InventoryInsertBaseRecord['reservedQuantity'],
+    reorder_level?: InventoryInsertBaseRecord['reorderLevel'],
+    last_restocked?: InventoryInsertBaseRecord['lastRestocked'],
+    supplier_info?: InventoryInsertBaseRecord['supplierInfo'],
+    warehouse_locations?: InventoryInsertBaseRecord['warehouseLocations'],
+    updated_at?: InventoryInsertBaseRecord['updatedAt'],
 } => ({
     product_id: data.productId,
     stock_quantity: data.stockQuantity,
     reserved_quantity: data.reservedQuantity,
     reorder_level: data.reorderLevel,
     last_restocked: data.lastRestocked,
-    supplier_info: (data.supplierInfo ? JSON.stringify(data.supplierInfo) : data.supplierInfo),
+    supplier_info: data.supplierInfo,
     warehouse_locations: data.warehouseLocations,
     updated_at: data.updatedAt,
 });
@@ -2724,22 +2724,22 @@ export const transformInventoryInsertRecord = (data: ): {
  * The update transform function for the "public.inventory" table.
  * Maps the expected property names to raw database fields. e.g camelCase to snake_case.
  */
-export const transformInventoryUpdateRecord = (data: ): {
-    product_id: ['productId'],
-    stock_quantity: ['stockQuantity'],
-    reserved_quantity?: ['reservedQuantity'],
-    reorder_level?: ['reorderLevel'],
-    last_restocked?: ['lastRestocked'],
-    supplier_info?: ['supplierInfo'],
-    warehouse_locations?: ['warehouseLocations'],
-    updated_at?: ['updatedAt'],
+export const transformInventoryUpdateRecord = (data: InventoryUpdateBaseRecord): {
+    product_id: InventoryUpdateBaseRecord['productId'],
+    stock_quantity: InventoryUpdateBaseRecord['stockQuantity'],
+    reserved_quantity?: InventoryUpdateBaseRecord['reservedQuantity'],
+    reorder_level?: InventoryUpdateBaseRecord['reorderLevel'],
+    last_restocked?: InventoryUpdateBaseRecord['lastRestocked'],
+    supplier_info?: InventoryUpdateBaseRecord['supplierInfo'],
+    warehouse_locations?: InventoryUpdateBaseRecord['warehouseLocations'],
+    updated_at?: InventoryUpdateBaseRecord['updatedAt'],
 } => ({
     product_id: data.productId,
     stock_quantity: data.stockQuantity,
     reserved_quantity: data.reservedQuantity,
     reorder_level: data.reorderLevel,
     last_restocked: data.lastRestocked,
-    supplier_info: (data.supplierInfo ? JSON.stringify(data.supplierInfo) : data.supplierInfo),
+    supplier_info: data.supplierInfo,
     warehouse_locations: data.warehouseLocations,
     updated_at: data.updatedAt,
 });
@@ -2879,90 +2879,90 @@ export const NetworkLogsTableReadSchema = z.object({
     * dataType: int4range
     * defaultValue: 
     */
-    port_range: z.any().nullable().optional(),
+    port_range: z.any().nullish().transform((value) => value ?? undefined).optional(),
     /**
     * dataType: macaddr
     * defaultValue: 
     */
-    mac_address: z.string().nullable().optional(),
+    mac_address: z.string().nullish().transform((value) => value ?? undefined).optional(),
     /**
     * dataType: timestamptz
     * defaultValue: now()
     */
-    request_time: z.date().nullable().optional(),
+    request_time: z.date().nullish().transform((value) => value ?? undefined).optional(),
     /**
     * dataType: interval
     * defaultValue: 
     */
-    response_time: z.any().nullable().optional(),
+    response_time: z.any().nullish().transform((value) => value ?? undefined).optional(),
     /**
     * dataType: int8
     * defaultValue: 0
     */
-    bytes_sent: z.number().int().nullable().optional(),
+    bytes_sent: z.number().int().nullish().transform((value) => value ?? undefined).optional(),
     /**
     * dataType: int8
     * defaultValue: 0
     */
-    bytes_received: z.number().int().nullable().optional(),
+    bytes_received: z.number().int().nullish().transform((value) => value ?? undefined).optional(),
     /**
     * dataType: varchar
     * defaultValue: 
     */
-    protocol: z.string().nullable().optional(),
+    protocol: z.string().nullish().transform((value) => value ?? undefined).optional(),
     /**
     * dataType: int2
     * defaultValue: 
     */
-    status_code: z.number().int().nullable().optional(),
+    status_code: z.number().int().nullish().transform((value) => value ?? undefined).optional(),
     /**
     * dataType: text
     * defaultValue: 
     */
-    user_agent: z.string().nullable().optional(),
+    user_agent: z.string().nullish().transform((value) => value ?? undefined).optional(),
     /**
     * dataType: jsonb
     * defaultValue: 
     */
-    headers: NetworkLogHeadersSchema.nullable().optional(),
+    headers: NetworkLogHeadersSchema.nullish().transform((value) => value ?? undefined).optional(),
 });
 
 /**
  * The base record type for the "public.network_logs" table.
  * This type represents the raw database record without any transformations.
  */
-export type NetworkLogReadRecord = z.output<typeof NetworkLogsTableReadSchema>;
+export type NetworkLogReadBaseRecord = z.output<typeof NetworkLogsTableReadSchema>;
 
 /**
 * The read transform function for the "public.network_logs" table.
 * Maps the raw database fields to expected property names. e.g snake_case to camelCase.
 */
-export const transformNetworkLogReadRecord = (data: NetworkLogReadRecord): {
-    id: NetworkLogReadRecord['id'],
-    ipAddress: NetworkLogReadRecord['ip_address'],
-    portRange?: NetworkLogReadRecord['port_range'],
-    macAddress?: NetworkLogReadRecord['mac_address'],
-    requestTime?: NetworkLogReadRecord['request_time'],
-    responseTime?: NetworkLogReadRecord['response_time'],
-    bytesSent?: NetworkLogReadRecord['bytes_sent'],
-    bytesReceived?: NetworkLogReadRecord['bytes_received'],
-    protocol?: NetworkLogReadRecord['protocol'],
-    statusCode?: NetworkLogReadRecord['status_code'],
-    userAgent?: NetworkLogReadRecord['user_agent'],
-    headers?: NetworkLogReadRecord['headers'],
+export const transformNetworkLogReadRecord = (data: NetworkLogReadBaseRecord): {
+    id: NetworkLogReadBaseRecord['id'],
+    ipAddress: NetworkLogReadBaseRecord['ip_address'],
+    portRange?: NetworkLogReadBaseRecord['port_range'],
+    macAddress?: NetworkLogReadBaseRecord['mac_address'],
+    requestTime?: NetworkLogReadBaseRecord['request_time'],
+    responseTime?: NetworkLogReadBaseRecord['response_time'],
+    bytesSent?: NetworkLogReadBaseRecord['bytes_sent'],
+    bytesReceived?: NetworkLogReadBaseRecord['bytes_received'],
+    protocol?: NetworkLogReadBaseRecord['protocol'],
+    statusCode?: NetworkLogReadBaseRecord['status_code'],
+    userAgent?: NetworkLogReadBaseRecord['user_agent'],
+    headers?: NetworkLogReadBaseRecord['headers'],
 } => ({
     id: data.id,
     ipAddress: data.ip_address,
-    portRange: data.port_range ?? undefined,
-    macAddress: data.mac_address ?? undefined,
-    requestTime: data.request_time ?? undefined,
-    responseTime: data.response_time ?? undefined,
-    bytesSent: data.bytes_sent ?? undefined,
-    bytesReceived: data.bytes_received ?? undefined,
-    protocol: data.protocol ?? undefined,
-    statusCode: data.status_code ?? undefined,
-    userAgent: data.user_agent ?? undefined,
-    headers: data.headers ?? undefined,
+    portRange: data.port_range,
+    macAddress: data.mac_address,
+    requestTime: data.request_time,
+    responseTime: data.response_time,
+    bytesSent: data.bytes_sent,
+    bytesReceived: data.bytes_received,
+    protocol: data.protocol,
+    statusCode: data.status_code,
+    userAgent: data.user_agent,
+    headers: data.headers,
 });
 
 /**
@@ -3030,37 +3030,37 @@ export const NetworkLogsTableWriteSchema = z.object({
     * dataType: jsonb
     * defaultValue: 
     */
-    headers: NetworkLogHeadersSchema.nullish().optional(),
+    headers: NetworkLogHeadersSchema.nullish().transform((value) => value ? JSON.stringify(value) : value).optional(),
 });
 
 /**
  * The base record type for the "public.network_logs" table.
  * This type represents an insertable database record before casing transformations are applied.
  */
-export type  = z.output<typeof NetworkLogsTableWriteSchema>;
+export type NetworkLogInsertBaseRecord = z.output<typeof NetworkLogsTableWriteSchema>;
 
 /**
  * The base record type for the "public.network_logs" table.
  * This type represents an updatable database record before casing transformations are applied.
  */
-export type  = Partial<>;
+export type NetworkLogUpdateBaseRecord = Partial<NetworkLogInsertBaseRecord>;
 
 /**
  * The insert transform function for the "public.network_logs" table.
  * Maps the expected property names to raw database fields. e.g camelCase to snake_case.
  */
-export const transformNetworkLogInsertRecord = (data: ): {
-    ip_address: ['ipAddress'],
-    port_range?: ['portRange'],
-    mac_address?: ['macAddress'],
-    request_time?: ['requestTime'],
-    response_time?: ['responseTime'],
-    bytes_sent?: ['bytesSent'],
-    bytes_received?: ['bytesReceived'],
-    protocol?: ['protocol'],
-    status_code?: ['statusCode'],
-    user_agent?: ['userAgent'],
-    headers?: ['headers'],
+export const transformNetworkLogInsertRecord = (data: NetworkLogInsertBaseRecord): {
+    ip_address: NetworkLogInsertBaseRecord['ipAddress'],
+    port_range?: NetworkLogInsertBaseRecord['portRange'],
+    mac_address?: NetworkLogInsertBaseRecord['macAddress'],
+    request_time?: NetworkLogInsertBaseRecord['requestTime'],
+    response_time?: NetworkLogInsertBaseRecord['responseTime'],
+    bytes_sent?: NetworkLogInsertBaseRecord['bytesSent'],
+    bytes_received?: NetworkLogInsertBaseRecord['bytesReceived'],
+    protocol?: NetworkLogInsertBaseRecord['protocol'],
+    status_code?: NetworkLogInsertBaseRecord['statusCode'],
+    user_agent?: NetworkLogInsertBaseRecord['userAgent'],
+    headers?: NetworkLogInsertBaseRecord['headers'],
 } => ({
     ip_address: data.ipAddress,
     port_range: data.portRange,
@@ -3072,25 +3072,25 @@ export const transformNetworkLogInsertRecord = (data: ): {
     protocol: data.protocol,
     status_code: data.statusCode,
     user_agent: data.userAgent,
-    headers: (data.headers ? JSON.stringify(data.headers) : data.headers),
+    headers: data.headers,
 });
 
 /**
  * The update transform function for the "public.network_logs" table.
  * Maps the expected property names to raw database fields. e.g camelCase to snake_case.
  */
-export const transformNetworkLogUpdateRecord = (data: ): {
-    ip_address: ['ipAddress'],
-    port_range?: ['portRange'],
-    mac_address?: ['macAddress'],
-    request_time?: ['requestTime'],
-    response_time?: ['responseTime'],
-    bytes_sent?: ['bytesSent'],
-    bytes_received?: ['bytesReceived'],
-    protocol?: ['protocol'],
-    status_code?: ['statusCode'],
-    user_agent?: ['userAgent'],
-    headers?: ['headers'],
+export const transformNetworkLogUpdateRecord = (data: NetworkLogUpdateBaseRecord): {
+    ip_address: NetworkLogUpdateBaseRecord['ipAddress'],
+    port_range?: NetworkLogUpdateBaseRecord['portRange'],
+    mac_address?: NetworkLogUpdateBaseRecord['macAddress'],
+    request_time?: NetworkLogUpdateBaseRecord['requestTime'],
+    response_time?: NetworkLogUpdateBaseRecord['responseTime'],
+    bytes_sent?: NetworkLogUpdateBaseRecord['bytesSent'],
+    bytes_received?: NetworkLogUpdateBaseRecord['bytesReceived'],
+    protocol?: NetworkLogUpdateBaseRecord['protocol'],
+    status_code?: NetworkLogUpdateBaseRecord['statusCode'],
+    user_agent?: NetworkLogUpdateBaseRecord['userAgent'],
+    headers?: NetworkLogUpdateBaseRecord['headers'],
 } => ({
     ip_address: data.ipAddress,
     port_range: data.portRange,
@@ -3102,7 +3102,7 @@ export const transformNetworkLogUpdateRecord = (data: ): {
     protocol: data.protocol,
     status_code: data.statusCode,
     user_agent: data.userAgent,
-    headers: (data.headers ? JSON.stringify(data.headers) : data.headers),
+    headers: data.headers,
 });
 
 /**
@@ -3262,12 +3262,12 @@ export const OrderItemsTableReadSchema = z.object({
     * dataType: int8
     * defaultValue: 
     */
-    order_id: z.number().int().nullable().optional(),
+    order_id: z.number().int().nullish().transform((value) => value ?? undefined).optional(),
     /**
     * dataType: int4
     * defaultValue: 
     */
-    product_id: z.number().int().nullable().optional(),
+    product_id: z.number().int().nullish().transform((value) => value ?? undefined).optional(),
     /**
     * dataType: int2
     * defaultValue: 
@@ -3282,40 +3282,40 @@ export const OrderItemsTableReadSchema = z.object({
     * dataType: numeric
     * defaultValue: 0
     */
-    discount_percent: z.number().nullable().optional(),
+    discount_percent: z.number().nullish().transform((value) => value ?? undefined).optional(),
     /**
     * dataType: numeric
     * defaultValue: (((quantity)::numeric * unit_price) * ((1)::numeric - (discount_percent / (100)::numeric)))
     */
-    line_total: z.number().nullable().optional(),
+    line_total: z.number().nullish().transform((value) => value ?? undefined).optional(),
 });
 
 /**
  * The base record type for the "public.order_items" table.
  * This type represents the raw database record without any transformations.
  */
-export type OrderItemReadRecord = z.output<typeof OrderItemsTableReadSchema>;
+export type OrderItemReadBaseRecord = z.output<typeof OrderItemsTableReadSchema>;
 
 /**
 * The read transform function for the "public.order_items" table.
 * Maps the raw database fields to expected property names. e.g snake_case to camelCase.
 */
-export const transformOrderItemReadRecord = (data: OrderItemReadRecord): {
-    id: OrderItemReadRecord['id'],
-    orderId?: OrderItemReadRecord['order_id'],
-    productId?: OrderItemReadRecord['product_id'],
-    quantity: OrderItemReadRecord['quantity'],
-    unitPrice: OrderItemReadRecord['unit_price'],
-    discountPercent?: OrderItemReadRecord['discount_percent'],
-    lineTotal?: OrderItemReadRecord['line_total'],
+export const transformOrderItemReadRecord = (data: OrderItemReadBaseRecord): {
+    id: OrderItemReadBaseRecord['id'],
+    orderId?: OrderItemReadBaseRecord['order_id'],
+    productId?: OrderItemReadBaseRecord['product_id'],
+    quantity: OrderItemReadBaseRecord['quantity'],
+    unitPrice: OrderItemReadBaseRecord['unit_price'],
+    discountPercent?: OrderItemReadBaseRecord['discount_percent'],
+    lineTotal?: OrderItemReadBaseRecord['line_total'],
 } => ({
     id: data.id,
-    orderId: data.order_id ?? undefined,
-    productId: data.product_id ?? undefined,
+    orderId: data.order_id,
+    productId: data.product_id,
     quantity: data.quantity,
     unitPrice: data.unit_price,
-    discountPercent: data.discount_percent ?? undefined,
-    lineTotal: data.line_total ?? undefined,
+    discountPercent: data.discount_percent,
+    lineTotal: data.line_total,
 });
 
 /**
@@ -3365,25 +3365,25 @@ export const OrderItemsTableWriteSchema = z.object({
  * The base record type for the "public.order_items" table.
  * This type represents an insertable database record before casing transformations are applied.
  */
-export type  = z.output<typeof OrderItemsTableWriteSchema>;
+export type OrderItemInsertBaseRecord = z.output<typeof OrderItemsTableWriteSchema>;
 
 /**
  * The base record type for the "public.order_items" table.
  * This type represents an updatable database record before casing transformations are applied.
  */
-export type  = Partial<>;
+export type OrderItemUpdateBaseRecord = Partial<OrderItemInsertBaseRecord>;
 
 /**
  * The insert transform function for the "public.order_items" table.
  * Maps the expected property names to raw database fields. e.g camelCase to snake_case.
  */
-export const transformOrderItemInsertRecord = (data: ): {
-    order_id?: ['orderId'],
-    product_id?: ['productId'],
-    quantity: ['quantity'],
-    unit_price: ['unitPrice'],
-    discount_percent?: ['discountPercent'],
-    line_total?: ['lineTotal'],
+export const transformOrderItemInsertRecord = (data: OrderItemInsertBaseRecord): {
+    order_id?: OrderItemInsertBaseRecord['orderId'],
+    product_id?: OrderItemInsertBaseRecord['productId'],
+    quantity: OrderItemInsertBaseRecord['quantity'],
+    unit_price: OrderItemInsertBaseRecord['unitPrice'],
+    discount_percent?: OrderItemInsertBaseRecord['discountPercent'],
+    line_total?: OrderItemInsertBaseRecord['lineTotal'],
 } => ({
     order_id: data.orderId,
     product_id: data.productId,
@@ -3397,13 +3397,13 @@ export const transformOrderItemInsertRecord = (data: ): {
  * The update transform function for the "public.order_items" table.
  * Maps the expected property names to raw database fields. e.g camelCase to snake_case.
  */
-export const transformOrderItemUpdateRecord = (data: ): {
-    order_id?: ['orderId'],
-    product_id?: ['productId'],
-    quantity: ['quantity'],
-    unit_price: ['unitPrice'],
-    discount_percent?: ['discountPercent'],
-    line_total?: ['lineTotal'],
+export const transformOrderItemUpdateRecord = (data: OrderItemUpdateBaseRecord): {
+    order_id?: OrderItemUpdateBaseRecord['orderId'],
+    product_id?: OrderItemUpdateBaseRecord['productId'],
+    quantity: OrderItemUpdateBaseRecord['quantity'],
+    unit_price: OrderItemUpdateBaseRecord['unitPrice'],
+    discount_percent?: OrderItemUpdateBaseRecord['discountPercent'],
+    line_total?: OrderItemUpdateBaseRecord['lineTotal'],
 } => ({
     order_id: data.orderId,
     product_id: data.productId,
@@ -3537,12 +3537,12 @@ export const OrdersTableReadSchema = z.object({
     * dataType: int4
     * defaultValue: 
     */
-    user_id: z.number().int().nullable().optional(),
+    user_id: z.number().int().nullish().transform((value) => value ?? undefined).optional(),
     /**
     * dataType: order_status
     * defaultValue: 'pending'::order_status
     */
-    status: z.any().nullable().optional(),
+    status: z.any().nullish().transform((value) => value ?? undefined).optional(),
     /**
     * dataType: money
     * defaultValue: 
@@ -3552,82 +3552,82 @@ export const OrdersTableReadSchema = z.object({
     * dataType: money
     * defaultValue: 0
     */
-    tax_amount: z.number().nullable().optional(),
+    tax_amount: z.number().nullish().transform((value) => value ?? undefined).optional(),
     /**
     * dataType: money
     * defaultValue: 0
     */
-    shipping_cost: z.number().nullable().optional(),
+    shipping_cost: z.number().nullish().transform((value) => value ?? undefined).optional(),
     /**
     * dataType: date
     * defaultValue: CURRENT_DATE
     */
-    order_date: z.date().nullable().optional(),
+    order_date: z.date().nullish().transform((value) => value ?? undefined).optional(),
     /**
     * dataType: date
     * defaultValue: 
     */
-    shipped_date: z.date().nullable().optional(),
+    shipped_date: z.date().nullish().transform((value) => value ?? undefined).optional(),
     /**
     * dataType: time
     * defaultValue: 
     */
-    delivery_time: z.string().nullable().optional(),
+    delivery_time: z.string().nullish().transform((value) => value ?? undefined).optional(),
     /**
     * dataType: _text
     * defaultValue: 
     */
-    notes: z.array(z.string()).nullable().optional(),
+    notes: z.array(z.string()).nullish().transform((value) => value ?? []).optional(),
     /**
     * dataType: jsonb
     * defaultValue: 
     */
-    metadata: OrderMetadataSchema.nullable().optional(),
+    metadata: OrderMetadataSchema.nullish().transform((value) => value ?? undefined).optional(),
     /**
     * dataType: timestamptz
     * defaultValue: now()
     */
-    created_at: z.date().nullable().optional(),
+    created_at: z.date().nullish().transform((value) => value ?? undefined).optional(),
 });
 
 /**
  * The base record type for the "public.orders" table.
  * This type represents the raw database record without any transformations.
  */
-export type OrderReadRecord = z.output<typeof OrdersTableReadSchema>;
+export type OrderReadBaseRecord = z.output<typeof OrdersTableReadSchema>;
 
 /**
 * The read transform function for the "public.orders" table.
 * Maps the raw database fields to expected property names. e.g snake_case to camelCase.
 */
-export const transformOrderReadRecord = (data: OrderReadRecord): {
-    id: OrderReadRecord['id'],
-    orderNumber: OrderReadRecord['order_number'],
-    userId?: OrderReadRecord['user_id'],
-    status?: OrderReadRecord['status'],
-    totalAmount: OrderReadRecord['total_amount'],
-    taxAmount?: OrderReadRecord['tax_amount'],
-    shippingCost?: OrderReadRecord['shipping_cost'],
-    orderDate?: OrderReadRecord['order_date'],
-    shippedDate?: OrderReadRecord['shipped_date'],
-    deliveryTime?: OrderReadRecord['delivery_time'],
-    notes?: OrderReadRecord['notes'],
-    metadata?: OrderReadRecord['metadata'],
-    createdAt?: OrderReadRecord['created_at'],
+export const transformOrderReadRecord = (data: OrderReadBaseRecord): {
+    id: OrderReadBaseRecord['id'],
+    orderNumber: OrderReadBaseRecord['order_number'],
+    userId?: OrderReadBaseRecord['user_id'],
+    status?: OrderReadBaseRecord['status'],
+    totalAmount: OrderReadBaseRecord['total_amount'],
+    taxAmount?: OrderReadBaseRecord['tax_amount'],
+    shippingCost?: OrderReadBaseRecord['shipping_cost'],
+    orderDate?: OrderReadBaseRecord['order_date'],
+    shippedDate?: OrderReadBaseRecord['shipped_date'],
+    deliveryTime?: OrderReadBaseRecord['delivery_time'],
+    notes?: OrderReadBaseRecord['notes'],
+    metadata?: OrderReadBaseRecord['metadata'],
+    createdAt?: OrderReadBaseRecord['created_at'],
 } => ({
     id: data.id,
     orderNumber: data.order_number,
-    userId: data.user_id ?? undefined,
-    status: data.status ?? undefined,
+    userId: data.user_id,
+    status: data.status,
     totalAmount: data.total_amount,
-    taxAmount: data.tax_amount ?? undefined,
-    shippingCost: data.shipping_cost ?? undefined,
-    orderDate: data.order_date ?? undefined,
-    shippedDate: data.shipped_date ?? undefined,
-    deliveryTime: data.delivery_time ?? undefined,
-    notes: data.notes ?? [],
-    metadata: data.metadata ?? undefined,
-    createdAt: data.created_at ?? undefined,
+    taxAmount: data.tax_amount,
+    shippingCost: data.shipping_cost,
+    orderDate: data.order_date,
+    shippedDate: data.shipped_date,
+    deliveryTime: data.delivery_time,
+    notes: data.notes,
+    metadata: data.metadata,
+    createdAt: data.created_at,
 });
 
 /**
@@ -3695,7 +3695,7 @@ export const OrdersTableWriteSchema = z.object({
     * dataType: jsonb
     * defaultValue: 
     */
-    metadata: OrderMetadataSchema.nullish().optional(),
+    metadata: OrderMetadataSchema.nullish().transform((value) => value ? JSON.stringify(value) : value).optional(),
     /**
     * dataType: timestamptz
     * defaultValue: now()
@@ -3707,31 +3707,31 @@ export const OrdersTableWriteSchema = z.object({
  * The base record type for the "public.orders" table.
  * This type represents an insertable database record before casing transformations are applied.
  */
-export type  = z.output<typeof OrdersTableWriteSchema>;
+export type OrderInsertBaseRecord = z.output<typeof OrdersTableWriteSchema>;
 
 /**
  * The base record type for the "public.orders" table.
  * This type represents an updatable database record before casing transformations are applied.
  */
-export type  = Partial<>;
+export type OrderUpdateBaseRecord = Partial<OrderInsertBaseRecord>;
 
 /**
  * The insert transform function for the "public.orders" table.
  * Maps the expected property names to raw database fields. e.g camelCase to snake_case.
  */
-export const transformOrderInsertRecord = (data: ): {
-    order_number: ['orderNumber'],
-    user_id?: ['userId'],
-    status?: ['status'],
-    total_amount: ['totalAmount'],
-    tax_amount?: ['taxAmount'],
-    shipping_cost?: ['shippingCost'],
-    order_date?: ['orderDate'],
-    shipped_date?: ['shippedDate'],
-    delivery_time?: ['deliveryTime'],
-    notes?: ['notes'],
-    metadata?: ['metadata'],
-    created_at?: ['createdAt'],
+export const transformOrderInsertRecord = (data: OrderInsertBaseRecord): {
+    order_number: OrderInsertBaseRecord['orderNumber'],
+    user_id?: OrderInsertBaseRecord['userId'],
+    status?: OrderInsertBaseRecord['status'],
+    total_amount: OrderInsertBaseRecord['totalAmount'],
+    tax_amount?: OrderInsertBaseRecord['taxAmount'],
+    shipping_cost?: OrderInsertBaseRecord['shippingCost'],
+    order_date?: OrderInsertBaseRecord['orderDate'],
+    shipped_date?: OrderInsertBaseRecord['shippedDate'],
+    delivery_time?: OrderInsertBaseRecord['deliveryTime'],
+    notes?: OrderInsertBaseRecord['notes'],
+    metadata?: OrderInsertBaseRecord['metadata'],
+    created_at?: OrderInsertBaseRecord['createdAt'],
 } => ({
     order_number: data.orderNumber,
     user_id: data.userId,
@@ -3743,7 +3743,7 @@ export const transformOrderInsertRecord = (data: ): {
     shipped_date: data.shippedDate,
     delivery_time: data.deliveryTime,
     notes: data.notes,
-    metadata: (data.metadata ? JSON.stringify(data.metadata) : data.metadata),
+    metadata: data.metadata,
     created_at: data.createdAt,
 });
 
@@ -3751,19 +3751,19 @@ export const transformOrderInsertRecord = (data: ): {
  * The update transform function for the "public.orders" table.
  * Maps the expected property names to raw database fields. e.g camelCase to snake_case.
  */
-export const transformOrderUpdateRecord = (data: ): {
-    order_number: ['orderNumber'],
-    user_id?: ['userId'],
-    status?: ['status'],
-    total_amount: ['totalAmount'],
-    tax_amount?: ['taxAmount'],
-    shipping_cost?: ['shippingCost'],
-    order_date?: ['orderDate'],
-    shipped_date?: ['shippedDate'],
-    delivery_time?: ['deliveryTime'],
-    notes?: ['notes'],
-    metadata?: ['metadata'],
-    created_at?: ['createdAt'],
+export const transformOrderUpdateRecord = (data: OrderUpdateBaseRecord): {
+    order_number: OrderUpdateBaseRecord['orderNumber'],
+    user_id?: OrderUpdateBaseRecord['userId'],
+    status?: OrderUpdateBaseRecord['status'],
+    total_amount: OrderUpdateBaseRecord['totalAmount'],
+    tax_amount?: OrderUpdateBaseRecord['taxAmount'],
+    shipping_cost?: OrderUpdateBaseRecord['shippingCost'],
+    order_date?: OrderUpdateBaseRecord['orderDate'],
+    shipped_date?: OrderUpdateBaseRecord['shippedDate'],
+    delivery_time?: OrderUpdateBaseRecord['deliveryTime'],
+    notes?: OrderUpdateBaseRecord['notes'],
+    metadata?: OrderUpdateBaseRecord['metadata'],
+    created_at?: OrderUpdateBaseRecord['createdAt'],
 } => ({
     order_number: data.orderNumber,
     user_id: data.userId,
@@ -3775,7 +3775,7 @@ export const transformOrderUpdateRecord = (data: ): {
     shipped_date: data.shippedDate,
     delivery_time: data.deliveryTime,
     notes: data.notes,
-    metadata: (data.metadata ? JSON.stringify(data.metadata) : data.metadata),
+    metadata: data.metadata,
     created_at: data.createdAt,
 });
 
@@ -3953,15 +3953,15 @@ export const PostCategoriesTableReadSchema = z.object({
  * The base record type for the "public.post_categories" table.
  * This type represents the raw database record without any transformations.
  */
-export type PostCategoryReadRecord = z.output<typeof PostCategoriesTableReadSchema>;
+export type PostCategoryReadBaseRecord = z.output<typeof PostCategoriesTableReadSchema>;
 
 /**
 * The read transform function for the "public.post_categories" table.
 * Maps the raw database fields to expected property names. e.g snake_case to camelCase.
 */
-export const transformPostCategoryReadRecord = (data: PostCategoryReadRecord): {
-    postId: PostCategoryReadRecord['post_id'],
-    categoryId: PostCategoryReadRecord['category_id'],
+export const transformPostCategoryReadRecord = (data: PostCategoryReadBaseRecord): {
+    postId: PostCategoryReadBaseRecord['post_id'],
+    categoryId: PostCategoryReadBaseRecord['category_id'],
 } => ({
     postId: data.post_id,
     categoryId: data.category_id,
@@ -3994,21 +3994,21 @@ export const PostCategoriesTableWriteSchema = z.object({
  * The base record type for the "public.post_categories" table.
  * This type represents an insertable database record before casing transformations are applied.
  */
-export type  = z.output<typeof PostCategoriesTableWriteSchema>;
+export type PostCategoryInsertBaseRecord = z.output<typeof PostCategoriesTableWriteSchema>;
 
 /**
  * The base record type for the "public.post_categories" table.
  * This type represents an updatable database record before casing transformations are applied.
  */
-export type  = Partial<>;
+export type PostCategoryUpdateBaseRecord = Partial<PostCategoryInsertBaseRecord>;
 
 /**
  * The insert transform function for the "public.post_categories" table.
  * Maps the expected property names to raw database fields. e.g camelCase to snake_case.
  */
-export const transformPostCategoryInsertRecord = (data: ): {
-    post_id: ['postId'],
-    category_id: ['categoryId'],
+export const transformPostCategoryInsertRecord = (data: PostCategoryInsertBaseRecord): {
+    post_id: PostCategoryInsertBaseRecord['postId'],
+    category_id: PostCategoryInsertBaseRecord['categoryId'],
 } => ({
     post_id: data.postId,
     category_id: data.categoryId,
@@ -4018,9 +4018,9 @@ export const transformPostCategoryInsertRecord = (data: ): {
  * The update transform function for the "public.post_categories" table.
  * Maps the expected property names to raw database fields. e.g camelCase to snake_case.
  */
-export const transformPostCategoryUpdateRecord = (data: ): {
-    post_id: ['postId'],
-    category_id: ['categoryId'],
+export const transformPostCategoryUpdateRecord = (data: PostCategoryUpdateBaseRecord): {
+    post_id: PostCategoryUpdateBaseRecord['postId'],
+    category_id: PostCategoryUpdateBaseRecord['categoryId'],
 } => ({
     post_id: data.postId,
     category_id: data.categoryId,
@@ -4105,7 +4105,7 @@ export const PostsTableReadSchema = z.object({
     * dataType: int4
     * defaultValue: 
     */
-    user_id: z.number().int().nullable().optional(),
+    user_id: z.number().int().nullish().transform((value) => value ?? undefined).optional(),
     /**
     * dataType: text
     * defaultValue: 
@@ -4115,78 +4115,78 @@ export const PostsTableReadSchema = z.object({
     * dataType: text
     * defaultValue: 
     */
-    content: z.string().nullable().optional(),
+    content: z.string().nullish().transform((value) => value ?? undefined).optional(),
     /**
     * dataType: bool
     * defaultValue: false
     */
-    published: z.boolean().nullable().optional(),
+    published: z.boolean().nullish().transform((value) => value ?? undefined).optional(),
     /**
     * dataType: varchar
     * defaultValue: 'draft'::character varying
     */
-    status: z.enum(POST_STATUSES).nullable().optional(),
+    status: z.enum(POST_STATUSES).nullish().transform((value) => value ?? undefined).optional(),
     /**
     * dataType: int4
     * defaultValue: 0
     */
-    views: z.number().int().nullable().optional(),
+    views: z.number().int().nullish().transform((value) => value ?? undefined).optional(),
     /**
     * dataType: _text
     * defaultValue: 
     */
-    tags: z.array(z.string()).nullable().optional(),
+    tags: z.array(z.string()).nullish().transform((value) => value ?? []).optional(),
     /**
     * dataType: jsonb
     * defaultValue: 
     */
-    metadata: PostMetadataSchema.nullable().optional(),
+    metadata: PostMetadataSchema.nullish().transform((value) => value ?? undefined).optional(),
     /**
     * dataType: timestamptz
     * defaultValue: 
     */
-    published_at: z.date().nullable().optional(),
+    published_at: z.date().nullish().transform((value) => value ?? undefined).optional(),
     /**
     * dataType: timestamptz
     * defaultValue: now()
     */
-    updated_at: z.date().nullable().optional(),
+    updated_at: z.date().nullish().transform((value) => value ?? undefined).optional(),
 });
 
 /**
  * The base record type for the "public.posts" table.
  * This type represents the raw database record without any transformations.
  */
-export type PostReadRecord = z.output<typeof PostsTableReadSchema>;
+export type PostReadBaseRecord = z.output<typeof PostsTableReadSchema>;
 
 /**
 * The read transform function for the "public.posts" table.
 * Maps the raw database fields to expected property names. e.g snake_case to camelCase.
 */
-export const transformPostReadRecord = (data: PostReadRecord): {
-    id: PostReadRecord['id'],
-    userId?: PostReadRecord['user_id'],
-    title: PostReadRecord['title'],
-    content?: PostReadRecord['content'],
-    published?: PostReadRecord['published'],
-    status?: PostReadRecord['status'],
-    views?: PostReadRecord['views'],
-    tags?: PostReadRecord['tags'],
-    metadata?: PostReadRecord['metadata'],
-    publishedAt?: PostReadRecord['published_at'],
-    updatedAt?: PostReadRecord['updated_at'],
+export const transformPostReadRecord = (data: PostReadBaseRecord): {
+    id: PostReadBaseRecord['id'],
+    userId?: PostReadBaseRecord['user_id'],
+    title: PostReadBaseRecord['title'],
+    content?: PostReadBaseRecord['content'],
+    published?: PostReadBaseRecord['published'],
+    status?: PostReadBaseRecord['status'],
+    views?: PostReadBaseRecord['views'],
+    tags?: PostReadBaseRecord['tags'],
+    metadata?: PostReadBaseRecord['metadata'],
+    publishedAt?: PostReadBaseRecord['published_at'],
+    updatedAt?: PostReadBaseRecord['updated_at'],
 } => ({
     id: data.id,
-    userId: data.user_id ?? undefined,
+    userId: data.user_id,
     title: data.title,
-    content: data.content ?? undefined,
-    published: data.published ?? undefined,
-    status: data.status ?? undefined,
-    views: data.views ?? undefined,
-    tags: data.tags ?? [],
-    metadata: data.metadata ?? undefined,
-    publishedAt: data.published_at ?? undefined,
-    updatedAt: data.updated_at ?? undefined,
+    content: data.content,
+    published: data.published,
+    status: data.status,
+    views: data.views,
+    tags: data.tags,
+    metadata: data.metadata,
+    publishedAt: data.published_at,
+    updatedAt: data.updated_at,
 });
 
 /**
@@ -4239,7 +4239,7 @@ export const PostsTableWriteSchema = z.object({
     * dataType: jsonb
     * defaultValue: 
     */
-    metadata: PostMetadataSchema.nullish().optional(),
+    metadata: PostMetadataSchema.nullish().transform((value) => value ? JSON.stringify(value) : value).optional(),
     /**
     * dataType: timestamptz
     * defaultValue: 
@@ -4256,29 +4256,29 @@ export const PostsTableWriteSchema = z.object({
  * The base record type for the "public.posts" table.
  * This type represents an insertable database record before casing transformations are applied.
  */
-export type  = z.output<typeof PostsTableWriteSchema>;
+export type PostInsertBaseRecord = z.output<typeof PostsTableWriteSchema>;
 
 /**
  * The base record type for the "public.posts" table.
  * This type represents an updatable database record before casing transformations are applied.
  */
-export type  = Partial<>;
+export type PostUpdateBaseRecord = Partial<PostInsertBaseRecord>;
 
 /**
  * The insert transform function for the "public.posts" table.
  * Maps the expected property names to raw database fields. e.g camelCase to snake_case.
  */
-export const transformPostInsertRecord = (data: ): {
-    user_id?: ['userId'],
-    title: ['title'],
-    content?: ['content'],
-    published?: ['published'],
-    status?: ['status'],
-    views?: ['views'],
-    tags?: ['tags'],
-    metadata?: ['metadata'],
-    published_at?: ['publishedAt'],
-    updated_at?: ['updatedAt'],
+export const transformPostInsertRecord = (data: PostInsertBaseRecord): {
+    user_id?: PostInsertBaseRecord['userId'],
+    title: PostInsertBaseRecord['title'],
+    content?: PostInsertBaseRecord['content'],
+    published?: PostInsertBaseRecord['published'],
+    status?: PostInsertBaseRecord['status'],
+    views?: PostInsertBaseRecord['views'],
+    tags?: PostInsertBaseRecord['tags'],
+    metadata?: PostInsertBaseRecord['metadata'],
+    published_at?: PostInsertBaseRecord['publishedAt'],
+    updated_at?: PostInsertBaseRecord['updatedAt'],
 } => ({
     user_id: data.userId,
     title: data.title,
@@ -4287,7 +4287,7 @@ export const transformPostInsertRecord = (data: ): {
     status: data.status,
     views: data.views,
     tags: data.tags,
-    metadata: (data.metadata ? JSON.stringify(data.metadata) : data.metadata),
+    metadata: data.metadata,
     published_at: data.publishedAt,
     updated_at: data.updatedAt,
 });
@@ -4296,17 +4296,17 @@ export const transformPostInsertRecord = (data: ): {
  * The update transform function for the "public.posts" table.
  * Maps the expected property names to raw database fields. e.g camelCase to snake_case.
  */
-export const transformPostUpdateRecord = (data: ): {
-    user_id?: ['userId'],
-    title: ['title'],
-    content?: ['content'],
-    published?: ['published'],
-    status?: ['status'],
-    views?: ['views'],
-    tags?: ['tags'],
-    metadata?: ['metadata'],
-    published_at?: ['publishedAt'],
-    updated_at?: ['updatedAt'],
+export const transformPostUpdateRecord = (data: PostUpdateBaseRecord): {
+    user_id?: PostUpdateBaseRecord['userId'],
+    title: PostUpdateBaseRecord['title'],
+    content?: PostUpdateBaseRecord['content'],
+    published?: PostUpdateBaseRecord['published'],
+    status?: PostUpdateBaseRecord['status'],
+    views?: PostUpdateBaseRecord['views'],
+    tags?: PostUpdateBaseRecord['tags'],
+    metadata?: PostUpdateBaseRecord['metadata'],
+    published_at?: PostUpdateBaseRecord['publishedAt'],
+    updated_at?: PostUpdateBaseRecord['updatedAt'],
 } => ({
     user_id: data.userId,
     title: data.title,
@@ -4315,7 +4315,7 @@ export const transformPostUpdateRecord = (data: ): {
     status: data.status,
     views: data.views,
     tags: data.tags,
-    metadata: (data.metadata ? JSON.stringify(data.metadata) : data.metadata),
+    metadata: data.metadata,
     published_at: data.publishedAt,
     updated_at: data.updatedAt,
 });
@@ -4475,73 +4475,73 @@ export const ProductsTableReadSchema = z.object({
     * dataType: numeric
     * defaultValue: 
     */
-    cost: z.number().nullable().optional(),
+    cost: z.number().nullish().transform((value) => value ?? undefined).optional(),
     /**
     * dataType: float4
     * defaultValue: 
     */
-    weight: z.number().nullable().optional(),
+    weight: z.number().nullish().transform((value) => value ?? undefined).optional(),
     /**
     * dataType: point
     * defaultValue: 
     */
-    dimensions: z.string().nullable().optional(),
+    dimensions: z.string().nullish().transform((value) => value ?? undefined).optional(),
     /**
     * dataType: bool
     * defaultValue: true
     */
-    is_active: z.boolean().nullable().optional(),
+    is_active: z.boolean().nullish().transform((value) => value ?? undefined).optional(),
     /**
     * dataType: bpchar
     * defaultValue: 
     */
-    barcode: z.string().nullable().optional(),
+    barcode: z.string().nullish().transform((value) => value ?? undefined).optional(),
     /**
     * dataType: text
     * defaultValue: 
     */
-    description: z.string().nullable().optional(),
+    description: z.string().nullish().transform((value) => value ?? undefined).optional(),
     /**
     * dataType: timestamptz
     * defaultValue: now()
     */
-    created_at: z.date().nullable().optional(),
+    created_at: z.date().nullish().transform((value) => value ?? undefined).optional(),
 });
 
 /**
  * The base record type for the "public.products" table.
  * This type represents the raw database record without any transformations.
  */
-export type ProductReadRecord = z.output<typeof ProductsTableReadSchema>;
+export type ProductReadBaseRecord = z.output<typeof ProductsTableReadSchema>;
 
 /**
 * The read transform function for the "public.products" table.
 * Maps the raw database fields to expected property names. e.g snake_case to camelCase.
 */
-export const transformProductReadRecord = (data: ProductReadRecord): {
-    id: ProductReadRecord['id'],
-    name: ProductReadRecord['name'],
-    sku: ProductReadRecord['sku'],
-    price: ProductReadRecord['price'],
-    cost?: ProductReadRecord['cost'],
-    weight?: ProductReadRecord['weight'],
-    dimensions?: ProductReadRecord['dimensions'],
-    isActive?: ProductReadRecord['is_active'],
-    barcode?: ProductReadRecord['barcode'],
-    description?: ProductReadRecord['description'],
-    createdAt?: ProductReadRecord['created_at'],
+export const transformProductReadRecord = (data: ProductReadBaseRecord): {
+    id: ProductReadBaseRecord['id'],
+    name: ProductReadBaseRecord['name'],
+    sku: ProductReadBaseRecord['sku'],
+    price: ProductReadBaseRecord['price'],
+    cost?: ProductReadBaseRecord['cost'],
+    weight?: ProductReadBaseRecord['weight'],
+    dimensions?: ProductReadBaseRecord['dimensions'],
+    isActive?: ProductReadBaseRecord['is_active'],
+    barcode?: ProductReadBaseRecord['barcode'],
+    description?: ProductReadBaseRecord['description'],
+    createdAt?: ProductReadBaseRecord['created_at'],
 } => ({
     id: data.id,
     name: data.name,
     sku: data.sku,
     price: data.price,
-    cost: data.cost ?? undefined,
-    weight: data.weight ?? undefined,
-    dimensions: data.dimensions ?? undefined,
-    isActive: data.is_active ?? undefined,
-    barcode: data.barcode ?? undefined,
-    description: data.description ?? undefined,
-    createdAt: data.created_at ?? undefined,
+    cost: data.cost,
+    weight: data.weight,
+    dimensions: data.dimensions,
+    isActive: data.is_active,
+    barcode: data.barcode,
+    description: data.description,
+    createdAt: data.created_at,
 });
 
 /**
@@ -4611,29 +4611,29 @@ export const ProductsTableWriteSchema = z.object({
  * The base record type for the "public.products" table.
  * This type represents an insertable database record before casing transformations are applied.
  */
-export type  = z.output<typeof ProductsTableWriteSchema>;
+export type ProductInsertBaseRecord = z.output<typeof ProductsTableWriteSchema>;
 
 /**
  * The base record type for the "public.products" table.
  * This type represents an updatable database record before casing transformations are applied.
  */
-export type  = Partial<>;
+export type ProductUpdateBaseRecord = Partial<ProductInsertBaseRecord>;
 
 /**
  * The insert transform function for the "public.products" table.
  * Maps the expected property names to raw database fields. e.g camelCase to snake_case.
  */
-export const transformProductInsertRecord = (data: ): {
-    name: ['name'],
-    sku: ['sku'],
-    price: ['price'],
-    cost?: ['cost'],
-    weight?: ['weight'],
-    dimensions?: ['dimensions'],
-    is_active?: ['isActive'],
-    barcode?: ['barcode'],
-    description?: ['description'],
-    created_at?: ['createdAt'],
+export const transformProductInsertRecord = (data: ProductInsertBaseRecord): {
+    name: ProductInsertBaseRecord['name'],
+    sku: ProductInsertBaseRecord['sku'],
+    price: ProductInsertBaseRecord['price'],
+    cost?: ProductInsertBaseRecord['cost'],
+    weight?: ProductInsertBaseRecord['weight'],
+    dimensions?: ProductInsertBaseRecord['dimensions'],
+    is_active?: ProductInsertBaseRecord['isActive'],
+    barcode?: ProductInsertBaseRecord['barcode'],
+    description?: ProductInsertBaseRecord['description'],
+    created_at?: ProductInsertBaseRecord['createdAt'],
 } => ({
     name: data.name,
     sku: data.sku,
@@ -4651,17 +4651,17 @@ export const transformProductInsertRecord = (data: ): {
  * The update transform function for the "public.products" table.
  * Maps the expected property names to raw database fields. e.g camelCase to snake_case.
  */
-export const transformProductUpdateRecord = (data: ): {
-    name: ['name'],
-    sku: ['sku'],
-    price: ['price'],
-    cost?: ['cost'],
-    weight?: ['weight'],
-    dimensions?: ['dimensions'],
-    is_active?: ['isActive'],
-    barcode?: ['barcode'],
-    description?: ['description'],
-    created_at?: ['createdAt'],
+export const transformProductUpdateRecord = (data: ProductUpdateBaseRecord): {
+    name: ProductUpdateBaseRecord['name'],
+    sku: ProductUpdateBaseRecord['sku'],
+    price: ProductUpdateBaseRecord['price'],
+    cost?: ProductUpdateBaseRecord['cost'],
+    weight?: ProductUpdateBaseRecord['weight'],
+    dimensions?: ProductUpdateBaseRecord['dimensions'],
+    is_active?: ProductUpdateBaseRecord['isActive'],
+    barcode?: ProductUpdateBaseRecord['barcode'],
+    description?: ProductUpdateBaseRecord['description'],
+    created_at?: ProductUpdateBaseRecord['createdAt'],
 } => ({
     name: data.name,
     sku: data.sku,
@@ -4837,71 +4837,71 @@ export const TimeSeriesTableReadSchema = z.object({
     * dataType: numeric
     * defaultValue: 
     */
-    temperature: z.number().nullable().optional(),
+    temperature: z.number().nullish().transform((value) => value ?? undefined).optional(),
     /**
     * dataType: numeric
     * defaultValue: 
     */
-    humidity: z.number().nullable().optional(),
+    humidity: z.number().nullish().transform((value) => value ?? undefined).optional(),
     /**
     * dataType: numeric
     * defaultValue: 
     */
-    pressure: z.number().nullable().optional(),
+    pressure: z.number().nullish().transform((value) => value ?? undefined).optional(),
     /**
     * dataType: _numeric
     * defaultValue: 
     */
-    readings: z.array(z.number()).nullable().optional(),
+    readings: z.array(z.number()).nullish().transform((value) => value ?? []).optional(),
     /**
     * dataType: bool
     * defaultValue: false
     */
-    anomaly_detected: z.boolean().nullable().optional(),
+    anomaly_detected: z.boolean().nullish().transform((value) => value ?? undefined).optional(),
     /**
     * dataType: int2
     * defaultValue: 
     */
-    data_quality: z.number().int().nullable().optional(),
+    data_quality: z.number().int().nullish().transform((value) => value ?? undefined).optional(),
     /**
     * dataType: timestamptz
     * defaultValue: now()
     */
-    created_at: z.date().nullable().optional(),
+    created_at: z.date().nullish().transform((value) => value ?? undefined).optional(),
 });
 
 /**
  * The base record type for the "public.time_series" table.
  * This type represents the raw database record without any transformations.
  */
-export type TimeSeriesReadRecord = z.output<typeof TimeSeriesTableReadSchema>;
+export type TimeSeriesReadBaseRecord = z.output<typeof TimeSeriesTableReadSchema>;
 
 /**
 * The read transform function for the "public.time_series" table.
 * Maps the raw database fields to expected property names. e.g snake_case to camelCase.
 */
-export const transformTimeSeriesReadRecord = (data: TimeSeriesReadRecord): {
-    id: TimeSeriesReadRecord['id'],
-    sensorId: TimeSeriesReadRecord['sensor_id'],
-    timestamp: TimeSeriesReadRecord['timestamp'],
-    temperature?: TimeSeriesReadRecord['temperature'],
-    humidity?: TimeSeriesReadRecord['humidity'],
-    pressure?: TimeSeriesReadRecord['pressure'],
-    readings?: TimeSeriesReadRecord['readings'],
-    anomalyDetected?: TimeSeriesReadRecord['anomaly_detected'],
-    dataQuality?: TimeSeriesReadRecord['data_quality'],
-    createdAt?: TimeSeriesReadRecord['created_at'],
+export const transformTimeSeriesReadRecord = (data: TimeSeriesReadBaseRecord): {
+    id: TimeSeriesReadBaseRecord['id'],
+    sensorId: TimeSeriesReadBaseRecord['sensor_id'],
+    timestamp: TimeSeriesReadBaseRecord['timestamp'],
+    temperature?: TimeSeriesReadBaseRecord['temperature'],
+    humidity?: TimeSeriesReadBaseRecord['humidity'],
+    pressure?: TimeSeriesReadBaseRecord['pressure'],
+    readings?: TimeSeriesReadBaseRecord['readings'],
+    anomalyDetected?: TimeSeriesReadBaseRecord['anomaly_detected'],
+    dataQuality?: TimeSeriesReadBaseRecord['data_quality'],
+    createdAt?: TimeSeriesReadBaseRecord['created_at'],
 } => ({
     id: data.id,
     sensorId: data.sensor_id,
     timestamp: data.timestamp,
-    temperature: data.temperature ?? undefined,
-    humidity: data.humidity ?? undefined,
-    pressure: data.pressure ?? undefined,
-    readings: data.readings ?? [],
-    anomalyDetected: data.anomaly_detected ?? undefined,
-    dataQuality: data.data_quality ?? undefined,
-    createdAt: data.created_at ?? undefined,
+    temperature: data.temperature,
+    humidity: data.humidity,
+    pressure: data.pressure,
+    readings: data.readings,
+    anomalyDetected: data.anomaly_detected,
+    dataQuality: data.data_quality,
+    createdAt: data.created_at,
 });
 
 /**
@@ -4966,28 +4966,28 @@ export const TimeSeriesTableWriteSchema = z.object({
  * The base record type for the "public.time_series" table.
  * This type represents an insertable database record before casing transformations are applied.
  */
-export type  = z.output<typeof TimeSeriesTableWriteSchema>;
+export type TimeSeriesInsertBaseRecord = z.output<typeof TimeSeriesTableWriteSchema>;
 
 /**
  * The base record type for the "public.time_series" table.
  * This type represents an updatable database record before casing transformations are applied.
  */
-export type  = Partial<>;
+export type TimeSeriesUpdateBaseRecord = Partial<TimeSeriesInsertBaseRecord>;
 
 /**
  * The insert transform function for the "public.time_series" table.
  * Maps the expected property names to raw database fields. e.g camelCase to snake_case.
  */
-export const transformTimeSeriesInsertRecord = (data: ): {
-    sensor_id: ['sensorId'],
-    timestamp: ['timestamp'],
-    temperature?: ['temperature'],
-    humidity?: ['humidity'],
-    pressure?: ['pressure'],
-    readings?: ['readings'],
-    anomaly_detected?: ['anomalyDetected'],
-    data_quality?: ['dataQuality'],
-    created_at?: ['createdAt'],
+export const transformTimeSeriesInsertRecord = (data: TimeSeriesInsertBaseRecord): {
+    sensor_id: TimeSeriesInsertBaseRecord['sensorId'],
+    timestamp: TimeSeriesInsertBaseRecord['timestamp'],
+    temperature?: TimeSeriesInsertBaseRecord['temperature'],
+    humidity?: TimeSeriesInsertBaseRecord['humidity'],
+    pressure?: TimeSeriesInsertBaseRecord['pressure'],
+    readings?: TimeSeriesInsertBaseRecord['readings'],
+    anomaly_detected?: TimeSeriesInsertBaseRecord['anomalyDetected'],
+    data_quality?: TimeSeriesInsertBaseRecord['dataQuality'],
+    created_at?: TimeSeriesInsertBaseRecord['createdAt'],
 } => ({
     sensor_id: data.sensorId,
     timestamp: data.timestamp,
@@ -5004,16 +5004,16 @@ export const transformTimeSeriesInsertRecord = (data: ): {
  * The update transform function for the "public.time_series" table.
  * Maps the expected property names to raw database fields. e.g camelCase to snake_case.
  */
-export const transformTimeSeriesUpdateRecord = (data: ): {
-    sensor_id: ['sensorId'],
-    timestamp: ['timestamp'],
-    temperature?: ['temperature'],
-    humidity?: ['humidity'],
-    pressure?: ['pressure'],
-    readings?: ['readings'],
-    anomaly_detected?: ['anomalyDetected'],
-    data_quality?: ['dataQuality'],
-    created_at?: ['createdAt'],
+export const transformTimeSeriesUpdateRecord = (data: TimeSeriesUpdateBaseRecord): {
+    sensor_id: TimeSeriesUpdateBaseRecord['sensorId'],
+    timestamp: TimeSeriesUpdateBaseRecord['timestamp'],
+    temperature?: TimeSeriesUpdateBaseRecord['temperature'],
+    humidity?: TimeSeriesUpdateBaseRecord['humidity'],
+    pressure?: TimeSeriesUpdateBaseRecord['pressure'],
+    readings?: TimeSeriesUpdateBaseRecord['readings'],
+    anomaly_detected?: TimeSeriesUpdateBaseRecord['anomalyDetected'],
+    data_quality?: TimeSeriesUpdateBaseRecord['dataQuality'],
+    created_at?: TimeSeriesUpdateBaseRecord['createdAt'],
 } => ({
     sensor_id: data.sensorId,
     timestamp: data.timestamp,
@@ -5169,7 +5169,7 @@ export const UserSessionsTableReadSchema = z.object({
     * dataType: int4
     * defaultValue: 
     */
-    user_id: z.number().int().nullable().optional(),
+    user_id: z.number().int().nullish().transform((value) => value ?? undefined).optional(),
     /**
     * dataType: varchar
     * defaultValue: 
@@ -5184,52 +5184,52 @@ export const UserSessionsTableReadSchema = z.object({
     * dataType: timestamptz
     * defaultValue: now()
     */
-    created_at: z.date().nullable().optional(),
+    created_at: z.date().nullish().transform((value) => value ?? undefined).optional(),
     /**
     * dataType: timestamptz
     * defaultValue: now()
     */
-    last_used_at: z.date().nullable().optional(),
+    last_used_at: z.date().nullish().transform((value) => value ?? undefined).optional(),
     /**
     * dataType: inet
     * defaultValue: 
     */
-    ip_address: z.string().nullable().optional(),
+    ip_address: z.string().nullish().transform((value) => value ?? undefined).optional(),
     /**
     * dataType: text
     * defaultValue: 
     */
-    user_agent: z.string().nullable().optional(),
+    user_agent: z.string().nullish().transform((value) => value ?? undefined).optional(),
 });
 
 /**
  * The base record type for the "public.user_sessions" table.
  * This type represents the raw database record without any transformations.
  */
-export type UserSessionReadRecord = z.output<typeof UserSessionsTableReadSchema>;
+export type UserSessionReadBaseRecord = z.output<typeof UserSessionsTableReadSchema>;
 
 /**
 * The read transform function for the "public.user_sessions" table.
 * Maps the raw database fields to expected property names. e.g snake_case to camelCase.
 */
-export const transformUserSessionReadRecord = (data: UserSessionReadRecord): {
-    id: UserSessionReadRecord['id'],
-    userId?: UserSessionReadRecord['user_id'],
-    tokenHash: UserSessionReadRecord['token_hash'],
-    expiresAt: UserSessionReadRecord['expires_at'],
-    createdAt?: UserSessionReadRecord['created_at'],
-    lastUsedAt?: UserSessionReadRecord['last_used_at'],
-    ipAddress?: UserSessionReadRecord['ip_address'],
-    userAgent?: UserSessionReadRecord['user_agent'],
+export const transformUserSessionReadRecord = (data: UserSessionReadBaseRecord): {
+    id: UserSessionReadBaseRecord['id'],
+    userId?: UserSessionReadBaseRecord['user_id'],
+    tokenHash: UserSessionReadBaseRecord['token_hash'],
+    expiresAt: UserSessionReadBaseRecord['expires_at'],
+    createdAt?: UserSessionReadBaseRecord['created_at'],
+    lastUsedAt?: UserSessionReadBaseRecord['last_used_at'],
+    ipAddress?: UserSessionReadBaseRecord['ip_address'],
+    userAgent?: UserSessionReadBaseRecord['user_agent'],
 } => ({
     id: data.id,
-    userId: data.user_id ?? undefined,
+    userId: data.user_id,
     tokenHash: data.token_hash,
     expiresAt: data.expires_at,
-    createdAt: data.created_at ?? undefined,
-    lastUsedAt: data.last_used_at ?? undefined,
-    ipAddress: data.ip_address ?? undefined,
-    userAgent: data.user_agent ?? undefined,
+    createdAt: data.created_at,
+    lastUsedAt: data.last_used_at,
+    ipAddress: data.ip_address,
+    userAgent: data.user_agent,
 });
 
 /**
@@ -5289,27 +5289,27 @@ export const UserSessionsTableWriteSchema = z.object({
  * The base record type for the "public.user_sessions" table.
  * This type represents an insertable database record before casing transformations are applied.
  */
-export type  = z.output<typeof UserSessionsTableWriteSchema>;
+export type UserSessionInsertBaseRecord = z.output<typeof UserSessionsTableWriteSchema>;
 
 /**
  * The base record type for the "public.user_sessions" table.
  * This type represents an updatable database record before casing transformations are applied.
  */
-export type  = Partial<>;
+export type UserSessionUpdateBaseRecord = Partial<UserSessionInsertBaseRecord>;
 
 /**
  * The insert transform function for the "public.user_sessions" table.
  * Maps the expected property names to raw database fields. e.g camelCase to snake_case.
  */
-export const transformUserSessionInsertRecord = (data: ): {
-    id: ['id'],
-    user_id?: ['userId'],
-    token_hash: ['tokenHash'],
-    expires_at: ['expiresAt'],
-    created_at?: ['createdAt'],
-    last_used_at?: ['lastUsedAt'],
-    ip_address?: ['ipAddress'],
-    user_agent?: ['userAgent'],
+export const transformUserSessionInsertRecord = (data: UserSessionInsertBaseRecord): {
+    id: UserSessionInsertBaseRecord['id'],
+    user_id?: UserSessionInsertBaseRecord['userId'],
+    token_hash: UserSessionInsertBaseRecord['tokenHash'],
+    expires_at: UserSessionInsertBaseRecord['expiresAt'],
+    created_at?: UserSessionInsertBaseRecord['createdAt'],
+    last_used_at?: UserSessionInsertBaseRecord['lastUsedAt'],
+    ip_address?: UserSessionInsertBaseRecord['ipAddress'],
+    user_agent?: UserSessionInsertBaseRecord['userAgent'],
 } => ({
     id: data.id,
     user_id: data.userId,
@@ -5325,15 +5325,15 @@ export const transformUserSessionInsertRecord = (data: ): {
  * The update transform function for the "public.user_sessions" table.
  * Maps the expected property names to raw database fields. e.g camelCase to snake_case.
  */
-export const transformUserSessionUpdateRecord = (data: ): {
-    id: ['id'],
-    user_id?: ['userId'],
-    token_hash: ['tokenHash'],
-    expires_at: ['expiresAt'],
-    created_at?: ['createdAt'],
-    last_used_at?: ['lastUsedAt'],
-    ip_address?: ['ipAddress'],
-    user_agent?: ['userAgent'],
+export const transformUserSessionUpdateRecord = (data: UserSessionUpdateBaseRecord): {
+    id: UserSessionUpdateBaseRecord['id'],
+    user_id?: UserSessionUpdateBaseRecord['userId'],
+    token_hash: UserSessionUpdateBaseRecord['tokenHash'],
+    expires_at: UserSessionUpdateBaseRecord['expiresAt'],
+    created_at?: UserSessionUpdateBaseRecord['createdAt'],
+    last_used_at?: UserSessionUpdateBaseRecord['lastUsedAt'],
+    ip_address?: UserSessionUpdateBaseRecord['ipAddress'],
+    user_agent?: UserSessionUpdateBaseRecord['userAgent'],
 } => ({
     id: data.id,
     user_id: data.userId,
@@ -5481,62 +5481,62 @@ export const UsersTableReadSchema = z.object({
     * dataType: varchar
     * defaultValue: 
     */
-    email: z.string().nullable().optional(),
+    email: z.string().nullish().transform((value) => value ?? undefined).optional(),
     /**
     * dataType: varchar
     * defaultValue: 'active'::character varying
     */
-    status: z.string().nullable().optional(),
+    status: z.string().nullish().transform((value) => value ?? undefined).optional(),
     /**
     * dataType: jsonb
     * defaultValue: 
     */
-    profile: UserProfileSchema.nullable().optional(),
+    profile: UserProfileSchema.nullish().transform((value) => value ?? undefined).optional(),
     /**
     * dataType: timestamptz
     * defaultValue: now()
     */
-    created_at: z.date().nullable().optional(),
+    created_at: z.date().nullish().transform((value) => value ?? undefined).optional(),
     /**
     * dataType: _text
     * defaultValue: 
     */
-    roles: z.array(z.enum(USER_ROLES)).nullable().optional(),
+    roles: z.array(z.enum(USER_ROLES)).nullish().transform((value) => value ?? []).optional(),
     /**
     * dataType: _timestamp
     * defaultValue: 
     */
-    dates: z.array(z.date()).nullable().optional(),
+    dates: z.array(z.date()).nullish().transform((value) => value ?? []).optional(),
 });
 
 /**
  * The base record type for the "public.users" table.
  * This type represents the raw database record without any transformations.
  */
-export type UserReadRecord = z.output<typeof UsersTableReadSchema>;
+export type UserReadBaseRecord = z.output<typeof UsersTableReadSchema>;
 
 /**
 * The read transform function for the "public.users" table.
 * Maps the raw database fields to expected property names. e.g snake_case to camelCase.
 */
-export const transformUserReadRecord = (data: UserReadRecord): {
-    id: UserReadRecord['id'],
-    name: UserReadRecord['name'],
-    email?: UserReadRecord['email'],
-    status?: UserReadRecord['status'],
-    profile?: UserReadRecord['profile'],
-    createdAt?: UserReadRecord['created_at'],
-    roles?: UserReadRecord['roles'],
-    dates?: UserReadRecord['dates'],
+export const transformUserReadRecord = (data: UserReadBaseRecord): {
+    id: UserReadBaseRecord['id'],
+    name: UserReadBaseRecord['name'],
+    email?: UserReadBaseRecord['email'],
+    status?: UserReadBaseRecord['status'],
+    profile?: UserReadBaseRecord['profile'],
+    createdAt?: UserReadBaseRecord['created_at'],
+    roles?: UserReadBaseRecord['roles'],
+    dates?: UserReadBaseRecord['dates'],
 } => ({
     id: data.id,
     name: data.name,
-    email: data.email ?? undefined,
-    status: data.status ?? undefined,
-    profile: data.profile ?? undefined,
-    createdAt: data.created_at ?? undefined,
-    roles: data.roles ?? [],
-    dates: data.dates ?? [],
+    email: data.email,
+    status: data.status,
+    profile: data.profile,
+    createdAt: data.created_at,
+    roles: data.roles,
+    dates: data.dates,
 });
 
 /**
@@ -5569,7 +5569,7 @@ export const UsersTableWriteSchema = z.object({
     * dataType: jsonb
     * defaultValue: 
     */
-    profile: UserProfileSchema.nullish().optional(),
+    profile: UserProfileSchema.nullish().transform((value) => value ? JSON.stringify(value) : value).optional(),
     /**
     * dataType: timestamptz
     * defaultValue: now()
@@ -5591,31 +5591,31 @@ export const UsersTableWriteSchema = z.object({
  * The base record type for the "public.users" table.
  * This type represents an insertable database record before casing transformations are applied.
  */
-export type  = z.output<typeof UsersTableWriteSchema>;
+export type UserInsertBaseRecord = z.output<typeof UsersTableWriteSchema>;
 
 /**
  * The base record type for the "public.users" table.
  * This type represents an updatable database record before casing transformations are applied.
  */
-export type  = Partial<>;
+export type UserUpdateBaseRecord = Partial<UserInsertBaseRecord>;
 
 /**
  * The insert transform function for the "public.users" table.
  * Maps the expected property names to raw database fields. e.g camelCase to snake_case.
  */
-export const transformUserInsertRecord = (data: ): {
-    name: ['name'],
-    email?: ['email'],
-    status?: ['status'],
-    profile?: ['profile'],
-    created_at?: ['createdAt'],
-    roles?: ['roles'],
-    dates?: ['dates'],
+export const transformUserInsertRecord = (data: UserInsertBaseRecord): {
+    name: UserInsertBaseRecord['name'],
+    email?: UserInsertBaseRecord['email'],
+    status?: UserInsertBaseRecord['status'],
+    profile?: UserInsertBaseRecord['profile'],
+    created_at?: UserInsertBaseRecord['createdAt'],
+    roles?: UserInsertBaseRecord['roles'],
+    dates?: UserInsertBaseRecord['dates'],
 } => ({
     name: data.name,
     email: data.email,
     status: data.status,
-    profile: (data.profile ? JSON.stringify(data.profile) : data.profile),
+    profile: data.profile,
     created_at: data.createdAt,
     roles: data.roles,
     dates: data.dates,
@@ -5625,19 +5625,19 @@ export const transformUserInsertRecord = (data: ): {
  * The update transform function for the "public.users" table.
  * Maps the expected property names to raw database fields. e.g camelCase to snake_case.
  */
-export const transformUserUpdateRecord = (data: ): {
-    name: ['name'],
-    email?: ['email'],
-    status?: ['status'],
-    profile?: ['profile'],
-    created_at?: ['createdAt'],
-    roles?: ['roles'],
-    dates?: ['dates'],
+export const transformUserUpdateRecord = (data: UserUpdateBaseRecord): {
+    name: UserUpdateBaseRecord['name'],
+    email?: UserUpdateBaseRecord['email'],
+    status?: UserUpdateBaseRecord['status'],
+    profile?: UserUpdateBaseRecord['profile'],
+    created_at?: UserUpdateBaseRecord['createdAt'],
+    roles?: UserUpdateBaseRecord['roles'],
+    dates?: UserUpdateBaseRecord['dates'],
 } => ({
     name: data.name,
     email: data.email,
     status: data.status,
-    profile: (data.profile ? JSON.stringify(data.profile) : data.profile),
+    profile: data.profile,
     created_at: data.createdAt,
     roles: data.roles,
     dates: data.dates,
@@ -5787,51 +5787,51 @@ export const ViewUserPostsReadSchema = z.object({
     * dataType: int4
     * defaultValue: 
     */
-    user_id: z.number().int().nullable().optional(),
+    user_id: z.number().int().nullish().transform((value) => value ?? undefined).optional(),
     /**
     * dataType: varchar
     * defaultValue: 
     */
-    user_name: z.string().nullable().optional(),
+    user_name: z.string().nullish().transform((value) => value ?? undefined).optional(),
     /**
     * dataType: int4
     * defaultValue: 
     */
-    post_id: z.number().int().nullable().optional(),
+    post_id: z.number().int().nullish().transform((value) => value ?? undefined).optional(),
     /**
     * dataType: text
     * defaultValue: 
     */
-    post_title: z.string().nullable().optional(),
+    post_title: z.string().nullish().transform((value) => value ?? undefined).optional(),
     /**
     * dataType: text
     * defaultValue: 
     */
-    post_content: z.string().nullable().optional(),
+    post_content: z.string().nullish().transform((value) => value ?? undefined).optional(),
 });
 
 /**
  * The base record type for the "public.view_user_posts" table.
  * This type represents the raw database record without any transformations.
  */
-export type ViewUserPostReadRecord = z.output<typeof ViewUserPostsReadSchema>;
+export type ViewUserPostReadBaseRecord = z.output<typeof ViewUserPostsReadSchema>;
 
 /**
 * The read transform function for the "public.view_user_posts" table.
 * Maps the raw database fields to expected property names. e.g snake_case to camelCase.
 */
-export const transformViewUserPostReadRecord = (data: ViewUserPostReadRecord): {
-    userId?: ViewUserPostReadRecord['user_id'],
-    userName?: ViewUserPostReadRecord['user_name'],
-    postId?: ViewUserPostReadRecord['post_id'],
-    postTitle?: ViewUserPostReadRecord['post_title'],
-    postContent?: ViewUserPostReadRecord['post_content'],
+export const transformViewUserPostReadRecord = (data: ViewUserPostReadBaseRecord): {
+    userId?: ViewUserPostReadBaseRecord['user_id'],
+    userName?: ViewUserPostReadBaseRecord['user_name'],
+    postId?: ViewUserPostReadBaseRecord['post_id'],
+    postTitle?: ViewUserPostReadBaseRecord['post_title'],
+    postContent?: ViewUserPostReadBaseRecord['post_content'],
 } => ({
-    userId: data.user_id ?? undefined,
-    userName: data.user_name ?? undefined,
-    postId: data.post_id ?? undefined,
-    postTitle: data.post_title ?? undefined,
-    postContent: data.post_content ?? undefined,
+    userId: data.user_id,
+    userName: data.user_name,
+    postId: data.post_id,
+    postTitle: data.post_title,
+    postContent: data.post_content,
 });
 
 /**
