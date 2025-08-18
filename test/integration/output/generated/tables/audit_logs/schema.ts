@@ -41,7 +41,7 @@ export const AuditLogsTableBaseSchema = z.object({
       * dataType: timestamptz
       * defaultValue: now()
       */
-    created_at: z.date().nullish().transform((value) => value ?? undefined).optional(),
+    created_at: z.coerce.date().nullish().transform((value) => value ?? undefined).optional(),
 });
 
 /**
@@ -52,7 +52,7 @@ export type AuditLogBaseRecord = z.output<typeof AuditLogsTableBaseSchema>;
 
 /**
  * Read transform for the "public.audit_logs" table.
- * Maps raw database snake_case fields to camelCase properties.
+ * Maps database fields to app case properties.
  */
 export const transformAuditLogBaseRecord = (data: AuditLogBaseRecord): {
     id: AuditLogBaseRecord['id'],
@@ -128,7 +128,7 @@ export type AuditLogUpdateBaseRecord = Partial<AuditLogInsertBaseRecord>;
 
 /**
  * Insert transform for the "public.audit_logs" table.
- * Maps camelCase properties to raw database snake_case fields.
+ * Maps app cased properties to database fields.
  */
 export const transformAuditLogInsertBaseRecord = (data: AuditLogInsertBaseRecord): {
     user_id?: AuditLogInsertBaseRecord['userId'],
@@ -150,7 +150,7 @@ export const transformAuditLogInsertBaseRecord = (data: AuditLogInsertBaseRecord
 
 /**
  * Update transform for the "public.audit_logs" table.
- * Maps camelCase properties to raw database snake_case fields.
+ * Maps app cased properties to database fields.
  */
 export const transformAuditLogUpdateBaseRecord = (data: AuditLogUpdateBaseRecord): {
     user_id?: AuditLogUpdateBaseRecord['userId'],

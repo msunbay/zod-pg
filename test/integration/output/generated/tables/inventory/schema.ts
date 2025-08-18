@@ -30,7 +30,7 @@ export const InventoryTableBaseSchema = z.object({
      /**
       * dataType: date
       */
-    last_restocked: z.date().nullish().transform((value) => value ?? undefined).optional(),
+    last_restocked: z.coerce.date().nullish().transform((value) => value ?? undefined).optional(),
      /**
       * dataType: jsonb
       */
@@ -43,7 +43,7 @@ export const InventoryTableBaseSchema = z.object({
       * dataType: timestamptz
       * defaultValue: now()
       */
-    updated_at: z.date().nullish().transform((value) => value ?? undefined).optional(),
+    updated_at: z.coerce.date().nullish().transform((value) => value ?? undefined).optional(),
 });
 
 /**
@@ -54,7 +54,7 @@ export type InventoryBaseRecord = z.output<typeof InventoryTableBaseSchema>;
 
 /**
  * Read transform for the "public.inventory" table.
- * Maps raw database snake_case fields to camelCase properties.
+ * Maps database fields to app case properties.
  */
 export const transformInventoryBaseRecord = (data: InventoryBaseRecord): {
     productId: InventoryBaseRecord['product_id'],
@@ -137,7 +137,7 @@ export type InventoryUpdateBaseRecord = Partial<InventoryInsertBaseRecord>;
 
 /**
  * Insert transform for the "public.inventory" table.
- * Maps camelCase properties to raw database snake_case fields.
+ * Maps app cased properties to database fields.
  */
 export const transformInventoryInsertBaseRecord = (data: InventoryInsertBaseRecord): {
     product_id: InventoryInsertBaseRecord['productId'],
@@ -161,7 +161,7 @@ export const transformInventoryInsertBaseRecord = (data: InventoryInsertBaseReco
 
 /**
  * Update transform for the "public.inventory" table.
- * Maps camelCase properties to raw database snake_case fields.
+ * Maps app cased properties to database fields.
  */
 export const transformInventoryUpdateBaseRecord = (data: InventoryUpdateBaseRecord): {
     product_id: InventoryUpdateBaseRecord['productId'],

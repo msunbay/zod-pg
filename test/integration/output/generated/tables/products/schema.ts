@@ -54,7 +54,7 @@ export const ProductsTableBaseSchema = z.object({
       * dataType: timestamptz
       * defaultValue: now()
       */
-    created_at: z.date().nullish().transform((value) => value ?? undefined).optional(),
+    created_at: z.coerce.date().nullish().transform((value) => value ?? undefined).optional(),
 });
 
 /**
@@ -65,7 +65,7 @@ export type ProductBaseRecord = z.output<typeof ProductsTableBaseSchema>;
 
 /**
  * Read transform for the "public.products" table.
- * Maps raw database snake_case fields to camelCase properties.
+ * Maps database fields to app case properties.
  */
 export const transformProductBaseRecord = (data: ProductBaseRecord): {
     id: ProductBaseRecord['id'],
@@ -160,7 +160,7 @@ export type ProductUpdateBaseRecord = Partial<ProductInsertBaseRecord>;
 
 /**
  * Insert transform for the "public.products" table.
- * Maps camelCase properties to raw database snake_case fields.
+ * Maps app cased properties to database fields.
  */
 export const transformProductInsertBaseRecord = (data: ProductInsertBaseRecord): {
     name: ProductInsertBaseRecord['name'],
@@ -188,7 +188,7 @@ export const transformProductInsertBaseRecord = (data: ProductInsertBaseRecord):
 
 /**
  * Update transform for the "public.products" table.
- * Maps camelCase properties to raw database snake_case fields.
+ * Maps app cased properties to database fields.
  */
 export const transformProductUpdateBaseRecord = (data: ProductUpdateBaseRecord): {
     name: ProductUpdateBaseRecord['name'],

@@ -24,17 +24,17 @@ export const UserSessionsTableBaseSchema = z.object({
      /**
       * dataType: timestamptz
       */
-    expires_at: z.date(),
+    expires_at: z.coerce.date(),
      /**
       * dataType: timestamptz
       * defaultValue: now()
       */
-    created_at: z.date().nullish().transform((value) => value ?? undefined).optional(),
+    created_at: z.coerce.date().nullish().transform((value) => value ?? undefined).optional(),
      /**
       * dataType: timestamptz
       * defaultValue: now()
       */
-    last_used_at: z.date().nullish().transform((value) => value ?? undefined).optional(),
+    last_used_at: z.coerce.date().nullish().transform((value) => value ?? undefined).optional(),
      /**
       * dataType: inet
       */
@@ -53,7 +53,7 @@ export type UserSessionBaseRecord = z.output<typeof UserSessionsTableBaseSchema>
 
 /**
  * Read transform for the "public.user_sessions" table.
- * Maps raw database snake_case fields to camelCase properties.
+ * Maps database fields to app case properties.
  */
 export const transformUserSessionBaseRecord = (data: UserSessionBaseRecord): {
     id: UserSessionBaseRecord['id'],
@@ -135,7 +135,7 @@ export type UserSessionUpdateBaseRecord = Partial<UserSessionInsertBaseRecord>;
 
 /**
  * Insert transform for the "public.user_sessions" table.
- * Maps camelCase properties to raw database snake_case fields.
+ * Maps app cased properties to database fields.
  */
 export const transformUserSessionInsertBaseRecord = (data: UserSessionInsertBaseRecord): {
     id: UserSessionInsertBaseRecord['id'],
@@ -159,7 +159,7 @@ export const transformUserSessionInsertBaseRecord = (data: UserSessionInsertBase
 
 /**
  * Update transform for the "public.user_sessions" table.
- * Maps camelCase properties to raw database snake_case fields.
+ * Maps app cased properties to database fields.
  */
 export const transformUserSessionUpdateBaseRecord = (data: UserSessionUpdateBaseRecord): {
     id: UserSessionUpdateBaseRecord['id'],

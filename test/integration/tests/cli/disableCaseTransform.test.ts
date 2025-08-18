@@ -13,7 +13,7 @@ import {
 
 let ctx: TestDbContext;
 const cliPath = path.resolve(import.meta.dirname, '../../../../index.js');
-const outputDir = `${import.meta.dirname}/test-output/json-options`;
+const outputDir = `${import.meta.dirname}/test-output/disable-case-transform`;
 
 beforeAll(async () => {
   ctx = await setupTestDb();
@@ -25,11 +25,11 @@ afterAll(async () => {
 });
 
 describe('CLI JSON Options', () => {
-  it('CLI works with --disable-stringify-json option', async () => {
+  it('CLI works with --disable-case-transform option', async () => {
     const connectionString = getClientConnectionString();
 
     execSync(
-      `node ${cliPath} --connection-string "${connectionString}" --output "${outputDir}" --disable-stringify-json --silent --include "^posts$" --module esm`,
+      `node ${cliPath} --connection-string "${connectionString}" --output "${outputDir}" --disable-case-transform --silent --include "^posts$" --module esm`,
       { stdio: 'inherit' }
     );
 
@@ -41,9 +41,8 @@ describe('CLI JSON Options', () => {
 
     expect(postsFile).toBeDefined();
     const content = fs.readFileSync(postsFile!, 'utf8');
-    // Should not contain JSON.stringify transforms in write schemas (check for presence of write schema with metadata field)
-    expect(content).not.toMatch(
-      /metadata.*JSON\.stringify|JSON\.stringify.*metadata/s
-    );
+
+    // Should not contain case transformations in schema (check for presence of transform function)
+    expect(content).not.toMatch(/transformUserBaseRecord/s);
   });
 });

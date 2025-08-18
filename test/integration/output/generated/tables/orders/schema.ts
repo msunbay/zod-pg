@@ -44,11 +44,11 @@ export const OrdersTableBaseSchema = z.object({
       * dataType: date
       * defaultValue: CURRENT_DATE
       */
-    order_date: z.date().nullish().transform((value) => value ?? undefined).optional(),
+    order_date: z.coerce.date().nullish().transform((value) => value ?? undefined).optional(),
      /**
       * dataType: date
       */
-    shipped_date: z.date().nullish().transform((value) => value ?? undefined).optional(),
+    shipped_date: z.coerce.date().nullish().transform((value) => value ?? undefined).optional(),
      /**
       * dataType: time
       */
@@ -65,7 +65,7 @@ export const OrdersTableBaseSchema = z.object({
       * dataType: timestamptz
       * defaultValue: now()
       */
-    created_at: z.date().nullish().transform((value) => value ?? undefined).optional(),
+    created_at: z.coerce.date().nullish().transform((value) => value ?? undefined).optional(),
 });
 
 /**
@@ -76,7 +76,7 @@ export type OrderBaseRecord = z.output<typeof OrdersTableBaseSchema>;
 
 /**
  * Read transform for the "public.orders" table.
- * Maps raw database snake_case fields to camelCase properties.
+ * Maps database fields to app case properties.
  */
 export const transformOrderBaseRecord = (data: OrderBaseRecord): {
     id: OrderBaseRecord['id'],
@@ -186,7 +186,7 @@ export type OrderUpdateBaseRecord = Partial<OrderInsertBaseRecord>;
 
 /**
  * Insert transform for the "public.orders" table.
- * Maps camelCase properties to raw database snake_case fields.
+ * Maps app cased properties to database fields.
  */
 export const transformOrderInsertBaseRecord = (data: OrderInsertBaseRecord): {
     order_number: OrderInsertBaseRecord['orderNumber'],
@@ -218,7 +218,7 @@ export const transformOrderInsertBaseRecord = (data: OrderInsertBaseRecord): {
 
 /**
  * Update transform for the "public.orders" table.
- * Maps camelCase properties to raw database snake_case fields.
+ * Maps app cased properties to database fields.
  */
 export const transformOrderUpdateBaseRecord = (data: OrderUpdateBaseRecord): {
     order_number: OrderUpdateBaseRecord['orderNumber'],

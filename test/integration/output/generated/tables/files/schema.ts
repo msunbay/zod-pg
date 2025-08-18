@@ -46,11 +46,11 @@ export const FilesTableBaseSchema = z.object({
       * dataType: timestamptz
       * defaultValue: now()
       */
-    upload_time: z.date().nullish().transform((value) => value ?? undefined).optional(),
+    upload_time: z.coerce.date().nullish().transform((value) => value ?? undefined).optional(),
      /**
       * dataType: timestamptz
       */
-    expiry_date: z.date().nullish().transform((value) => value ?? undefined).optional(),
+    expiry_date: z.coerce.date().nullish().transform((value) => value ?? undefined).optional(),
      /**
       * dataType: jsonb
       */
@@ -74,7 +74,7 @@ export type FileBaseRecord = z.output<typeof FilesTableBaseSchema>;
 
 /**
  * Read transform for the "public.files" table.
- * Maps raw database snake_case fields to camelCase properties.
+ * Maps database fields to app case properties.
  */
 export const transformFileBaseRecord = (data: FileBaseRecord): {
     id: FileBaseRecord['id'],
@@ -187,7 +187,7 @@ export type FileUpdateBaseRecord = Partial<FileInsertBaseRecord>;
 
 /**
  * Insert transform for the "public.files" table.
- * Maps camelCase properties to raw database snake_case fields.
+ * Maps app cased properties to database fields.
  */
 export const transformFileInsertBaseRecord = (data: FileInsertBaseRecord): {
     id: FileInsertBaseRecord['id'],
@@ -221,7 +221,7 @@ export const transformFileInsertBaseRecord = (data: FileInsertBaseRecord): {
 
 /**
  * Update transform for the "public.files" table.
- * Maps camelCase properties to raw database snake_case fields.
+ * Maps app cased properties to database fields.
  */
 export const transformFileUpdateBaseRecord = (data: FileUpdateBaseRecord): {
     id: FileUpdateBaseRecord['id'],

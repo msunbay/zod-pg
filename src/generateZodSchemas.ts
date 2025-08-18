@@ -17,9 +17,7 @@ export interface ZodPgGenerateConfig extends ZodPgConfig {
 }
 
 const defaultConfig = {
-  defaultEmptyArray: false,
-  stringifyJson: true,
-  zodVersion: 3,
+  zodVersion: '3',
   fieldNameCasing: 'camelCase',
   objectNameCasing: 'PascalCase',
   moduleResolution: 'commonjs',

@@ -46,7 +46,7 @@ export const ConstraintVariationsTableBaseSchema = z.object({
       * dataType: timestamptz
       * defaultValue: now()
       */
-    created_at: z.date().nullish().transform((value) => value ?? undefined).optional(),
+    created_at: z.coerce.date().nullish().transform((value) => value ?? undefined).optional(),
 });
 
 /**
@@ -57,7 +57,7 @@ export type ConstraintVariationBaseRecord = z.output<typeof ConstraintVariations
 
 /**
  * Read transform for the "public.constraint_variations" table.
- * Maps raw database snake_case fields to camelCase properties.
+ * Maps database fields to app case properties.
  */
 export const transformConstraintVariationBaseRecord = (data: ConstraintVariationBaseRecord): {
     id: ConstraintVariationBaseRecord['id'],
@@ -133,7 +133,7 @@ export type ConstraintVariationUpdateBaseRecord = Partial<ConstraintVariationIns
 
 /**
  * Insert transform for the "public.constraint_variations" table.
- * Maps camelCase properties to raw database snake_case fields.
+ * Maps app cased properties to database fields.
  */
 export const transformConstraintVariationInsertBaseRecord = (data: ConstraintVariationInsertBaseRecord): {
     animal?: ConstraintVariationInsertBaseRecord['animal'],
@@ -155,7 +155,7 @@ export const transformConstraintVariationInsertBaseRecord = (data: ConstraintVar
 
 /**
  * Update transform for the "public.constraint_variations" table.
- * Maps camelCase properties to raw database snake_case fields.
+ * Maps app cased properties to database fields.
  */
 export const transformConstraintVariationUpdateBaseRecord = (data: ConstraintVariationUpdateBaseRecord): {
     animal?: ConstraintVariationUpdateBaseRecord['animal'],

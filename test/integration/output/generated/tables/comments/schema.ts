@@ -38,12 +38,12 @@ export const CommentsTableBaseSchema = z.object({
       * dataType: timestamptz
       * defaultValue: now()
       */
-    created_at: z.date().nullish().transform((value) => value ?? undefined).optional(),
+    created_at: z.coerce.date().nullish().transform((value) => value ?? undefined).optional(),
      /**
       * dataType: timestamptz
       * defaultValue: now()
       */
-    updated_at: z.date().nullish().transform((value) => value ?? undefined).optional(),
+    updated_at: z.coerce.date().nullish().transform((value) => value ?? undefined).optional(),
 });
 
 /**
@@ -54,7 +54,7 @@ export type CommentBaseRecord = z.output<typeof CommentsTableBaseSchema>;
 
 /**
  * Read transform for the "public.comments" table.
- * Maps raw database snake_case fields to camelCase properties.
+ * Maps database fields to app case properties.
  */
 export const transformCommentBaseRecord = (data: CommentBaseRecord): {
     id: CommentBaseRecord['id'],
@@ -132,7 +132,7 @@ export type CommentUpdateBaseRecord = Partial<CommentInsertBaseRecord>;
 
 /**
  * Insert transform for the "public.comments" table.
- * Maps camelCase properties to raw database snake_case fields.
+ * Maps app cased properties to database fields.
  */
 export const transformCommentInsertBaseRecord = (data: CommentInsertBaseRecord): {
     post_id?: CommentInsertBaseRecord['postId'],
@@ -154,7 +154,7 @@ export const transformCommentInsertBaseRecord = (data: CommentInsertBaseRecord):
 
 /**
  * Update transform for the "public.comments" table.
- * Maps camelCase properties to raw database snake_case fields.
+ * Maps app cased properties to database fields.
  */
 export const transformCommentUpdateBaseRecord = (data: CommentUpdateBaseRecord): {
     post_id?: CommentUpdateBaseRecord['postId'],

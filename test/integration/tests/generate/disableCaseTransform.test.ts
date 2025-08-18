@@ -13,7 +13,7 @@ import {
 
 let ctx: TestDbContext;
 
-const outputDir = `${import.meta.dirname}/test-output/zod4`;
+const outputDir = `${import.meta.dirname}/test-output/disable-case-transform`;
 let connectionString: string;
 
 beforeAll(async () => {
@@ -26,7 +26,7 @@ afterAll(async () => {
   await deleteOutputFiles(outputDir);
 });
 
-it('generates schemas compatible with zod version 4', async () => {
+it('generates schemas without case transformations', async () => {
   await generateZodSchemas({
     connection: {
       connectionString,
@@ -34,7 +34,7 @@ it('generates schemas compatible with zod version 4', async () => {
     },
     outputDir,
     moduleResolution: 'esm',
-    zodVersion: '4',
+    disableCaseTransform: true,
     include: ['users'],
   });
 

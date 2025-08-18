@@ -52,12 +52,12 @@ export const PostsTableBaseSchema = z.object({
      /**
       * dataType: timestamptz
       */
-    published_at: z.date().nullish().transform((value) => value ?? undefined).optional(),
+    published_at: z.coerce.date().nullish().transform((value) => value ?? undefined).optional(),
      /**
       * dataType: timestamptz
       * defaultValue: now()
       */
-    updated_at: z.date().nullish().transform((value) => value ?? undefined).optional(),
+    updated_at: z.coerce.date().nullish().transform((value) => value ?? undefined).optional(),
 });
 
 /**
@@ -68,7 +68,7 @@ export type PostBaseRecord = z.output<typeof PostsTableBaseSchema>;
 
 /**
  * Read transform for the "public.posts" table.
- * Maps raw database snake_case fields to camelCase properties.
+ * Maps database fields to app case properties.
  */
 export const transformPostBaseRecord = (data: PostBaseRecord): {
     id: PostBaseRecord['id'],
@@ -165,7 +165,7 @@ export type PostUpdateBaseRecord = Partial<PostInsertBaseRecord>;
 
 /**
  * Insert transform for the "public.posts" table.
- * Maps camelCase properties to raw database snake_case fields.
+ * Maps app cased properties to database fields.
  */
 export const transformPostInsertBaseRecord = (data: PostInsertBaseRecord): {
     user_id?: PostInsertBaseRecord['userId'],
@@ -193,7 +193,7 @@ export const transformPostInsertBaseRecord = (data: PostInsertBaseRecord): {
 
 /**
  * Update transform for the "public.posts" table.
- * Maps camelCase properties to raw database snake_case fields.
+ * Maps app cased properties to database fields.
  */
 export const transformPostUpdateBaseRecord = (data: PostUpdateBaseRecord): {
     user_id?: PostUpdateBaseRecord['userId'],

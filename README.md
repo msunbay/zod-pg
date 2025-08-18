@@ -120,29 +120,30 @@ Note that if you use both `--exclude` and `--include` options together, the `--i
 
 ### All Options
 
-| Option                          | Description                                                                                     | Required | Default     |
-| ------------------------------- | ----------------------------------------------------------------------------------------------- | -------- | ----------- |
-| `--connection`                  | Connection string for PostgreSQL.                                                               | false    |             |
-| `-o, --output`                  | Output directory for generated files.                                                           | true     |             |
-| `--clean`                       | Delete the output directory before generation.                                                  | false    | `false`     |
-| `--coerce-dates`                | Use `z.coerce.date()` for date fields in read schemas (allows string-to-date coercion).         | false    | `false`     |
-| `--stringify-json`              | Stringify JSON values in write schemas using `JSON.stringify()` transforms.                     | false    | `true`      |
-| `--stringify-dates`             | Convert dates to ISO strings in write schemas using `.toISOString()` transforms.                | false    | `false`     |
-| `--default-empty-array`         | Provide empty arrays as defaults for nullable array fields in write schemas.                    | false    | `true`      |
-| `--user`                        | PostgreSQL user name.                                                                           | false    | `postgres`  |
-| `--password`                    | PostgreSQL user password.                                                                       | false    |             |
-| `--host`                        | PostgreSQL host.                                                                                | false    | `localhost` |
-| `--port`                        | PostgreSQL port.                                                                                | false    | `5432`      |
-| `--database`                    | PostgreSQL database name.                                                                       | false    | `postgres`  |
-| `--schema`                      | Specify schema name (default: public)                                                           | false    | `public`    |
-| `--ssl`                         | Use SSL for the connection.                                                                     | false    | `false`     |
-| `--exclude`                     | Regex pattern to exclude tables from generation.                                                | false    |             |
-| `--include`                     | Regex pattern to include only specific tables.                                                  | false    |             |
-| `--json-schema-import-location` | Location to import Zod schemas for JSON fields.                                                 | false    |             |
-| `--silent`                      | Suppress output messages during generation.                                                     | false    | `false`     |
-| `--module`                      | Module resolution type (esm, commonjs). ESM uses file extensions in imports, CommonJS does not. | false    | `commonjs`  |
-| `--zod-version`                 | Target Zod version (3, 4).                                                                      | false    | `3`         |
-| `--help`                        | Show help message.                                                                              | false    |             |
+| Option                          | Description                                                                                        | Required | Default     |
+| ------------------------------- | -------------------------------------------------------------------------------------------------- | -------- | ----------- |
+| `--connection`                  | Connection string for PostgreSQL.                                                                  | false    |             |
+| `-o, --output`                  | Output directory for generated files.                                                              | true     |             |
+| `--clean`                       | Delete the output directory before generation.                                                     | false    | `false`     |
+| `--disable-coerce-dates`        | Disables using `z.coerce.date()` for date fields in read schemas (allows string-to-date coercion). | false    | `false`     |
+| `--disable-stringify-json`      | Disables stringifying JSON values in write schemas using `JSON.stringify()` transforms.            | false    | `false`     |
+| `--disable-case-transform`      | Disables transforming db record field casing. e.g snake_case to camelCase.                         | false    | `false`     |
+| `--stringify-dates`             | Convert dates to ISO strings in write schemas using `.toISOString()` transforms.                   | false    | `false`     |
+| `--default-empty-array`         | Provide empty arrays as defaults for nullable array fields in write schemas.                       | false    | `false`     |
+| `--user`                        | PostgreSQL user name.                                                                              | false    | `postgres`  |
+| `--password`                    | PostgreSQL user password.                                                                          | false    |             |
+| `--host`                        | PostgreSQL host.                                                                                   | false    | `localhost` |
+| `--port`                        | PostgreSQL port.                                                                                   | false    | `5432`      |
+| `--database`                    | PostgreSQL database name.                                                                          | false    | `postgres`  |
+| `--schema`                      | Specify schema name (default: public)                                                              | false    | `public`    |
+| `--ssl`                         | Use SSL for the connection.                                                                        | false    | `false`     |
+| `--exclude`                     | Regex pattern to exclude tables from generation.                                                   | false    |             |
+| `--include`                     | Regex pattern to include only specific tables.                                                     | false    |             |
+| `--json-schema-import-location` | Location to import Zod schemas for JSON fields.                                                    | false    |             |
+| `--silent`                      | Suppress output messages during generation.                                                        | false    | `false`     |
+| `--module`                      | Module resolution type (esm, commonjs). ESM uses file extensions in imports, CommonJS does not.    | false    | `commonjs`  |
+| `--zod-version`                 | Target Zod version (3, 4).                                                                         | false    | `3`         |
+| `--help`                        | Show help message.                                                                                 | false    |             |
 
 ## Configuration File
 
@@ -343,20 +344,22 @@ export const UserProfileSchema = z.object({
 It is possible to extend the generated Zod schemas with additional fields / rules / transformations.
 This is especially handy if you are doing a joined query.
 
-To extend a read schema you need to import the base read schema and apply the transformations afterwards.
+To extend a read schema you need to import the base read schema and apply the casing transformations afterwards (if needed).
 e.g.
 
 ```ts
 import {
-  transformUserReadRecord,
+  transformUserBaseRecord,
   UsersTableReadSchema,
-} from '[output]/tables/users/schema.ts';
+} from '[output]/tables/users';
 
-const MyExtendedSchema = UsersTableReadSchema.extend({
-  profile: z.string(),
+const ExtendedSchema = UsersTableBaseSchema.extend({
+  permissions: z.array(z.string()).nullish().optional(),
+  signed_in_at: z.coerce.date().nullish().optional(),
 }).transform((data) => ({
-  ...transformUserReadRecord(data),
-  profile: data.profile,
+  ...transformUserBaseRecord(data),
+  permissions: data.permissions,
+  signedInAt: data.signed_in_at,
 }));
 ```
 

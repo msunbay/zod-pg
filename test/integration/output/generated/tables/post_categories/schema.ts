@@ -26,7 +26,7 @@ export type PostCategoryBaseRecord = z.output<typeof PostCategoriesTableBaseSche
 
 /**
  * Read transform for the "public.post_categories" table.
- * Maps raw database snake_case fields to camelCase properties.
+ * Maps database fields to app case properties.
  */
 export const transformPostCategoryBaseRecord = (data: PostCategoryBaseRecord): {
     postId: PostCategoryBaseRecord['post_id'],
@@ -69,7 +69,7 @@ export type PostCategoryUpdateBaseRecord = Partial<PostCategoryInsertBaseRecord>
 
 /**
  * Insert transform for the "public.post_categories" table.
- * Maps camelCase properties to raw database snake_case fields.
+ * Maps app cased properties to database fields.
  */
 export const transformPostCategoryInsertBaseRecord = (data: PostCategoryInsertBaseRecord): {
     post_id: PostCategoryInsertBaseRecord['postId'],
@@ -81,7 +81,7 @@ export const transformPostCategoryInsertBaseRecord = (data: PostCategoryInsertBa
 
 /**
  * Update transform for the "public.post_categories" table.
- * Maps camelCase properties to raw database snake_case fields.
+ * Maps app cased properties to database fields.
  */
 export const transformPostCategoryUpdateBaseRecord = (data: PostCategoryUpdateBaseRecord): {
     post_id: PostCategoryUpdateBaseRecord['postId'],

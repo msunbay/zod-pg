@@ -52,12 +52,12 @@ export const GeographicDataTableBaseSchema = z.object({
      /**
       * dataType: date
       */
-    established_date: z.date().nullish().transform((value) => value ?? undefined).optional(),
+    established_date: z.coerce.date().nullish().transform((value) => value ?? undefined).optional(),
      /**
       * dataType: timestamptz
       * defaultValue: now()
       */
-    last_updated: z.date().nullish().transform((value) => value ?? undefined).optional(),
+    last_updated: z.coerce.date().nullish().transform((value) => value ?? undefined).optional(),
 });
 
 /**
@@ -68,7 +68,7 @@ export type GeographicDataBaseRecord = z.output<typeof GeographicDataTableBaseSc
 
 /**
  * Read transform for the "public.geographic_data" table.
- * Maps raw database snake_case fields to camelCase properties.
+ * Maps database fields to app case properties.
  */
 export const transformGeographicDataBaseRecord = (data: GeographicDataBaseRecord): {
     id: GeographicDataBaseRecord['id'],
@@ -168,7 +168,7 @@ export type GeographicDataUpdateBaseRecord = Partial<GeographicDataInsertBaseRec
 
 /**
  * Insert transform for the "public.geographic_data" table.
- * Maps camelCase properties to raw database snake_case fields.
+ * Maps app cased properties to database fields.
  */
 export const transformGeographicDataInsertBaseRecord = (data: GeographicDataInsertBaseRecord): {
     location_name: GeographicDataInsertBaseRecord['locationName'],
@@ -198,7 +198,7 @@ export const transformGeographicDataInsertBaseRecord = (data: GeographicDataInse
 
 /**
  * Update transform for the "public.geographic_data" table.
- * Maps camelCase properties to raw database snake_case fields.
+ * Maps app cased properties to database fields.
  */
 export const transformGeographicDataUpdateBaseRecord = (data: GeographicDataUpdateBaseRecord): {
     location_name: GeographicDataUpdateBaseRecord['locationName'],

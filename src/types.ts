@@ -348,7 +348,7 @@ export type ZodPgColumnType =
 /**
  * Supported Zod versions for code generation.
  */
-export type ZodPgZodVersion = 3 | 4;
+export type ZodPgZodVersion = '3' | '4' | '4-mini';
 
 /**
  * Main configuration interface for zod-pg schema generation.
@@ -368,11 +368,11 @@ export interface ZodPgConfig {
   jsonSchemaImportLocation?: string;
 
   /** Whether to stringify JSON values in write schemas */
-  stringifyJson?: boolean;
+  disableStringifyJson?: boolean;
   /** Whether to convert dates to ISO strings in write schemas */
   stringifyDates?: boolean;
   /** Whether to use z.coerce.date() instead of z.date() in read schemas */
-  coerceDates?: boolean;
+  disableCoerceDates?: boolean;
   /** Whether to provide empty arrays as defaults for nullable array fields */
   defaultEmptyArray?: boolean;
 
@@ -383,6 +383,9 @@ export interface ZodPgConfig {
   fieldNameCasing?: ZodPgCasing;
   /** Casing style for object/type names in generated schemas */
   objectNameCasing?: ZodPgCasing;
+
+  /** Whether to disable case transformations for generated schemas */
+  disableCaseTransform?: boolean;
 
   /** Whether to suppress console output during generation */
   silent?: boolean;

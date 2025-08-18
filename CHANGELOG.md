@@ -2,11 +2,16 @@
 
 ### v2.0.0 (2025-08-18)
 
-- Moved generated schema files to separate named folders.
-- Moved field transforms into base schemas.
+- Moved field transforms into base schemas and marked nullable fields as optional.
 - Added more exports from the generated files to allow extending the read/write Zod schemas.
-- Marked optional properties with `?` in exported interfaces / types.
-- Fixed casing and singularize issues.
+- Fixed casing and singularization issues.
+- Added new option: `disable-case-transform` to skip transforming / converting db record field name casing. This is useful if your db columns are already in the case format you want or that you want to handle it in a different way.
+
+#### BREAKING CHANGES:
+
+- Moved generated schema files to named folders to prevent naming collsions and allow breaking up the generated code into separate files per table/view.
+- Renamed the `--coerce-dates` to `--disable-coerce-dates`. Meaning that date coersion is now default on for the read schemas.
+- Renamed the `--stringify-json` option to `--disable-stringify-json`. Previously this option was not respected and it was already on by default.
 
 ### v1.0.2 (2025-08-09)
 

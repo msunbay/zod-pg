@@ -21,7 +21,10 @@ async function generateSchemaFile(
     return;
   }
 
-  const output = await renderTemplate('schema', table);
+  let templateName = 'schema';
+  if (config.disableCaseTransform) templateName += '.simple';
+
+  const output = await renderTemplate(templateName, table);
 
   const folderPath = `${config.outputDir}/${getOutputFolder(table.type)}/${table.tableName}`;
   await ensureFolder(folderPath);

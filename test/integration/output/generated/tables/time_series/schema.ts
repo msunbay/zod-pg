@@ -20,7 +20,7 @@ export const TimeSeriesTableBaseSchema = z.object({
      /**
       * dataType: timestamptz
       */
-    timestamp: z.date(),
+    timestamp: z.coerce.date(),
      /**
       * dataType: numeric
       */
@@ -50,7 +50,7 @@ export const TimeSeriesTableBaseSchema = z.object({
       * dataType: timestamptz
       * defaultValue: now()
       */
-    created_at: z.date().nullish().transform((value) => value ?? undefined).optional(),
+    created_at: z.coerce.date().nullish().transform((value) => value ?? undefined).optional(),
 });
 
 /**
@@ -61,7 +61,7 @@ export type TimeSeriesBaseRecord = z.output<typeof TimeSeriesTableBaseSchema>;
 
 /**
  * Read transform for the "public.time_series" table.
- * Maps raw database snake_case fields to camelCase properties.
+ * Maps database fields to app case properties.
  */
 export const transformTimeSeriesBaseRecord = (data: TimeSeriesBaseRecord): {
     id: TimeSeriesBaseRecord['id'],
@@ -150,7 +150,7 @@ export type TimeSeriesUpdateBaseRecord = Partial<TimeSeriesInsertBaseRecord>;
 
 /**
  * Insert transform for the "public.time_series" table.
- * Maps camelCase properties to raw database snake_case fields.
+ * Maps app cased properties to database fields.
  */
 export const transformTimeSeriesInsertBaseRecord = (data: TimeSeriesInsertBaseRecord): {
     sensor_id: TimeSeriesInsertBaseRecord['sensorId'],
@@ -176,7 +176,7 @@ export const transformTimeSeriesInsertBaseRecord = (data: TimeSeriesInsertBaseRe
 
 /**
  * Update transform for the "public.time_series" table.
- * Maps camelCase properties to raw database snake_case fields.
+ * Maps app cased properties to database fields.
  */
 export const transformTimeSeriesUpdateBaseRecord = (data: TimeSeriesUpdateBaseRecord): {
     sensor_id: TimeSeriesUpdateBaseRecord['sensorId'],

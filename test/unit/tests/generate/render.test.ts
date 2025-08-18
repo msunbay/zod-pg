@@ -58,9 +58,11 @@ describe('render', () => {
       connection: { host: 'localhost', port: '5432', database: 'test' },
       outputDir: './output',
       defaultEmptyArray: false,
-      stringifyJson: false,
+      disableStringifyJson: false,
+      disableCaseTransform: false,
+      disableCoerceDates: false,
       stringifyDates: false,
-      zodVersion: 3,
+      zodVersion: '3',
     } as ZodPgConfig;
 
     mockRender = vi.fn((text: string) => text);
@@ -335,7 +337,7 @@ describe('render', () => {
           isArray: false,
         });
 
-        const configV4 = { ...mockConfig, zodVersion: 4 as ZodPgZodVersion };
+        const configV4 = { ...mockConfig, zodVersion: '4' as ZodPgZodVersion };
         const result = renderReadField(column, configV4);
         expect(result).toBe('z.email()');
       });
@@ -358,7 +360,7 @@ describe('render', () => {
           isArray: false,
         });
 
-        const configV4 = { ...mockConfig, zodVersion: 4 as ZodPgZodVersion };
+        const configV4 = { ...mockConfig, zodVersion: '4' as ZodPgZodVersion };
         const result = renderReadField(column, configV4);
         expect(result).toBe('z.url()');
       });
@@ -381,7 +383,7 @@ describe('render', () => {
           isArray: false,
         });
 
-        const configV4 = { ...mockConfig, zodVersion: 4 as ZodPgZodVersion };
+        const configV4 = { ...mockConfig, zodVersion: '4' as ZodPgZodVersion };
         const result = renderReadField(column, configV4);
         expect(result).toBe('z.int()');
       });
@@ -404,7 +406,7 @@ describe('render', () => {
           isArray: false,
         });
 
-        const configV4 = { ...mockConfig, zodVersion: 4 as ZodPgZodVersion };
+        const configV4 = { ...mockConfig, zodVersion: '4' as ZodPgZodVersion };
         const result = renderReadField(column, configV4);
         expect(result).toBe('z.uuid()');
       });
@@ -427,7 +429,7 @@ describe('render', () => {
           isArray: false,
         });
 
-        const configV4 = { ...mockConfig, zodVersion: 4 as ZodPgZodVersion };
+        const configV4 = { ...mockConfig, zodVersion: '4' as ZodPgZodVersion };
         const result = renderReadField(column, configV4);
         expect(result).toBe('z.json()');
       });
@@ -462,7 +464,7 @@ describe('render', () => {
         });
 
         const result = renderReadField(column, mockConfig);
-        expect(result).toBe('z.date()');
+        expect(result).toBe('z.coerce.date()');
       });
 
       it('should render unknown type as z.any()', () => {
@@ -630,7 +632,7 @@ describe('render', () => {
       });
       const configWithStringify: ZodPgConfig = {
         ...mockConfig,
-        stringifyJson: true,
+        disableStringifyJson: false,
       };
 
       const result = renderWriteField(column, configWithStringify);
@@ -647,13 +649,27 @@ describe('render', () => {
       });
       const configWithStringify: ZodPgConfig = {
         ...mockConfig,
-        stringifyJson: true,
+        disableStringifyJson: false,
       };
 
       const result = renderWriteField(column, configWithStringify);
       expect(result).toBe(
         'z.any().nullish().transform((value) => value ? JSON.stringify(value) : value)'
       );
+    });
+
+    it('should not stringify json write field when configured', () => {
+      const column = createMockColumnBaseModel({
+        type: 'json',
+        isNullable: true,
+      });
+      const configWithStringify: ZodPgConfig = {
+        ...mockConfig,
+        disableStringifyJson: true,
+      };
+
+      const result = renderWriteField(column, configWithStringify);
+      expect(result).toBe('z.any().nullish()');
     });
 
     it('should convert non-nullable date write field to ISO string when configured', () => {

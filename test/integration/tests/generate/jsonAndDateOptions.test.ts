@@ -34,7 +34,7 @@ describe('JSON and date handling options', () => {
         ssl: false,
       },
       outputDir: `${outputDir}/stringify-json`,
-      stringifyJson: true,
+      disableStringifyJson: true,
       include: ['posts'], // posts table has JSON metadata column
     });
 
@@ -57,7 +57,7 @@ describe('JSON and date handling options', () => {
         ssl: false,
       },
       outputDir: `${outputDir}/no-stringify-json`,
-      stringifyJson: false,
+      disableStringifyJson: true,
       include: ['posts'],
     });
 
@@ -130,7 +130,7 @@ describe('JSON and date handling options', () => {
         ssl: false,
       },
       outputDir: `${outputDir}/coerce-dates`,
-      coerceDates: true,
+      disableCoerceDates: false,
       include: ['users'], // users table has date columns
     });
 
@@ -147,6 +147,36 @@ describe('JSON and date handling options', () => {
       // Test captures the actual generated code
       expect(content).toMatchSnapshot(
         `coerce-dates/${path.relative(`${outputDir}/coerce-dates`, file)}`
+      );
+    }
+  });
+
+  it('generates schemas with coerceDates disabled', async () => {
+    await generateZodSchemas({
+      connection: {
+        connectionString,
+        ssl: false,
+      },
+      outputDir: `${outputDir}/coerce-dates-disabled`,
+      disableCoerceDates: true,
+      include: ['users'], // users table has date columns
+    });
+
+    const outputFiles = await getOutputFiles(
+      `${outputDir}/coerce-dates-disabled`
+    );
+
+    for (const file of outputFiles) {
+      const content = fs.readFileSync(file, 'utf8');
+
+      // Should not use z.coerce.date() in read schemas for date columns
+      if (file.includes('users.ts')) {
+        expect(content).not.toMatch(/z\.coerce\.date\(\)/);
+      }
+
+      // Test captures the actual generated code
+      expect(content).toMatchSnapshot(
+        `coerce-dates/${path.relative(`${outputDir}/coerce-dates-disabled`, file)}`
       );
     }
   });

@@ -41,14 +41,14 @@ export const main = async (port?: number) => {
     config.cleanOutput
   );
   program.option(
-    '--coerce-dates',
-    'Use z.coerce.date() for date fields in read schemas',
-    config.coerceDates
+    '--disable-coerce-dates',
+    'Disable using z.coerce.date() for date fields in read schemas',
+    config.disableCoerceDates
   );
   program.option(
-    '--stringify-json',
-    'Stringify JSON values in write schemas',
-    config.stringifyJson
+    '--disable-stringify-json',
+    'Disable JSON.stringify() on json fields in write schemas',
+    config.disableStringifyJson
   );
   program.option(
     '--stringify-dates',
@@ -59,6 +59,11 @@ export const main = async (port?: number) => {
     '--default-empty-array',
     'Provide empty arrays as defaults for nullable array fields',
     config.defaultEmptyArray
+  );
+  program.option(
+    '--disable-case-transform',
+    'Disable case transformations / conversions for generated schemas',
+    config.disableCaseTransform
   );
   program.option(
     '--exclude <regex>',
@@ -120,9 +125,8 @@ export const main = async (port?: number) => {
   );
   program.option(
     '--zod-version <number>',
-    'Zod version to use (default: 3)',
-    (value) => parseInt(value, 10),
-    config.zodVersion || 3
+    'Zod version to use',
+    config.zodVersion || '3'
   );
   program.option(
     '--debug',
@@ -151,10 +155,11 @@ export const main = async (port?: number) => {
     silent: options.silent,
     outputDir: options.output,
     cleanOutput: options.clean,
-    coerceDates: options.coerceDates,
-    stringifyJson: options.stringifyJson ?? true,
-    stringifyDates: options.stringifyDates,
-    defaultEmptyArray: options.defaultEmptyArray ?? true,
+    disableCoerceDates: options.disableCoerceDates ?? false,
+    disableStringifyJson: options.disableStringifyJson ?? false,
+    stringifyDates: options.stringifyDates ?? false,
+    defaultEmptyArray: options.defaultEmptyArray ?? false,
+    disableCaseTransform: options.disableCaseTransform ?? false,
     schemaName: options.schema,
     exclude: options.exclude,
     include: options.include,
@@ -168,10 +173,13 @@ export const main = async (port?: number) => {
 
     logSetting('output', cliConfig.outputDir);
     if (cliConfig.cleanOutput) logSetting('clean-output', 'true');
-    if (cliConfig.coerceDates) logSetting('coerce-dates', 'true');
-    if (cliConfig.stringifyJson) logSetting('stringify-json', 'true');
+    if (cliConfig.disableCoerceDates) logSetting('coerce-dates', 'true');
     if (cliConfig.stringifyDates) logSetting('stringify-dates', 'true');
     if (cliConfig.defaultEmptyArray) logSetting('default-empty-array', 'true');
+    if (cliConfig.disableStringifyJson)
+      logSetting('disable-stringify-json', 'true');
+    if (cliConfig.disableCaseTransform)
+      logSetting('disable-case-transformations', 'true');
     logSetting('module', cliConfig.moduleResolution);
     logSetting('zod-version', cliConfig.zodVersion);
     logSetting(

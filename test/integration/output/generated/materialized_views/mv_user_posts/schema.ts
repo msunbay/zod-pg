@@ -38,7 +38,7 @@ export type MvUserPostBaseRecord = z.output<typeof MvUserPostsBaseSchema>;
 
 /**
  * Read transform for the "public.mv_user_posts" table.
- * Maps raw database snake_case fields to camelCase properties.
+ * Maps database fields to app case properties.
  */
 export const transformMvUserPostBaseRecord = (data: MvUserPostBaseRecord): {
     userId?: MvUserPostBaseRecord['user_id'],

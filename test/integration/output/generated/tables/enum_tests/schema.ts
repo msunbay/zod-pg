@@ -77,7 +77,7 @@ export const EnumTestsTableBaseSchema = z.object({
       * dataType: timestamptz
       * defaultValue: now()
       */
-    created_at: z.date().nullish().transform((value) => value ?? undefined).optional(),
+    created_at: z.coerce.date().nullish().transform((value) => value ?? undefined).optional(),
 });
 
 /**
@@ -88,7 +88,7 @@ export type EnumTestBaseRecord = z.output<typeof EnumTestsTableBaseSchema>;
 
 /**
  * Read transform for the "public.enum_tests" table.
- * Maps raw database snake_case fields to camelCase properties.
+ * Maps database fields to app case properties.
  */
 export const transformEnumTestBaseRecord = (data: EnumTestBaseRecord): {
     id: EnumTestBaseRecord['id'],
@@ -200,7 +200,7 @@ export type EnumTestUpdateBaseRecord = Partial<EnumTestInsertBaseRecord>;
 
 /**
  * Insert transform for the "public.enum_tests" table.
- * Maps camelCase properties to raw database snake_case fields.
+ * Maps app cased properties to database fields.
  */
 export const transformEnumTestInsertBaseRecord = (data: EnumTestInsertBaseRecord): {
     priority?: EnumTestInsertBaseRecord['priority'],
@@ -234,7 +234,7 @@ export const transformEnumTestInsertBaseRecord = (data: EnumTestInsertBaseRecord
 
 /**
  * Update transform for the "public.enum_tests" table.
- * Maps camelCase properties to raw database snake_case fields.
+ * Maps app cased properties to database fields.
  */
 export const transformEnumTestUpdateBaseRecord = (data: EnumTestUpdateBaseRecord): {
     priority?: EnumTestUpdateBaseRecord['priority'],

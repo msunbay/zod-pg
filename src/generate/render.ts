@@ -28,27 +28,29 @@ const renderZodType = (
   config: ZodPgConfig,
   isReadField: boolean = false
 ): string => {
-  const { zodVersion, coerceDates } = config;
+  const { zodVersion, disableCoerceDates } = config;
 
   switch (zodType) {
     case 'string':
       return 'z.string()';
     case 'email':
-      return zodVersion === 4 ? 'z.email()' : 'z.string().email()';
+      return zodVersion === '4' ? 'z.email()' : 'z.string().email()';
     case 'url':
-      return zodVersion === 4 ? 'z.url()' : 'z.string().url()';
+      return zodVersion === '4' ? 'z.url()' : 'z.string().url()';
     case 'int':
-      return zodVersion === 4 ? 'z.int()' : 'z.number().int()';
+      return zodVersion === '4' ? 'z.int()' : 'z.number().int()';
     case 'number':
       return 'z.number()';
     case 'boolean':
       return 'z.boolean()';
     case 'date':
-      return coerceDates && isReadField ? 'z.coerce.date()' : 'z.date()';
+      return !disableCoerceDates && isReadField
+        ? 'z.coerce.date()'
+        : 'z.date()';
     case 'uuid':
-      return zodVersion === 4 ? 'z.uuid()' : 'z.string().uuid()';
+      return zodVersion === '4' ? 'z.uuid()' : 'z.string().uuid()';
     case 'json':
-      return zodVersion === 4 ? 'z.json()' : 'z.any()';
+      return zodVersion === '4' ? 'z.json()' : 'z.any()';
     default:
       return 'z.any()';
   }
@@ -115,7 +117,7 @@ export const renderWriteField = (
     zodType = `${zodType}.nullish()`;
   }
 
-  if (column.type === 'json' && config.stringifyJson) {
+  if (column.type === 'json' && !config.disableStringifyJson) {
     if (!column.isNullable)
       zodType = `${zodType}.transform((value) => JSON.stringify(value))`;
     else

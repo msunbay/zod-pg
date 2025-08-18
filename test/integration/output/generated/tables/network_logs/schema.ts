@@ -29,7 +29,7 @@ export const NetworkLogsTableBaseSchema = z.object({
       * dataType: timestamptz
       * defaultValue: now()
       */
-    request_time: z.date().nullish().transform((value) => value ?? undefined).optional(),
+    request_time: z.coerce.date().nullish().transform((value) => value ?? undefined).optional(),
      /**
       * dataType: interval
       */
@@ -70,7 +70,7 @@ export type NetworkLogBaseRecord = z.output<typeof NetworkLogsTableBaseSchema>;
 
 /**
  * Read transform for the "public.network_logs" table.
- * Maps raw database snake_case fields to camelCase properties.
+ * Maps database fields to app case properties.
  */
 export const transformNetworkLogBaseRecord = (data: NetworkLogBaseRecord): {
     id: NetworkLogBaseRecord['id'],
@@ -172,7 +172,7 @@ export type NetworkLogUpdateBaseRecord = Partial<NetworkLogInsertBaseRecord>;
 
 /**
  * Insert transform for the "public.network_logs" table.
- * Maps camelCase properties to raw database snake_case fields.
+ * Maps app cased properties to database fields.
  */
 export const transformNetworkLogInsertBaseRecord = (data: NetworkLogInsertBaseRecord): {
     ip_address: NetworkLogInsertBaseRecord['ipAddress'],
@@ -202,7 +202,7 @@ export const transformNetworkLogInsertBaseRecord = (data: NetworkLogInsertBaseRe
 
 /**
  * Update transform for the "public.network_logs" table.
- * Maps camelCase properties to raw database snake_case fields.
+ * Maps app cased properties to database fields.
  */
 export const transformNetworkLogUpdateBaseRecord = (data: NetworkLogUpdateBaseRecord): {
     ip_address: NetworkLogUpdateBaseRecord['ipAddress'],

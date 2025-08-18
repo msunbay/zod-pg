@@ -38,7 +38,7 @@ export type ViewUserPostBaseRecord = z.output<typeof ViewUserPostsBaseSchema>;
 
 /**
  * Read transform for the "public.view_user_posts" table.
- * Maps raw database snake_case fields to camelCase properties.
+ * Maps database fields to app case properties.
  */
 export const transformViewUserPostBaseRecord = (data: ViewUserPostBaseRecord): {
     userId?: ViewUserPostBaseRecord['user_id'],

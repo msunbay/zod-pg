@@ -29,7 +29,7 @@ export const CategoriesTableBaseSchema = z.object({
       * dataType: timestamptz
       * defaultValue: now()
       */
-    created_at: z.date().nullish().transform((value) => value ?? undefined).optional(),
+    created_at: z.coerce.date().nullish().transform((value) => value ?? undefined).optional(),
 });
 
 /**
@@ -40,7 +40,7 @@ export type CategoryBaseRecord = z.output<typeof CategoriesTableBaseSchema>;
 
 /**
  * Read transform for the "public.categories" table.
- * Maps raw database snake_case fields to camelCase properties.
+ * Maps database fields to app case properties.
  */
 export const transformCategoryBaseRecord = (data: CategoryBaseRecord): {
     id: CategoryBaseRecord['id'],
@@ -98,7 +98,7 @@ export type CategoryUpdateBaseRecord = Partial<CategoryInsertBaseRecord>;
 
 /**
  * Insert transform for the "public.categories" table.
- * Maps camelCase properties to raw database snake_case fields.
+ * Maps app cased properties to database fields.
  */
 export const transformCategoryInsertBaseRecord = (data: CategoryInsertBaseRecord): {
     name: CategoryInsertBaseRecord['name'],
@@ -114,7 +114,7 @@ export const transformCategoryInsertBaseRecord = (data: CategoryInsertBaseRecord
 
 /**
  * Update transform for the "public.categories" table.
- * Maps camelCase properties to raw database snake_case fields.
+ * Maps app cased properties to database fields.
  */
 export const transformCategoryUpdateBaseRecord = (data: CategoryUpdateBaseRecord): {
     name: CategoryUpdateBaseRecord['name'],

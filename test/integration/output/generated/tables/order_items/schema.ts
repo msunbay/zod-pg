@@ -49,7 +49,7 @@ export type OrderItemBaseRecord = z.output<typeof OrderItemsTableBaseSchema>;
 
 /**
  * Read transform for the "public.order_items" table.
- * Maps raw database snake_case fields to camelCase properties.
+ * Maps database fields to app case properties.
  */
 export const transformOrderItemBaseRecord = (data: OrderItemBaseRecord): {
     id: OrderItemBaseRecord['id'],
@@ -120,7 +120,7 @@ export type OrderItemUpdateBaseRecord = Partial<OrderItemInsertBaseRecord>;
 
 /**
  * Insert transform for the "public.order_items" table.
- * Maps camelCase properties to raw database snake_case fields.
+ * Maps app cased properties to database fields.
  */
 export const transformOrderItemInsertBaseRecord = (data: OrderItemInsertBaseRecord): {
     order_id?: OrderItemInsertBaseRecord['orderId'],
@@ -140,7 +140,7 @@ export const transformOrderItemInsertBaseRecord = (data: OrderItemInsertBaseReco
 
 /**
  * Update transform for the "public.order_items" table.
- * Maps camelCase properties to raw database snake_case fields.
+ * Maps app cased properties to database fields.
  */
 export const transformOrderItemUpdateBaseRecord = (data: OrderItemUpdateBaseRecord): {
     order_id?: OrderItemUpdateBaseRecord['orderId'],

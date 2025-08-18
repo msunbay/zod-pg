@@ -31,7 +31,7 @@ export type {{{tableReadBaseRecordName}}} = z.output<typeof {{tableReadBaseSchem
 
 /**
  * Read transform for the "{{schemaName}}.{{tableName}}" table.
- * Maps raw database snake_case fields to camelCase properties.
+ * Maps database fields to app case properties.
  */
 export const {{tableReadTransformName}} = (data: {{{tableReadBaseRecordName}}}): {
 {{#readableColumns}}
@@ -76,7 +76,7 @@ export type {{{tableUpdateBaseRecordName}}} = Partial<{{{tableInsertBaseRecordNa
 
 /**
  * Insert transform for the "{{schemaName}}.{{tableName}}" table.
- * Maps camelCase properties to raw database snake_case fields.
+ * Maps app cased properties to database fields.
  */
 export const {{tableInsertTransformName}} = (data: {{{tableInsertBaseRecordName}}}): {
 {{#writableColumns}}
@@ -90,7 +90,7 @@ export const {{tableInsertTransformName}} = (data: {{{tableInsertBaseRecordName}
 
 /**
  * Update transform for the "{{schemaName}}.{{tableName}}" table.
- * Maps camelCase properties to raw database snake_case fields.
+ * Maps app cased properties to database fields.
  */
 export const {{tableUpdateTransformName}} = (data: {{{tableUpdateBaseRecordName}}}): {
 {{#writableColumns}}

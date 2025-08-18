@@ -62,7 +62,7 @@ const createMockConfig = (
   fieldNameCasing: 'camelCase',
   objectNameCasing: 'PascalCase',
   outputDir: './generated',
-  zodVersion: 4,
+  zodVersion: '4',
   schemaName: 'public',
   jsonSchemaImportLocation: undefined,
   ...overrides,

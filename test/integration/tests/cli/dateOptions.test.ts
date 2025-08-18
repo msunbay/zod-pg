@@ -25,11 +25,11 @@ afterAll(async () => {
 });
 
 describe('CLI Date Options', () => {
-  it('CLI works with --coerce-dates option', async () => {
+  it('CLI works with --disable-coerce-dates option', async () => {
     const connectionString = getClientConnectionString();
 
     execSync(
-      `node ${cliPath} --connection-string "${connectionString}" --output "${outputDir}" --coerce-dates --silent --include users --module esm`,
+      `node ${cliPath} --connection-string "${connectionString}" --output "${outputDir}" --disable-coerce-dates --silent --include users --module esm`,
       { stdio: 'inherit' }
     );
 
@@ -40,6 +40,6 @@ describe('CLI Date Options', () => {
 
     expect(usersFile).toBeDefined();
     const content = fs.readFileSync(usersFile!, 'utf8');
-    expect(content).toMatch(/z\.coerce\.date\(\)/);
+    expect(content).not.toMatch(/z\.coerce\.date\(\)/);
   });
 });

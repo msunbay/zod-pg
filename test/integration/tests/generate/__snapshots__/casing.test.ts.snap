@@ -78,12 +78,12 @@ export const PostsTableBaseSchema = z.object({
      /**
       * dataType: timestamptz
       */
-    published_at: z.date().nullish().transform((value) => value ?? undefined).optional(),
+    published_at: z.coerce.date().nullish().transform((value) => value ?? undefined).optional(),
      /**
       * dataType: timestamptz
       * defaultValue: now()
       */
-    updated_at: z.date().nullish().transform((value) => value ?? undefined).optional(),
+    updated_at: z.coerce.date().nullish().transform((value) => value ?? undefined).optional(),
 });
 
 /**
@@ -94,7 +94,7 @@ export type PostBaseRecord = z.output<typeof PostsTableBaseSchema>;
 
 /**
  * Read transform for the "public.posts" table.
- * Maps raw database snake_case fields to camelCase properties.
+ * Maps database fields to app case properties.
  */
 export const transformPostBaseRecord = (data: PostBaseRecord): {
     id: PostBaseRecord['id'],
@@ -191,7 +191,7 @@ export type PostUpdateBaseRecord = Partial<PostInsertBaseRecord>;
 
 /**
  * Insert transform for the "public.posts" table.
- * Maps camelCase properties to raw database snake_case fields.
+ * Maps app cased properties to database fields.
  */
 export const transformPostInsertBaseRecord = (data: PostInsertBaseRecord): {
     user_id?: PostInsertBaseRecord['userId'],
@@ -219,7 +219,7 @@ export const transformPostInsertBaseRecord = (data: PostInsertBaseRecord): {
 
 /**
  * Update transform for the "public.posts" table.
- * Maps camelCase properties to raw database snake_case fields.
+ * Maps app cased properties to database fields.
  */
 export const transformPostUpdateBaseRecord = (data: PostUpdateBaseRecord): {
     user_id?: PostUpdateBaseRecord['userId'],
@@ -402,7 +402,7 @@ export const UsersTableBaseSchema = z.object({
       * dataType: timestamptz
       * defaultValue: now()
       */
-    created_at: z.date().nullish().transform((value) => value ?? undefined).optional(),
+    created_at: z.coerce.date().nullish().transform((value) => value ?? undefined).optional(),
      /**
       * dataType: _text
       */
@@ -410,7 +410,7 @@ export const UsersTableBaseSchema = z.object({
      /**
       * dataType: _timestamp
       */
-    dates: z.array(z.date()).nullish().transform((value) => value ?? undefined).optional(),
+    dates: z.array(z.coerce.date()).nullish().transform((value) => value ?? undefined).optional(),
 });
 
 /**
@@ -421,7 +421,7 @@ export type UserBaseRecord = z.output<typeof UsersTableBaseSchema>;
 
 /**
  * Read transform for the "public.users" table.
- * Maps raw database snake_case fields to camelCase properties.
+ * Maps database fields to app case properties.
  */
 export const transformUserBaseRecord = (data: UserBaseRecord): {
     id: UserBaseRecord['id'],
@@ -498,7 +498,7 @@ export type UserUpdateBaseRecord = Partial<UserInsertBaseRecord>;
 
 /**
  * Insert transform for the "public.users" table.
- * Maps camelCase properties to raw database snake_case fields.
+ * Maps app cased properties to database fields.
  */
 export const transformUserInsertBaseRecord = (data: UserInsertBaseRecord): {
     name: UserInsertBaseRecord['name'],
@@ -520,7 +520,7 @@ export const transformUserInsertBaseRecord = (data: UserInsertBaseRecord): {
 
 /**
  * Update transform for the "public.users" table.
- * Maps camelCase properties to raw database snake_case fields.
+ * Maps app cased properties to database fields.
  */
 export const transformUserUpdateBaseRecord = (data: UserUpdateBaseRecord): {
     name: UserUpdateBaseRecord['name'],
@@ -692,7 +692,7 @@ export const users-table-base-schema = z.object({
       * dataType: timestamptz
       * defaultValue: now()
       */
-    created_at: z.date().nullish().transform((value) => value ?? undefined).optional(),
+    created_at: z.coerce.date().nullish().transform((value) => value ?? undefined).optional(),
      /**
       * dataType: _text
       */
@@ -700,7 +700,7 @@ export const users-table-base-schema = z.object({
      /**
       * dataType: _timestamp
       */
-    dates: z.array(z.date()).nullish().transform((value) => value ?? undefined).optional(),
+    dates: z.array(z.coerce.date()).nullish().transform((value) => value ?? undefined).optional(),
 });
 
 /**
@@ -711,7 +711,7 @@ export type user-base-record = z.output<typeof users-table-base-schema>;
 
 /**
  * Read transform for the "public.users" table.
- * Maps raw database snake_case fields to camelCase properties.
+ * Maps database fields to app case properties.
  */
 export const transformUserBaseRecord = (data: user-base-record): {
     id: user-base-record['id'],
@@ -788,7 +788,7 @@ export type user-update-base-record = Partial<user-insert-base-record>;
 
 /**
  * Insert transform for the "public.users" table.
- * Maps camelCase properties to raw database snake_case fields.
+ * Maps app cased properties to database fields.
  */
 export const transformUserInsertBaseRecord = (data: user-insert-base-record): {
     name: user-insert-base-record['name'],
@@ -810,7 +810,7 @@ export const transformUserInsertBaseRecord = (data: user-insert-base-record): {
 
 /**
  * Update transform for the "public.users" table.
- * Maps camelCase properties to raw database snake_case fields.
+ * Maps app cased properties to database fields.
  */
 export const transformUserUpdateBaseRecord = (data: user-update-base-record): {
     name: user-update-base-record['name'],
@@ -981,7 +981,7 @@ export const UsersTableBaseSchema = z.object({
       * dataType: timestamptz
       * defaultValue: now()
       */
-    created_at: z.date().nullish().transform((value) => value ?? undefined).optional(),
+    created_at: z.coerce.date().nullish().transform((value) => value ?? undefined).optional(),
      /**
       * dataType: _text
       */
@@ -989,7 +989,7 @@ export const UsersTableBaseSchema = z.object({
      /**
       * dataType: _timestamp
       */
-    dates: z.array(z.date()).nullish().transform((value) => value ?? undefined).optional(),
+    dates: z.array(z.coerce.date()).nullish().transform((value) => value ?? undefined).optional(),
 });
 
 /**
@@ -1000,7 +1000,7 @@ export type UserBaseRecord = z.output<typeof UsersTableBaseSchema>;
 
 /**
  * Read transform for the "public.users" table.
- * Maps raw database snake_case fields to camelCase properties.
+ * Maps database fields to app case properties.
  */
 export const transformUserBaseRecord = (data: UserBaseRecord): {
     id: UserBaseRecord['id'],
@@ -1077,7 +1077,7 @@ export type UserUpdateBaseRecord = Partial<UserInsertBaseRecord>;
 
 /**
  * Insert transform for the "public.users" table.
- * Maps camelCase properties to raw database snake_case fields.
+ * Maps app cased properties to database fields.
  */
 export const transformUserInsertBaseRecord = (data: UserInsertBaseRecord): {
     name: UserInsertBaseRecord['name'],
@@ -1099,7 +1099,7 @@ export const transformUserInsertBaseRecord = (data: UserInsertBaseRecord): {
 
 /**
  * Update transform for the "public.users" table.
- * Maps camelCase properties to raw database snake_case fields.
+ * Maps app cased properties to database fields.
  */
 export const transformUserUpdateBaseRecord = (data: UserUpdateBaseRecord): {
     name: UserUpdateBaseRecord['name'],
@@ -1270,7 +1270,7 @@ export const UsersTableBaseSchema = z.object({
       * dataType: timestamptz
       * defaultValue: now()
       */
-    created_at: z.date().nullish().transform((value) => value ?? undefined).optional(),
+    created_at: z.coerce.date().nullish().transform((value) => value ?? undefined).optional(),
      /**
       * dataType: _text
       */
@@ -1278,7 +1278,7 @@ export const UsersTableBaseSchema = z.object({
      /**
       * dataType: _timestamp
       */
-    dates: z.array(z.date()).nullish().transform((value) => value ?? undefined).optional(),
+    dates: z.array(z.coerce.date()).nullish().transform((value) => value ?? undefined).optional(),
 });
 
 /**
@@ -1289,7 +1289,7 @@ export type UserBaseRecord = z.output<typeof UsersTableBaseSchema>;
 
 /**
  * Read transform for the "public.users" table.
- * Maps raw database snake_case fields to camelCase properties.
+ * Maps database fields to app case properties.
  */
 export const transform_user_base_record = (data: UserBaseRecord): {
     id: UserBaseRecord['id'],
@@ -1366,7 +1366,7 @@ export type UserUpdateBaseRecord = Partial<UserInsertBaseRecord>;
 
 /**
  * Insert transform for the "public.users" table.
- * Maps camelCase properties to raw database snake_case fields.
+ * Maps app cased properties to database fields.
  */
 export const transform_user_insert_base_record = (data: UserInsertBaseRecord): {
     name: UserInsertBaseRecord['name'],
@@ -1388,7 +1388,7 @@ export const transform_user_insert_base_record = (data: UserInsertBaseRecord): {
 
 /**
  * Update transform for the "public.users" table.
- * Maps camelCase properties to raw database snake_case fields.
+ * Maps app cased properties to database fields.
  */
 export const transform_user_update_base_record = (data: UserUpdateBaseRecord): {
     name: UserUpdateBaseRecord['name'],
