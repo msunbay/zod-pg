@@ -349,7 +349,7 @@ e.g.
 ```ts
 import {
   transformUserBaseRecord,
-  UsersTableReadSchema,
+  UsersTableBaseSchema,
 } from '[output]/tables/users';
 
 const ExtendedSchema = UsersTableBaseSchema.extend({
