@@ -29,9 +29,9 @@ export async function setupTestDb(): Promise<TestDbContext> {
   const schemaPath = path.resolve(import.meta.dirname, './schema.sql');
 
   const container = await new PostgreSqlContainer('postgres')
-    .withDatabase('test')
-    .withUsername('test')
-    .withPassword('test')
+    .withDatabase('postgres')
+    .withUsername('postgres')
+    .withPassword('postgres')
     .withExposedPorts(5432)
     .start();
 

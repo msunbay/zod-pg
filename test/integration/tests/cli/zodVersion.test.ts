@@ -34,7 +34,9 @@ describe('CLI Zod Version', () => {
     );
 
     const outputFiles = await getOutputFiles(outputDir);
-    const usersFile = outputFiles.find((file) => file.includes('users.ts'));
+    const usersFile = outputFiles.find((file) =>
+      file.includes('users/schema.ts')
+    );
 
     expect(usersFile).toBeDefined();
     const content = fs.readFileSync(usersFile!, 'utf8');

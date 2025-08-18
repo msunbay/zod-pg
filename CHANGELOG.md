@@ -1,5 +1,13 @@
 # Changelog
 
+### v1.1.0 (2025-08-15)
+
+- Moved generated schema files to separate named folders. Prevents collision with tables/views named "index".
+- Added more exports from the generated files to allow extending the read/write Zod schemas.
+- Marked optional properties with `?` in exported interfaces.
+
+### v1.0.0 (2025-08-03)hangelog
+
 ### v1.0.2 (2025-08-09)
 
 - Included missing templates directory in package files.

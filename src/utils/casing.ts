@@ -38,7 +38,7 @@ export const singularUpperCase = (tableName: string): string => {
 };
 
 export const singularPascalCase = (tableName: string): string => {
-  return tableName
+  return snakeCase(tableName)
     .split(/_|-|\s+/)
     .map(singularize)
     .map((part) => part.toLowerCase())

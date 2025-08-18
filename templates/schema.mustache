@@ -4,16 +4,16 @@ import { z } from 'zod';
 {{#hasJsonSchemaImports}}
 import { {{#jsonSchemaImports}}{{name}}{{^last}}, {{/last}}{{/jsonSchemaImports}} } from '{{{jsonSchemaImportLocation}}}';
 {{/hasJsonSchemaImports}}
+
 {{#enums}}
 export const {{constantName}} = [{{#values}}'{{value}}'{{^last}}, {{/last}}{{/values}}] as const;
 {{/enums}}
-{{#description}}
 
 /**
- * {{{description}}}
+ * The base read schema for the "{{schemaName}}.{{tableName}}" table.
+ * This schema is used to validate the data read from the database without any transformations.
  */
-{{/description}}
-export const {{tableReadSchemaName}} = z.object({
+export const {{tableReadBaseSchemaName}} = z.object({
 {{#readableColumns}}
     /**
     * dataType: {{dataType}}
@@ -21,21 +21,40 @@ export const {{tableReadSchemaName}} = z.object({
     */
     {{name}}: {{{renderedReadType}}},
 {{/readableColumns}}
-}).transform(data => ({
+});
+
+/**
+ * The base record type for the "{{schemaName}}.{{tableName}}" table.
+ * This type represents the raw database record without any transformations.
+ */
+export type {{{tableReadBaseRecordName}}} = z.output<typeof {{tableReadBaseSchemaName}}>;
+
+/**
+* The read transform function for the "{{schemaName}}.{{tableName}}" table.
+* Maps the raw database fields to expected property names. e.g snake_case to camelCase.
+*/
+export const {{tableReadTransformName}} = (data: {{{tableReadBaseRecordName}}}): {
+{{#readableColumns}}
+    {{propertyName}}{{#isOptional}}?{{/isOptional}}: {{{tableReadBaseRecordName}}}['{{name}}'],
+{{/readableColumns}}
+} => ({
 {{#readableColumns}}
     {{propertyName}}: {{#renderedReadTransform}}data.{{name}}{{/renderedReadTransform}},
 {{/readableColumns}}
-}));
-
-type TableReadRecord = z.output<typeof {{tableReadSchemaName}}>;
-{{#isWritable}}
-{{#description}}
+});
 
 /**
- * {{{description}}} - Insert schema
+ * The read schema for the "{{schemaName}}.{{tableName}}" table.
+ * This schema is used to validate the data read from the database with transformations.
  */
-{{/description}}
-const TableWriteSchema = z.object({
+export const {{tableReadSchemaName}} = {{tableReadBaseSchemaName}}.transform({{tableReadTransformName}});
+
+{{#isWritable}}
+/**
+ * The base write schema for the "{{schemaName}}.{{tableName}}" table.
+ * This schema is used to validate the data before writing to the database without any transformations.
+ */
+export const {{tableWriteBaseSchemaName}} = z.object({
 {{#writableColumns}}
     /**
     * dataType: {{dataType}}
@@ -44,31 +63,62 @@ const TableWriteSchema = z.object({
     {{propertyName}}: {{{renderedWriteType}}},
 {{/writableColumns}}
 });
-{{#description}}
 
 /**
- * {{{description}}} - Insert schema
+ * The base record type for the "{{schemaName}}.{{tableName}}" table.
+ * This type represents an insertable database record before casing transformations are applied.
  */
-{{/description}}
-export const {{tableInsertSchemaName}} = TableWriteSchema.transform(data => ({
+export type {{{tableInsertBaseRecordName}}} = z.output<typeof {{tableWriteBaseSchemaName}}>;
+
+/**
+ * The base record type for the "{{schemaName}}.{{tableName}}" table.
+ * This type represents an updatable database record before casing transformations are applied.
+ */
+export type {{{tableUpdateBaseRecordName}}} = Partial<{{{tableInsertBaseRecordName}}}>;
+
+/**
+ * The insert transform function for the "{{schemaName}}.{{tableName}}" table.
+ * Maps the expected property names to raw database fields. e.g camelCase to snake_case.
+ */
+export const {{tableInsertTransformName}} = (data: {{{tableInsertBaseRecordName}}}): {
+{{#writableColumns}}
+    {{name}}{{#isOptional}}?{{/isOptional}}: {{{tableInsertBaseRecordName}}}['{{propertyName}}'],
+{{/writableColumns}}
+} => ({
 {{#writableColumns}}
     {{name}}: {{#renderedWriteTransform}}data.{{propertyName}}{{/renderedWriteTransform}},
 {{/writableColumns}}
-}));
-{{#description}}
+});
 
 /**
- * {{{description}}} - Update schema
+ * The update transform function for the "{{schemaName}}.{{tableName}}" table.
+ * Maps the expected property names to raw database fields. e.g camelCase to snake_case.
  */
-{{/description}}
-export const {{tableUpdateSchemaName}} = TableWriteSchema.partial().transform(data => ({
+export const {{tableUpdateTransformName}} = (data: {{{tableUpdateBaseRecordName}}}): {
+{{#writableColumns}}
+    {{name}}{{#isOptional}}?{{/isOptional}}: {{{tableUpdateBaseRecordName}}}['{{propertyName}}'],
+{{/writableColumns}}
+} => ({
 {{#writableColumns}}
     {{name}}: {{#renderedWriteTransform}}data.{{propertyName}}{{/renderedWriteTransform}},
 {{/writableColumns}}
-}));
+});
+
+/**
+ * The insert schema for the "{{schemaName}}.{{tableName}}" table.
+ * This schema is used to validate and transform a record before inserting into the database.
+ */
+export const {{tableInsertSchemaName}} = {{tableWriteBaseSchemaName}}.transform({{tableInsertTransformName}});
+
+/**
+ * The update schema for the "{{schemaName}}.{{tableName}}" table.
+ * This schema is used to validate and transform a record before updating the database.
+ */
+export const {{tableUpdateSchemaName}} = {{tableWriteBaseSchemaName}}.partial().transform({{tableUpdateTransformName}});
 
 type TableInsertRecord = z.input<typeof {{tableInsertSchemaName}}>;
 {{/isWritable}}
+type TableReadRecord = z.output<typeof {{tableReadSchemaName}}>;
 {{#enums}}
 export type {{typeName}} = (typeof {{constantName}})[number];
 {{/enums}}
@@ -78,12 +128,11 @@ export type {{typeName}} = (typeof {{constantName}})[number];
 */
 export interface {{tableReadRecordName}} {
 {{#readableColumns}}
-{{#description}}
     /**
-     * {{{description}}}
-     */
-{{/description}}
-    {{propertyName}}: TableReadRecord['{{propertyName}}'];
+    {{#description}}* {{{description}}}
+    {{/description}}{{#isDeprecated}}* @deprecated {{isDeprecatedReason}}
+    {{/isDeprecated}}*/
+    {{propertyName}}{{#isOptional}}?{{/isOptional}}: TableReadRecord['{{propertyName}}'];
 {{/readableColumns}}
 }
 {{#isWritable}}
@@ -99,7 +148,7 @@ export interface {{tableInsertRecordName}} {
     {{/maxLen}}{{#defaultValue}}* @default: {{{defaultValue}}}
     {{/defaultValue}}{{#isDeprecated}}* @deprecated {{isDeprecatedReason}}
     {{/isDeprecated}}*/
-    {{propertyName}}{{#isNullable}}?{{/isNullable}}: TableInsertRecord['{{propertyName}}'];
+    {{propertyName}}{{#isOptional}}?{{/isOptional}}: TableInsertRecord['{{propertyName}}'];
 {{/writableColumns}}
 }
 

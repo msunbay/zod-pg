@@ -6,8 +6,9 @@ import { createClient } from './database/client.js';
 import { getSchemaInformation } from './database/schema.js';
 import { generateConstantsFile } from './generate/generateConstantsFile.js';
 import { generateIndexFiles } from './generate/generateIndexFiles.js';
-import { generateSchemaFile } from './generate/generateSchemaFile.js';
+import { generateSchemaFiles } from './generate/generateSchemaFile.js';
 import { generateTypesFile } from './generate/generateTypesFile.js';
+import { createTableModel } from './generate/models.js';
 import { clearTablesDirectory, logDebug } from './utils/index.js';
 
 export interface ZodPgGenerateConfig extends ZodPgConfig {
@@ -70,11 +71,19 @@ export const generateZodSchemas = async ({
       `Generating zod schemas for ${schema.tables.length} tables in db schema '${schemaName}'`
     );
 
+    const models = [];
+
     for (const tableInfo of schema.tables) {
-      await generateSchemaFile(tableInfo, generateConfig);
+      logDebug(`Generating model for: ${tableInfo.type} ${tableInfo.name}`);
+      const model = await createTableModel(tableInfo, generateConfig);
+      models.push(model);
     }
 
-    await generateIndexFiles(schema, generateConfig);
+    for (const tableModel of models) {
+      await generateSchemaFiles(tableModel, generateConfig);
+    }
+
+    await generateIndexFiles(models, generateConfig);
     await generateConstantsFile(schema, generateConfig);
     await generateTypesFile(schema, generateConfig);
 

@@ -1,10 +1,3 @@
-import {
-  formatEnumConstantName,
-  formatEnumTypeName,
-  formatJsonSchemaName,
-  formatTableRecordName,
-  formatTableSchemaName,
-} from '../../../../src/generate/format.js';
 import { createTableModel } from '../../../../src/generate/models.js';
 import {
   createRenderReadTransform,
@@ -18,25 +11,6 @@ import {
   ZodPgTableInfo,
   ZodPgTableType,
 } from '../../../../src/types.js';
-// Import mocked functions for type safety
-import {
-  convertCaseFormat,
-  formatSingularString,
-} from '../../../../src/utils/casing.js';
-
-// Mock the dependencies
-vi.mock('../../../../src/utils/casing.js', () => ({
-  convertCaseFormat: vi.fn(),
-  formatSingularString: vi.fn(),
-}));
-
-vi.mock('../../../../src/generate/format.js', () => ({
-  formatEnumConstantName: vi.fn(),
-  formatEnumTypeName: vi.fn(),
-  formatJsonSchemaName: vi.fn(),
-  formatTableRecordName: vi.fn(),
-  formatTableSchemaName: vi.fn(),
-}));
 
 vi.mock('../../../../src/generate/render.js', () => ({
   createRenderReadTransform: vi.fn(),
@@ -99,17 +73,6 @@ describe('models', () => {
     vi.clearAllMocks();
 
     // Setup default mock implementations
-    vi.mocked(convertCaseFormat).mockReturnValue('testColumn');
-    vi.mocked(formatSingularString).mockReturnValue('TestTable');
-    vi.mocked(formatEnumConstantName).mockReturnValue(
-      'TEST_TABLE_TEST_COLUMN_ENUM'
-    );
-    vi.mocked(formatEnumTypeName).mockReturnValue('TestTableTestColumnEnum');
-    vi.mocked(formatJsonSchemaName).mockReturnValue(
-      'TestTableTestColumnJsonSchema'
-    );
-    vi.mocked(formatTableRecordName).mockReturnValue('TestTableRecord');
-    vi.mocked(formatTableSchemaName).mockReturnValue('TestTableSchema');
     vi.mocked(renderReadField).mockReturnValue('z.string()');
     vi.mocked(renderWriteField).mockReturnValue('z.string()');
     vi.mocked(createRenderReadTransform).mockReturnValue(
@@ -144,25 +107,32 @@ describe('models', () => {
         type: 'table',
         tableName: 'users',
         schemaName: 'public',
-        tableSingularName: 'TestTable',
-        tableReadSchemaName: 'TestTableSchema',
-        tableInsertSchemaName: 'TestTableSchema',
-        tableUpdateSchemaName: 'TestTableSchema',
-        tableInsertRecordName: 'TestTableRecord',
-        tableReadRecordName: 'TestTableRecord',
-        tableUpdateRecordName: 'TestTableRecord',
+        tableSingularName: 'User',
+        tableReadBaseRecordName: 'UserReadRecord',
+        tableReadBaseSchemaName: 'UsersTableReadSchema',
+        tableReadSchemaName: 'UsersTableSchema',
+        tableInsertSchemaName: 'UsersTableInsertSchema',
+        tableUpdateSchemaName: 'UsersTableUpdateSchema',
+        tableInsertRecordName: 'UserInsertRecord',
+        tableReadRecordName: 'UserRecord',
+        tableUpdateRecordName: 'UserUpdateRecord',
+        tableReadTransformName: 'transformUserReadRecord',
+        tableUpdateTransformName: 'transformUserUpdateRecord',
+        tableInsertTransformName: 'transformUserInsertRecord',
+        tableWriteBaseRecordName: 'UserWriteRecord',
+        tableWriteBaseSchemaName: 'UsersTableWriteSchema',
         jsonSchemaImportLocation: undefined,
         jsonSchemaImports: undefined,
         hasJsonSchemaImports: false,
         readableColumns: expect.arrayContaining([
           expect.objectContaining({
             name: 'id',
-            propertyName: 'testColumn',
+            propertyName: 'id',
             isWritable: false, // Serial columns are not writable
           }),
           expect.objectContaining({
             name: 'name',
-            propertyName: 'testColumn',
+            propertyName: 'name',
             isWritable: true, // Non-serial columns in tables are writable
           }),
         ]),
@@ -175,22 +145,6 @@ describe('models', () => {
         enums: [],
         isWritable: true,
       });
-
-      expect(formatTableSchemaName).toHaveBeenCalledWith(
-        tableInfo,
-        'read',
-        'PascalCase'
-      );
-      expect(formatTableSchemaName).toHaveBeenCalledWith(
-        tableInfo,
-        'insert',
-        'PascalCase'
-      );
-      expect(formatTableSchemaName).toHaveBeenCalledWith(
-        tableInfo,
-        'update',
-        'PascalCase'
-      );
     });
 
     it('should handle view tables with no writable columns', async () => {
@@ -235,24 +189,14 @@ describe('models', () => {
 
       expect(result.enums).toHaveLength(1);
       expect(result.enums[0]).toEqual({
-        constantName: 'TEST_TABLE_TEST_COLUMN_ENUM',
-        typeName: 'TestTableTestColumnEnum',
+        constantName: 'TEST_TABLE_STATUSES',
+        typeName: 'TestTableStatus',
         values: [
           { value: 'active', last: false },
           { value: 'inactive', last: false },
           { value: 'pending', last: true },
         ],
       });
-
-      expect(formatEnumConstantName).toHaveBeenCalledWith(
-        'test_table',
-        'status'
-      );
-      expect(formatEnumTypeName).toHaveBeenCalledWith(
-        'test_table',
-        'status',
-        'PascalCase'
-      );
     });
 
     it('should handle JSON schema imports when configured', async () => {
@@ -282,8 +226,8 @@ describe('models', () => {
       expect(result.hasJsonSchemaImports).toBe(true);
       expect(result.jsonSchemaImports).toHaveLength(2);
       expect(result.jsonSchemaImports).toEqual([
-        { name: 'TestTableTestColumnJsonSchema', last: false },
-        { name: 'TestTableTestColumnJsonSchema', last: true },
+        { name: 'TestTableDataSchema', last: false },
+        { name: 'TestTableMetadataSchema', last: true },
       ]);
     });
 
@@ -329,7 +273,7 @@ describe('models', () => {
       expect(onColumnModelCreated).toHaveBeenCalledWith(
         expect.objectContaining({
           name: 'test_col',
-          propertyName: 'testColumn',
+          propertyName: 'testCol',
         })
       );
 
@@ -417,8 +361,6 @@ describe('models', () => {
       const result = await createTableModel(tableInfo, config);
 
       expect(result.enums[0].typeName).toBe('CustomStatusType');
-      // Should not call formatEnumTypeName when custom type name is provided
-      expect(formatEnumTypeName).not.toHaveBeenCalled();
     });
 
     it('should handle empty enum values', async () => {
@@ -517,45 +459,15 @@ describe('models', () => {
           }),
         ],
       });
+
       const config = createMockConfig({
         fieldNameCasing: 'snake_case',
         objectNameCasing: 'kebab-case',
       });
 
-      await createTableModel(tableInfo, config);
+      const result = await createTableModel(tableInfo, config);
 
-      expect(convertCaseFormat).toHaveBeenCalledWith(
-        'test_column',
-        'snake_case'
-      );
-      expect(formatSingularString).toHaveBeenCalledWith(
-        'test_table',
-        'kebab-case'
-      );
-      expect(formatEnumConstantName).toHaveBeenCalledWith(
-        'test_table',
-        'test_column'
-      );
-      expect(formatJsonSchemaName).toHaveBeenCalledWith(
-        'test_table',
-        'test_column',
-        'kebab-case'
-      );
-      expect(formatTableRecordName).toHaveBeenCalledWith(
-        tableInfo,
-        'read',
-        'kebab-case'
-      );
-      expect(formatTableRecordName).toHaveBeenCalledWith(
-        tableInfo,
-        'insert',
-        'kebab-case'
-      );
-      expect(formatTableRecordName).toHaveBeenCalledWith(
-        tableInfo,
-        'update',
-        'kebab-case'
-      );
+      expect(result.tableReadSchemaName).toEqual('test-table-table-schema');
     });
 
     it('should handle columns with different zodTypes', async () => {

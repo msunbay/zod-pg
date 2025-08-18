@@ -8,6 +8,7 @@ import {
 } from '../types.js';
 import { convertCaseFormat, formatSingularString } from '../utils/casing.js';
 import {
+  formaRecordTransformName,
   formatEnumConstantName,
   formatEnumTypeName,
   formatJsonSchemaName,
@@ -34,6 +35,7 @@ const createColumnModel = (
       config.objectNameCasing
     ),
     isWritable: !column.isSerial && column.tableType === 'table',
+    isOptional: column.isOptional ?? column.isNullable,
     ...column,
   };
 
@@ -141,9 +143,34 @@ export const createTableModel = async (
       tableInfo.name,
       config.objectNameCasing
     ),
-    tableReadSchemaName: formatTableSchemaName(
+    tableReadBaseSchemaName: formatTableSchemaName(
       tableInfo,
       'read',
+      config.objectNameCasing
+    ),
+    tableWriteBaseSchemaName: formatTableSchemaName(
+      tableInfo,
+      'write',
+      config.objectNameCasing
+    ),
+    tableReadTransformName: formaRecordTransformName(
+      tableInfo,
+      'read',
+      config.fieldNameCasing
+    ),
+    tableInsertTransformName: formaRecordTransformName(
+      tableInfo,
+      'insert',
+      config.fieldNameCasing
+    ),
+    tableUpdateTransformName: formaRecordTransformName(
+      tableInfo,
+      'update',
+      config.fieldNameCasing
+    ),
+    tableReadSchemaName: formatTableSchemaName(
+      tableInfo,
+      'none',
       config.objectNameCasing
     ),
     tableInsertSchemaName: formatTableSchemaName(
@@ -156,22 +183,39 @@ export const createTableModel = async (
       'update',
       config.objectNameCasing
     ),
-
-    tableInsertRecordName: formatTableRecordName(
+    tableInsertRecordName: formatTableRecordName({
       tableInfo,
-      'insert',
-      config.objectNameCasing
-    ),
-    tableReadRecordName: formatTableRecordName(
+      operation: 'insert',
+      casing: config.objectNameCasing,
+    }),
+    tableReadBaseRecordName: formatTableRecordName({
       tableInfo,
-      'read',
-      config.objectNameCasing
-    ),
-    tableUpdateRecordName: formatTableRecordName(
+      operation: 'read',
+      casing: config.objectNameCasing,
+      suffix: 'BaseRecord',
+    }),
+    tableInsertBaseRecordName: formatTableRecordName({
       tableInfo,
-      'update',
-      config.objectNameCasing
-    ),
+      operation: 'insert',
+      casing: config.objectNameCasing,
+      suffix: 'BaseRecord',
+    }),
+    tableUpdateBaseRecordName: formatTableRecordName({
+      tableInfo,
+      operation: 'update',
+      casing: config.objectNameCasing,
+      suffix: 'BaseRecord',
+    }),
+    tableReadRecordName: formatTableRecordName({
+      tableInfo,
+      operation: 'none',
+      casing: config.objectNameCasing,
+    }),
+    tableUpdateRecordName: formatTableRecordName({
+      tableInfo,
+      operation: 'update',
+      casing: config.objectNameCasing,
+    }),
     jsonSchemaImportLocation: config.jsonSchemaImportLocation,
     jsonSchemaImports,
     hasJsonSchemaImports: !!jsonSchemaImports?.length,

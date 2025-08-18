@@ -44,6 +44,11 @@ export interface ZodPgRawColumnInfo {
   defaultValue?: string;
   /** Whether the column allows NULL values */
   isNullable: boolean;
+  /**
+   * Whether the field is optional in the Zod schema
+   * Defaults to the same as isNullable.
+   */
+  isOptional?: boolean;
   /** Maximum length constraint for string columns */
   maxLen?: number;
   /** Minimum length constraint for string columns */
@@ -236,6 +241,16 @@ export interface ZodPgTable {
   /** The singular form of the table name (e.g., 'user' from 'users') */
   tableSingularName: string;
 
+  /** Generated name for the read base schema (e.g., 'UserBaseSchema') */
+  tableReadBaseSchemaName?: string;
+  /** Generated name for the write base schema (e.g., 'UserWriteBaseSchema') */
+  tableWriteBaseSchemaName?: string;
+  /** Generated name for the read transform function (e.g., 'transformUserReadRecord') */
+  tableReadTransformName?: string;
+  /** Generated name for the insert transform function (e.g., 'transformUserInsertRecord') */
+  tableInsertTransformName?: string;
+  /** Generated name for the update transform function (e.g., 'transformUserUpdateRecord') */
+  tableUpdateTransformName?: string;
   /** Generated name for the read schema (e.g., 'UserSchema') */
   tableReadSchemaName?: string;
   /** Generated name for the insert schema (e.g., 'UserInsertSchema') */
@@ -243,10 +258,16 @@ export interface ZodPgTable {
   /** Generated name for the update schema (e.g., 'UserUpdateSchema') */
   tableUpdateSchemaName?: string;
 
+  /** Generated name for the base read record type (e.g., 'UserReadRecord') */
+  tableReadBaseRecordName?: string;
   /** Generated name for the read record type (e.g., 'UserRecord') */
   tableReadRecordName?: string;
+  /** Generated name for the base write record type (e.g., 'UserInsertBaseRecord') */
+  tableInsertBaseRecordName?: string;
   /** Generated name for the insert record type (e.g., 'UserInsertRecord') */
   tableInsertRecordName?: string;
+  /** Generated name for the base update record type (e.g., 'UserUpdateBaseRecord') */
+  tableUpdateBaseRecordName?: string;
   /** Generated name for the update record type (e.g., 'UserUpdateRecord') */
   tableUpdateRecordName?: string;
 

@@ -6,49 +6,20 @@ import {
 } from '../types.js';
 
 export const createRenderReadTransform = (
-  column: ZodPgColumnInfo,
-  config: ZodPgConfig
+  _column: ZodPgColumnInfo,
+  _config: ZodPgConfig
 ) => {
   return () => (text: string, render: (text: string) => string) => {
-    const innerText = render(text);
-
-    if (column.isNullable && column.isArray && config.defaultEmptyArray) {
-      return `${innerText} ?? []`;
-    }
-
-    if (column.isNullable) {
-      return `${innerText} ?? undefined`;
-    }
-
-    return innerText;
+    return render(text);
   };
 };
 
 export const createRenderWriteTransform = (
-  column: ZodPgColumnBaseModel,
-  config: ZodPgConfig
+  _column: ZodPgColumnBaseModel,
+  _config: ZodPgConfig
 ) => {
   return () => (text: string, render: (text: string) => string) => {
-    const innerText = render(text);
-
-    if (column.type === 'json' && config.stringifyJson) {
-      if (!column.isNullable) return `JSON.stringify(${innerText})`;
-
-      return `(${innerText} ? JSON.stringify(${innerText}) : ${innerText})`;
-    }
-
-    if (column.type === 'date' && config.stringifyDates) {
-      if (column.isArray) {
-        if (!column.isNullable)
-          return `${innerText}.map(date => date.toISOString())`;
-        return `(${innerText} ? ${innerText}.map(date => date.toISOString()) : ${innerText})`;
-      }
-
-      if (!column.isNullable) return `${innerText}.toISOString()`;
-      return `(${innerText} ? ${innerText}.toISOString() : ${innerText})`;
-    }
-
-    return innerText;
+    return render(text);
   };
 };
 
@@ -101,7 +72,15 @@ export const renderReadField = (
   }
 
   if (column.isNullable) {
-    zodType = `${zodType}.nullable()`;
+    zodType = `${zodType}.nullish()`;
+  }
+
+  if (column.isOptional || column.isNullable) {
+    if (column.isArray && config.defaultEmptyArray)
+      zodType = `${zodType}.transform((value) => value ?? [])`;
+    else zodType = `${zodType}.transform((value) => value ?? undefined)`;
+
+    zodType = `${zodType}.optional()`;
   }
 
   return zodType;
@@ -134,6 +113,31 @@ export const renderWriteField = (
 
   if (column.isNullable) {
     zodType = `${zodType}.nullish()`;
+  }
+
+  if (column.type === 'json' && config.stringifyJson) {
+    if (!column.isNullable)
+      zodType = `${zodType}.transform((value) => JSON.stringify(value))`;
+    else
+      zodType = `${zodType}.transform((value) => value ? JSON.stringify(value) : value)`;
+  }
+
+  if (column.type === 'date' && config.stringifyDates) {
+    if (column.isArray) {
+      if (!column.isNullable)
+        zodType = `${zodType}.transform((value) => value.map(date => date.toISOString()))`;
+      else
+        zodType = `${zodType}.transform((value) => value ? value.map(date => date.toISOString()) : value)`;
+    } else {
+      if (!column.isNullable)
+        zodType = `${zodType}.transform((value) => value.toISOString())`;
+      else
+        zodType = `${zodType}.transform((value) => value ? value.toISOString() : value)`;
+    }
+  }
+
+  if (column.isOptional) {
+    zodType = `${zodType}.optional()`;
   }
 
   return zodType;

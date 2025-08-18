@@ -34,8 +34,10 @@ describe('CLI JSON Options', () => {
     );
 
     const outputFiles = await getOutputFiles(outputDir);
+
     const postsFile = outputFiles.find(
-      (file) => file.includes('posts.ts') && !file.includes('mv_user_posts')
+      (file) =>
+        file.includes('posts/schema.ts') && !file.includes('mv_user_posts')
     );
 
     expect(postsFile).toBeDefined();

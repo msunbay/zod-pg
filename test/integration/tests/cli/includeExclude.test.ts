@@ -34,7 +34,9 @@ describe('CLI Include/Exclude Options', () => {
     );
 
     const outputFiles = await getOutputFiles(testOutputDir);
-    const hasPostsFile = outputFiles.some((file) => file.includes('posts.ts'));
+    const hasPostsFile = outputFiles.some((file) =>
+      file.includes('posts/schema.ts')
+    );
 
     expect(hasPostsFile).toBe(false);
   });
@@ -49,8 +51,12 @@ describe('CLI Include/Exclude Options', () => {
     );
 
     const outputFiles = await getOutputFiles(testOutputDir);
-    const hasUsersFile = outputFiles.some((file) => file.includes('users.ts'));
-    const hasPostsFile = outputFiles.some((file) => file.includes('posts.ts'));
+    const hasUsersFile = outputFiles.some((file) =>
+      file.includes('users/schema.ts')
+    );
+    const hasPostsFile = outputFiles.some((file) =>
+      file.includes('posts/schema.ts')
+    );
 
     expect(hasUsersFile).toBe(true);
     expect(hasPostsFile).toBe(false);

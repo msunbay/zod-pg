@@ -1,28 +1,30 @@
 import { promises } from 'fs';
 
-import { ZodPgConfig, ZodPgSchemaInfo, ZodPgTableType } from '../types.js';
+import { ZodPgConfig, ZodPgTable, ZodPgTableType } from '../types.js';
 import { logDebug } from '../utils/debug.js';
 import { getOutputFolder } from '../utils/fs.js';
 import { renderTemplate } from './template.js';
 
 const generateSchemasIndexFile = async (
-  schema: ZodPgSchemaInfo,
+  models: ZodPgTable[],
   type: ZodPgTableType,
   {
     outputDir,
     moduleResolution,
   }: Pick<ZodPgConfig, 'outputDir' | 'moduleResolution'>
 ) => {
-  const exports = schema.tables
+  const exports = models
     .filter((table) => table.type === type)
-    .map(({ name }) => ({
-      fileName: moduleResolution === 'esm' ? `${name}.js` : name,
+    .map((table) => ({
+      ...table,
+      fileName:
+        moduleResolution === 'esm'
+          ? `${table.tableName}/index.js`
+          : table.tableName,
     }));
 
   if (exports.length === 0) {
-    logDebug(
-      `No ${type} found in schema '${schema.name}' to generate index file.`
-    );
+    logDebug(`No ${type} found in schema to generate index file.`);
 
     return;
   }
@@ -37,12 +39,12 @@ const generateSchemasIndexFile = async (
 };
 
 export const generateIndexFiles = async (
-  schema: ZodPgSchemaInfo,
+  models: ZodPgTable[],
   config: ZodPgConfig
 ): Promise<void> => {
-  await generateSchemasIndexFile(schema, 'table', config);
-  await generateSchemasIndexFile(schema, 'view', config);
-  await generateSchemasIndexFile(schema, 'materialized_view', config);
-  await generateSchemasIndexFile(schema, 'foreign_table', config);
-  await generateSchemasIndexFile(schema, 'unknown', config);
+  await generateSchemasIndexFile(models, 'table', config);
+  await generateSchemasIndexFile(models, 'view', config);
+  await generateSchemasIndexFile(models, 'materialized_view', config);
+  await generateSchemasIndexFile(models, 'foreign_table', config);
+  await generateSchemasIndexFile(models, 'unknown', config);
 };

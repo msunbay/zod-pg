@@ -8,7 +8,13 @@ export const getConfiguration = async (): Promise<ZodPgConfig> => {
 
   if (!result) {
     return {
-      connection: {},
+      connection: {
+        host: 'localhost',
+        user: 'postgres',
+        password: 'postgres',
+        database: 'postgres',
+        port: '5432',
+      },
       outputDir: './zod-schemas',
     };
   }

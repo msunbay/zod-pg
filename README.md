@@ -193,14 +193,11 @@ module.exports = {
 
 The generator creates the following files:
 
-- `output/constants.ts` – Constants for all table and view names
-- `output/types.ts` – TypeScript types for all tables and views
-- `output/tables/` – Zod schemas for each table (one file per table)
-- `output/tables/index.ts` – Exports all table schemas
-- `output/views/` – Zod schemas for each view (one file per view)
-- `output/views/index.ts` – Exports all view schemas
-- `output/materialized-views/` – Zod schemas for each mview (one file per view)
-- `output/materialized-views/index.ts` – Exports all mview schemas
+- `output/constants.ts` – Constants for all table and view names.
+- `output/types.ts` – TypeScript types for all tables and views.
+- `output/[tables|views|materialized_views]/[name]/schema.ts` – Zod schema definitions for the table/view.
+- `output/[tables|views|materialized_views]/[name]/index.ts` – Zod schema and type exports for the table/view.
+- `output/[tables|views|materialized_views]/index.ts` – Exports all schemas / types-
 
 ## Schema Output
 
@@ -339,6 +336,28 @@ export const UserProfileSchema = z.object({
   lastName: z.string(),
   age: z.number().optional(),
 });
+```
+
+## Extending schemas
+
+It is possible to extend the generated Zod schemas with additional fields / rules / transformations.
+This is especially handy if you are doing a joined query.
+
+To extend a read schema you need to import the base read schema and apply the transformations afterwards.
+e.g.
+
+```ts
+import {
+  transformUserReadRecord,
+  UsersTableReadSchema,
+} from '[output]/tables/users/schema.ts';
+
+const MyExtendedSchema = UsersTableReadSchema.extend({
+  profile: z.string(),
+}).transform((data) => ({
+  ...transformUserReadRecord(data),
+  profile: data.profile,
+}));
 ```
 
 ## Contributing

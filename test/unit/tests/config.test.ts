@@ -24,7 +24,13 @@ describe('getConfiguration', () => {
     const config = await getConfiguration();
 
     expect(config).toEqual({
-      connection: {},
+      connection: {
+        database: 'postgres',
+        host: 'localhost',
+        port: '5432',
+        user: 'postgres',
+        password: 'postgres',
+      },
       outputDir: './zod-schemas',
     });
     expect(cosmiconfig).toHaveBeenCalledWith('zod-pg');

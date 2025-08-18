@@ -3,7 +3,7 @@ import {
   UserInsertRecord,
   UsersTableInsertSchema,
   UsersTableSchema,
-} from '../../output/generated/tables/users.js';
+} from '../../output/generated/tables/users/index.js';
 import {
   setupTestDb,
   teardownTestDb,
