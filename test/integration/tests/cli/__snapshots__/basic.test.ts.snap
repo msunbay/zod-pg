@@ -82,7 +82,7 @@ export type MvUserPostBaseRecord = z.output<typeof MvUserPostsBaseSchema>;
  * Read transform for the "public.mv_user_posts" table.
  * Maps raw database snake_case fields to camelCase properties.
  */
-export const transformMvUserPostRecord = (data: MvUserPostBaseRecord): {
+export const transformMvUserPostBaseRecord = (data: MvUserPostBaseRecord): {
     userId?: MvUserPostBaseRecord['user_id'],
     userName?: MvUserPostBaseRecord['user_name'],
     postId?: MvUserPostBaseRecord['post_id'],
@@ -99,7 +99,7 @@ export const transformMvUserPostRecord = (data: MvUserPostBaseRecord): {
 /**
  * Read schema for the "public.mv_user_posts" table (after casing transform).
  */
-export const MvUserPostsSchema = MvUserPostsBaseSchema.transform(transformMvUserPostRecord);
+export const MvUserPostsSchema = MvUserPostsBaseSchema.transform(transformMvUserPostBaseRecord);
 
 type TableReadRecord = z.output<typeof MvUserPostsSchema>;
 
@@ -192,7 +192,7 @@ export type AuditLogBaseRecord = z.output<typeof AuditLogsTableBaseSchema>;
  * Read transform for the "public.audit_logs" table.
  * Maps raw database snake_case fields to camelCase properties.
  */
-export const transformAuditLogRecord = (data: AuditLogBaseRecord): {
+export const transformAuditLogBaseRecord = (data: AuditLogBaseRecord): {
     id: AuditLogBaseRecord['id'],
     userId?: AuditLogBaseRecord['user_id'],
     action: AuditLogBaseRecord['action'],
@@ -215,7 +215,7 @@ export const transformAuditLogRecord = (data: AuditLogBaseRecord): {
 /**
  * Read schema for the "public.audit_logs" table (after casing transform).
  */
-export const AuditLogsTableSchema = AuditLogsTableBaseSchema.transform(transformAuditLogRecord);
+export const AuditLogsTableSchema = AuditLogsTableBaseSchema.transform(transformAuditLogBaseRecord);
 
 /**
  * Base insert/write schema for the "public.audit_logs" table (no casing transforms).
@@ -268,7 +268,7 @@ export type AuditLogUpdateBaseRecord = Partial<AuditLogInsertBaseRecord>;
  * Insert transform for the "public.audit_logs" table.
  * Maps camelCase properties to raw database snake_case fields.
  */
-export const transformAuditLogInsertRecord = (data: AuditLogInsertBaseRecord): {
+export const transformAuditLogInsertBaseRecord = (data: AuditLogInsertBaseRecord): {
     user_id?: AuditLogInsertBaseRecord['userId'],
     action: AuditLogInsertBaseRecord['action'],
     table_name?: AuditLogInsertBaseRecord['tableName'],
@@ -290,7 +290,7 @@ export const transformAuditLogInsertRecord = (data: AuditLogInsertBaseRecord): {
  * Update transform for the "public.audit_logs" table.
  * Maps camelCase properties to raw database snake_case fields.
  */
-export const transformAuditLogUpdateRecord = (data: AuditLogUpdateBaseRecord): {
+export const transformAuditLogUpdateBaseRecord = (data: AuditLogUpdateBaseRecord): {
     user_id?: AuditLogUpdateBaseRecord['userId'],
     action: AuditLogUpdateBaseRecord['action'],
     table_name?: AuditLogUpdateBaseRecord['tableName'],
@@ -311,12 +311,12 @@ export const transformAuditLogUpdateRecord = (data: AuditLogUpdateBaseRecord): {
 /**
  * Insert schema for the "public.audit_logs" table (after casing transform).
  */
-export const AuditLogsTableInsertSchema = AuditLogsTableInsertBaseSchema.transform(transformAuditLogInsertRecord);
+export const AuditLogsTableInsertSchema = AuditLogsTableInsertBaseSchema.transform(transformAuditLogInsertBaseRecord);
 
 /**
  * Update schema for the "public.audit_logs" table (after casing transform).
  */
-export const AuditLogsTableUpdateSchema = AuditLogsTableInsertBaseSchema.partial().transform(transformAuditLogUpdateRecord);
+export const AuditLogsTableUpdateSchema = AuditLogsTableInsertBaseSchema.partial().transform(transformAuditLogUpdateBaseRecord);
 
 type TableInsertRecord = z.input<typeof AuditLogsTableInsertSchema>;
 type TableReadRecord = z.output<typeof AuditLogsTableSchema>;
@@ -456,7 +456,7 @@ export type CategoryBaseRecord = z.output<typeof CategoriesTableBaseSchema>;
  * Read transform for the "public.categories" table.
  * Maps raw database snake_case fields to camelCase properties.
  */
-export const transformCategoryRecord = (data: CategoryBaseRecord): {
+export const transformCategoryBaseRecord = (data: CategoryBaseRecord): {
     id: CategoryBaseRecord['id'],
     name: CategoryBaseRecord['name'],
     description?: CategoryBaseRecord['description'],
@@ -473,7 +473,7 @@ export const transformCategoryRecord = (data: CategoryBaseRecord): {
 /**
  * Read schema for the "public.categories" table (after casing transform).
  */
-export const CategoriesTableSchema = CategoriesTableBaseSchema.transform(transformCategoryRecord);
+export const CategoriesTableSchema = CategoriesTableBaseSchema.transform(transformCategoryBaseRecord);
 
 /**
  * Base insert/write schema for the "public.categories" table (no casing transforms).
@@ -514,7 +514,7 @@ export type CategoryUpdateBaseRecord = Partial<CategoryInsertBaseRecord>;
  * Insert transform for the "public.categories" table.
  * Maps camelCase properties to raw database snake_case fields.
  */
-export const transformCategoryInsertRecord = (data: CategoryInsertBaseRecord): {
+export const transformCategoryInsertBaseRecord = (data: CategoryInsertBaseRecord): {
     name: CategoryInsertBaseRecord['name'],
     description?: CategoryInsertBaseRecord['description'],
     color?: CategoryInsertBaseRecord['color'],
@@ -530,7 +530,7 @@ export const transformCategoryInsertRecord = (data: CategoryInsertBaseRecord): {
  * Update transform for the "public.categories" table.
  * Maps camelCase properties to raw database snake_case fields.
  */
-export const transformCategoryUpdateRecord = (data: CategoryUpdateBaseRecord): {
+export const transformCategoryUpdateBaseRecord = (data: CategoryUpdateBaseRecord): {
     name: CategoryUpdateBaseRecord['name'],
     description?: CategoryUpdateBaseRecord['description'],
     color?: CategoryUpdateBaseRecord['color'],
@@ -545,12 +545,12 @@ export const transformCategoryUpdateRecord = (data: CategoryUpdateBaseRecord): {
 /**
  * Insert schema for the "public.categories" table (after casing transform).
  */
-export const CategoriesTableInsertSchema = CategoriesTableInsertBaseSchema.transform(transformCategoryInsertRecord);
+export const CategoriesTableInsertSchema = CategoriesTableInsertBaseSchema.transform(transformCategoryInsertBaseRecord);
 
 /**
  * Update schema for the "public.categories" table (after casing transform).
  */
-export const CategoriesTableUpdateSchema = CategoriesTableInsertBaseSchema.partial().transform(transformCategoryUpdateRecord);
+export const CategoriesTableUpdateSchema = CategoriesTableInsertBaseSchema.partial().transform(transformCategoryUpdateBaseRecord);
 
 type TableInsertRecord = z.input<typeof CategoriesTableInsertSchema>;
 type TableReadRecord = z.output<typeof CategoriesTableSchema>;
@@ -680,7 +680,7 @@ export type CommentBaseRecord = z.output<typeof CommentsTableBaseSchema>;
  * Read transform for the "public.comments" table.
  * Maps raw database snake_case fields to camelCase properties.
  */
-export const transformCommentRecord = (data: CommentBaseRecord): {
+export const transformCommentBaseRecord = (data: CommentBaseRecord): {
     id: CommentBaseRecord['id'],
     postId?: CommentBaseRecord['post_id'],
     userId?: CommentBaseRecord['user_id'],
@@ -703,7 +703,7 @@ export const transformCommentRecord = (data: CommentBaseRecord): {
 /**
  * Read schema for the "public.comments" table (after casing transform).
  */
-export const CommentsTableSchema = CommentsTableBaseSchema.transform(transformCommentRecord);
+export const CommentsTableSchema = CommentsTableBaseSchema.transform(transformCommentBaseRecord);
 
 /**
  * Base insert/write schema for the "public.comments" table (no casing transforms).
@@ -758,7 +758,7 @@ export type CommentUpdateBaseRecord = Partial<CommentInsertBaseRecord>;
  * Insert transform for the "public.comments" table.
  * Maps camelCase properties to raw database snake_case fields.
  */
-export const transformCommentInsertRecord = (data: CommentInsertBaseRecord): {
+export const transformCommentInsertBaseRecord = (data: CommentInsertBaseRecord): {
     post_id?: CommentInsertBaseRecord['postId'],
     user_id?: CommentInsertBaseRecord['userId'],
     parent_id?: CommentInsertBaseRecord['parentId'],
@@ -780,7 +780,7 @@ export const transformCommentInsertRecord = (data: CommentInsertBaseRecord): {
  * Update transform for the "public.comments" table.
  * Maps camelCase properties to raw database snake_case fields.
  */
-export const transformCommentUpdateRecord = (data: CommentUpdateBaseRecord): {
+export const transformCommentUpdateBaseRecord = (data: CommentUpdateBaseRecord): {
     post_id?: CommentUpdateBaseRecord['postId'],
     user_id?: CommentUpdateBaseRecord['userId'],
     parent_id?: CommentUpdateBaseRecord['parentId'],
@@ -801,12 +801,12 @@ export const transformCommentUpdateRecord = (data: CommentUpdateBaseRecord): {
 /**
  * Insert schema for the "public.comments" table (after casing transform).
  */
-export const CommentsTableInsertSchema = CommentsTableInsertBaseSchema.transform(transformCommentInsertRecord);
+export const CommentsTableInsertSchema = CommentsTableInsertBaseSchema.transform(transformCommentInsertBaseRecord);
 
 /**
  * Update schema for the "public.comments" table (after casing transform).
  */
-export const CommentsTableUpdateSchema = CommentsTableInsertBaseSchema.partial().transform(transformCommentUpdateRecord);
+export const CommentsTableUpdateSchema = CommentsTableInsertBaseSchema.partial().transform(transformCommentUpdateBaseRecord);
 
 type TableInsertRecord = z.input<typeof CommentsTableInsertSchema>;
 type TableReadRecord = z.output<typeof CommentsTableSchema>;
@@ -963,7 +963,7 @@ export type ConstraintVariationBaseRecord = z.output<typeof ConstraintVariations
  * Read transform for the "public.constraint_variations" table.
  * Maps raw database snake_case fields to camelCase properties.
  */
-export const transformConstraintVariationRecord = (data: ConstraintVariationBaseRecord): {
+export const transformConstraintVariationBaseRecord = (data: ConstraintVariationBaseRecord): {
     id: ConstraintVariationBaseRecord['id'],
     animal?: ConstraintVariationBaseRecord['animal'],
     fruit?: ConstraintVariationBaseRecord['fruit'],
@@ -986,7 +986,7 @@ export const transformConstraintVariationRecord = (data: ConstraintVariationBase
 /**
  * Read schema for the "public.constraint_variations" table (after casing transform).
  */
-export const ConstraintVariationsTableSchema = ConstraintVariationsTableBaseSchema.transform(transformConstraintVariationRecord);
+export const ConstraintVariationsTableSchema = ConstraintVariationsTableBaseSchema.transform(transformConstraintVariationBaseRecord);
 
 /**
  * Base insert/write schema for the "public.constraint_variations" table (no casing transforms).
@@ -1039,7 +1039,7 @@ export type ConstraintVariationUpdateBaseRecord = Partial<ConstraintVariationIns
  * Insert transform for the "public.constraint_variations" table.
  * Maps camelCase properties to raw database snake_case fields.
  */
-export const transformConstraintVariationInsertRecord = (data: ConstraintVariationInsertBaseRecord): {
+export const transformConstraintVariationInsertBaseRecord = (data: ConstraintVariationInsertBaseRecord): {
     animal?: ConstraintVariationInsertBaseRecord['animal'],
     fruit?: ConstraintVariationInsertBaseRecord['fruit'],
     vehicle?: ConstraintVariationInsertBaseRecord['vehicle'],
@@ -1061,7 +1061,7 @@ export const transformConstraintVariationInsertRecord = (data: ConstraintVariati
  * Update transform for the "public.constraint_variations" table.
  * Maps camelCase properties to raw database snake_case fields.
  */
-export const transformConstraintVariationUpdateRecord = (data: ConstraintVariationUpdateBaseRecord): {
+export const transformConstraintVariationUpdateBaseRecord = (data: ConstraintVariationUpdateBaseRecord): {
     animal?: ConstraintVariationUpdateBaseRecord['animal'],
     fruit?: ConstraintVariationUpdateBaseRecord['fruit'],
     vehicle?: ConstraintVariationUpdateBaseRecord['vehicle'],
@@ -1082,12 +1082,12 @@ export const transformConstraintVariationUpdateRecord = (data: ConstraintVariati
 /**
  * Insert schema for the "public.constraint_variations" table (after casing transform).
  */
-export const ConstraintVariationsTableInsertSchema = ConstraintVariationsTableInsertBaseSchema.transform(transformConstraintVariationInsertRecord);
+export const ConstraintVariationsTableInsertSchema = ConstraintVariationsTableInsertBaseSchema.transform(transformConstraintVariationInsertBaseRecord);
 
 /**
  * Update schema for the "public.constraint_variations" table (after casing transform).
  */
-export const ConstraintVariationsTableUpdateSchema = ConstraintVariationsTableInsertBaseSchema.partial().transform(transformConstraintVariationUpdateRecord);
+export const ConstraintVariationsTableUpdateSchema = ConstraintVariationsTableInsertBaseSchema.partial().transform(transformConstraintVariationUpdateBaseRecord);
 
 type TableInsertRecord = z.input<typeof ConstraintVariationsTableInsertSchema>;
 type TableReadRecord = z.output<typeof ConstraintVariationsTableSchema>;
@@ -1281,7 +1281,7 @@ export type EnumTestBaseRecord = z.output<typeof EnumTestsTableBaseSchema>;
  * Read transform for the "public.enum_tests" table.
  * Maps raw database snake_case fields to camelCase properties.
  */
-export const transformEnumTestRecord = (data: EnumTestBaseRecord): {
+export const transformEnumTestBaseRecord = (data: EnumTestBaseRecord): {
     id: EnumTestBaseRecord['id'],
     priority?: EnumTestBaseRecord['priority'],
     color?: EnumTestBaseRecord['color'],
@@ -1316,7 +1316,7 @@ export const transformEnumTestRecord = (data: EnumTestBaseRecord): {
 /**
  * Read schema for the "public.enum_tests" table (after casing transform).
  */
-export const EnumTestsTableSchema = EnumTestsTableBaseSchema.transform(transformEnumTestRecord);
+export const EnumTestsTableSchema = EnumTestsTableBaseSchema.transform(transformEnumTestBaseRecord);
 
 /**
  * Base insert/write schema for the "public.enum_tests" table (no casing transforms).
@@ -1393,7 +1393,7 @@ export type EnumTestUpdateBaseRecord = Partial<EnumTestInsertBaseRecord>;
  * Insert transform for the "public.enum_tests" table.
  * Maps camelCase properties to raw database snake_case fields.
  */
-export const transformEnumTestInsertRecord = (data: EnumTestInsertBaseRecord): {
+export const transformEnumTestInsertBaseRecord = (data: EnumTestInsertBaseRecord): {
     priority?: EnumTestInsertBaseRecord['priority'],
     color?: EnumTestInsertBaseRecord['color'],
     size?: EnumTestInsertBaseRecord['size'],
@@ -1427,7 +1427,7 @@ export const transformEnumTestInsertRecord = (data: EnumTestInsertBaseRecord): {
  * Update transform for the "public.enum_tests" table.
  * Maps camelCase properties to raw database snake_case fields.
  */
-export const transformEnumTestUpdateRecord = (data: EnumTestUpdateBaseRecord): {
+export const transformEnumTestUpdateBaseRecord = (data: EnumTestUpdateBaseRecord): {
     priority?: EnumTestUpdateBaseRecord['priority'],
     color?: EnumTestUpdateBaseRecord['color'],
     size?: EnumTestUpdateBaseRecord['size'],
@@ -1460,12 +1460,12 @@ export const transformEnumTestUpdateRecord = (data: EnumTestUpdateBaseRecord): {
 /**
  * Insert schema for the "public.enum_tests" table (after casing transform).
  */
-export const EnumTestsTableInsertSchema = EnumTestsTableInsertBaseSchema.transform(transformEnumTestInsertRecord);
+export const EnumTestsTableInsertSchema = EnumTestsTableInsertBaseSchema.transform(transformEnumTestInsertBaseRecord);
 
 /**
  * Update schema for the "public.enum_tests" table (after casing transform).
  */
-export const EnumTestsTableUpdateSchema = EnumTestsTableInsertBaseSchema.partial().transform(transformEnumTestUpdateRecord);
+export const EnumTestsTableUpdateSchema = EnumTestsTableInsertBaseSchema.partial().transform(transformEnumTestUpdateBaseRecord);
 
 type TableInsertRecord = z.input<typeof EnumTestsTableInsertSchema>;
 type TableReadRecord = z.output<typeof EnumTestsTableSchema>;
@@ -1705,7 +1705,7 @@ export type FileBaseRecord = z.output<typeof FilesTableBaseSchema>;
  * Read transform for the "public.files" table.
  * Maps raw database snake_case fields to camelCase properties.
  */
-export const transformFileRecord = (data: FileBaseRecord): {
+export const transformFileBaseRecord = (data: FileBaseRecord): {
     id: FileBaseRecord['id'],
     filename: FileBaseRecord['filename'],
     filePath: FileBaseRecord['file_path'],
@@ -1738,7 +1738,7 @@ export const transformFileRecord = (data: FileBaseRecord): {
 /**
  * Read schema for the "public.files" table (after casing transform).
  */
-export const FilesTableSchema = FilesTableBaseSchema.transform(transformFileRecord);
+export const FilesTableSchema = FilesTableBaseSchema.transform(transformFileBaseRecord);
 
 /**
  * Base insert/write schema for the "public.files" table (no casing transforms).
@@ -1818,7 +1818,7 @@ export type FileUpdateBaseRecord = Partial<FileInsertBaseRecord>;
  * Insert transform for the "public.files" table.
  * Maps camelCase properties to raw database snake_case fields.
  */
-export const transformFileInsertRecord = (data: FileInsertBaseRecord): {
+export const transformFileInsertBaseRecord = (data: FileInsertBaseRecord): {
     id: FileInsertBaseRecord['id'],
     filename: FileInsertBaseRecord['filename'],
     file_path: FileInsertBaseRecord['filePath'],
@@ -1852,7 +1852,7 @@ export const transformFileInsertRecord = (data: FileInsertBaseRecord): {
  * Update transform for the "public.files" table.
  * Maps camelCase properties to raw database snake_case fields.
  */
-export const transformFileUpdateRecord = (data: FileUpdateBaseRecord): {
+export const transformFileUpdateBaseRecord = (data: FileUpdateBaseRecord): {
     id: FileUpdateBaseRecord['id'],
     filename: FileUpdateBaseRecord['filename'],
     file_path: FileUpdateBaseRecord['filePath'],
@@ -1885,12 +1885,12 @@ export const transformFileUpdateRecord = (data: FileUpdateBaseRecord): {
 /**
  * Insert schema for the "public.files" table (after casing transform).
  */
-export const FilesTableInsertSchema = FilesTableInsertBaseSchema.transform(transformFileInsertRecord);
+export const FilesTableInsertSchema = FilesTableInsertBaseSchema.transform(transformFileInsertBaseRecord);
 
 /**
  * Update schema for the "public.files" table (after casing transform).
  */
-export const FilesTableUpdateSchema = FilesTableInsertBaseSchema.partial().transform(transformFileUpdateRecord);
+export const FilesTableUpdateSchema = FilesTableInsertBaseSchema.partial().transform(transformFileUpdateBaseRecord);
 
 type TableInsertRecord = z.input<typeof FilesTableInsertSchema>;
 type TableReadRecord = z.output<typeof FilesTableSchema>;
@@ -2106,7 +2106,7 @@ export type GeographicDataBaseRecord = z.output<typeof GeographicDataTableBaseSc
  * Read transform for the "public.geographic_data" table.
  * Maps raw database snake_case fields to camelCase properties.
  */
-export const transformGeographicDataRecord = (data: GeographicDataBaseRecord): {
+export const transformGeographicDataBaseRecord = (data: GeographicDataBaseRecord): {
     id: GeographicDataBaseRecord['id'],
     locationName: GeographicDataBaseRecord['location_name'],
     coordinates: GeographicDataBaseRecord['coordinates'],
@@ -2137,7 +2137,7 @@ export const transformGeographicDataRecord = (data: GeographicDataBaseRecord): {
 /**
  * Read schema for the "public.geographic_data" table (after casing transform).
  */
-export const GeographicDataTableSchema = GeographicDataTableBaseSchema.transform(transformGeographicDataRecord);
+export const GeographicDataTableSchema = GeographicDataTableBaseSchema.transform(transformGeographicDataBaseRecord);
 
 /**
  * Base insert/write schema for the "public.geographic_data" table (no casing transforms).
@@ -2206,7 +2206,7 @@ export type GeographicDataUpdateBaseRecord = Partial<GeographicDataInsertBaseRec
  * Insert transform for the "public.geographic_data" table.
  * Maps camelCase properties to raw database snake_case fields.
  */
-export const transformGeographicDataInsertRecord = (data: GeographicDataInsertBaseRecord): {
+export const transformGeographicDataInsertBaseRecord = (data: GeographicDataInsertBaseRecord): {
     location_name: GeographicDataInsertBaseRecord['locationName'],
     coordinates: GeographicDataInsertBaseRecord['coordinates'],
     boundary?: GeographicDataInsertBaseRecord['boundary'],
@@ -2236,7 +2236,7 @@ export const transformGeographicDataInsertRecord = (data: GeographicDataInsertBa
  * Update transform for the "public.geographic_data" table.
  * Maps camelCase properties to raw database snake_case fields.
  */
-export const transformGeographicDataUpdateRecord = (data: GeographicDataUpdateBaseRecord): {
+export const transformGeographicDataUpdateBaseRecord = (data: GeographicDataUpdateBaseRecord): {
     location_name: GeographicDataUpdateBaseRecord['locationName'],
     coordinates: GeographicDataUpdateBaseRecord['coordinates'],
     boundary?: GeographicDataUpdateBaseRecord['boundary'],
@@ -2265,12 +2265,12 @@ export const transformGeographicDataUpdateRecord = (data: GeographicDataUpdateBa
 /**
  * Insert schema for the "public.geographic_data" table (after casing transform).
  */
-export const GeographicDataTableInsertSchema = GeographicDataTableInsertBaseSchema.transform(transformGeographicDataInsertRecord);
+export const GeographicDataTableInsertSchema = GeographicDataTableInsertBaseSchema.transform(transformGeographicDataInsertBaseRecord);
 
 /**
  * Update schema for the "public.geographic_data" table (after casing transform).
  */
-export const GeographicDataTableUpdateSchema = GeographicDataTableInsertBaseSchema.partial().transform(transformGeographicDataUpdateRecord);
+export const GeographicDataTableUpdateSchema = GeographicDataTableInsertBaseSchema.partial().transform(transformGeographicDataUpdateBaseRecord);
 
 type TableInsertRecord = z.input<typeof GeographicDataTableInsertSchema>;
 type TableReadRecord = z.output<typeof GeographicDataTableSchema>;
@@ -2481,7 +2481,7 @@ export type InventoryBaseRecord = z.output<typeof InventoryTableBaseSchema>;
  * Read transform for the "public.inventory" table.
  * Maps raw database snake_case fields to camelCase properties.
  */
-export const transformInventoryRecord = (data: InventoryBaseRecord): {
+export const transformInventoryBaseRecord = (data: InventoryBaseRecord): {
     productId: InventoryBaseRecord['product_id'],
     stockQuantity: InventoryBaseRecord['stock_quantity'],
     reservedQuantity?: InventoryBaseRecord['reserved_quantity'],
@@ -2504,7 +2504,7 @@ export const transformInventoryRecord = (data: InventoryBaseRecord): {
 /**
  * Read schema for the "public.inventory" table (after casing transform).
  */
-export const InventoryTableSchema = InventoryTableBaseSchema.transform(transformInventoryRecord);
+export const InventoryTableSchema = InventoryTableBaseSchema.transform(transformInventoryBaseRecord);
 
 /**
  * Base insert/write schema for the "public.inventory" table (no casing transforms).
@@ -2564,7 +2564,7 @@ export type InventoryUpdateBaseRecord = Partial<InventoryInsertBaseRecord>;
  * Insert transform for the "public.inventory" table.
  * Maps camelCase properties to raw database snake_case fields.
  */
-export const transformInventoryInsertRecord = (data: InventoryInsertBaseRecord): {
+export const transformInventoryInsertBaseRecord = (data: InventoryInsertBaseRecord): {
     product_id: InventoryInsertBaseRecord['productId'],
     stock_quantity: InventoryInsertBaseRecord['stockQuantity'],
     reserved_quantity?: InventoryInsertBaseRecord['reservedQuantity'],
@@ -2588,7 +2588,7 @@ export const transformInventoryInsertRecord = (data: InventoryInsertBaseRecord):
  * Update transform for the "public.inventory" table.
  * Maps camelCase properties to raw database snake_case fields.
  */
-export const transformInventoryUpdateRecord = (data: InventoryUpdateBaseRecord): {
+export const transformInventoryUpdateBaseRecord = (data: InventoryUpdateBaseRecord): {
     product_id: InventoryUpdateBaseRecord['productId'],
     stock_quantity: InventoryUpdateBaseRecord['stockQuantity'],
     reserved_quantity?: InventoryUpdateBaseRecord['reservedQuantity'],
@@ -2611,12 +2611,12 @@ export const transformInventoryUpdateRecord = (data: InventoryUpdateBaseRecord):
 /**
  * Insert schema for the "public.inventory" table (after casing transform).
  */
-export const InventoryTableInsertSchema = InventoryTableInsertBaseSchema.transform(transformInventoryInsertRecord);
+export const InventoryTableInsertSchema = InventoryTableInsertBaseSchema.transform(transformInventoryInsertBaseRecord);
 
 /**
  * Update schema for the "public.inventory" table (after casing transform).
  */
-export const InventoryTableUpdateSchema = InventoryTableInsertBaseSchema.partial().transform(transformInventoryUpdateRecord);
+export const InventoryTableUpdateSchema = InventoryTableInsertBaseSchema.partial().transform(transformInventoryUpdateBaseRecord);
 
 type TableInsertRecord = z.input<typeof InventoryTableInsertSchema>;
 type TableReadRecord = z.output<typeof InventoryTableSchema>;
@@ -2792,7 +2792,7 @@ export type NetworkLogBaseRecord = z.output<typeof NetworkLogsTableBaseSchema>;
  * Read transform for the "public.network_logs" table.
  * Maps raw database snake_case fields to camelCase properties.
  */
-export const transformNetworkLogRecord = (data: NetworkLogBaseRecord): {
+export const transformNetworkLogBaseRecord = (data: NetworkLogBaseRecord): {
     id: NetworkLogBaseRecord['id'],
     ipAddress: NetworkLogBaseRecord['ip_address'],
     portRange?: NetworkLogBaseRecord['port_range'],
@@ -2823,7 +2823,7 @@ export const transformNetworkLogRecord = (data: NetworkLogBaseRecord): {
 /**
  * Read schema for the "public.network_logs" table (after casing transform).
  */
-export const NetworkLogsTableSchema = NetworkLogsTableBaseSchema.transform(transformNetworkLogRecord);
+export const NetworkLogsTableSchema = NetworkLogsTableBaseSchema.transform(transformNetworkLogBaseRecord);
 
 /**
  * Base insert/write schema for the "public.network_logs" table (no casing transforms).
@@ -2894,7 +2894,7 @@ export type NetworkLogUpdateBaseRecord = Partial<NetworkLogInsertBaseRecord>;
  * Insert transform for the "public.network_logs" table.
  * Maps camelCase properties to raw database snake_case fields.
  */
-export const transformNetworkLogInsertRecord = (data: NetworkLogInsertBaseRecord): {
+export const transformNetworkLogInsertBaseRecord = (data: NetworkLogInsertBaseRecord): {
     ip_address: NetworkLogInsertBaseRecord['ipAddress'],
     port_range?: NetworkLogInsertBaseRecord['portRange'],
     mac_address?: NetworkLogInsertBaseRecord['macAddress'],
@@ -2924,7 +2924,7 @@ export const transformNetworkLogInsertRecord = (data: NetworkLogInsertBaseRecord
  * Update transform for the "public.network_logs" table.
  * Maps camelCase properties to raw database snake_case fields.
  */
-export const transformNetworkLogUpdateRecord = (data: NetworkLogUpdateBaseRecord): {
+export const transformNetworkLogUpdateBaseRecord = (data: NetworkLogUpdateBaseRecord): {
     ip_address: NetworkLogUpdateBaseRecord['ipAddress'],
     port_range?: NetworkLogUpdateBaseRecord['portRange'],
     mac_address?: NetworkLogUpdateBaseRecord['macAddress'],
@@ -2953,12 +2953,12 @@ export const transformNetworkLogUpdateRecord = (data: NetworkLogUpdateBaseRecord
 /**
  * Insert schema for the "public.network_logs" table (after casing transform).
  */
-export const NetworkLogsTableInsertSchema = NetworkLogsTableInsertBaseSchema.transform(transformNetworkLogInsertRecord);
+export const NetworkLogsTableInsertSchema = NetworkLogsTableInsertBaseSchema.transform(transformNetworkLogInsertBaseRecord);
 
 /**
  * Update schema for the "public.network_logs" table (after casing transform).
  */
-export const NetworkLogsTableUpdateSchema = NetworkLogsTableInsertBaseSchema.partial().transform(transformNetworkLogUpdateRecord);
+export const NetworkLogsTableUpdateSchema = NetworkLogsTableInsertBaseSchema.partial().transform(transformNetworkLogUpdateBaseRecord);
 
 type TableInsertRecord = z.input<typeof NetworkLogsTableInsertSchema>;
 type TableReadRecord = z.output<typeof NetworkLogsTableSchema>;
@@ -3140,7 +3140,7 @@ export type OrderItemBaseRecord = z.output<typeof OrderItemsTableBaseSchema>;
  * Read transform for the "public.order_items" table.
  * Maps raw database snake_case fields to camelCase properties.
  */
-export const transformOrderItemRecord = (data: OrderItemBaseRecord): {
+export const transformOrderItemBaseRecord = (data: OrderItemBaseRecord): {
     id: OrderItemBaseRecord['id'],
     orderId?: OrderItemBaseRecord['order_id'],
     productId?: OrderItemBaseRecord['product_id'],
@@ -3161,7 +3161,7 @@ export const transformOrderItemRecord = (data: OrderItemBaseRecord): {
 /**
  * Read schema for the "public.order_items" table (after casing transform).
  */
-export const OrderItemsTableSchema = OrderItemsTableBaseSchema.transform(transformOrderItemRecord);
+export const OrderItemsTableSchema = OrderItemsTableBaseSchema.transform(transformOrderItemBaseRecord);
 
 /**
  * Base insert/write schema for the "public.order_items" table (no casing transforms).
@@ -3211,7 +3211,7 @@ export type OrderItemUpdateBaseRecord = Partial<OrderItemInsertBaseRecord>;
  * Insert transform for the "public.order_items" table.
  * Maps camelCase properties to raw database snake_case fields.
  */
-export const transformOrderItemInsertRecord = (data: OrderItemInsertBaseRecord): {
+export const transformOrderItemInsertBaseRecord = (data: OrderItemInsertBaseRecord): {
     order_id?: OrderItemInsertBaseRecord['orderId'],
     product_id?: OrderItemInsertBaseRecord['productId'],
     quantity: OrderItemInsertBaseRecord['quantity'],
@@ -3231,7 +3231,7 @@ export const transformOrderItemInsertRecord = (data: OrderItemInsertBaseRecord):
  * Update transform for the "public.order_items" table.
  * Maps camelCase properties to raw database snake_case fields.
  */
-export const transformOrderItemUpdateRecord = (data: OrderItemUpdateBaseRecord): {
+export const transformOrderItemUpdateBaseRecord = (data: OrderItemUpdateBaseRecord): {
     order_id?: OrderItemUpdateBaseRecord['orderId'],
     product_id?: OrderItemUpdateBaseRecord['productId'],
     quantity: OrderItemUpdateBaseRecord['quantity'],
@@ -3250,12 +3250,12 @@ export const transformOrderItemUpdateRecord = (data: OrderItemUpdateBaseRecord):
 /**
  * Insert schema for the "public.order_items" table (after casing transform).
  */
-export const OrderItemsTableInsertSchema = OrderItemsTableInsertBaseSchema.transform(transformOrderItemInsertRecord);
+export const OrderItemsTableInsertSchema = OrderItemsTableInsertBaseSchema.transform(transformOrderItemInsertBaseRecord);
 
 /**
  * Update schema for the "public.order_items" table (after casing transform).
  */
-export const OrderItemsTableUpdateSchema = OrderItemsTableInsertBaseSchema.partial().transform(transformOrderItemUpdateRecord);
+export const OrderItemsTableUpdateSchema = OrderItemsTableInsertBaseSchema.partial().transform(transformOrderItemUpdateBaseRecord);
 
 type TableInsertRecord = z.input<typeof OrderItemsTableInsertSchema>;
 type TableReadRecord = z.output<typeof OrderItemsTableSchema>;
@@ -3426,7 +3426,7 @@ export type OrderBaseRecord = z.output<typeof OrdersTableBaseSchema>;
  * Read transform for the "public.orders" table.
  * Maps raw database snake_case fields to camelCase properties.
  */
-export const transformOrderRecord = (data: OrderBaseRecord): {
+export const transformOrderBaseRecord = (data: OrderBaseRecord): {
     id: OrderBaseRecord['id'],
     orderNumber: OrderBaseRecord['order_number'],
     userId?: OrderBaseRecord['user_id'],
@@ -3459,7 +3459,7 @@ export const transformOrderRecord = (data: OrderBaseRecord): {
 /**
  * Read schema for the "public.orders" table (after casing transform).
  */
-export const OrdersTableSchema = OrdersTableBaseSchema.transform(transformOrderRecord);
+export const OrdersTableSchema = OrdersTableBaseSchema.transform(transformOrderBaseRecord);
 
 /**
  * Base insert/write schema for the "public.orders" table (no casing transforms).
@@ -3536,7 +3536,7 @@ export type OrderUpdateBaseRecord = Partial<OrderInsertBaseRecord>;
  * Insert transform for the "public.orders" table.
  * Maps camelCase properties to raw database snake_case fields.
  */
-export const transformOrderInsertRecord = (data: OrderInsertBaseRecord): {
+export const transformOrderInsertBaseRecord = (data: OrderInsertBaseRecord): {
     order_number: OrderInsertBaseRecord['orderNumber'],
     user_id?: OrderInsertBaseRecord['userId'],
     status?: OrderInsertBaseRecord['status'],
@@ -3568,7 +3568,7 @@ export const transformOrderInsertRecord = (data: OrderInsertBaseRecord): {
  * Update transform for the "public.orders" table.
  * Maps camelCase properties to raw database snake_case fields.
  */
-export const transformOrderUpdateRecord = (data: OrderUpdateBaseRecord): {
+export const transformOrderUpdateBaseRecord = (data: OrderUpdateBaseRecord): {
     order_number: OrderUpdateBaseRecord['orderNumber'],
     user_id?: OrderUpdateBaseRecord['userId'],
     status?: OrderUpdateBaseRecord['status'],
@@ -3599,12 +3599,12 @@ export const transformOrderUpdateRecord = (data: OrderUpdateBaseRecord): {
 /**
  * Insert schema for the "public.orders" table (after casing transform).
  */
-export const OrdersTableInsertSchema = OrdersTableInsertBaseSchema.transform(transformOrderInsertRecord);
+export const OrdersTableInsertSchema = OrdersTableInsertBaseSchema.transform(transformOrderInsertBaseRecord);
 
 /**
  * Update schema for the "public.orders" table (after casing transform).
  */
-export const OrdersTableUpdateSchema = OrdersTableInsertBaseSchema.partial().transform(transformOrderUpdateRecord);
+export const OrdersTableUpdateSchema = OrdersTableInsertBaseSchema.partial().transform(transformOrderUpdateBaseRecord);
 
 type TableInsertRecord = z.input<typeof OrdersTableInsertSchema>;
 type TableReadRecord = z.output<typeof OrdersTableSchema>;
@@ -3773,7 +3773,7 @@ export type PostCategoryBaseRecord = z.output<typeof PostCategoriesTableBaseSche
  * Read transform for the "public.post_categories" table.
  * Maps raw database snake_case fields to camelCase properties.
  */
-export const transformPostCategoryRecord = (data: PostCategoryBaseRecord): {
+export const transformPostCategoryBaseRecord = (data: PostCategoryBaseRecord): {
     postId: PostCategoryBaseRecord['post_id'],
     categoryId: PostCategoryBaseRecord['category_id'],
 } => ({
@@ -3784,7 +3784,7 @@ export const transformPostCategoryRecord = (data: PostCategoryBaseRecord): {
 /**
  * Read schema for the "public.post_categories" table (after casing transform).
  */
-export const PostCategoriesTableSchema = PostCategoriesTableBaseSchema.transform(transformPostCategoryRecord);
+export const PostCategoriesTableSchema = PostCategoriesTableBaseSchema.transform(transformPostCategoryBaseRecord);
 
 /**
  * Base insert/write schema for the "public.post_categories" table (no casing transforms).
@@ -3816,7 +3816,7 @@ export type PostCategoryUpdateBaseRecord = Partial<PostCategoryInsertBaseRecord>
  * Insert transform for the "public.post_categories" table.
  * Maps camelCase properties to raw database snake_case fields.
  */
-export const transformPostCategoryInsertRecord = (data: PostCategoryInsertBaseRecord): {
+export const transformPostCategoryInsertBaseRecord = (data: PostCategoryInsertBaseRecord): {
     post_id: PostCategoryInsertBaseRecord['postId'],
     category_id: PostCategoryInsertBaseRecord['categoryId'],
 } => ({
@@ -3828,7 +3828,7 @@ export const transformPostCategoryInsertRecord = (data: PostCategoryInsertBaseRe
  * Update transform for the "public.post_categories" table.
  * Maps camelCase properties to raw database snake_case fields.
  */
-export const transformPostCategoryUpdateRecord = (data: PostCategoryUpdateBaseRecord): {
+export const transformPostCategoryUpdateBaseRecord = (data: PostCategoryUpdateBaseRecord): {
     post_id: PostCategoryUpdateBaseRecord['postId'],
     category_id: PostCategoryUpdateBaseRecord['categoryId'],
 } => ({
@@ -3839,12 +3839,12 @@ export const transformPostCategoryUpdateRecord = (data: PostCategoryUpdateBaseRe
 /**
  * Insert schema for the "public.post_categories" table (after casing transform).
  */
-export const PostCategoriesTableInsertSchema = PostCategoriesTableInsertBaseSchema.transform(transformPostCategoryInsertRecord);
+export const PostCategoriesTableInsertSchema = PostCategoriesTableInsertBaseSchema.transform(transformPostCategoryInsertBaseRecord);
 
 /**
  * Update schema for the "public.post_categories" table (after casing transform).
  */
-export const PostCategoriesTableUpdateSchema = PostCategoriesTableInsertBaseSchema.partial().transform(transformPostCategoryUpdateRecord);
+export const PostCategoriesTableUpdateSchema = PostCategoriesTableInsertBaseSchema.partial().transform(transformPostCategoryUpdateBaseRecord);
 
 type TableInsertRecord = z.input<typeof PostCategoriesTableInsertSchema>;
 type TableReadRecord = z.output<typeof PostCategoriesTableSchema>;
@@ -3966,7 +3966,7 @@ export type PostBaseRecord = z.output<typeof PostsTableBaseSchema>;
  * Read transform for the "public.posts" table.
  * Maps raw database snake_case fields to camelCase properties.
  */
-export const transformPostRecord = (data: PostBaseRecord): {
+export const transformPostBaseRecord = (data: PostBaseRecord): {
     id: PostBaseRecord['id'],
     userId?: PostBaseRecord['user_id'],
     title: PostBaseRecord['title'],
@@ -3995,7 +3995,7 @@ export const transformPostRecord = (data: PostBaseRecord): {
 /**
  * Read schema for the "public.posts" table (after casing transform).
  */
-export const PostsTableSchema = PostsTableBaseSchema.transform(transformPostRecord);
+export const PostsTableSchema = PostsTableBaseSchema.transform(transformPostBaseRecord);
 
 /**
  * Base insert/write schema for the "public.posts" table (no casing transforms).
@@ -4063,7 +4063,7 @@ export type PostUpdateBaseRecord = Partial<PostInsertBaseRecord>;
  * Insert transform for the "public.posts" table.
  * Maps camelCase properties to raw database snake_case fields.
  */
-export const transformPostInsertRecord = (data: PostInsertBaseRecord): {
+export const transformPostInsertBaseRecord = (data: PostInsertBaseRecord): {
     user_id?: PostInsertBaseRecord['userId'],
     title: PostInsertBaseRecord['title'],
     content?: PostInsertBaseRecord['content'],
@@ -4091,7 +4091,7 @@ export const transformPostInsertRecord = (data: PostInsertBaseRecord): {
  * Update transform for the "public.posts" table.
  * Maps camelCase properties to raw database snake_case fields.
  */
-export const transformPostUpdateRecord = (data: PostUpdateBaseRecord): {
+export const transformPostUpdateBaseRecord = (data: PostUpdateBaseRecord): {
     user_id?: PostUpdateBaseRecord['userId'],
     title: PostUpdateBaseRecord['title'],
     content?: PostUpdateBaseRecord['content'],
@@ -4118,12 +4118,12 @@ export const transformPostUpdateRecord = (data: PostUpdateBaseRecord): {
 /**
  * Insert schema for the "public.posts" table (after casing transform).
  */
-export const PostsTableInsertSchema = PostsTableInsertBaseSchema.transform(transformPostInsertRecord);
+export const PostsTableInsertSchema = PostsTableInsertBaseSchema.transform(transformPostInsertBaseRecord);
 
 /**
  * Update schema for the "public.posts" table (after casing transform).
  */
-export const PostsTableUpdateSchema = PostsTableInsertBaseSchema.partial().transform(transformPostUpdateRecord);
+export const PostsTableUpdateSchema = PostsTableInsertBaseSchema.partial().transform(transformPostUpdateBaseRecord);
 
 type TableInsertRecord = z.input<typeof PostsTableInsertSchema>;
 type TableReadRecord = z.output<typeof PostsTableSchema>;
@@ -4304,7 +4304,7 @@ export type ProductBaseRecord = z.output<typeof ProductsTableBaseSchema>;
  * Read transform for the "public.products" table.
  * Maps raw database snake_case fields to camelCase properties.
  */
-export const transformProductRecord = (data: ProductBaseRecord): {
+export const transformProductBaseRecord = (data: ProductBaseRecord): {
     id: ProductBaseRecord['id'],
     name: ProductBaseRecord['name'],
     sku: ProductBaseRecord['sku'],
@@ -4333,7 +4333,7 @@ export const transformProductRecord = (data: ProductBaseRecord): {
 /**
  * Read schema for the "public.products" table (after casing transform).
  */
-export const ProductsTableSchema = ProductsTableBaseSchema.transform(transformProductRecord);
+export const ProductsTableSchema = ProductsTableBaseSchema.transform(transformProductBaseRecord);
 
 /**
  * Base insert/write schema for the "public.products" table (no casing transforms).
@@ -4399,7 +4399,7 @@ export type ProductUpdateBaseRecord = Partial<ProductInsertBaseRecord>;
  * Insert transform for the "public.products" table.
  * Maps camelCase properties to raw database snake_case fields.
  */
-export const transformProductInsertRecord = (data: ProductInsertBaseRecord): {
+export const transformProductInsertBaseRecord = (data: ProductInsertBaseRecord): {
     name: ProductInsertBaseRecord['name'],
     sku: ProductInsertBaseRecord['sku'],
     price: ProductInsertBaseRecord['price'],
@@ -4427,7 +4427,7 @@ export const transformProductInsertRecord = (data: ProductInsertBaseRecord): {
  * Update transform for the "public.products" table.
  * Maps camelCase properties to raw database snake_case fields.
  */
-export const transformProductUpdateRecord = (data: ProductUpdateBaseRecord): {
+export const transformProductUpdateBaseRecord = (data: ProductUpdateBaseRecord): {
     name: ProductUpdateBaseRecord['name'],
     sku: ProductUpdateBaseRecord['sku'],
     price: ProductUpdateBaseRecord['price'],
@@ -4454,12 +4454,12 @@ export const transformProductUpdateRecord = (data: ProductUpdateBaseRecord): {
 /**
  * Insert schema for the "public.products" table (after casing transform).
  */
-export const ProductsTableInsertSchema = ProductsTableInsertBaseSchema.transform(transformProductInsertRecord);
+export const ProductsTableInsertSchema = ProductsTableInsertBaseSchema.transform(transformProductInsertBaseRecord);
 
 /**
  * Update schema for the "public.products" table (after casing transform).
  */
-export const ProductsTableUpdateSchema = ProductsTableInsertBaseSchema.partial().transform(transformProductUpdateRecord);
+export const ProductsTableUpdateSchema = ProductsTableInsertBaseSchema.partial().transform(transformProductUpdateBaseRecord);
 
 type TableInsertRecord = z.input<typeof ProductsTableInsertSchema>;
 type TableReadRecord = z.output<typeof ProductsTableSchema>;
@@ -4648,7 +4648,7 @@ export type TimeSeriesBaseRecord = z.output<typeof TimeSeriesTableBaseSchema>;
  * Read transform for the "public.time_series" table.
  * Maps raw database snake_case fields to camelCase properties.
  */
-export const transformTimeSeriesRecord = (data: TimeSeriesBaseRecord): {
+export const transformTimeSeriesBaseRecord = (data: TimeSeriesBaseRecord): {
     id: TimeSeriesBaseRecord['id'],
     sensorId: TimeSeriesBaseRecord['sensor_id'],
     timestamp: TimeSeriesBaseRecord['timestamp'],
@@ -4675,7 +4675,7 @@ export const transformTimeSeriesRecord = (data: TimeSeriesBaseRecord): {
 /**
  * Read schema for the "public.time_series" table (after casing transform).
  */
-export const TimeSeriesTableSchema = TimeSeriesTableBaseSchema.transform(transformTimeSeriesRecord);
+export const TimeSeriesTableSchema = TimeSeriesTableBaseSchema.transform(transformTimeSeriesBaseRecord);
 
 /**
  * Base insert/write schema for the "public.time_series" table (no casing transforms).
@@ -4737,7 +4737,7 @@ export type TimeSeriesUpdateBaseRecord = Partial<TimeSeriesInsertBaseRecord>;
  * Insert transform for the "public.time_series" table.
  * Maps camelCase properties to raw database snake_case fields.
  */
-export const transformTimeSeriesInsertRecord = (data: TimeSeriesInsertBaseRecord): {
+export const transformTimeSeriesInsertBaseRecord = (data: TimeSeriesInsertBaseRecord): {
     sensor_id: TimeSeriesInsertBaseRecord['sensorId'],
     timestamp: TimeSeriesInsertBaseRecord['timestamp'],
     temperature?: TimeSeriesInsertBaseRecord['temperature'],
@@ -4763,7 +4763,7 @@ export const transformTimeSeriesInsertRecord = (data: TimeSeriesInsertBaseRecord
  * Update transform for the "public.time_series" table.
  * Maps camelCase properties to raw database snake_case fields.
  */
-export const transformTimeSeriesUpdateRecord = (data: TimeSeriesUpdateBaseRecord): {
+export const transformTimeSeriesUpdateBaseRecord = (data: TimeSeriesUpdateBaseRecord): {
     sensor_id: TimeSeriesUpdateBaseRecord['sensorId'],
     timestamp: TimeSeriesUpdateBaseRecord['timestamp'],
     temperature?: TimeSeriesUpdateBaseRecord['temperature'],
@@ -4788,12 +4788,12 @@ export const transformTimeSeriesUpdateRecord = (data: TimeSeriesUpdateBaseRecord
 /**
  * Insert schema for the "public.time_series" table (after casing transform).
  */
-export const TimeSeriesTableInsertSchema = TimeSeriesTableInsertBaseSchema.transform(transformTimeSeriesInsertRecord);
+export const TimeSeriesTableInsertSchema = TimeSeriesTableInsertBaseSchema.transform(transformTimeSeriesInsertBaseRecord);
 
 /**
  * Update schema for the "public.time_series" table (after casing transform).
  */
-export const TimeSeriesTableUpdateSchema = TimeSeriesTableInsertBaseSchema.partial().transform(transformTimeSeriesUpdateRecord);
+export const TimeSeriesTableUpdateSchema = TimeSeriesTableInsertBaseSchema.partial().transform(transformTimeSeriesUpdateBaseRecord);
 
 type TableInsertRecord = z.input<typeof TimeSeriesTableInsertSchema>;
 type TableReadRecord = z.output<typeof TimeSeriesTableSchema>;
@@ -4965,7 +4965,7 @@ export type UserSessionBaseRecord = z.output<typeof UserSessionsTableBaseSchema>
  * Read transform for the "public.user_sessions" table.
  * Maps raw database snake_case fields to camelCase properties.
  */
-export const transformUserSessionRecord = (data: UserSessionBaseRecord): {
+export const transformUserSessionBaseRecord = (data: UserSessionBaseRecord): {
     id: UserSessionBaseRecord['id'],
     userId?: UserSessionBaseRecord['user_id'],
     tokenHash: UserSessionBaseRecord['token_hash'],
@@ -4988,7 +4988,7 @@ export const transformUserSessionRecord = (data: UserSessionBaseRecord): {
 /**
  * Read schema for the "public.user_sessions" table (after casing transform).
  */
-export const UserSessionsTableSchema = UserSessionsTableBaseSchema.transform(transformUserSessionRecord);
+export const UserSessionsTableSchema = UserSessionsTableBaseSchema.transform(transformUserSessionBaseRecord);
 
 /**
  * Base insert/write schema for the "public.user_sessions" table (no casing transforms).
@@ -5047,7 +5047,7 @@ export type UserSessionUpdateBaseRecord = Partial<UserSessionInsertBaseRecord>;
  * Insert transform for the "public.user_sessions" table.
  * Maps camelCase properties to raw database snake_case fields.
  */
-export const transformUserSessionInsertRecord = (data: UserSessionInsertBaseRecord): {
+export const transformUserSessionInsertBaseRecord = (data: UserSessionInsertBaseRecord): {
     id: UserSessionInsertBaseRecord['id'],
     user_id?: UserSessionInsertBaseRecord['userId'],
     token_hash: UserSessionInsertBaseRecord['tokenHash'],
@@ -5071,7 +5071,7 @@ export const transformUserSessionInsertRecord = (data: UserSessionInsertBaseReco
  * Update transform for the "public.user_sessions" table.
  * Maps camelCase properties to raw database snake_case fields.
  */
-export const transformUserSessionUpdateRecord = (data: UserSessionUpdateBaseRecord): {
+export const transformUserSessionUpdateBaseRecord = (data: UserSessionUpdateBaseRecord): {
     id: UserSessionUpdateBaseRecord['id'],
     user_id?: UserSessionUpdateBaseRecord['userId'],
     token_hash: UserSessionUpdateBaseRecord['tokenHash'],
@@ -5094,12 +5094,12 @@ export const transformUserSessionUpdateRecord = (data: UserSessionUpdateBaseReco
 /**
  * Insert schema for the "public.user_sessions" table (after casing transform).
  */
-export const UserSessionsTableInsertSchema = UserSessionsTableInsertBaseSchema.transform(transformUserSessionInsertRecord);
+export const UserSessionsTableInsertSchema = UserSessionsTableInsertBaseSchema.transform(transformUserSessionInsertBaseRecord);
 
 /**
  * Update schema for the "public.user_sessions" table (after casing transform).
  */
-export const UserSessionsTableUpdateSchema = UserSessionsTableInsertBaseSchema.partial().transform(transformUserSessionUpdateRecord);
+export const UserSessionsTableUpdateSchema = UserSessionsTableInsertBaseSchema.partial().transform(transformUserSessionUpdateBaseRecord);
 
 type TableInsertRecord = z.input<typeof UserSessionsTableInsertSchema>;
 type TableReadRecord = z.output<typeof UserSessionsTableSchema>;
@@ -5259,7 +5259,7 @@ export type UserBaseRecord = z.output<typeof UsersTableBaseSchema>;
  * Read transform for the "public.users" table.
  * Maps raw database snake_case fields to camelCase properties.
  */
-export const transformUserRecord = (data: UserBaseRecord): {
+export const transformUserBaseRecord = (data: UserBaseRecord): {
     id: UserBaseRecord['id'],
     name: UserBaseRecord['name'],
     email?: UserBaseRecord['email'],
@@ -5282,7 +5282,7 @@ export const transformUserRecord = (data: UserBaseRecord): {
 /**
  * Read schema for the "public.users" table (after casing transform).
  */
-export const UsersTableSchema = UsersTableBaseSchema.transform(transformUserRecord);
+export const UsersTableSchema = UsersTableBaseSchema.transform(transformUserBaseRecord);
 
 /**
  * Base insert/write schema for the "public.users" table (no casing transforms).
@@ -5336,7 +5336,7 @@ export type UserUpdateBaseRecord = Partial<UserInsertBaseRecord>;
  * Insert transform for the "public.users" table.
  * Maps camelCase properties to raw database snake_case fields.
  */
-export const transformUserInsertRecord = (data: UserInsertBaseRecord): {
+export const transformUserInsertBaseRecord = (data: UserInsertBaseRecord): {
     name: UserInsertBaseRecord['name'],
     email?: UserInsertBaseRecord['email'],
     status?: UserInsertBaseRecord['status'],
@@ -5358,7 +5358,7 @@ export const transformUserInsertRecord = (data: UserInsertBaseRecord): {
  * Update transform for the "public.users" table.
  * Maps camelCase properties to raw database snake_case fields.
  */
-export const transformUserUpdateRecord = (data: UserUpdateBaseRecord): {
+export const transformUserUpdateBaseRecord = (data: UserUpdateBaseRecord): {
     name: UserUpdateBaseRecord['name'],
     email?: UserUpdateBaseRecord['email'],
     status?: UserUpdateBaseRecord['status'],
@@ -5379,12 +5379,12 @@ export const transformUserUpdateRecord = (data: UserUpdateBaseRecord): {
 /**
  * Insert schema for the "public.users" table (after casing transform).
  */
-export const UsersTableInsertSchema = UsersTableInsertBaseSchema.transform(transformUserInsertRecord);
+export const UsersTableInsertSchema = UsersTableInsertBaseSchema.transform(transformUserInsertBaseRecord);
 
 /**
  * Update schema for the "public.users" table (after casing transform).
  */
-export const UsersTableUpdateSchema = UsersTableInsertBaseSchema.partial().transform(transformUserUpdateRecord);
+export const UsersTableUpdateSchema = UsersTableInsertBaseSchema.partial().transform(transformUserUpdateBaseRecord);
 
 type TableInsertRecord = z.input<typeof UsersTableInsertSchema>;
 type TableReadRecord = z.output<typeof UsersTableSchema>;
@@ -5547,7 +5547,7 @@ export type ViewUserPostBaseRecord = z.output<typeof ViewUserPostsBaseSchema>;
  * Read transform for the "public.view_user_posts" table.
  * Maps raw database snake_case fields to camelCase properties.
  */
-export const transformViewUserPostRecord = (data: ViewUserPostBaseRecord): {
+export const transformViewUserPostBaseRecord = (data: ViewUserPostBaseRecord): {
     userId?: ViewUserPostBaseRecord['user_id'],
     userName?: ViewUserPostBaseRecord['user_name'],
     postId?: ViewUserPostBaseRecord['post_id'],
@@ -5564,7 +5564,7 @@ export const transformViewUserPostRecord = (data: ViewUserPostBaseRecord): {
 /**
  * Read schema for the "public.view_user_posts" table (after casing transform).
  */
-export const ViewUserPostsSchema = ViewUserPostsBaseSchema.transform(transformViewUserPostRecord);
+export const ViewUserPostsSchema = ViewUserPostsBaseSchema.transform(transformViewUserPostBaseRecord);
 
 type TableReadRecord = z.output<typeof ViewUserPostsSchema>;
 
