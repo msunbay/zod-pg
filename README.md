@@ -166,9 +166,7 @@ const config: ZodPgConfig = {
   cleanOutput: true,
   include: ['users', 'posts'],
   exclude: ['^temp_'],
-  zodVersion: 4,
-  coerceDates: true,
-  stringifyJson: true,
+  zodVersion: '4',
   stringifyDates: false,
   defaultEmptyArray: true,
   fieldNameCasing: 'camelCase',
@@ -202,7 +200,7 @@ The generator creates the following files:
 
 ## Schema Output
 
-The generated Zod schemas will look like this: (example for a "user" table)
+The generated Zod schemas will look something like this: (example for a "user" table)
 
 ```ts
 // output/tables/user.ts
@@ -223,7 +221,7 @@ export interface UserInsertRecord {
 export type UserUpdateRecord = Partial<UserInsertRecord>;
 ```
 
-Since reading and writing are two different operations, zod-pg generates separate schemas for reads, inserts and updates. The `UserTableInsertSchema` is used for creating new records, while the `UserTableUpdateSchema` is a partial version of the insert schema, allowing you to update only specific fields.
+Since reading and writing are two different operations, zod-pg generates separate schemas for reads, inserts and updates. The `UsersTableInsertSchema` is used for creating new records, while the `UsersTableUpdateSchema` is a partial version of the insert schema, allowing you to update only specific fields.
 
 ### The Read Schemas
 
@@ -306,21 +304,21 @@ npx zod-pg --json-schema-import-location '../../json' --output ./schema/generate
 
 **Step 2: Generated schema imports your JSON schemas**
 
-This will create a `./schema/generated/tables/user.ts` file looking similar to this:
+This will create a `./schema/generated/tables/users/schema.ts` file looking similar to this:
 
 ```ts
 import { z } from 'zod';
 
 import { UserProfileSchema } from '../../json';
 
-export const UserSchema = z.object({
+export const UsersTableSchema = z.object({
   id: z.number().int(),
   name: z.string(),
   profile: UserProfileSchema,
 });
 ```
 
-The JSON Zod schema name is derived from `[tableName][FieldName]Schema`, so in this case, it will look for `UserProfileSchema` in the specified import location.
+The JSON Zod schema name is derived from `[TableName][FieldName]Schema`, so in this case, it will look for `UserProfileSchema` in the specified import location.
 
 **Step 3: Create your JSON schemas**
 
@@ -361,6 +359,18 @@ const ExtendedSchema = UsersTableBaseSchema.extend({
   permissions: data.permissions,
   signedInAt: data.signed_in_at,
 }));
+```
+
+If you have disabled case transforms (`--disable-case-transform`) then there are no "base" schemas or transform functions.
+And you can just extend the read schema like:
+
+```ts
+import { UsersTableSchema } from '[output]/tables';
+
+const ExtendedSchema = UsersTableSchema.extend({
+  permissions: z.array(z.string()).nullish().optional(),
+  signed_in_at: z.coerce.date().nullish().optional(),
+});
 ```
 
 ## Contributing
