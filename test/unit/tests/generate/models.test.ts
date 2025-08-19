@@ -264,7 +264,7 @@ describe('models', () => {
       );
     });
 
-    it.only('should re-render types when onColumnModelCreated does not modify them', async () => {
+    it('should re-render types when onColumnModelCreated does not modify them', async () => {
       vi.spyOn(render, 'renderReadField');
       vi.spyOn(render, 'renderWriteField');
 
