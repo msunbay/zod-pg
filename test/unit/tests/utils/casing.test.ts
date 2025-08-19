@@ -197,13 +197,6 @@ describe('casing utilities', () => {
       );
     });
 
-    it('should convert to kebab-case format', () => {
-      expect(convertCaseFormat('helloWorld', 'kebab-case')).toBe('hello-world');
-      expect(convertCaseFormat('UserProfile', 'kebab-case')).toBe(
-        'user-profile'
-      );
-    });
-
     it('should convert to PascalCase format', () => {
       expect(convertCaseFormat('hello_world', 'PascalCase')).toBe('HelloWorld');
       expect(convertCaseFormat('user-profile', 'PascalCase')).toBe(

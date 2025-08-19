@@ -3,8 +3,8 @@ import fs from 'fs';
 import path from 'path';
 
 import {
-  deleteOutputFiles,
   getClientConnectionString,
+  getOutputDir,
   getOutputFiles,
   setupTestDb,
   teardownTestDb,
@@ -12,8 +12,8 @@ import {
 } from '../../testDbUtils.js';
 
 let ctx: TestDbContext;
+
 const cliPath = path.resolve(import.meta.dirname, '../../../../index.js');
-const outputDir = `${import.meta.dirname}/test-output/json-options`;
 
 beforeAll(async () => {
   ctx = await setupTestDb();
@@ -21,12 +21,16 @@ beforeAll(async () => {
 
 afterAll(async () => {
   await teardownTestDb(ctx);
-  await deleteOutputFiles(outputDir);
 });
 
 describe('CLI JSON Options', () => {
   it('CLI works with --disable-stringify-json option', async () => {
     const connectionString = getClientConnectionString();
+    const outputDir = getOutputDir(
+      'cli',
+      'jsonOptions',
+      'disable-stringify-json'
+    );
 
     execSync(
       `node ${cliPath} --connection-string "${connectionString}" --output "${outputDir}" --disable-stringify-json --silent --include "^posts$" --module esm`,

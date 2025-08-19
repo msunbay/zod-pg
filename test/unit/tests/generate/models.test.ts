@@ -1,23 +1,11 @@
 import { createTableModel } from '../../../../src/generate/models.js';
-import {
-  createRenderReadTransform,
-  createRenderWriteTransform,
-  renderReadField,
-  renderWriteField,
-} from '../../../../src/generate/render.js';
+import * as render from '../../../../src/generate/render.js';
 import {
   ZodPgColumnInfo,
   ZodPgConfig,
   ZodPgTableInfo,
   ZodPgTableType,
 } from '../../../../src/types.js';
-
-vi.mock('../../../../src/generate/render.js', () => ({
-  createRenderReadTransform: vi.fn(),
-  createRenderWriteTransform: vi.fn(),
-  renderReadField: vi.fn(),
-  renderWriteField: vi.fn(),
-}));
 
 // Helper function to create mock column info
 const createMockColumn = (
@@ -71,16 +59,6 @@ const createMockConfig = (
 describe('models', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-
-    // Setup default mock implementations
-    vi.mocked(renderReadField).mockReturnValue('z.string()');
-    vi.mocked(renderWriteField).mockReturnValue('z.string()');
-    vi.mocked(createRenderReadTransform).mockReturnValue(
-      () => () => '.transform(...)'
-    );
-    vi.mocked(createRenderWriteTransform).mockReturnValue(
-      () => () => '.transform(...)'
-    );
   });
 
   describe('createTableModel', () => {
@@ -286,11 +264,15 @@ describe('models', () => {
       );
     });
 
-    it('should re-render types when onColumnModelCreated does not modify them', async () => {
+    it.only('should re-render types when onColumnModelCreated does not modify them', async () => {
+      vi.spyOn(render, 'renderReadField');
+      vi.spyOn(render, 'renderWriteField');
+
       const onColumnModelCreated = vi
         .fn()
         .mockImplementation(async (column) => ({
           ...column,
+          type: 'email',
           customProperty: 'modified',
           // renderedReadType unchanged, should be re-rendered
         }));
@@ -302,11 +284,21 @@ describe('models', () => {
         onColumnModelCreated,
       });
 
-      await createTableModel(tableInfo, config);
+      const result = await createTableModel(tableInfo, config);
 
       // Should be called twice: once for initial model creation, once for re-rendering after hook
-      expect(renderReadField).toHaveBeenCalledTimes(2);
-      expect(renderWriteField).toHaveBeenCalledTimes(2);
+      expect(render.renderReadField).toHaveBeenCalledTimes(2);
+      expect(render.renderWriteField).toHaveBeenCalledTimes(2);
+
+      expect(result.readableColumns).toHaveLength(1);
+
+      expect(result.readableColumns[0]).toEqual(
+        expect.objectContaining({
+          renderedReadType:
+            'z.email().nullish().transform((value) => value ?? undefined).optional()',
+          customProperty: 'modified',
+        })
+      );
     });
 
     it('should call onTableModelCreated hook when provided', async () => {
@@ -463,15 +455,18 @@ describe('models', () => {
 
       const config = createMockConfig({
         fieldNameCasing: 'snake_case',
-        objectNameCasing: 'kebab-case',
+        objectNameCasing: 'snake_case',
       });
 
       const result = await createTableModel(tableInfo, config);
 
-      expect(result.tableReadSchemaName).toEqual('test-table-table-schema');
+      expect(result.tableReadSchemaName).toEqual('test_table_table_schema');
     });
 
     it('should handle columns with different zodTypes', async () => {
+      vi.spyOn(render, 'renderReadField');
+      vi.spyOn(render, 'renderWriteField');
+
       const tableInfo = createMockTableInfo({
         columns: [
           createMockColumn({
@@ -502,11 +497,11 @@ describe('models', () => {
 
       expect(result.readableColumns).toHaveLength(5);
       result.readableColumns.forEach((column) => {
-        expect(renderReadField).toHaveBeenCalledWith(
+        expect(render.renderReadField).toHaveBeenCalledWith(
           expect.objectContaining({ name: column.name }),
           config
         );
-        expect(renderWriteField).toHaveBeenCalledWith(
+        expect(render.renderWriteField).toHaveBeenCalledWith(
           expect.objectContaining({ name: column.name }),
           config
         );

@@ -59,12 +59,19 @@ export async function teardownTestDb(ctx: TestDbContext) {
   await ctx.container.stop();
 }
 
-export const outputDir = path.resolve(
-  import.meta.dirname,
-  './output/generated'
-);
+export const getOutputDir = (
+  project: 'cli' | 'generate',
+  testSuite: string,
+  subPath = ''
+): string =>
+  path.resolve(
+    import.meta.dirname,
+    `./tests/${project}/output/`,
+    testSuite,
+    subPath
+  );
 
-export async function getOutputFiles(dir = outputDir): Promise<string[]> {
+export async function getOutputFiles(dir: string): Promise<string[]> {
   let results: string[] = [];
   const list = await fs.readdir(dir, { withFileTypes: true });
 

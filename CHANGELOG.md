@@ -1,5 +1,12 @@
 # Changelog
 
+### v2.0.1 (2025-08-20)
+
+- Fixed a bug in the `onColumnModelCreated` hook that caused incorrect schema generation when changing the column type.
+- Added missing `unknown` column type option.
+- Removed kebab casing option as it produced invalid code output.
+- Improved test suites to ensure better coverage and reliability.
+
 ### v2.0.0 (2025-08-18)
 
 - Moved field transforms into base schemas and marked nullable fields as optional.

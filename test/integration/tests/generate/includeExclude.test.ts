@@ -3,8 +3,8 @@ import path from 'path';
 
 import { generateZodSchemas } from '../../../../src/generateZodSchemas.js';
 import {
-  deleteOutputFiles,
   getClientConnectionString,
+  getOutputDir,
   getOutputFiles,
   setupTestDb,
   teardownTestDb,
@@ -12,8 +12,6 @@ import {
 } from '../../testDbUtils.js';
 
 let ctx: TestDbContext;
-
-const outputDir = `${import.meta.dirname}/test-output/include-exclude`;
 let connectionString: string;
 
 beforeAll(async () => {
@@ -23,21 +21,27 @@ beforeAll(async () => {
 
 afterAll(async () => {
   await teardownTestDb(ctx);
-  await deleteOutputFiles(outputDir);
 });
 
 describe('include and exclude options', () => {
   it('generates schemas for specific tables using include string', async () => {
+    const outputDir = getOutputDir(
+      'generate',
+      'includeExclude',
+      'include-string'
+    );
+
     await generateZodSchemas({
       connection: {
         connectionString,
         ssl: false,
       },
-      outputDir: `${outputDir}/include-string`,
+      moduleResolution: 'esm',
+      outputDir,
       include: 'users',
     });
 
-    const outputFiles = await getOutputFiles(`${outputDir}/include-string`);
+    const outputFiles = await getOutputFiles(outputDir);
     const tableFiles = outputFiles.filter((file) => file.includes('/tables/'));
 
     // Should only have users table file (plus index.ts)
@@ -46,23 +50,28 @@ describe('include and exclude options', () => {
 
     for (const file of outputFiles) {
       const content = fs.readFileSync(file, 'utf8');
-      expect(content).toMatchSnapshot(
-        `include-string/${path.relative(`${outputDir}/include-string`, file)}`
-      );
+      expect(content).toMatchSnapshot(path.relative(outputDir, file));
     }
   });
 
   it('generates schemas for specific tables using include array', async () => {
+    const outputDir = getOutputDir(
+      'generate',
+      'includeExclude',
+      'include-array'
+    );
+
     await generateZodSchemas({
       connection: {
         connectionString,
         ssl: false,
       },
-      outputDir: `${outputDir}/include-array`,
+      moduleResolution: 'esm',
+      outputDir,
       include: ['users', 'posts'],
     });
 
-    const outputFiles = await getOutputFiles(`${outputDir}/include-array`);
+    const outputFiles = await getOutputFiles(outputDir);
     const tableFiles = outputFiles.filter((file) => file.includes('/tables/'));
 
     // Should have users and posts table files (plus index.ts)
@@ -72,23 +81,28 @@ describe('include and exclude options', () => {
 
     for (const file of outputFiles) {
       const content = fs.readFileSync(file, 'utf8');
-      expect(content).toMatchSnapshot(
-        `include-array/${path.relative(`${outputDir}/include-array`, file)}`
-      );
+      expect(content).toMatchSnapshot(path.relative(outputDir, file));
     }
   });
 
   it('generates schemas excluding specific tables using exclude string', async () => {
+    const outputDir = getOutputDir(
+      'generate',
+      'includeExclude',
+      'exclude-string'
+    );
+
     await generateZodSchemas({
       connection: {
         connectionString,
         ssl: false,
       },
-      outputDir: `${outputDir}/exclude-string`,
+      moduleResolution: 'esm',
+      outputDir,
       exclude: 'posts',
     });
 
-    const outputFiles = await getOutputFiles(`${outputDir}/exclude-string`);
+    const outputFiles = await getOutputFiles(outputDir);
     const tableFiles = outputFiles.filter((file) => file.includes('/tables/'));
 
     // Should not have posts table file
@@ -97,23 +111,28 @@ describe('include and exclude options', () => {
 
     for (const file of outputFiles) {
       const content = fs.readFileSync(file, 'utf8');
-      expect(content).toMatchSnapshot(
-        `exclude-string/${path.relative(`${outputDir}/exclude-string`, file)}`
-      );
+      expect(content).toMatchSnapshot(path.relative(outputDir, file));
     }
   });
 
   it('generates schemas excluding multiple tables using exclude array', async () => {
+    const outputDir = getOutputDir(
+      'generate',
+      'includeExclude',
+      'exclude-array'
+    );
+
     await generateZodSchemas({
       connection: {
         connectionString,
         ssl: false,
       },
-      outputDir: `${outputDir}/exclude-array`,
+      moduleResolution: 'esm',
+      outputDir,
       exclude: ['posts', 'users'],
     });
 
-    const outputFiles = await getOutputFiles(`${outputDir}/exclude-array`);
+    const outputFiles = await getOutputFiles(outputDir);
     const tableFiles = outputFiles.filter((file) => file.includes('/tables/'));
 
     // Should not have posts or users table files
@@ -125,26 +144,29 @@ describe('include and exclude options', () => {
 
     for (const file of outputFiles) {
       const content = fs.readFileSync(file, 'utf8');
-      expect(content).toMatchSnapshot(
-        `exclude-array/${path.relative(`${outputDir}/exclude-array`, file)}`
-      );
+      expect(content).toMatchSnapshot(path.relative(outputDir, file));
     }
   });
 
   it('respects both include and exclude options (exclude takes precedence)', async () => {
+    const outputDir = getOutputDir(
+      'generate',
+      'includeExclude',
+      'include-exclude-combined'
+    );
+
     await generateZodSchemas({
       connection: {
         connectionString,
         ssl: false,
       },
-      outputDir: `${outputDir}/include-exclude-combined`,
+      moduleResolution: 'esm',
+      outputDir,
       include: ['users', 'posts'],
       exclude: ['posts'],
     });
 
-    const outputFiles = await getOutputFiles(
-      `${outputDir}/include-exclude-combined`
-    );
+    const outputFiles = await getOutputFiles(outputDir);
     const tableFiles = outputFiles.filter((file) => file.includes('/tables/'));
 
     // Should only have users (posts is excluded even though included)
@@ -153,9 +175,7 @@ describe('include and exclude options', () => {
 
     for (const file of outputFiles) {
       const content = fs.readFileSync(file, 'utf8');
-      expect(content).toMatchSnapshot(
-        `include-exclude-combined/${path.relative(`${outputDir}/include-exclude-combined`, file)}`
-      );
+      expect(content).toMatchSnapshot(path.relative(outputDir, file));
     }
   });
 });

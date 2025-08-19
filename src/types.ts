@@ -229,7 +229,7 @@ export interface ZodPgImport {
 
 /**
  * Complete table model ready for template generation.
- * Contains all processed information needed to generate Zod schemas for a table.
+ * Contains all processed information needed to generate Zod schemas for a table or view.
  */
 export interface ZodPgTable {
   /** The schema name where this table resides */
@@ -327,8 +327,7 @@ export type ZodPgCasing =
   | 'passthrough' // Keep original database naming
   | 'PascalCase' // FirstLetterUppercase
   | 'camelCase' // firstLetterLowercase
-  | 'snake_case' // all_lowercase_with_underscores
-  | 'kebab-case'; // all-lowercase-with-dashes
+  | 'snake_case'; // all_lowercase_with_underscores
 
 /**
  * Mapped Zod column types that PostgreSQL types are converted to.
@@ -343,6 +342,7 @@ export type ZodPgColumnType =
   | 'date' // Date object
   | 'uuid' // String with UUID validation
   | 'json' // JSON object
+  | 'unknown' // Unknown type
   | 'any'; // Any type (fallback)
 
 /**

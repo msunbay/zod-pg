@@ -3,8 +3,8 @@ import path from 'path';
 
 import { generateZodSchemas } from '../../../../src/generateZodSchemas.js';
 import {
-  deleteOutputFiles,
   getClientConnectionString,
+  getOutputDir,
   getOutputFiles,
   setupTestDb,
   teardownTestDb,
@@ -12,8 +12,6 @@ import {
 } from '../../testDbUtils.js';
 
 let ctx: TestDbContext;
-
-const outputDir = `${import.meta.dirname}/test-output/json-and-date-options`;
 let connectionString: string;
 
 beforeAll(async () => {
@@ -23,161 +21,151 @@ beforeAll(async () => {
 
 afterAll(async () => {
   await teardownTestDb(ctx);
-  await deleteOutputFiles(outputDir);
 });
 
 describe('JSON and date handling options', () => {
   it('generates schemas with stringifyJson enabled', async () => {
+    const outputDir = getOutputDir(
+      'generate',
+      'jsonAndDateOptions',
+      'stringify-json'
+    );
+
     await generateZodSchemas({
-      connection: {
-        connectionString,
-        ssl: false,
-      },
-      outputDir: `${outputDir}/stringify-json`,
-      disableStringifyJson: true,
-      include: ['posts'], // posts table has JSON metadata column
+      connection: { connectionString, ssl: false },
+      moduleResolution: 'esm',
+      outputDir,
+      // stringifyJson is enabled by default (i.e. disableStringifyJson not set)
+      include: ['posts'],
     });
 
-    const outputFiles = await getOutputFiles(`${outputDir}/stringify-json`);
+    const outputFiles = await getOutputFiles(outputDir);
 
     for (const file of outputFiles) {
       const content = fs.readFileSync(file, 'utf8');
-
-      // Test captures the actual generated code
-      expect(content).toMatchSnapshot(
-        `stringify-json/${path.relative(`${outputDir}/stringify-json`, file)}`
-      );
+      expect(content).toMatchSnapshot(path.relative(outputDir, file));
     }
   });
 
   it('generates schemas with stringifyJson disabled', async () => {
+    const outputDir = getOutputDir(
+      'generate',
+      'jsonAndDateOptions',
+      'no-stringify-json'
+    );
+
     await generateZodSchemas({
-      connection: {
-        connectionString,
-        ssl: false,
-      },
-      outputDir: `${outputDir}/no-stringify-json`,
+      connection: { connectionString, ssl: false },
+      moduleResolution: 'esm',
+      outputDir,
       disableStringifyJson: true,
       include: ['posts'],
     });
 
-    const outputFiles = await getOutputFiles(`${outputDir}/no-stringify-json`);
+    const outputFiles = await getOutputFiles(outputDir);
 
     for (const file of outputFiles) {
       const content = fs.readFileSync(file, 'utf8');
-
-      // Should not contain JSON.stringify transforms
       expect(content).not.toMatch(/JSON\.stringify/);
-
-      expect(content).toMatchSnapshot(
-        `no-stringify-json/${path.relative(`${outputDir}/no-stringify-json`, file)}`
-      );
+      expect(content).toMatchSnapshot(path.relative(outputDir, file));
     }
   });
 
   it('generates schemas with stringifyDates enabled', async () => {
+    const outputDir = getOutputDir(
+      'generate',
+      'jsonAndDateOptions',
+      'stringify-dates'
+    );
+
     await generateZodSchemas({
-      connection: {
-        connectionString,
-        ssl: false,
-      },
-      outputDir: `${outputDir}/stringify-dates`,
+      connection: { connectionString, ssl: false },
+      moduleResolution: 'esm',
+      outputDir,
       stringifyDates: true,
-      include: ['users'], // users table has date columns
+      include: ['users'],
     });
 
-    const outputFiles = await getOutputFiles(`${outputDir}/stringify-dates`);
+    const outputFiles = await getOutputFiles(outputDir);
 
     for (const file of outputFiles) {
       const content = fs.readFileSync(file, 'utf8');
-
-      // Test captures the actual generated code
-      expect(content).toMatchSnapshot(
-        `stringify-dates/${path.relative(`${outputDir}/stringify-dates`, file)}`
-      );
+      expect(content).toMatchSnapshot(path.relative(outputDir, file));
     }
   });
 
   it('generates schemas with defaultEmptyArray enabled', async () => {
+    const outputDir = getOutputDir(
+      'generate',
+      'jsonAndDateOptions',
+      'default-empty-array'
+    );
+
     await generateZodSchemas({
-      connection: {
-        connectionString,
-        ssl: false,
-      },
-      outputDir: `${outputDir}/default-empty-array`,
+      connection: { connectionString, ssl: false },
+      moduleResolution: 'esm',
+      outputDir,
       defaultEmptyArray: true,
       include: ['users'],
     });
 
-    const outputFiles = await getOutputFiles(
-      `${outputDir}/default-empty-array`
-    );
+    const outputFiles = await getOutputFiles(outputDir);
 
     for (const file of outputFiles) {
       const content = fs.readFileSync(file, 'utf8');
-
-      // Test captures the actual generated code
-      expect(content).toMatchSnapshot(
-        `default-empty-array/${path.relative(`${outputDir}/default-empty-array`, file)}`
-      );
+      expect(content).toMatchSnapshot(path.relative(outputDir, file));
     }
   });
 
   it('generates schemas with coerceDates enabled', async () => {
+    const outputDir = getOutputDir(
+      'generate',
+      'jsonAndDateOptions',
+      'coerce-dates'
+    );
+
     await generateZodSchemas({
-      connection: {
-        connectionString,
-        ssl: false,
-      },
-      outputDir: `${outputDir}/coerce-dates`,
+      connection: { connectionString, ssl: false },
+      moduleResolution: 'esm',
+      outputDir,
       disableCoerceDates: false,
-      include: ['users'], // users table has date columns
+      include: ['users'],
     });
 
-    const outputFiles = await getOutputFiles(`${outputDir}/coerce-dates`);
+    const outputFiles = await getOutputFiles(outputDir);
 
     for (const file of outputFiles) {
       const content = fs.readFileSync(file, 'utf8');
-
-      // Should use z.coerce.date() in read schemas for date columns
       if (file.includes('users.ts')) {
         expect(content).toMatch(/z\.coerce\.date\(\)/);
       }
-
-      // Test captures the actual generated code
-      expect(content).toMatchSnapshot(
-        `coerce-dates/${path.relative(`${outputDir}/coerce-dates`, file)}`
-      );
+      expect(content).toMatchSnapshot(path.relative(outputDir, file));
     }
   });
 
   it('generates schemas with coerceDates disabled', async () => {
+    const outputDir = getOutputDir(
+      'generate',
+      'jsonAndDateOptions',
+      'coerce-dates-disabled'
+    );
+
     await generateZodSchemas({
-      connection: {
-        connectionString,
-        ssl: false,
-      },
-      outputDir: `${outputDir}/coerce-dates-disabled`,
+      connection: { connectionString, ssl: false },
+      moduleResolution: 'esm',
+      outputDir,
       disableCoerceDates: true,
-      include: ['users'], // users table has date columns
+      include: ['users'],
     });
 
-    const outputFiles = await getOutputFiles(
-      `${outputDir}/coerce-dates-disabled`
-    );
+    const outputFiles = await getOutputFiles(outputDir);
 
     for (const file of outputFiles) {
       const content = fs.readFileSync(file, 'utf8');
-
-      // Should not use z.coerce.date() in read schemas for date columns
       if (file.includes('users.ts')) {
         expect(content).not.toMatch(/z\.coerce\.date\(\)/);
       }
-
-      // Test captures the actual generated code
-      expect(content).toMatchSnapshot(
-        `coerce-dates/${path.relative(`${outputDir}/coerce-dates-disabled`, file)}`
-      );
+      expect(content).toMatchSnapshot(path.relative(outputDir, file));
     }
   });
 });

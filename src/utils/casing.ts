@@ -55,8 +55,6 @@ export const convertCaseFormat = (
       return camelCase(name);
     case 'snake_case':
       return snakeCase(name);
-    case 'kebab-case':
-      return kebabCase(name);
     case 'PascalCase':
       return pascalCase(name);
     case 'passthrough':

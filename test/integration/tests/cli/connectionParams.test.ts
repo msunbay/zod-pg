@@ -2,8 +2,8 @@ import { execSync } from 'child_process';
 import path from 'path';
 
 import {
-  deleteOutputFiles,
   getClientConnectionString,
+  getOutputDir,
   getOutputFiles,
   setupTestDb,
   teardownTestDb,
@@ -11,8 +11,8 @@ import {
 } from '../../testDbUtils.js';
 
 let ctx: TestDbContext;
+
 const cliPath = path.resolve(import.meta.dirname, '../../../../index.js');
-const outputDir = `${import.meta.dirname}/test-output/connection-params`;
 
 beforeAll(async () => {
   ctx = await setupTestDb();
@@ -20,11 +20,12 @@ beforeAll(async () => {
 
 afterAll(async () => {
   await teardownTestDb(ctx);
-  await deleteOutputFiles(outputDir);
 });
 
 describe('CLI Connection Parameters', () => {
   it('CLI works with connection parameters instead of connection string', async () => {
+    const outputDir = getOutputDir('cli', 'connectionParams');
+
     // Use the same connection details as the test database
     const connectionString = getClientConnectionString();
     const url = new URL(connectionString);

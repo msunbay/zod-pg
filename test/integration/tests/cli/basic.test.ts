@@ -3,8 +3,8 @@ import fs from 'fs';
 import path from 'path';
 
 import {
-  deleteOutputFiles,
   getClientConnectionString,
+  getOutputDir,
   getOutputFiles,
   setupTestDb,
   teardownTestDb,
@@ -12,8 +12,8 @@ import {
 } from '../../testDbUtils.js';
 
 let ctx: TestDbContext;
+
 const cliPath = path.resolve(import.meta.dirname, '../../../../index.js');
-const outputDir = `${import.meta.dirname}/test-output/basic`;
 
 beforeAll(async () => {
   ctx = await setupTestDb();
@@ -21,15 +21,15 @@ beforeAll(async () => {
 
 afterAll(async () => {
   await teardownTestDb(ctx);
-  await deleteOutputFiles(outputDir);
 });
 
 describe('CLI Basic Schema Generation', () => {
   it('CLI generates correct zod schemas with basic options', async () => {
     const connectionString = getClientConnectionString();
+    const outputDir = getOutputDir('cli', 'basic');
 
     execSync(
-      `node ${cliPath} --connection-string "${connectionString}" --output "${outputDir}" --json-schema-import-location "../../json.js" --silent --module esm --schema public`,
+      `node ${cliPath} --connection-string "${connectionString}" --output "${outputDir}" --silent --module esm --schema public`,
       { stdio: 'inherit' }
     );
 

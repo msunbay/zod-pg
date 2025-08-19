@@ -4,8 +4,8 @@ import path from 'path';
 import { generateZodSchemas } from '../../../../src/generateZodSchemas.js';
 import {
   getClientConnectionString,
+  getOutputDir,
   getOutputFiles,
-  outputDir,
   setupTestDb,
   teardownTestDb,
   TestDbContext,
@@ -24,17 +24,18 @@ afterAll(async () => {
 });
 
 it('generates correct zod schemas with default options', async () => {
+  const outputDir = getOutputDir('generate', 'default');
+
   await generateZodSchemas({
     connection: {
       connectionString,
       ssl: false,
     },
-
     outputDir,
     moduleResolution: 'esm',
   });
 
-  const outputFiles = await getOutputFiles();
+  const outputFiles = await getOutputFiles(outputDir);
 
   for (const file of outputFiles) {
     const content = fs.readFileSync(file, 'utf8');

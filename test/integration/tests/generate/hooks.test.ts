@@ -5,8 +5,8 @@ import type { ZodPgColumn, ZodPgTable } from '../../../../src/types.js';
 
 import { generateZodSchemas } from '../../../../src/generateZodSchemas.js';
 import {
-  deleteOutputFiles,
   getClientConnectionString,
+  getOutputDir,
   getOutputFiles,
   setupTestDb,
   teardownTestDb,
@@ -14,8 +14,6 @@ import {
 } from '../../testDbUtils.js';
 
 let ctx: TestDbContext;
-
-const outputDir = `${import.meta.dirname}/test-output/hooks`;
 let connectionString: string;
 
 beforeAll(async () => {
@@ -25,54 +23,59 @@ beforeAll(async () => {
 
 afterAll(async () => {
   await teardownTestDb(ctx);
-  await deleteOutputFiles(outputDir);
 });
 
 describe('hook options', () => {
   it('applies onColumnModelCreated hook to modify column schemas', async () => {
+    const outputDir = getOutputDir('generate', 'hooks', 'column-hook');
+
     await generateZodSchemas({
       connection: {
         connectionString,
         ssl: false,
       },
-      outputDir: `${outputDir}/column-hook`,
+      moduleResolution: 'esm',
+      outputDir,
       include: ['users'],
       onColumnModelCreated: (column: ZodPgColumn) => {
         // Add custom validation to email columns
         if (column.name === 'email') {
+          console.log('Modifying email column');
+
           return {
             ...column,
-            renderedReadType: column.renderedReadType + '.email()',
-            renderedWriteType: column.renderedWriteType + '.email()',
+            type: 'email',
           };
         }
+
         return column;
       },
     });
 
-    const outputFiles = await getOutputFiles(`${outputDir}/column-hook`);
+    const outputFiles = await getOutputFiles(outputDir);
 
     for (const file of outputFiles) {
       const content = fs.readFileSync(file, 'utf8');
 
       // Check if email validation was applied
-      if (content.includes('email')) {
+      if (file.includes('schema.ts')) {
         expect(content).toMatch(/\.email\(\)/);
       }
 
-      expect(content).toMatchSnapshot(
-        `column-hook/${path.relative(`${outputDir}/column-hook`, file)}`
-      );
+      expect(content).toMatchSnapshot(path.relative(outputDir, file));
     }
   });
 
   it('applies onTableModelCreated hook to modify table schemas', async () => {
+    const outputDir = getOutputDir('generate', 'hooks', 'table-hook');
+
     await generateZodSchemas({
       connection: {
         connectionString,
         ssl: false,
       },
-      outputDir: `${outputDir}/table-hook`,
+      moduleResolution: 'esm',
+      outputDir,
       include: ['users'],
       onTableModelCreated: (table: ZodPgTable) => {
         // Add a custom description to all tables
@@ -83,32 +86,33 @@ describe('hook options', () => {
       },
     });
 
-    const outputFiles = await getOutputFiles(`${outputDir}/table-hook`);
+    const outputFiles = await getOutputFiles(outputDir);
 
     for (const file of outputFiles) {
       const content = fs.readFileSync(file, 'utf8');
 
       // Test captures the actual generated code
-      expect(content).toMatchSnapshot(
-        `table-hook/${path.relative(`${outputDir}/table-hook`, file)}`
-      );
+      expect(content).toMatchSnapshot(path.relative(outputDir, file));
     }
   });
 
   it('applies both column and table hooks together', async () => {
+    const outputDir = getOutputDir('generate', 'hooks', 'combined-hooks');
+
     await generateZodSchemas({
       connection: {
         connectionString,
         ssl: false,
       },
-      outputDir: `${outputDir}/combined-hooks`,
+      moduleResolution: 'esm',
+      outputDir,
       include: ['users'],
       onColumnModelCreated: (column: ZodPgColumn) => {
         // Mark all string columns as trimmed
         if (column.type === 'string') {
           return {
             ...column,
-            renderedWriteType: column.renderedWriteType + '.trim()',
+            isTrimmed: true,
           };
         }
         return column;
@@ -122,15 +126,13 @@ describe('hook options', () => {
       },
     });
 
-    const outputFiles = await getOutputFiles(`${outputDir}/combined-hooks`);
+    const outputFiles = await getOutputFiles(outputDir);
 
     for (const file of outputFiles) {
       const content = fs.readFileSync(file, 'utf8');
 
       // Test captures the actual generated code
-      expect(content).toMatchSnapshot(
-        `combined-hooks/${path.relative(`${outputDir}/combined-hooks`, file)}`
-      );
+      expect(content).toMatchSnapshot(path.relative(outputDir, file));
     }
   });
 });

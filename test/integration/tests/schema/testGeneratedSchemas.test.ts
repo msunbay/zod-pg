@@ -1,14 +1,18 @@
+/**
+ * Note that this file relies on the generated files from the integration/tests/generate/default.test.ts test suite.
+ * After initial checkout or if the test files are deleted, run the `npm run test:integration:generate` command first.
+ */
 import { sql } from '../../../../src/utils/sql.js';
-import {
-  UserInsertRecord,
-  UsersTableInsertSchema,
-  UsersTableSchema,
-} from '../../output/generated/tables/users/index.js';
 import {
   setupTestDb,
   teardownTestDb,
   TestDbContext,
 } from '../../testDbUtils.js';
+import {
+  UserInsertRecord,
+  UsersTableInsertSchema,
+  UsersTableSchema,
+} from '../../tests/generate/output/default/tables/users/index.js';
 
 let ctx: TestDbContext;
 

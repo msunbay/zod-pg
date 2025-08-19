@@ -5,8 +5,8 @@ import type { ZodPgProgress } from '../../../../src/types.js';
 
 import { generateZodSchemas } from '../../../../src/generateZodSchemas.js';
 import {
-  deleteOutputFiles,
   getClientConnectionString,
+  getOutputDir,
   getOutputFiles,
   setupTestDb,
   teardownTestDb,
@@ -14,8 +14,6 @@ import {
 } from '../../testDbUtils.js';
 
 let ctx: TestDbContext;
-
-const outputDir = `${import.meta.dirname}/test-output/progress`;
 let connectionString: string;
 
 beforeAll(async () => {
@@ -25,19 +23,20 @@ beforeAll(async () => {
 
 afterAll(async () => {
   await teardownTestDb(ctx);
-  await deleteOutputFiles(outputDir);
 });
 
 describe('progress callback', () => {
   it('calls onProgress callback with correct status updates', async () => {
     const progressEvents: { status: ZodPgProgress; args?: unknown }[] = [];
+    const outputDir = getOutputDir('generate', 'progress', 'progress-tracking');
 
     await generateZodSchemas({
       connection: {
         connectionString,
         ssl: false,
       },
-      outputDir: `${outputDir}/progress-tracking`,
+      moduleResolution: 'esm',
+      outputDir,
       include: ['users', 'posts'],
       onProgress: (status: ZodPgProgress, args?: unknown) => {
         progressEvents.push({ status, args });
@@ -61,17 +60,17 @@ describe('progress callback', () => {
     });
     expect(progressEvents[3]).toEqual({ status: 'done', args: undefined });
 
-    const outputFiles = await getOutputFiles(`${outputDir}/progress-tracking`);
+    const outputFiles = await getOutputFiles(outputDir);
 
     for (const file of outputFiles) {
       const content = fs.readFileSync(file, 'utf8');
-      expect(content).toMatchSnapshot(
-        `progress-tracking/${path.relative(`${outputDir}/progress-tracking`, file)}`
-      );
+      expect(content).toMatchSnapshot(path.relative(outputDir, file));
     }
   });
 
   it('works without onProgress callback', async () => {
+    const outputDir = getOutputDir('generate', 'progress', 'no-progress');
+
     // Should not throw when no progress callback is provided
     await expect(
       generateZodSchemas({
@@ -79,19 +78,18 @@ describe('progress callback', () => {
           connectionString,
           ssl: false,
         },
-        outputDir: `${outputDir}/no-progress`,
+        moduleResolution: 'esm',
+        outputDir,
         include: ['users'],
         // No onProgress callback
       })
     ).resolves.toBeDefined();
 
-    const outputFiles = await getOutputFiles(`${outputDir}/no-progress`);
+    const outputFiles = await getOutputFiles(outputDir);
 
     for (const file of outputFiles) {
       const content = fs.readFileSync(file, 'utf8');
-      expect(content).toMatchSnapshot(
-        `no-progress/${path.relative(`${outputDir}/no-progress`, file)}`
-      );
+      expect(content).toMatchSnapshot(path.relative(outputDir, file));
     }
   });
 });

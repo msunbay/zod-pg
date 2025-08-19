@@ -212,19 +212,6 @@ describe('format', () => {
       expect(result).toBe('user_posts_table_schema');
     });
 
-    it('should respect kebab-case casing', () => {
-      const tableInfo = createMockTableInfo({
-        type: 'table',
-        name: 'UserPosts',
-      });
-      const result = formatTableSchemaName({
-        tableInfo,
-        operation: 'read',
-        casing: 'kebab-case',
-      });
-      expect(result).toBe('user-posts-table-schema');
-    });
-
     it('should respect passthrough casing', () => {
       const tableInfo = createMockTableInfo({
         type: 'table',
@@ -352,15 +339,6 @@ describe('format', () => {
       expect(result).toBe('user_post_meta_data_schema');
     });
 
-    it('should respect kebab-case casing', () => {
-      const result = formatJsonSchemaName(
-        'UserPosts',
-        'MetaData',
-        'kebab-case'
-      );
-      expect(result).toBe('user-post-meta-data-schema');
-    });
-
     it('should respect passthrough casing', () => {
       const result = formatJsonSchemaName(
         'user_posts',
@@ -453,11 +431,6 @@ describe('format', () => {
     it('should respect snake_case casing', () => {
       const result = formatEnumTypeName('Users', 'Status', 'snake_case');
       expect(result).toBe('user_status');
-    });
-
-    it('should respect kebab-case casing', () => {
-      const result = formatEnumTypeName('Users', 'Status', 'kebab-case');
-      expect(result).toBe('user-status');
     });
 
     it('should respect passthrough casing', () => {

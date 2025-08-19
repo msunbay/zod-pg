@@ -5,6 +5,7 @@ import path from 'path';
 import {
   deleteOutputFiles,
   getClientConnectionString,
+  getOutputDir,
   getOutputFiles,
   setupTestDb,
   teardownTestDb,
@@ -12,8 +13,9 @@ import {
 } from '../../testDbUtils.js';
 
 let ctx: TestDbContext;
+
 const cliPath = path.resolve(import.meta.dirname, '../../../../index.js');
-const outputDir = `${import.meta.dirname}/test-output/clean`;
+const outputDir = getOutputDir('cli', 'clean');
 
 beforeAll(async () => {
   ctx = await setupTestDb();

@@ -1,9 +1,8 @@
 dist/
 node_modules/
-test/output/
 .env
 .generated/
 
 zod-schemas/
-test-output/
+test/integration/tests/*/output/
 coverage/

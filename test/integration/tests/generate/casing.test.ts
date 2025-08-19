@@ -3,8 +3,8 @@ import path from 'path';
 
 import { generateZodSchemas } from '../../../../src/generateZodSchemas.js';
 import {
-  deleteOutputFiles,
   getClientConnectionString,
+  getOutputDir,
   getOutputFiles,
   setupTestDb,
   teardownTestDb,
@@ -12,8 +12,6 @@ import {
 } from '../../testDbUtils.js';
 
 let ctx: TestDbContext;
-
-const outputDir = `${import.meta.dirname}/test-output/casing`;
 let connectionString: string;
 
 beforeAll(async () => {
@@ -23,99 +21,77 @@ beforeAll(async () => {
 
 afterAll(async () => {
   await teardownTestDb(ctx);
-  await deleteOutputFiles(outputDir);
 });
 
 describe('casing options', () => {
   it('generates schemas with camelCase field names and PascalCase object names (default)', async () => {
+    const outputDir = getOutputDir('generate', 'casing', 'default');
+
     await generateZodSchemas({
       connection: {
         connectionString,
         ssl: false,
       },
-      outputDir: `${outputDir}/default`,
+      moduleResolution: 'esm',
+      outputDir,
       fieldNameCasing: 'camelCase',
       objectNameCasing: 'PascalCase',
       include: ['users', 'posts'],
     });
 
-    const outputFiles = await getOutputFiles(`${outputDir}/default`);
+    const outputFiles = await getOutputFiles(outputDir);
 
     for (const file of outputFiles) {
       const content = fs.readFileSync(file, 'utf8');
-      expect(content).toMatchSnapshot(
-        `default/${path.relative(`${outputDir}/default`, file)}`
-      );
+      expect(content).toMatchSnapshot(path.relative(outputDir, file));
     }
   });
 
   it('generates schemas with snake_case field names', async () => {
+    const outputDir = getOutputDir('generate', 'casing', 'snake-case-fields');
+
     await generateZodSchemas({
       connection: {
         connectionString,
         ssl: false,
       },
-      outputDir: `${outputDir}/snake-case-fields`,
+      moduleResolution: 'esm',
+      outputDir: outputDir,
       fieldNameCasing: 'snake_case',
       objectNameCasing: 'PascalCase',
       include: ['users'],
     });
 
-    const outputFiles = await getOutputFiles(`${outputDir}/snake-case-fields`);
+    const outputFiles = await getOutputFiles(outputDir);
 
     for (const file of outputFiles) {
       const content = fs.readFileSync(file, 'utf8');
 
       // Test captures the actual generated code
-      expect(content).toMatchSnapshot(
-        `snake-case-fields/${path.relative(`${outputDir}/snake-case-fields`, file)}`
-      );
-    }
-  });
-
-  it('generates schemas with kebab-case object names', async () => {
-    await generateZodSchemas({
-      connection: {
-        connectionString,
-        ssl: false,
-      },
-      outputDir: `${outputDir}/kebab-case-objects`,
-      fieldNameCasing: 'camelCase',
-      objectNameCasing: 'kebab-case',
-      include: ['users'],
-    });
-
-    const outputFiles = await getOutputFiles(`${outputDir}/kebab-case-objects`);
-
-    for (const file of outputFiles) {
-      const content = fs.readFileSync(file, 'utf8');
-
-      // Test captures the actual generated code
-      expect(content).toMatchSnapshot(
-        `kebab-case-objects/${path.relative(`${outputDir}/kebab-case-objects`, file)}`
-      );
+      expect(content).toMatchSnapshot(path.relative(outputDir, file));
     }
   });
 
   it('generates schemas with passthrough casing', async () => {
+    const outputDir = getOutputDir('generate', 'casing', 'passthrough');
+
     await generateZodSchemas({
       connection: {
         connectionString,
         ssl: false,
       },
-      outputDir: `${outputDir}/passthrough`,
+      moduleResolution: 'esm',
+      outputDir,
       fieldNameCasing: 'passthrough',
       objectNameCasing: 'passthrough',
       include: ['users'],
     });
 
-    const outputFiles = await getOutputFiles(`${outputDir}/passthrough`);
+    const outputFiles = await getOutputFiles(outputDir);
 
     for (const file of outputFiles) {
       const content = fs.readFileSync(file, 'utf8');
-      expect(content).toMatchSnapshot(
-        `passthrough/${path.relative(`${outputDir}/passthrough`, file)}`
-      );
+      expect(content).toMatchSnapshot(path.relative(outputDir, file));
     }
   });
 });

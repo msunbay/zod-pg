@@ -3,8 +3,8 @@ import path from 'path';
 
 import { generateZodSchemas } from '../../../../src/generateZodSchemas.js';
 import {
-  deleteOutputFiles,
   getClientConnectionString,
+  getOutputDir,
   getOutputFiles,
   setupTestDb,
   teardownTestDb,
@@ -12,8 +12,6 @@ import {
 } from '../../testDbUtils.js';
 
 let ctx: TestDbContext;
-
-const outputDir = `${import.meta.dirname}/test-output/zod4`;
 let connectionString: string;
 
 beforeAll(async () => {
@@ -23,10 +21,11 @@ beforeAll(async () => {
 
 afterAll(async () => {
   await teardownTestDb(ctx);
-  await deleteOutputFiles(outputDir);
 });
 
 it('generates schemas compatible with zod version 4', async () => {
+  const outputDir = getOutputDir('generate', 'zod4');
+
   await generateZodSchemas({
     connection: {
       connectionString,

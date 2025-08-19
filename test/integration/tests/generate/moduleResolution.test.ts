@@ -5,6 +5,7 @@ import { generateZodSchemas } from '../../../../src/generateZodSchemas.js';
 import {
   deleteOutputFiles,
   getClientConnectionString,
+  getOutputDir,
   getOutputFiles,
   setupTestDb,
   teardownTestDb,
@@ -12,8 +13,6 @@ import {
 } from '../../testDbUtils.js';
 
 let ctx: TestDbContext;
-
-const outputDir = `${import.meta.dirname}/test-output/module-resolution`;
 let connectionString: string;
 
 beforeAll(async () => {
@@ -23,22 +22,23 @@ beforeAll(async () => {
 
 afterAll(async () => {
   await teardownTestDb(ctx);
-  await deleteOutputFiles(outputDir);
+  await deleteOutputFiles(getOutputDir('generate', 'moduleResolution'));
 });
 
 describe('module resolution formats', () => {
   it('generates modules without file extensions (commonjs module resolution)', async () => {
+    const outputDir = getOutputDir('generate', 'moduleResolution', 'commonjs');
+
     await generateZodSchemas({
       connection: {
         connectionString,
         ssl: false,
       },
-      outputDir: `${outputDir}/commonjs`,
+      outputDir,
       moduleResolution: 'commonjs',
       include: ['users'],
     });
-
-    const outputFiles = await getOutputFiles(`${outputDir}/commonjs`);
+    const outputFiles = await getOutputFiles(outputDir);
 
     for (const file of outputFiles) {
       const content = fs.readFileSync(file, 'utf8');
@@ -54,24 +54,23 @@ describe('module resolution formats', () => {
         }
       }
 
-      expect(content).toMatchSnapshot(
-        `commonjs/${path.relative(`${outputDir}/commonjs`, file)}`
-      );
+      expect(content).toMatchSnapshot(path.relative(outputDir, file));
     }
   });
 
   it('generates modules with file extensions (esm module resolution)', async () => {
+    const outputDir = getOutputDir('generate', 'moduleResolution', 'esm');
+
     await generateZodSchemas({
       connection: {
         connectionString,
         ssl: false,
       },
-      outputDir: `${outputDir}/esm`,
+      outputDir,
       moduleResolution: 'esm',
       include: ['users'],
     });
-
-    const outputFiles = await getOutputFiles(`${outputDir}/esm`);
+    const outputFiles = await getOutputFiles(outputDir);
 
     for (const file of outputFiles) {
       const content = fs.readFileSync(file, 'utf8');
@@ -87,9 +86,7 @@ describe('module resolution formats', () => {
         }
       }
 
-      expect(content).toMatchSnapshot(
-        `esm/${path.relative(`${outputDir}/esm`, file)}`
-      );
+      expect(content).toMatchSnapshot(path.relative(outputDir, file));
     }
   });
 });

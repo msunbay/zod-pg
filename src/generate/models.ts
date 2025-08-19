@@ -88,22 +88,22 @@ export const createTableModel = async (
 
         renderedReadType:
           modifiedModel.renderedReadType === model.renderedReadType
-            ? renderReadField(model, config)
+            ? renderReadField(modifiedModel, config)
             : modifiedModel.renderedReadType,
 
         renderedWriteType:
           modifiedModel.renderedWriteType === model.renderedWriteType
-            ? renderWriteField(model, config)
+            ? renderWriteField(modifiedModel, config)
             : modifiedModel.renderedWriteType,
 
         renderedReadTransform:
           modifiedModel.renderedReadTransform === model.renderedReadTransform
-            ? createRenderReadTransform(model, config)
+            ? createRenderReadTransform(modifiedModel, config)
             : modifiedModel.renderedReadTransform,
 
         renderedWriteTransform:
           modifiedModel.renderedWriteTransform === model.renderedWriteTransform
-            ? createRenderWriteTransform(model, config)
+            ? createRenderWriteTransform(modifiedModel, config)
             : modifiedModel.renderedWriteTransform,
       });
     } else {
