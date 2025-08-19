@@ -40,8 +40,6 @@ describe('hook options', () => {
       onColumnModelCreated: (column: ZodPgColumn) => {
         // Add custom validation to email columns
         if (column.name === 'email') {
-          console.log('Modifying email column');
-
           return {
             ...column,
             type: 'email',
