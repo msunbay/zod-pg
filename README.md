@@ -121,30 +121,32 @@ Note that if you use both `--exclude` and `--include` options together, the `--i
 
 ### All Options
 
-| Option                          | Description                                                                                        | Required | Default     |
-| ------------------------------- | -------------------------------------------------------------------------------------------------- | -------- | ----------- |
-| `--connection`                  | Connection string for PostgreSQL.                                                                  | false    |             |
-| `-o, --output`                  | Output directory for generated files.                                                              | true     |             |
-| `--clean`                       | Delete the output directory before generation.                                                     | false    | `false`     |
-| `--disable-coerce-dates`        | Disables using `z.coerce.date()` for date fields in read schemas (allows string-to-date coercion). | false    | `false`     |
-| `--disable-stringify-json`      | Disables stringifying JSON values in write schemas using `JSON.stringify()` transforms.            | false    | `false`     |
-| `--disable-case-transform`      | Disables transforming db record field casing. e.g snake_case to camelCase.                         | false    | `false`     |
-| `--stringify-dates`             | Convert dates to ISO strings in write schemas using `.toISOString()` transforms.                   | false    | `false`     |
-| `--default-empty-array`         | Provide empty arrays as defaults for nullable array fields in write schemas.                       | false    | `false`     |
-| `--user`                        | PostgreSQL user name.                                                                              | false    | `postgres`  |
-| `--password`                    | PostgreSQL user password.                                                                          | false    |             |
-| `--host`                        | PostgreSQL host.                                                                                   | false    | `localhost` |
-| `--port`                        | PostgreSQL port.                                                                                   | false    | `5432`      |
-| `--database`                    | PostgreSQL database name.                                                                          | false    | `postgres`  |
-| `--schema`                      | Specify schema name (default: public)                                                              | false    | `public`    |
-| `--ssl`                         | Use SSL for the connection.                                                                        | false    | `false`     |
-| `--exclude`                     | Regex pattern to exclude tables from generation.                                                   | false    |             |
-| `--include`                     | Regex pattern to include only specific tables.                                                     | false    |             |
-| `--json-schema-import-location` | Location to import Zod schemas for JSON fields.                                                    | false    |             |
-| `--silent`                      | Suppress output messages during generation.                                                        | false    | `false`     |
-| `--module`                      | Module resolution type (esm, commonjs). ESM uses file extensions in imports, CommonJS does not.    | false    | `commonjs`  |
-| `--zod-version`                 | Target Zod version (3, 4).                                                                         | false    | `3`         |
-| `--help`                        | Show help message.                                                                                 | false    |             |
+All CLI options are optional. Sensible defaults are applied (e.g. output defaults to `./zod-schemas`, schema defaults to `public`). You can also supply values via a config file or environment variables which override file values.
+
+| Option                          | Description                                                                                        | Default         |
+| ------------------------------- | -------------------------------------------------------------------------------------------------- | --------------- |
+| `--connection-string`           | Connection string for PostgreSQL.                                                                  |                 |
+| `-o, --output`                  | Output directory for generated files.                                                              | `./zod-schemas` |
+| `--clean`                       | Delete the output directory before generation.                                                     | `false`         |
+| `--disable-coerce-dates`        | Disables using `z.coerce.date()` for date fields in read schemas (allows string-to-date coercion). | `false`         |
+| `--disable-stringify-json`      | Disables stringifying JSON values in write schemas using `JSON.stringify()` transforms.            | `false`         |
+| `--disable-case-transform`      | Disables transforming db record field casing. e.g snake_case to camelCase.                         | `false`         |
+| `--stringify-dates`             | Convert dates to ISO strings in write schemas using `.toISOString()` transforms.                   | `false`         |
+| `--default-empty-array`         | Provide empty arrays as defaults for nullable array fields in write schemas.                       | `false`         |
+| `--user`                        | PostgreSQL user name.                                                                              | `postgres`      |
+| `--password`                    | PostgreSQL user password.                                                                          |                 |
+| `--host`                        | PostgreSQL host.                                                                                   | `localhost`     |
+| `--port`                        | PostgreSQL port.                                                                                   | `5432`          |
+| `--database`                    | PostgreSQL database name.                                                                          | `postgres`      |
+| `--schema`                      | Specify schema name.                                                                               | `public`        |
+| `--ssl`                         | Use SSL for the connection.                                                                        | `false`         |
+| `--exclude`                     | Regex pattern to exclude tables from generation.                                                   |                 |
+| `--include`                     | Regex pattern to include only specific tables.                                                     |                 |
+| `--json-schema-import-location` | Location to import Zod schemas for JSON fields.                                                    |                 |
+| `--silent`                      | Suppress output messages during generation.                                                        | `false`         |
+| `--module`                      | Module resolution type (esm, commonjs). ESM uses file extensions in imports, CommonJS does not.    | `commonjs`      |
+| `--zod-version`                 | Target Zod version (3, 4, 4-mini).                                                                 | `3`             |
+| `--help`                        | Show help message.                                                                                 |                 |
 
 ## Configuration File
 

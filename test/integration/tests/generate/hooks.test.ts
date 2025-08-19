@@ -1,8 +1,6 @@
 import fs from 'fs';
 import path from 'path';
 
-import type { ZodPgColumn, ZodPgTable } from '../../../../src/types.js';
-
 import { generateZodSchemas } from '../../../../src/generateZodSchemas.js';
 import {
   getClientConnectionString,
@@ -37,12 +35,13 @@ describe('hook options', () => {
       moduleResolution: 'esm',
       outputDir,
       include: ['users'],
-      onColumnModelCreated: (column: ZodPgColumn) => {
+      onColumnInfoCreated: (column) => {
         // Add custom validation to email columns
         if (column.name === 'email') {
           return {
             ...column,
             type: 'email',
+            writeTransforms: ['trim', 'lowercase'],
           };
         }
 
@@ -57,7 +56,7 @@ describe('hook options', () => {
 
       // Check if email validation was applied
       if (file.includes('schema.ts')) {
-        expect(content).toMatch(/\.email\(\)/);
+        expect(content).toMatch(/\.email\(\).trim\(\).lowercase\(\)/);
       }
 
       expect(content).toMatchSnapshot(path.relative(outputDir, file));
@@ -75,11 +74,11 @@ describe('hook options', () => {
       moduleResolution: 'esm',
       outputDir,
       include: ['users'],
-      onTableModelCreated: (table: ZodPgTable) => {
+      onTableInfoCreated: (table) => {
         // Add a custom description to all tables
         return {
           ...table,
-          description: `Generated schema for ${table.tableName} table`,
+          description: `Generated schema for ${table.name} table`,
         };
       },
     });
@@ -105,7 +104,7 @@ describe('hook options', () => {
       moduleResolution: 'esm',
       outputDir,
       include: ['users'],
-      onColumnModelCreated: (column: ZodPgColumn) => {
+      onColumnInfoCreated: (column) => {
         // Mark all string columns as trimmed
         if (column.type === 'string') {
           return {
@@ -115,11 +114,11 @@ describe('hook options', () => {
         }
         return column;
       },
-      onTableModelCreated: (table: ZodPgTable) => {
+      onTableInfoCreated: (table) => {
         // Add table metadata
         return {
           ...table,
-          description: `Table: ${table.tableName} (${table.readableColumns.length} columns)`,
+          description: `Table: ${table.name} (${table.columns.length} columns)`,
         };
       },
     });

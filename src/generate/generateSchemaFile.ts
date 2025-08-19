@@ -1,6 +1,6 @@
 import { promises } from 'fs';
 
-import type { ZodPgConfig, ZodPgTable } from '../types.js';
+import type { ZodPgConfig, ZodPgTableInfo } from '../types.js';
 
 import {
   ensureFolder,
@@ -8,25 +8,47 @@ import {
   logDebug,
   logWarning,
 } from '../utils/index.js';
+import { DefaultRenderer } from './renderers/DefaultRenderer.js';
+import { Zod3Renderer } from './renderers/Zod3Renderer.js';
+import { Zod4MiniRenderer } from './renderers/Zod4MiniRenderer.js';
+import { Zod4Renderer } from './renderers/Zod4Renderer.js';
 import { renderTemplate } from './template.js';
 
+const createRenderer = (config: ZodPgConfig) => {
+  if (config.renderer) {
+    return config.renderer;
+  }
+
+  if (config.zodVersion === '3') {
+    return new Zod3Renderer();
+  }
+
+  if (config.zodVersion === '4') {
+    return new Zod4Renderer();
+  }
+
+  if (config.zodVersion === '4-mini') {
+    return new Zod4MiniRenderer();
+  }
+
+  return new DefaultRenderer();
+};
+
 async function generateSchemaFile(
-  table: ZodPgTable,
+  table: ZodPgTableInfo,
   config: ZodPgConfig
 ): Promise<void> {
-  logDebug(`Generating schema for: ${table.type} ${table.tableName}`);
+  logDebug(`Generating schema for: ${table.type} ${table.name}`);
 
-  if (table.readableColumns.length === 0) {
-    logWarning(`No columns found for ${table.type} ${table.tableName}`);
+  if (table.columns.length === 0) {
+    logWarning(`No columns found for ${table.type} ${table.name}`);
     return;
   }
 
-  let templateName = 'schema';
-  if (config.disableCaseTransform) templateName += '.simple';
+  const renderer = createRenderer(config);
+  const output = await renderer.renderSchema(table, config);
 
-  const output = await renderTemplate(templateName, table);
-
-  const folderPath = `${config.outputDir}/${getOutputFolder(table.type)}/${table.tableName}`;
+  const folderPath = `${config.outputDir}/${getOutputFolder(table.type)}/${table.name}`;
   await ensureFolder(folderPath);
 
   const fileName = `${folderPath}/schema.ts`;
@@ -36,15 +58,13 @@ async function generateSchemaFile(
 }
 
 async function generateSchemaIndexFile(
-  table: ZodPgTable,
+  table: ZodPgTableInfo,
   config: ZodPgConfig
 ): Promise<void> {
-  logDebug(
-    `Generating schema index file for: ${table.type} ${table.tableName}`
-  );
+  logDebug(`Generating schema index file for: ${table.type} ${table.name}`);
 
-  if (table.readableColumns.length === 0) {
-    logWarning(`No columns found for ${table.type} ${table.tableName}`);
+  if (table.columns.length === 0) {
+    logWarning(`No columns found for ${table.type} ${table.name}`);
     return;
   }
 
@@ -53,7 +73,7 @@ async function generateSchemaIndexFile(
     fileName: config.moduleResolution === 'esm' ? `schema.js` : 'schema',
   });
 
-  const folderPath = `${config.outputDir}/${getOutputFolder(table.type)}/${table.tableName}`;
+  const folderPath = `${config.outputDir}/${getOutputFolder(table.type)}/${table.name}`;
   await ensureFolder(folderPath);
 
   const fileName = `${folderPath}/index.ts`;
@@ -63,7 +83,7 @@ async function generateSchemaIndexFile(
 }
 
 export async function generateSchemaFiles(
-  table: ZodPgTable,
+  table: ZodPgTableInfo,
   config: ZodPgConfig
 ): Promise<void> {
   await generateSchemaFile(table, config);

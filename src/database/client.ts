@@ -1,5 +1,3 @@
-import { Client } from 'pg';
-
 import { ZodPgConnectionConfig } from '../types.js';
 
 export const createConnectionString = (
@@ -18,12 +16,4 @@ export const createConnectionString = (
   }
 
   return `postgresql://${user}:${password}@${host}:${port}/${database}`;
-};
-
-export const createClient = (options: ZodPgConnectionConfig) => {
-  return new Client({
-    connectionString: createConnectionString(options),
-    ssl: options.ssl,
-    application_name: 'zod-pg',
-  });
 };

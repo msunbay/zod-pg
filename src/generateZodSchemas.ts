@@ -1,18 +1,13 @@
-import { Client } from 'pg';
-
 import type { ZodPgConfig, ZodPgProgress, ZodPgSchemaInfo } from './types.js';
 
-import { createClient } from './database/client.js';
-import { getSchemaInformation } from './database/schema.js';
+import { PostgreSqlConnector } from './database/PostgreSqlConnector.js';
 import { generateConstantsFile } from './generate/generateConstantsFile.js';
 import { generateIndexFiles } from './generate/generateIndexFiles.js';
 import { generateSchemaFiles } from './generate/generateSchemaFile.js';
 import { generateTypesFile } from './generate/generateTypesFile.js';
-import { createTableModel } from './generate/models.js';
 import { clearTablesDirectory, logDebug } from './utils/index.js';
 
 export interface ZodPgGenerateConfig extends ZodPgConfig {
-  outputDir: string;
   onProgress?: (status: ZodPgProgress, args?: unknown) => void;
 }
 
@@ -35,60 +30,35 @@ export const generateZodSchemas = async ({
     ...config,
   };
 
-  const { connection, outputDir, schemaName, include, exclude, cleanOutput } =
-    generateConfig;
+  const { connection, outputDir, schemaName, cleanOutput } = generateConfig;
 
   if (cleanOutput) {
     clearTablesDirectory(outputDir);
   }
 
-  let client: Client | undefined = undefined;
+  logDebug(`Connecting to Postgres database at ${connection.connectionString}`);
 
-  try {
-    logDebug(
-      `Connecting to Postgres database at ${connection.connectionString}`
-    );
+  const connector = config.dbConnector ?? new PostgreSqlConnector(config);
 
-    client = createClient(connection);
+  onProgress?.('connecting');
+  onProgress?.('fetchingSchema');
+  const schema = await connector.getSchemaInformation(config);
 
-    onProgress?.('connecting');
+  onProgress?.('generating', { total: schema.tables.length });
 
-    await client.connect();
-    logDebug(`Connected to Postgres database`);
+  logDebug(
+    `Generating zod schemas for ${schema.tables.length} tables in db schema '${schemaName}'`
+  );
 
-    onProgress?.('fetchingSchema');
-    const schema = await getSchemaInformation(client, {
-      schemaName,
-      include,
-      exclude,
-    });
-
-    onProgress?.('generating', { total: schema.tables.length });
-
-    logDebug(
-      `Generating zod schemas for ${schema.tables.length} tables in db schema '${schemaName}'`
-    );
-
-    const models = [];
-
-    for (const tableInfo of schema.tables) {
-      logDebug(`Generating model for: ${tableInfo.type} ${tableInfo.name}`);
-      const model = await createTableModel(tableInfo, generateConfig);
-      models.push(model);
-    }
-
-    for (const tableModel of models) {
-      await generateSchemaFiles(tableModel, generateConfig);
-    }
-
-    await generateIndexFiles(models, generateConfig);
-    await generateConstantsFile(schema, generateConfig);
-    await generateTypesFile(schema, generateConfig);
-
-    onProgress?.('done');
-
-    return schema;
-  } finally {
-    await client?.end();
+  for (const table of schema.tables) {
+    await generateSchemaFiles(table, generateConfig);
   }
+
+  await generateIndexFiles(schema, generateConfig);
+  await generateConstantsFile(schema, generateConfig);
+  await generateTypesFile(schema, generateConfig);
+
+  onProgress?.('done');
+
+  return schema;
 };

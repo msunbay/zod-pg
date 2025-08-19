@@ -34,6 +34,16 @@ export type ZodPgTableType =
   | 'unknown'; // Unknown or unsupported type
 
 /**
+ * Transform types that can be applied to Zod schemas.
+ */
+export type ZodPgTransform =
+  | 'trim'
+  | 'lowercase'
+  | 'uppercase'
+  | 'normalize'
+  | 'nonnegative';
+
+/**
  * Raw column information directly from PostgreSQL system catalogs.
  * This interface represents the unprocessed data about a database column.
  */
@@ -44,11 +54,6 @@ export interface ZodPgRawColumnInfo {
   defaultValue?: string;
   /** Whether the column allows NULL values */
   isNullable: boolean;
-  /**
-   * Whether the field is optional in the Zod schema
-   * Defaults to the same as isNullable.
-   */
-  isOptional?: boolean;
   /** Maximum length constraint for string columns */
   maxLen?: number;
   /** Minimum length constraint for string columns */
@@ -104,58 +109,24 @@ export interface ZodPgColumnInfo extends ZodPgRawColumnInfo {
    * This mapped type is used to generate the appropriate Zod schema (e.g., z.string(), z.number(), z.date()).
    */
   type: ZodPgColumnType;
+  /** If isEnum is true, contains the possible enum values */
+  enumValues?: string[];
   /** Whether this column represents an enumeration type */
   isEnum: boolean;
   /** Whether this column is a serial/auto-incrementing column */
   isSerial: boolean;
   /** Whether this column is an array type */
   isArray: boolean;
-  /** If isEnum is true, contains the possible enum values */
-  enumValues?: string[];
-}
-
-/**
- * Function type for Mustache template transforms.
- * Used to transform values during template rendering.
- */
-type ZodPgTransform = () => (
-  text: string,
-  render: (text: string) => string
-) => string;
-
-/**
- * Base model for a column with additional processing and naming information.
- * This represents the column after initial processing but before final rendering.
- */
-export interface ZodPgColumnBaseModel extends ZodPgColumnInfo {
   /**
-   * The property name of the column in the generated Zod schema.
-   * This is typically the column name transformed according to the specified casing (e.g., camelCase).
+   * Whether the field is optional in the Zod schema
+   * Defaults to the same as isNullable.
    */
-  propertyName: string;
-  /**
-   * The name of the enum type for the column.
-   * Used when the column is identified as an enum type through check constraints.
-   * Example: 'UserStatus' for a status column with enum values.
-   */
-  enumTypeName?: string;
-  /**
-   * The constant name of the enum type for the column.
-   * Used for generating enum constants in the constants file.
-   * Example: 'USER_STATUS_ENUM' for a status column.
-   */
-  enumConstantName?: string;
-  /**
-   * The name of the JSON Zod schema for the column.
-   * Used when the JSON schema import feature is enabled for JSON/JSONB columns.
-   * Example: 'UserProfileSchema' for a profile column.
-   */
-  jsonSchemaName?: string;
+  isOptional?: boolean;
   /**
    * Whether this column should be included in insert/update schemas.
    * Typically false for serial columns, primary keys, or other read-only columns.
    */
-  isWritable: boolean;
+  isWritable?: boolean;
   /**
    * Whether this property is marked as deprecated.
    * Can be used to generate @deprecated JSDoc comments.
@@ -165,130 +136,12 @@ export interface ZodPgColumnBaseModel extends ZodPgColumnInfo {
    * If isDeprecated is true, this provides the reason for deprecation.
    */
   isDeprecatedReason?: string;
-}
-
-/**
- * Final column model with fully rendered Zod types and transforms.
- * This represents the column after all processing and is ready for template generation.
- */
-export interface ZodPgColumn extends ZodPgColumnBaseModel {
   /**
-   * The fully rendered Zod type/schema for reading operations.
-   * Example: 'z.string()', 'z.number().optional()', 'z.date()'
+   * Additional transforms applied to the column.
+   * These are used provide rendering hints the Zod type during rendering the write schema.
+   * Examples: using 'trim' for a text field should output z.string().trim() for the property.
    */
-  renderedReadType: string;
-  /**
-   * The fully rendered Zod type/schema for writing operations (insert/update).
-   * May include additional constraints like max length, nullish handling, etc.
-   * Example: 'z.string().max(100)', 'z.number().nullish()', 'z.string().email()'
-   */
-  renderedWriteType: string;
-  /**
-   * The transform function for reading column values from the database.
-   * Handles nullable values, arrays, and other read-time transformations.
-   */
-  renderedReadTransform: ZodPgTransform;
-  /**
-   * The transform function for writing column values to the database.
-   * Handles serialization of JSON, dates, and other write-time transformations.
-   */
-  renderedWriteTransform: ZodPgTransform;
-}
-
-/**
- * Represents a single value in an enumeration with rendering context.
- */
-interface ZodPgEnumValue {
-  /** The actual enum value */
-  value: string;
-  /** Whether this is the last value in the enum (used for template rendering) */
-  last: boolean;
-}
-
-/**
- * Represents an enumeration type derived from check constraints.
- */
-export interface ZodPgEnum {
-  /** The constant name for the enum (e.g., 'USER_STATUS_ENUM') */
-  constantName: string;
-  /** The TypeScript type name for the enum (e.g., 'UserStatus') */
-  typeName: string;
-  /** Array of possible enum values */
-  values: ZodPgEnumValue[];
-}
-
-/**
- * Represents an import statement with rendering context.
- */
-export interface ZodPgImport {
-  /** The name to import (e.g., 'UserProfileSchema') */
-  name: string;
-  /** Whether this is the last import in the list (used for template rendering) */
-  last: boolean;
-}
-
-/**
- * Complete table model ready for template generation.
- * Contains all processed information needed to generate Zod schemas for a table or view.
- */
-export interface ZodPgTable {
-  /** The schema name where this table resides */
-  schemaName: string;
-  /** The type of relation (table, view, etc.) */
-  type: ZodPgTableType;
-  /** The original table name */
-  tableName: string;
-  /** The singular form of the table name (e.g., 'user' from 'users') */
-  tableSingularName: string;
-
-  /** Generated name for the read base schema (e.g., 'UserBaseSchema') */
-  tableReadBaseSchemaName?: string;
-  /** Generated name for the write base schema (e.g., 'UserWriteBaseSchema') */
-  tableInsertBaseSchemaName?: string;
-  /** Generated name for the read transform function (e.g., 'transformUserReadRecord') */
-  tableReadTransformName?: string;
-  /** Generated name for the insert transform function (e.g., 'transformUserInsertRecord') */
-  tableInsertTransformName?: string;
-  /** Generated name for the update transform function (e.g., 'transformUserUpdateRecord') */
-  tableUpdateTransformName?: string;
-  /** Generated name for the read schema (e.g., 'UserSchema') */
-  tableReadSchemaName?: string;
-  /** Generated name for the insert schema (e.g., 'UserInsertSchema') */
-  tableInsertSchemaName?: string;
-  /** Generated name for the update schema (e.g., 'UserUpdateSchema') */
-  tableUpdateSchemaName?: string;
-
-  /** Generated name for the base read record type (e.g., 'UserReadRecord') */
-  tableReadBaseRecordName?: string;
-  /** Generated name for the read record type (e.g., 'UserRecord') */
-  tableReadRecordName?: string;
-  /** Generated name for the base write record type (e.g., 'UserInsertBaseRecord') */
-  tableInsertBaseRecordName?: string;
-  /** Generated name for the insert record type (e.g., 'UserInsertRecord') */
-  tableInsertRecordName?: string;
-  /** Generated name for the base update record type (e.g., 'UserUpdateBaseRecord') */
-  tableUpdateBaseRecordName?: string;
-  /** Generated name for the update record type (e.g., 'UserUpdateRecord') */
-  tableUpdateRecordName?: string;
-
-  /** Optional description for the table schema */
-  description?: string;
-
-  /** Location to import JSON schemas from, if JSON schema feature is enabled */
-  jsonSchemaImportLocation?: string;
-  /** Array of JSON schema imports needed for this table */
-  jsonSchemaImports?: ZodPgImport[];
-  /** Whether this table has any JSON schema imports */
-  hasJsonSchemaImports: boolean;
-
-  /** Array of enum types found in this table */
-  enums: ZodPgEnum[];
-  /** Columns that should be included in read schemas */
-  readableColumns: ZodPgColumn[];
-  /** Columns that should be included in write (insert/update) schemas */
-  writableColumns: ZodPgColumn[];
-  /** Whether this table supports write operations (false for views, etc.) */
-  isWritable: boolean;
+  writeTransforms?: ZodPgTransform[];
 }
 
 /**
@@ -305,7 +158,7 @@ export type ZodPgProgress =
  */
 export interface ZodPgConnectionConfig {
   /** Database port (default: 5432) */
-  port?: string;
+  port?: string | number;
   /** Database host (default: localhost) */
   host?: string;
   /** Database name to connect to */
@@ -318,6 +171,17 @@ export interface ZodPgConnectionConfig {
   connectionString?: string;
   /** Whether to use SSL connection */
   ssl?: boolean;
+}
+
+export interface ZodPgDbConnector {
+  getSchemaInformation: (config: ZodPgConfig) => Promise<ZodPgSchemaInfo>;
+}
+
+export interface ZodPgRenderer {
+  renderSchema: (
+    table: ZodPgTableInfo,
+    config: ZodPgConfig
+  ) => string | Promise<string>;
 }
 
 /**
@@ -357,7 +221,6 @@ export type ZodPgZodVersion = '3' | '4' | '4-mini';
 export interface ZodPgConfig {
   /** Database connection configuration */
   connection: ZodPgConnectionConfig;
-
   /** Whether to clean the output directory before generation */
   cleanOutput?: boolean;
   /** Regex pattern(s) to include only specific tables */
@@ -397,16 +260,30 @@ export interface ZodPgConfig {
   schemaName?: string;
 
   /**
-   * Hook called for each column after initial model creation.
+   * Hook called for each column after initial model creation from the database schema.
    * Allows customization of individual column properties and Zod types.
    */
-  onColumnModelCreated?: (
-    column: ZodPgColumn
-  ) => ZodPgColumn | Promise<ZodPgColumn>;
+  onColumnInfoCreated?: (
+    column: ZodPgColumnInfo
+  ) => ZodPgColumnInfo | Promise<ZodPgColumnInfo>;
 
   /**
-   * Hook called for each table after all columns have been processed.
+   * Hook called for each table after information is fetched from the database.
    * Allows customization of the entire table model.
    */
-  onTableModelCreated?: (table: ZodPgTable) => ZodPgTable | Promise<ZodPgTable>;
+  onTableInfoCreated?: (
+    table: ZodPgTableInfo
+  ) => ZodPgTableInfo | Promise<ZodPgTableInfo>;
+
+  /**
+   * Custom renderer for generating Zod schemas.
+   * If not provided, the default renderer will be used.
+   */
+  renderer?: ZodPgRenderer;
+
+  /**
+   * Custom database connector to fetch schema information.
+   * If not provided, the default PostgreSqlConnector will be used.
+   */
+  dbConnector?: ZodPgDbConnector;
 }

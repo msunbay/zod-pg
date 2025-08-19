@@ -1,5 +1,16 @@
 # Changelog
 
+### v3.0.0 (2025-08-25)
+
+- Added support for Zod v4 mini.
+- Added support to provide a custom `dbConnector` implementation for more flexible database connections.
+- Added support to provide a custom `renderer` implementation for custom template rendering.
+
+#### BREAKING CHANGES:
+
+- Renamed the `onColumnModelCreated` hook to `onColumnInfoCreated` to better reflect its purpose and avoid confusion with the model rendering process. The column info object is the model collected from the database schema, not the rendered model.
+- Renamed the `onTableModelCreated` hook to `onTableInfoCreated` to better reflect its purpose and avoid confusion with the model rendering process. The table info object is the model collected from the database schema, not the rendered model.
+
 ### v2.0.1 (2025-08-20)
 
 - Fixed a bug in the `onColumnModelCreated` hook that caused incorrect schema generation when changing the column type.

@@ -3,6 +3,7 @@ import { program } from 'commander';
 import { getConfiguration } from './config.js';
 import { createConnectionString } from './database/client.js';
 import { generateZodSchemas } from './generateZodSchemas.js';
+import { ZodPgConfig } from './types.js';
 import {
   enableDebug,
   logAppName,
@@ -18,8 +19,8 @@ import { getAppVersion } from './utils/version.js';
 /**
  * Main entrypoint: connects to Postgres, cleans output, generates Zod schemas for all tables, and writes an index file.
  */
-export const main = async (port?: number) => {
-  const config = await getConfiguration();
+export const main = async (overrides?: Partial<ZodPgConfig>) => {
+  const config = await getConfiguration(overrides);
   const appVersion = await getAppVersion();
 
   program.name('zod-pg');
@@ -78,7 +79,7 @@ export const main = async (port?: number) => {
   program.option(
     '--schema <name>',
     'Specify schema name (default: public)',
-    config.schemaName || 'public'
+    config.schemaName
   );
   program.option(
     '--json-schema-import-location <path>',
@@ -93,40 +94,29 @@ export const main = async (port?: number) => {
   program.option(
     '--password <string>',
     'Postgres password',
-    config.connection.password || process.env.POSTGRES_PASSWORD
+    config.connection.password
   );
-  program.option(
-    '--user <string>',
-    'Postgres user',
-    config.connection.user || process.env.POSTGRES_USER || 'postgres'
-  );
+  program.option('--user <string>', 'Postgres user', config.connection.user);
   program.option(
     '--database <string>',
     'Postgres database',
-    config.connection.database || process.env.POSTGRES_DB || 'postgres'
+    config.connection.database
   );
-  program.option(
-    '--host <string>',
-    'Postgres host',
-    config.connection.host || process.env.POSTGRES_HOST || 'localhost'
-  );
+  program.option('--host <string>', 'Postgres host', config.connection.host);
   program.option(
     '--ssl',
     'Use SSL for Postgres connection',
-    config.connection.ssl ?? process.env.POSTGRES_SSL === 'true'
+    config.connection.ssl
   );
   program.option(
     '--port <number>',
     'Postgres port',
-    port?.toString() ||
-      config.connection.port ||
-      process.env.POSTGRES_PORT ||
-      '5432'
+    config.connection.port?.toString()
   );
   program.option(
     '--zod-version <number>',
     'Zod version to use',
-    config.zodVersion || '3'
+    config.zodVersion
   );
   program.option(
     '--debug',
@@ -150,7 +140,7 @@ export const main = async (port?: number) => {
       port: options.port,
       user: options.user,
       password: options.password,
-      ssl: options.ssl,
+      ssl: !!options.ssl,
     },
     silent: options.silent,
     outputDir: options.output,
@@ -178,8 +168,10 @@ export const main = async (port?: number) => {
     if (cliConfig.defaultEmptyArray) logSetting('default-empty-array', 'true');
     if (cliConfig.disableStringifyJson)
       logSetting('disable-stringify-json', 'true');
+    if (cliConfig.disableCoerceDates)
+      logSetting('disable-coerce-dates', 'true');
     if (cliConfig.disableCaseTransform)
-      logSetting('disable-case-transformations', 'true');
+      logSetting('disable-case-transform', 'true');
     logSetting('module', cliConfig.moduleResolution);
     logSetting('zod-version', cliConfig.zodVersion);
     logSetting(

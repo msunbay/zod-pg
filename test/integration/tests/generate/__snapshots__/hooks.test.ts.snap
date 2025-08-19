@@ -405,7 +405,7 @@ export const UsersTableInsertBaseSchema = z.object({
      /**
       * dataType: varchar
       */
-    email: z.string().email().max(255).nullish().optional(),
+    email: z.string().email().trim().lowercase().max(255).nullish().optional(),
      /**
       * dataType: varchar
       * defaultValue: 'active'::character varying
