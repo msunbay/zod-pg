@@ -168,10 +168,14 @@ export interface ZodPgRenderer {
  * Available casing options for generated names.
  */
 export type ZodPgCasing =
-  | 'passthrough' // Keep original database naming
   | 'PascalCase' // FirstLetterUppercase
   | 'camelCase' // firstLetterLowercase
   | 'snake_case'; // all_lowercase_with_underscores
+
+/**
+ * Available casing options for generated field names.
+ */
+export type ZodPgFieldCasing = ZodPgCasing | 'passthrough';
 
 /**
  * Mapped Zod column types that PostgreSQL types are converted to.
@@ -272,7 +276,7 @@ export interface ZodPgConfig extends ZodPgHooks, ZodPgConnectionConfig {
   zodVersion?: ZodPgZodVersion;
 
   /** Casing style for field names in generated schemas */
-  fieldNameCasing?: ZodPgCasing;
+  fieldNameCasing?: ZodPgFieldCasing;
   /** Casing style for object/type names in generated schemas */
   objectNameCasing?: ZodPgCasing;
   /** Whether to enable case transformations for generated schemas */

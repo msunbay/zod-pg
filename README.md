@@ -35,14 +35,14 @@ zod-pg supports PostgreSQL's type system including arrays, enums, and custom typ
 
 ## Key Features
 
-- **Database-First Development** - Generate schemas from your PostgreSQL database
-- **Multiple Schema Types** - Separate schemas for reading, inserting, and updating data
-- **Multiple Zod Versions** - Supports generating schemas in Zod v3, v4, and Zod v4-mini formats.
-- **PostgreSQL Support** - Arrays, enums, custom types, materialized views, and foreign tables
-- **Type Detection** - Detects serials, arrays, and enum constraints automatically
-- **Customization** - Hooks system and casing transformations
-- **File Organization** - Generates organized file structures with imports and TypeScript types
-- **No Runtime Dependencies** - Generated schemas use only Zod
+- **Database-First Development** – Generate schemas directly from your PostgreSQL database.
+- **Multiple Schema Types** – Separate read, insert, and update schemas for clearer intent.
+- **Multiple Zod Versions** – Generate for Zod v3, v4, or the lightweight v4-mini build.
+- **PostgreSQL Coverage** – Arrays, enums, custom types, materialized views, foreign tables.
+- **Type Detection** – Detects serial, enum, array, and nullable characteristics automatically.
+- **Customization** – Hooks, casing transformations, singularization control.
+- **Organized Output** – Predictable file structure (constants, types, per-table schemas).
+- **No Runtime Dependencies** – Generated artifacts only depend on Zod.
 
 ## Requirements
 
@@ -140,7 +140,7 @@ Negative flags (`--no-*`) disable a feature that is enabled by default.
 | `--no-stringify-json`                  | Disable `JSON.stringify()` transforms for `json` fields in write schemas.                         | `false`         |
 | `--stringify-dates`                    | Add `.toISOString()` transforms for date fields in write schemas.                                 | `false`         |
 | `--default-empty-array`                | Default nullable array fields to `[]` in write schemas.                                           | `false`         |
-| `--object-name-casing <value>`         | Casing for object/type names (one of: `PascalCase`, `camelCase`, `snake_case`, `passthrough`).    | `PascalCase`    |
+| `--object-name-casing <value>`         | Casing for object/type names (one of: `PascalCase`, `camelCase`, `snake_case`).                   | `PascalCase`    |
 | `--field-name-casing <value>`          | Casing for field/property names (one of: `PascalCase`, `camelCase`, `snake_case`, `passthrough`). | `camelCase`     |
 | `--no-case-transform`                  | Disable transforming property name casing (skips base schema + transform helpers).                | `false`         |
 | `--no-singularize`                     | Preserve plural table / enum names (singularization on by default).                               | `false`         |
@@ -201,20 +201,21 @@ module.exports = {
 
 ## Output File Structure
 
-The generator creates the following files:
+The generator creates a predictable structure:
 
 - `output/constants.ts` – Constants for all table and view names.
 - `output/types.ts` – TypeScript types for all tables and views.
-- `output/[tables|views|materialized_views]/[name]/schema.ts` – Zod schema definitions for the table/view.
-- `output/[tables|views|materialized_views]/[name]/index.ts` – Zod schema and type exports for the table/view.
-- `output/[tables|views|materialized_views]/index.ts` – Exports all schemas / types.
+- `output/tables/<table>/schema.ts` – Zod schemas for the table (read / insert / update; plus base + transform when casing enabled).
+- `output/tables/<table>/index.ts` – Re-exports for the table.
+- `output/tables/index.ts` – Aggregated exports of all table schemas & types.
+- (Folders `views/` and `materialized_views/` are generated similarly when those relation types exist.)
 
 ## Schema Output
 
 The generated Zod schemas will look something like this: (example for a "users" table)
 
 ```ts
-// output/tables/user/schema.ts
+// output/tables/users/schema.ts
 import { z } from "zod";
 
 export const UsersTableSchema = z.object({..});
@@ -298,7 +299,7 @@ onColumnInfoCreated: (column) => {
     // The read schema will still output the field as a z.string.
     column.type = 'email';
 
-    // Additional validation / tranformation
+    // Additional validation / transformation
     column.writeTransforms = ['trim', 'lowercase'];
   }
 

@@ -221,19 +221,6 @@ describe('format', () => {
       });
       expect(result).toBe('user_posts_table_schema');
     });
-
-    it('should respect passthrough casing', () => {
-      const tableInfo = createMockTableInfo({
-        type: 'table',
-        name: 'UserPosts',
-      });
-      const result = formatTableSchemaName({
-        tableInfo,
-        operation: 'read',
-        casing: 'passthrough',
-      });
-      expect(result).toBe('UserPostsTableSchema');
-    });
   });
 
   describe('formatTableRecordName', () => {
@@ -445,15 +432,6 @@ describe('format', () => {
       expect(result).toBe('user_post_meta_data_schema');
     });
 
-    it('should respect passthrough casing', () => {
-      const result = formatJsonSchemaName({
-        tableName: 'user_posts',
-        columnName: 'metadata',
-        casing: 'passthrough',
-      });
-      expect(result).toBe('UserPostMetadataSchema');
-    });
-
     it('should handle complex table and column names', () => {
       const result = formatJsonSchemaName({
         tableName: 'user_account_settings',
@@ -575,15 +553,6 @@ describe('format', () => {
         casing: 'snake_case',
       });
       expect(result).toBe('user_status');
-    });
-
-    it('should respect passthrough casing', () => {
-      const result = formatEnumTypeName({
-        tableName: 'users',
-        colName: 'status',
-        casing: 'passthrough',
-      });
-      expect(result).toBe('UserStatus');
     });
 
     it('should handle complex table and column names', () => {

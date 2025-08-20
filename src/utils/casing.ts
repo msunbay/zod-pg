@@ -1,4 +1,4 @@
-import { ZodPgCasing } from '../types.js';
+import { ZodPgFieldCasing } from '../types.js';
 import { singularize } from './singularize.js';
 
 export function camelCase(str: string): string {
@@ -48,7 +48,7 @@ export const singularPascalCase = (tableName: string): string => {
 
 export const convertCaseFormat = (
   name: string,
-  format: ZodPgCasing = 'passthrough'
+  format: ZodPgFieldCasing = 'passthrough'
 ): string => {
   switch (format) {
     case 'camelCase':
@@ -65,7 +65,7 @@ export const convertCaseFormat = (
 
 export const formatSingularString = (
   name: string,
-  format: ZodPgCasing = 'passthrough'
+  format: ZodPgFieldCasing = 'passthrough'
 ): string => {
   switch (format) {
     case 'PascalCase':

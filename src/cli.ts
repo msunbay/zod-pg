@@ -59,7 +59,7 @@ export const main = async (overrides?: Partial<ZodPgConfig>) => {
       '--object-name-casing <type>',
       'Casing for generated object/type names'
     )
-      .choices(['PascalCase', 'camelCase', 'snake_case', 'passthrough'])
+      .choices(['PascalCase', 'camelCase', 'snake_case'])
       .default(config.objectNameCasing)
   );
   program.addOption(

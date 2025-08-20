@@ -1,6 +1,6 @@
 import pluralize from 'pluralize';
 
-import { ZodPgCasing, ZodPgTableInfo } from '../types.js';
+import { ZodPgCasing, ZodPgFieldCasing, ZodPgTableInfo } from '../types.js';
 import {
   convertCaseFormat,
   pascalCase,
@@ -60,7 +60,7 @@ export const formatRecordTransformName = ({
 }: {
   tableInfo: ZodPgTableInfo;
   operation: Operation;
-  casing?: ZodPgCasing;
+  casing?: ZodPgFieldCasing;
   singularize?: boolean;
   suffix?: string;
 }): string => {

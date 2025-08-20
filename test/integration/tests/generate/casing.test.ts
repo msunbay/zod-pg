@@ -74,7 +74,7 @@ describe('casing options', () => {
       moduleResolution: 'esm',
       outputDir,
       fieldNameCasing: 'passthrough',
-      objectNameCasing: 'passthrough',
+      objectNameCasing: 'PascalCase',
       include: ['users'],
     });
 
