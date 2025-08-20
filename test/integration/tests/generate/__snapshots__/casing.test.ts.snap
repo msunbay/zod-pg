@@ -39,11 +39,11 @@ export const PostsTableBaseSchema = z.object({
       * dataType: int4
       * defaultValue: nextval('posts_id_seq'::regclass)
       */
-    id: z.number().int(),
+    id: z.number(),
      /**
       * dataType: int4
       */
-    user_id: z.number().int().nullable().transform((value) => value ?? undefined).optional(),
+    user_id: z.number().nullable().transform((value) => value ?? undefined).optional(),
      /**
       * dataType: text
       */
@@ -66,7 +66,7 @@ export const PostsTableBaseSchema = z.object({
       * dataType: int4
       * defaultValue: 0
       */
-    views: z.number().int().nullable().transform((value) => value ?? undefined).optional(),
+    views: z.number().nullable().transform((value) => value ?? undefined).optional(),
      /**
       * dataType: _text
       */
@@ -380,7 +380,7 @@ export const UsersTableBaseSchema = z.object({
       * dataType: int4
       * defaultValue: nextval('users_id_seq'::regclass)
       */
-    id: z.number().int(),
+    id: z.number(),
      /**
       * dataType: varchar
       */
@@ -670,7 +670,7 @@ export const UsersTableBaseSchema = z.object({
       * dataType: int4
       * defaultValue: nextval('users_id_seq'::regclass)
       */
-    id: z.number().int(),
+    id: z.number(),
      /**
       * dataType: varchar
       */
@@ -959,7 +959,7 @@ export const UsersTableBaseSchema = z.object({
       * dataType: int4
       * defaultValue: nextval('users_id_seq'::regclass)
       */
-    id: z.number().int(),
+    id: z.number(),
      /**
       * dataType: varchar
       */

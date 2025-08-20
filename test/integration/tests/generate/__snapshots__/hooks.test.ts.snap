@@ -37,7 +37,7 @@ export const UsersTableBaseSchema = z.object({
       * dataType: int4
       * defaultValue: nextval('users_id_seq'::regclass)
       */
-    id: z.number().int(),
+    id: z.number(),
      /**
       * dataType: varchar
       */
@@ -326,7 +326,7 @@ export const UsersTableBaseSchema = z.object({
       * dataType: int4
       * defaultValue: nextval('users_id_seq'::regclass)
       */
-    id: z.number().int(),
+    id: z.number(),
      /**
       * dataType: varchar
       */
@@ -334,7 +334,7 @@ export const UsersTableBaseSchema = z.object({
      /**
       * dataType: varchar
       */
-    email: z.string().email().nullable().transform((value) => value ?? undefined).optional(),
+    email: z.string().nullable().transform((value) => value ?? undefined).optional(),
      /**
       * dataType: varchar
       * defaultValue: 'active'::character varying
@@ -615,7 +615,7 @@ export const UsersTableBaseSchema = z.object({
       * dataType: int4
       * defaultValue: nextval('users_id_seq'::regclass)
       */
-    id: z.number().int(),
+    id: z.number(),
      /**
       * dataType: varchar
       */

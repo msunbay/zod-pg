@@ -8,7 +8,14 @@ export class Zod4Renderer extends DefaultRenderer {
     config: ZodPgConfig,
     isReadField: boolean
   ): string {
-    const renderedType = super.renderZodType(zodType, config, isReadField);
+    let renderedType = super.renderZodType(zodType, config, isReadField);
+
+    if (zodType === 'json') {
+      renderedType = 'z.json()';
+    }
+
+    // For read fields, we don't apply additional validation or transformations.
+    if (isReadField) return renderedType;
 
     switch (zodType) {
       case 'email':
@@ -19,8 +26,6 @@ export class Zod4Renderer extends DefaultRenderer {
         return 'z.int()';
       case 'uuid':
         return 'z.uuid()';
-      case 'json':
-        return 'z.json()';
       default:
         return renderedType;
     }

@@ -37,7 +37,7 @@ export const UsersTableBaseSchema = z.object({
       * dataType: int4
       * defaultValue: nextval('users_id_seq'::regclass)
       */
-    id: z.number().int(),
+    id: z.number(),
      /**
       * dataType: varchar
       */

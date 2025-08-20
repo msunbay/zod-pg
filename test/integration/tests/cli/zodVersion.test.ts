@@ -28,13 +28,13 @@ it('CLI works with --zod-version option', async () => {
   const outputDir = getOutputDir('cli', 'zodVersion', 'zod-version-4');
 
   execSync(
-    `node ${cliPath} --connection-string "${connectionString}" --output-dir "${outputDir}" --zod-version 4 --silent --include users --module-resolution esm`,
+    `node ${cliPath} --connection-string "${connectionString}" --output-dir "${outputDir}" --zod-version 4 --silent --include orders --module-resolution esm`,
     { stdio: 'inherit' }
   );
 
   const outputFiles = await getOutputFiles(outputDir);
   const usersFile = outputFiles.find((file) =>
-    file.includes('users/schema.ts')
+    file.includes('orders/schema.ts')
   );
 
   expect(usersFile).toBeDefined();

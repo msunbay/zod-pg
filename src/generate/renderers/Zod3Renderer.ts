@@ -10,6 +10,9 @@ export class Zod3Renderer extends DefaultRenderer {
   ): string {
     const renderedType = super.renderZodType(zodType, config, isReadField);
 
+    // For read fields, we don't apply additional validation or transformations.
+    if (isReadField) return renderedType;
+
     switch (zodType) {
       case 'email':
         return 'z.string().email()';
