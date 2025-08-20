@@ -5,13 +5,14 @@
 - Added support for Zod v4 mini.
 - Added support to provide a custom `dbConnector` implementation for more flexible database connections.
 - Added support to provide a custom `renderer` implementation for custom template rendering.
+- Aligned cli arguments with file configuration options.
+- Improved schema generation to prevent edge cases where the output was invalid.
+- Added support for SSL configuration in the connection options.
 
 #### BREAKING CHANGES:
 
 - Flattened the configuration options to simplify usage. The "connection" options are now directly part of the main configuration object.
-- Renamed `--disable-case-transform` option to `no-case-transform`.
-- Renamed `--disable-coerce-dates` option to `no-coerce-dates`.
-- Renamed `--disable-stringify-json` option to `no-stringify-json`.
+- Renamed several cli arguments.
 - Renamed the `onColumnModelCreated` hook to `onColumnInfoCreated`. This hook is called after the column info object is created from the database schema, allowing for modifications before the Zod schema is generated.
 - Renamed the `onTableModelCreated` hook to `onTableInfoCreated`. This hook is called after the table info object is created from the database schema, allowing for modifications before the Zod schema is generated.
 

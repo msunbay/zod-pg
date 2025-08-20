@@ -1,3 +1,5 @@
+import type { ConnectionOptions } from 'tls';
+
 /**
  * Represents the overall schema information for a PostgreSQL database schema.
  */
@@ -224,6 +226,8 @@ export interface ZodPgHooks {
   ) => ZodPgTableInfo | Promise<ZodPgTableInfo>;
 }
 
+export interface ZodPgSslConfig extends ConnectionOptions {}
+
 /**
  * Configuration for PostgreSQL database connection.
  */
@@ -241,7 +245,7 @@ export interface ZodPgConnectionConfig {
   /** Complete connection string (overrides individual connection params) */
   connectionString?: string;
   /** Whether to use SSL connection */
-  ssl?: boolean;
+  ssl?: boolean | ZodPgSslConfig;
 }
 
 /**

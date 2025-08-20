@@ -83,7 +83,10 @@ export const main = async (overrides?: Partial<ZodPgConfig>) => {
     '--include <regex>',
     'Include only tables matching this regex'
   );
-  program.option('--schema <name>', 'Specify schema name (default: public)');
+  program.option(
+    '--schema-name <name>',
+    'Specify schema name (default: public)'
+  );
   program.option(
     '--json-schema-import-location <path>',
     'Path to import JSON schemas'

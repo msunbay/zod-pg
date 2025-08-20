@@ -28,7 +28,7 @@ it('CLI generates correct zod schemas with basic options', async () => {
   const outputDir = getOutputDir('cli', 'basic');
 
   execSync(
-    `node ${cliPath} --connection-string "${connectionString}" --output-dir "${outputDir}" --silent --module-resolution esm --schema public`,
+    `node ${cliPath} --connection-string "${connectionString}" --output-dir "${outputDir}" --silent --module-resolution esm --schema-name public`,
     { stdio: 'inherit' }
   );
 
