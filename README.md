@@ -257,7 +257,7 @@ Since reading and writing are two different operations, zod-pg generates separat
 ### Casing
 
 zod-pg supports different casing styles for generated schemas and types. By default zod-pg uses `PascalCase` for object names and `camelCase` for properties. You can specify the desired casing for field names and object names using the `--field-name-casing` and `--object-name-casing` options.
-The `--no-case-transform` option disables the automatic casing transformation, which means that the generated schemas will use the original database column names as-is without any transformation.
+The `--no-case-transform` option disables the automatic casing transformation for field names, which means that the generated schemas will use the original database column names as-is without any transformation.
 
 ### Singularization
 
