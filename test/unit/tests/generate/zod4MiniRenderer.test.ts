@@ -191,4 +191,206 @@ describe('Zod4MiniRenderer', () => {
     expect(out).toContain("import { z } from 'zod'");
     expect(out).not.toContain('Base read schema');
   });
+
+  it('ignores writeTransforms & min/max for enum columns', async () => {
+    const tbl = table([
+      column({
+        name: 'status',
+        type: 'string',
+        isEnum: true,
+        enumValues: ['active', 'inactive'],
+        minLen: 2,
+        maxLen: 10,
+      }),
+    ]);
+    const out = await new Zod4MiniRenderer({
+      onColumnModelCreated: (m) => ({
+        ...m,
+        writeTransforms: ['trim', 'lowercase'] as any,
+      }),
+    }).renderSchema(tbl, config);
+    const line = out.split('\n').find((l) => /status: z\.enum/.test(l)) || '';
+    expect(line).toMatch(/status: z\.enum/);
+    expect(line).not.toMatch(/trim|lowercase|minLength|maxLength/);
+  });
+
+  it('applies min/max & nonnegative constraints to number field', async () => {
+    const tbl = table([
+      column({
+        name: 'score',
+        type: 'number',
+        dataType: 'int4',
+        minLen: 1,
+        maxLen: 10,
+        writeTransforms: ['nonnegative'] as any,
+      }),
+    ]);
+    const out = await new Zod4MiniRenderer().renderSchema(tbl, config);
+    expect(out).toMatch(
+      /score: z\.number\(\)\.check\(z\.nonnegative\(\)\)\.check\(z\.minimum\(1\)\)\.check\(z\.maximum\(10\)\)/
+    );
+  });
+
+  it('nullable-only (not optional) read field uses undefined fallback pipe', async () => {
+    const tbl = table([
+      column({ name: 'note', type: 'string', isNullable: true }),
+    ]);
+    const out = await new Zod4MiniRenderer().renderSchema(tbl, config);
+    const line = out.split('\n').find((l) => /note: /.test(l)) || '';
+    expect(line).toMatch(/z\.nullable\(z\.string\(\)\)/);
+    expect(line).toMatch(/z\.pipe\(z\.nullable/);
+    expect(line).toMatch(/val => val \?\? undefined/);
+    expect(line).not.toMatch(/z\.optional/);
+  });
+
+  it('optional-only array (non-nullable) uses defaultEmptyArray transform', async () => {
+    const tbl = table([
+      column({
+        name: 'labels',
+        type: 'string',
+        isArray: true,
+        isOptional: true,
+      }),
+    ]);
+    const out = await new Zod4MiniRenderer().renderSchema(tbl, config);
+    expect(out).toMatch(
+      /labels: z\.pipe\(z\.optional\(z\.array\(z\.string\(\)\)\), z\.transform\(val => val \?\? \[\]\)\)/
+    );
+  });
+
+  it('nullable array with defaultEmptyArray false uses undefined fallback', async () => {
+    const tbl = table([
+      column({
+        name: 'opts',
+        type: 'string',
+        isArray: true,
+        isNullable: true,
+        isOptional: true,
+      }),
+    ]);
+    const out = await new Zod4MiniRenderer().renderSchema(tbl, {
+      ...config,
+      defaultEmptyArray: false,
+    });
+    expect(out).toMatch(
+      /opts: z\.pipe\(z\.optional\(z\.nullable\(z\.array\(z\.string\(\)\)\)\), z\.transform\(val => val \?\? undefined\)\)/
+    );
+    expect(out).not.toMatch(/\?\? \[\]/);
+  });
+
+  it('creates json schema imports and uses schema names for json fields', async () => {
+    const tbl = table([
+      column({ name: 'profile', type: 'json', dataType: 'jsonb' }),
+      column({
+        name: 'meta',
+        type: 'json',
+        dataType: 'json',
+        isNullable: true,
+        isOptional: true,
+      }),
+    ]);
+    const out = await new Zod4MiniRenderer().renderSchema(tbl, {
+      ...config,
+      jsonSchemaImportLocation: '@schemas',
+    });
+    expect(out).toMatch(
+      /import { UserProfileSchema, UserMetaSchema } from '@schemas'/
+    );
+    expect(out).toContain('profile: UserProfileSchema');
+    expect(out).toMatch(
+      /meta: z\.pipe\(z\.optional\(z\.nullable\(UserMetaSchema\)\), z\.transform\(val => val \?\? undefined\)\)/
+    );
+  });
+
+  it('stringifies nullable json in write schema when enabled', async () => {
+    const tbl = table([
+      column({
+        name: 'meta',
+        type: 'json',
+        dataType: 'jsonb',
+        isNullable: true,
+        isOptional: true,
+      }),
+    ]);
+    const out = await new Zod4MiniRenderer().renderSchema(tbl, config);
+    expect(out).toMatch(
+      /meta: z\.pipe\(z\.optional\(z\.nullable\(z\.json\(\)\)\), z\.transform\(val => val \?\? undefined\)\)/
+    ); // read path
+    expect(out).toMatch(
+      /meta: z\.pipe\(z\.optional\(z\.nullable\(z\.json\(\)\)\), z\.transform\(\(value\) => value \? JSON\.stringify\(value\) : value\)\)/
+    ); // write path
+  });
+
+  it('stringifies single date fields (nullable and non-nullable)', async () => {
+    const tbl = table([
+      column({ name: 'created_at', type: 'date', dataType: 'timestamptz' }),
+      column({
+        name: 'updated_at',
+        type: 'date',
+        dataType: 'timestamptz',
+        isNullable: true,
+        isOptional: true,
+      }),
+    ]);
+    const out = await new Zod4MiniRenderer().renderSchema(tbl, config);
+    expect(out).toMatch(
+      /createdAt: z\.pipe\(z\.date\(\), z\.transform\(\(value\) => value\.toISOString\(\)\)\)/
+    );
+    expect(out).toMatch(
+      /updatedAt: z\.pipe\(z\.optional\(z\.nullable\(z\.date\(\)\)\), z\.transform\(\(value\) => value \? value\.toISOString\(\) : value\)\)/
+    );
+  });
+
+  it('does not stringify date fields when stringifyDates is false', async () => {
+    const tbl = table([
+      column({ name: 'created_at', type: 'date', dataType: 'timestamptz' }),
+    ]);
+    const out = await new Zod4MiniRenderer().renderSchema(tbl, {
+      ...config,
+      stringifyDates: false,
+    });
+    const line = out.split('\n').find((l) => /createdAt: /.test(l)) || '';
+    expect(line).not.toMatch(/toISOString/);
+  });
+
+  it('does not stringify non-nullable json when stringifyJson is false', async () => {
+    const tbl = table([
+      column({ name: 'payload', type: 'json', dataType: 'jsonb' }),
+    ]);
+    const out = await new Zod4MiniRenderer().renderSchema(tbl, {
+      ...config,
+      stringifyJson: false,
+    });
+    expect(out).not.toMatch(/JSON\.stringify\(value\)/);
+  });
+
+  it('ignores writeTransforms on non-string base types (date, json, boolean)', async () => {
+    const tbl = table([
+      column({ name: 'created_at', type: 'date', dataType: 'timestamptz' }),
+      column({ name: 'settings', type: 'json', dataType: 'jsonb' }),
+      column({ name: 'is_active', type: 'boolean', dataType: 'bool' }),
+    ]);
+    const out = await new Zod4MiniRenderer({
+      onColumnModelCreated: (m) => ({
+        ...m,
+        writeTransforms: ['trim', 'lowercase', 'uppercase', 'normalize'] as any,
+      }),
+    }).renderSchema(tbl, config);
+    const section = out
+      .split('\n')
+      .filter((l) => /createdAt:|settings:|is_active:/.test(l))
+      .join('\n');
+    expect(section).not.toMatch(
+      /\.check\(z\.(trim|lowercase|uppercase|normalize)\(\)\)/
+    );
+  });
+
+  it('handles empty writeTransforms array (no .check chains)', async () => {
+    const tbl = table([column({ name: 'title', type: 'string' })]);
+    const out = await new Zod4MiniRenderer({
+      onColumnModelCreated: (m) => ({ ...m, writeTransforms: [] }),
+    }).renderSchema(tbl, config);
+    const line = out.split('\n').find((l) => /title: z\.string/.test(l)) || '';
+    expect(line).toMatch(/title: z\.string\(\)(?!\.check)/);
+  });
 });

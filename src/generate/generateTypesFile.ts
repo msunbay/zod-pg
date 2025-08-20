@@ -4,7 +4,7 @@ import type { ZodPgSchemaInfo } from '../types.js';
 
 import { ZodPgConfig } from '../types.js';
 import { logDebug } from '../utils/debug.js';
-import { renderTemplate } from './template.js';
+import { renderMustacheTemplate } from '../utils/mustache.js';
 
 export const generateTypesFile = async (
   schema: ZodPgSchemaInfo,
@@ -19,7 +19,7 @@ export const generateTypesFile = async (
     (table) => table.type === 'foreign_table'
   );
 
-  const content = await renderTemplate('types', {
+  const content = await renderMustacheTemplate('types', {
     tables,
     views,
     materializedViews,

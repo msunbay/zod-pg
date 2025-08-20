@@ -8,11 +8,11 @@ import {
   logDebug,
   logWarning,
 } from '../utils/index.js';
+import { renderMustacheTemplate } from '../utils/mustache.js';
 import { DefaultRenderer } from './renderers/DefaultRenderer.js';
 import { Zod3Renderer } from './renderers/Zod3Renderer.js';
 import { Zod4MiniRenderer } from './renderers/Zod4MiniRenderer.js';
 import { Zod4Renderer } from './renderers/Zod4Renderer.js';
-import { renderTemplate } from './template.js';
 
 const createRenderer = (config: ZodPgConfig) => {
   if (config.renderer) {
@@ -68,7 +68,7 @@ async function generateSchemaIndexFile(
     return;
   }
 
-  const output = await renderTemplate('schema-index', {
+  const output = await renderMustacheTemplate('schema-index', {
     ...table,
     fileName: config.moduleResolution === 'esm' ? `schema.js` : 'schema',
   });

@@ -14,6 +14,7 @@ import type {
 } from './types.js';
 
 import { convertCaseFormat, formatSingularString } from '../../utils/casing.js';
+import { renderMustacheTemplate } from '../../utils/mustache.js';
 import {
   formatEnumConstantName,
   formatEnumTypeName,
@@ -22,7 +23,6 @@ import {
   formatTableRecordName,
   formatTableSchemaName,
 } from '../format.js';
-import { renderTemplate } from '../template.js';
 
 export interface DefaultRendererOptions {
   onColumnModelCreated?: (
@@ -439,6 +439,13 @@ export class DefaultRenderer implements ZodPgRenderer {
     return tableModel;
   }
 
+  protected async renderTemplate(
+    templateName: string,
+    model: ZodPgTableRenderModel
+  ): Promise<string> {
+    return await renderMustacheTemplate(templateName, model);
+  }
+
   public async renderSchema(
     table: ZodPgTableInfo,
     config: ZodPgConfig
@@ -446,6 +453,6 @@ export class DefaultRenderer implements ZodPgRenderer {
     const templateName = this.getSchemaTemplateName(config);
     const model = await this.createTableModel(table, config);
 
-    return await renderTemplate(templateName, model);
+    return await this.renderTemplate(templateName, model);
   }
 }

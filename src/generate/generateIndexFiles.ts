@@ -4,7 +4,7 @@ import type { ZodPgConfig, ZodPgSchemaInfo, ZodPgTableType } from '../types.js';
 
 import { logDebug } from '../utils/debug.js';
 import { getOutputFolder } from '../utils/fs.js';
-import { renderTemplate } from './template.js';
+import { renderMustacheTemplate } from '../utils/mustache.js';
 
 const generateSchemasIndexFile = async (
   schema: ZodPgSchemaInfo,
@@ -28,7 +28,7 @@ const generateSchemasIndexFile = async (
     return;
   }
 
-  const content = await renderTemplate('index', { exports });
+  const content = await renderMustacheTemplate('index', { exports });
 
   const filePath = `${outputDir}/${getOutputFolder(type)}/index.ts`;
 

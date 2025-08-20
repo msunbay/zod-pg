@@ -4,8 +4,8 @@ import type { ZodPgSchemaInfo } from '../types.js';
 
 import { ZodPgConfig } from '../types.js';
 import { logDebug } from '../utils/debug.js';
+import { renderMustacheTemplate } from '../utils/mustache.js';
 import { getSchemaPrefix } from './format.js';
-import { renderTemplate } from './template.js';
 
 export const generateConstantsFile = async (
   schema: ZodPgSchemaInfo,
@@ -21,7 +21,7 @@ export const generateConstantsFile = async (
 
   const filePath = `${outputDir}/constants.ts`;
 
-  const content = await renderTemplate('constants', { constants });
+  const content = await renderMustacheTemplate('constants', { constants });
 
   await promises.writeFile(filePath, content, 'utf8');
 

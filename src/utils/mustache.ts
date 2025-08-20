@@ -2,9 +2,11 @@ import { promises } from 'fs';
 import path from 'path';
 import mustache from 'mustache';
 
-import { toError } from '../utils/error.js';
+import { toError } from './error.js';
 
-export const loadTemplate = async (templateName: string): Promise<string> => {
+export const loadMustacheTemplate = async (
+  templateName: string
+): Promise<string> => {
   const templatePath = path.join(
     import.meta.dirname,
     '../../templates',
@@ -20,11 +22,11 @@ export const loadTemplate = async (templateName: string): Promise<string> => {
   }
 };
 
-export const renderTemplate = async (
+export const renderMustacheTemplate = async (
   templateName: string,
   data: Record<string, any>,
   partials: Record<string, string> = {}
 ): Promise<string> => {
-  const templateContent = await loadTemplate(templateName);
+  const templateContent = await loadMustacheTemplate(templateName);
   return mustache.render(templateContent, data, partials);
 };
