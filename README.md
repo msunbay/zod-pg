@@ -265,10 +265,11 @@ By default zod-pg converts plural table / view names into singular, PascalCase i
 
 Example:
 
-| Database object     | Generated names                                      |
-| ------------------- | ---------------------------------------------------- |
-| `users` (table)     | `UserRecord`, `UserInsertRecord`, `UserUpdateRecord` |
-| `user_roles` (enum) | `UserRole`                                           |
+| Database object          | Generated names                                                           |
+| ------------------------ | ------------------------------------------------------------------------- |
+| `users` (table)          | `UserRecord`, `UserInsertRecord`, `UserUpdateRecord`                      |
+| `users_accounts` (table) | `UserAccountRecord`, `UserAccountInsertRecord`, `UserAccountUpdateRecord` |
+| `users.roles` (enum)     | `UserRole`                                                                |
 
 If you would prefer the generated identifiers to preserve the original (often plural / snake_case) names, disable singularization with the CLI flag:
 
