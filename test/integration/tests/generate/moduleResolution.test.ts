@@ -30,10 +30,7 @@ describe('module resolution formats', () => {
     const outputDir = getOutputDir('generate', 'moduleResolution', 'commonjs');
 
     await generateZodSchemas({
-      connection: {
-        connectionString,
-        ssl: false,
-      },
+      connectionString,
       outputDir,
       moduleResolution: 'commonjs',
       include: ['users'],
@@ -62,10 +59,7 @@ describe('module resolution formats', () => {
     const outputDir = getOutputDir('generate', 'moduleResolution', 'esm');
 
     await generateZodSchemas({
-      connection: {
-        connectionString,
-        ssl: false,
-      },
+      connectionString,
       outputDir,
       moduleResolution: 'esm',
       include: ['users'],

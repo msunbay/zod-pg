@@ -25,9 +25,21 @@ const setup = async () => {
   });
 
   await main({
-    connection: { port: db.client.port },
+    port: db.client.port,
     zodVersion: '4-mini',
     moduleResolution: 'esm',
+    defaultUnknown: true,
+    defaultNullsToUndefined: true,
+    onColumnModelCreated: (model) => {
+      if (model.type === 'json') {
+        return {
+          ...model,
+          minLen: 1,
+        };
+      }
+
+      return model;
+    },
   });
 
   process.exit(0);

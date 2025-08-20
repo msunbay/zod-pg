@@ -32,10 +32,9 @@ describe('JSON and date handling options', () => {
     );
 
     await generateZodSchemas({
-      connection: { connectionString, ssl: false },
+      connectionString,
       moduleResolution: 'esm',
       outputDir,
-      // stringifyJson is enabled by default (i.e. disableStringifyJson not set)
       include: ['posts'],
     });
 
@@ -55,10 +54,10 @@ describe('JSON and date handling options', () => {
     );
 
     await generateZodSchemas({
-      connection: { connectionString, ssl: false },
+      connectionString,
       moduleResolution: 'esm',
       outputDir,
-      disableStringifyJson: true,
+      stringifyJson: false,
       include: ['posts'],
     });
 
@@ -79,7 +78,7 @@ describe('JSON and date handling options', () => {
     );
 
     await generateZodSchemas({
-      connection: { connectionString, ssl: false },
+      connectionString,
       moduleResolution: 'esm',
       outputDir,
       stringifyDates: true,
@@ -102,7 +101,7 @@ describe('JSON and date handling options', () => {
     );
 
     await generateZodSchemas({
-      connection: { connectionString, ssl: false },
+      connectionString,
       moduleResolution: 'esm',
       outputDir,
       defaultEmptyArray: true,
@@ -125,10 +124,10 @@ describe('JSON and date handling options', () => {
     );
 
     await generateZodSchemas({
-      connection: { connectionString, ssl: false },
+      connectionString,
       moduleResolution: 'esm',
       outputDir,
-      disableCoerceDates: false,
+      coerceDates: true,
       include: ['users'],
     });
 
@@ -151,10 +150,10 @@ describe('JSON and date handling options', () => {
     );
 
     await generateZodSchemas({
-      connection: { connectionString, ssl: false },
+      connectionString,
       moduleResolution: 'esm',
       outputDir,
-      disableCoerceDates: true,
+      coerceDates: false,
       include: ['users'],
     });
 

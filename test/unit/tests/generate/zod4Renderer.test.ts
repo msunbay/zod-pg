@@ -29,10 +29,14 @@ const table = (cols: ZodPgColumnInfo[]): ZodPgTableInfo => ({
   columns: cols,
 });
 const config: ZodPgConfig = {
-  connection: { connectionString: 'x', ssl: false },
   outputDir: '/tmp/ignore',
   fieldNameCasing: 'camelCase',
   objectNameCasing: 'PascalCase',
+  defaultNullsToUndefined: true,
+  stringifyJson: true,
+  singularize: true,
+  coerceDates: true,
+  caseTransform: true,
 };
 
 describe('Zod4Renderer', () => {
@@ -52,13 +56,13 @@ describe('Zod4Renderer', () => {
     expect(out).toContain('payload: z.json()');
   });
 
-  it('uses z.date when disableCoerceDates is true', async () => {
+  it('uses z.date when coerceDates is false', async () => {
     const tbl = table([
       column({ name: 'created_at', type: 'date', dataType: 'timestamptz' }),
     ]);
     const out = await new Zod4Renderer().renderSchema(tbl, {
       ...config,
-      disableCoerceDates: true,
+      coerceDates: false,
     });
     expect(out).toContain('created_at: z.date()');
   });
@@ -86,13 +90,13 @@ describe('Zod4Renderer', () => {
     });
     expect(out).toMatch(/dates: z\.array\(z\.coerce\.date\(\)\)/);
     expect(out).toMatch(
-      /dates_nullable: z\.array\(z\.coerce\.date\(\)\)\.nullish\(\)\.transform\(\(value\) => value \?\? undefined\)\.optional\(\)/
+      /dates_nullable: z\.array\(z\.coerce\.date\(\)\)\.nullable\(\)\.transform\(\(value\) => value \?\? undefined\)\.optional\(\)/
     );
     expect(out).toMatch(
       /dates: z\.array\(z\.date\(\)\)\.transform\(\(value\) => value\.map\(date => date\.toISOString\(\)\)\)/
     );
     expect(out).toMatch(
-      /datesNullable: z\.array\(z\.date\(\)\)\.nullish\(\)\.transform\(\(value\) => value \? value\.map\(date => date\.toISOString\(\)\) : value\)\.optional\(\)/
+      /datesNullable: z\.array\(z\.date\(\)\)\.nullable\(\)\.transform\(\(value\) => value \? value\.map\(date => date\.toISOString\(\)\) : value\)\.optional\(\)/
     );
   });
 

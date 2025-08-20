@@ -1,4 +1,4 @@
-import { program } from 'commander';
+import { Option, program } from 'commander';
 
 import { getConfiguration } from './config.js';
 import { createConnectionString } from './database/client.js';
@@ -26,98 +26,76 @@ export const main = async (overrides?: Partial<ZodPgConfig>) => {
   program.name('zod-pg');
   program.description('Generates Zod schemas from PostgreSQL database tables.');
   program.option(
-    '-o,--output <path>',
-    'Output directory for generated schemas',
-    config.outputDir
+    '-o,--output-dir <path>',
+    'Output directory for generated schemas'
   );
   program.option('--silent', 'Suppress all console output', config.silent);
   program.option(
-    '--module <type>',
-    'Module resolution type for generated files (commonjs or esm)',
-    config.moduleResolution || 'commonjs'
+    '--module-resolution <type>',
+    'Module resolution type for generated files (commonjs or esm)'
   );
   program.option(
-    '--clean',
-    'Clean output directory before generating schemas',
-    config.cleanOutput
+    '--clean-output',
+    'Clean output directory before generating schemas'
   );
   program.option(
-    '--disable-coerce-dates',
-    'Disable using z.coerce.date() for date fields in read schemas',
-    config.disableCoerceDates
+    '--no-coerce-dates',
+    'Disable using z.coerce.date() for date fields in read schemas'
   );
   program.option(
-    '--disable-stringify-json',
-    'Disable JSON.stringify() on json fields in write schemas',
-    config.disableStringifyJson
+    '--no-stringify-json',
+    'Disable JSON.stringify() on json fields in write schemas'
   );
   program.option(
     '--stringify-dates',
-    'Convert dates to ISO strings in write schemas',
-    config.stringifyDates
+    'Convert dates to ISO strings in write schemas'
   );
   program.option(
     '--default-empty-array',
-    'Provide empty arrays as defaults for nullable array fields',
-    config.defaultEmptyArray
+    'Provide empty arrays as defaults for nullable array fields'
+  );
+  program.addOption(
+    new Option(
+      '--object-name-casing <type>',
+      'Casing for generated object/type names'
+    )
+      .choices(['PascalCase', 'camelCase', 'snake_case', 'passthrough'])
+      .default(config.objectNameCasing)
+  );
+  program.addOption(
+    new Option(
+      '--field-name-casing <type>',
+      'Casing for field/property names in schemas & records'
+    )
+      .choices(['camelCase', 'snake_case', 'PascalCase', 'passthrough'])
+      .default(config.fieldNameCasing)
   );
   program.option(
-    '--disable-case-transform',
-    'Disable case transformations / conversions for generated schemas',
-    config.disableCaseTransform
+    '--no-case-transform',
+    'Disable case transformations / conversions for generated schemas'
   );
   program.option(
-    '--exclude <regex>',
-    'Exclude tables matching this regex',
-    config.exclude
+    '--no-singularize',
+    'Disable singularization of type and enum names'
   );
+  program.option('--exclude <regex>', 'Exclude tables matching this regex');
   program.option(
     '--include <regex>',
-    'Include only tables matching this regex',
-    config.include
+    'Include only tables matching this regex'
   );
-  program.option(
-    '--schema <name>',
-    'Specify schema name (default: public)',
-    config.schemaName
-  );
+  program.option('--schema <name>', 'Specify schema name (default: public)');
   program.option(
     '--json-schema-import-location <path>',
-    'Path to import JSON schemas',
-    config.jsonSchemaImportLocation
+    'Path to import JSON schemas'
   );
-  program.option(
-    '--connection-string <string>',
-    'Postgres connection string',
-    config.connection.connectionString
-  );
-  program.option(
-    '--password <string>',
-    'Postgres password',
-    config.connection.password
-  );
-  program.option('--user <string>', 'Postgres user', config.connection.user);
-  program.option(
-    '--database <string>',
-    'Postgres database',
-    config.connection.database
-  );
-  program.option('--host <string>', 'Postgres host', config.connection.host);
-  program.option(
-    '--ssl',
-    'Use SSL for Postgres connection',
-    config.connection.ssl
-  );
-  program.option(
-    '--port <number>',
-    'Postgres port',
-    config.connection.port?.toString()
-  );
-  program.option(
-    '--zod-version <number>',
-    'Zod version to use',
-    config.zodVersion
-  );
+  program.option('--connection-string <string>', 'Postgres connection string');
+  program.option('--password <string>', 'Postgres password');
+  program.option('--user <string>', 'Postgres user');
+  program.option('--database <string>', 'Postgres database');
+  program.option('--host <string>', 'Postgres host');
+  program.option('--ssl', 'Use SSL for Postgres connection');
+  program.option('--port <number>', 'Postgres port');
+  program.option('--zod-version <number>', 'Zod version to use');
   program.option(
     '--debug',
     'Enable debug logging',
@@ -131,55 +109,30 @@ export const main = async (overrides?: Partial<ZodPgConfig>) => {
   program.parse();
   const options = program.opts();
 
-  const cliConfig = {
-    ...config,
-    connection: {
-      connectionString: options.connectionString,
-      database: options.database,
-      host: options.host,
-      port: options.port,
-      user: options.user,
-      password: options.password,
-      ssl: !!options.ssl,
-    },
-    silent: options.silent,
-    outputDir: options.output,
-    cleanOutput: options.clean,
-    disableCoerceDates: options.disableCoerceDates ?? false,
-    disableStringifyJson: options.disableStringifyJson ?? false,
-    stringifyDates: options.stringifyDates ?? false,
-    defaultEmptyArray: options.defaultEmptyArray ?? false,
-    disableCaseTransform: options.disableCaseTransform ?? false,
-    schemaName: options.schema,
-    exclude: options.exclude,
-    include: options.include,
-    jsonSchemaImportLocation: options.jsonSchemaImportLocation,
-    moduleResolution: options.module,
-    zodVersion: options.zodVersion,
-  };
+  const cliConfig: ZodPgConfig = { ...config, ...options };
+
+  logDebug('CLI configuration:', cliConfig);
 
   if (!cliConfig.silent) {
     logAppName(`zod-pg CLI v${appVersion}`);
 
     logSetting('output', cliConfig.outputDir);
     if (cliConfig.cleanOutput) logSetting('clean-output', 'true');
-    if (cliConfig.disableCoerceDates) logSetting('coerce-dates', 'true');
+    if (cliConfig.coerceDates) logSetting('coerce-dates', 'true');
     if (cliConfig.stringifyDates) logSetting('stringify-dates', 'true');
     if (cliConfig.defaultEmptyArray) logSetting('default-empty-array', 'true');
-    if (cliConfig.disableStringifyJson)
-      logSetting('disable-stringify-json', 'true');
-    if (cliConfig.disableCoerceDates)
-      logSetting('disable-coerce-dates', 'true');
-    if (cliConfig.disableCaseTransform)
-      logSetting('disable-case-transform', 'true');
-    logSetting('module', cliConfig.moduleResolution);
-    logSetting('zod-version', cliConfig.zodVersion);
+    if (cliConfig.stringifyJson) logSetting('stringify-json', 'true');
+    if (cliConfig.coerceDates) logSetting('coerce-dates', 'true');
+    if (cliConfig.caseTransform) logSetting('case-transform', 'true');
+    if (cliConfig.moduleResolution)
+      logSetting('module', cliConfig.moduleResolution);
+    if (cliConfig.zodVersion) logSetting('zod-version', cliConfig.zodVersion);
     logSetting(
-      'connection',
-      maskConnectionString(createConnectionString(cliConfig.connection))
+      'connection-string',
+      maskConnectionString(createConnectionString(cliConfig))
     );
-    logSetting('ssl', cliConfig.connection.ssl ? 'true' : 'false');
-    logSetting('schema', cliConfig.schemaName);
+    logSetting('ssl', cliConfig.ssl ? 'true' : 'false');
+    if (cliConfig.schemaName) logSetting('schema', cliConfig.schemaName);
 
     if (process.env.DEBUG) logSetting('debug', process.env.DEBUG);
 

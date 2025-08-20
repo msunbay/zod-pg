@@ -40,10 +40,7 @@ it('generates schemas using a custom renderer', async () => {
   const renderer = new CustomRenderer();
 
   await generateZodSchemas({
-    connection: {
-      connectionString,
-      ssl: false,
-    },
+    connectionString,
     outputDir,
     moduleResolution: 'esm',
     include: ['users'],

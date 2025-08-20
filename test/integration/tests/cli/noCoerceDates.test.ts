@@ -23,19 +23,21 @@ afterAll(async () => {
   await teardownTestDb(ctx);
 });
 
-it('CLI generates correct zod schemas with basic options', async () => {
+it('CLI works with --no-coerce-dates option', async () => {
+  const outputDir = getOutputDir('cli', 'noCoerceDates');
   const connectionString = getClientConnectionString();
-  const outputDir = getOutputDir('cli', 'basic');
 
   execSync(
-    `node ${cliPath} --connection-string "${connectionString}" --output-dir "${outputDir}" --silent --module-resolution esm --schema public`,
+    `node ${cliPath} --connection-string "${connectionString}" --output-dir "${outputDir}" --no-coerce-dates --silent --include users --module-resolution esm`,
     { stdio: 'inherit' }
   );
 
   const outputFiles = await getOutputFiles(outputDir);
+  const usersFile = outputFiles.find((file) =>
+    file.includes('users/schema.ts')
+  );
 
-  for (const file of outputFiles) {
-    const content = fs.readFileSync(file, 'utf8');
-    expect(content).toMatchSnapshot(path.relative(outputDir, file));
-  }
+  expect(usersFile).toBeDefined();
+  const content = fs.readFileSync(usersFile!, 'utf8');
+  expect(content).not.toMatch(/z\.coerce\.date\(\)/);
 });

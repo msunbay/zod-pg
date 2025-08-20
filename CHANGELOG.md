@@ -8,8 +8,12 @@
 
 #### BREAKING CHANGES:
 
-- Renamed the `onColumnModelCreated` hook to `onColumnInfoCreated` to better reflect its purpose and avoid confusion with the model rendering process. The column info object is the model collected from the database schema, not the rendered model.
-- Renamed the `onTableModelCreated` hook to `onTableInfoCreated` to better reflect its purpose and avoid confusion with the model rendering process. The table info object is the model collected from the database schema, not the rendered model.
+- Flattened the configuration options to simplify usage. The "connection" options are now directly part of the main configuration object.
+- Renamed `--disable-case-transform` option to `no-case-transform`.
+- Renamed `--disable-coerce-dates` option to `no-coerce-dates`.
+- Renamed `--disable-stringify-json` option to `no-stringify-json`.
+- Renamed the `onColumnModelCreated` hook to `onColumnInfoCreated`. This hook is called after the column info object is created from the database schema, allowing for modifications before the Zod schema is generated.
+- Renamed the `onTableModelCreated` hook to `onTableInfoCreated`. This hook is called after the table info object is created from the database schema, allowing for modifications before the Zod schema is generated.
 
 ### v2.0.1 (2025-08-20)
 

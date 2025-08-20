@@ -32,12 +32,16 @@ const table = (cols: ZodPgColumnInfo[]): ZodPgTableInfo => ({
 });
 
 const baseConfig: ZodPgConfig = {
-  connection: { connectionString: 'x', ssl: false },
   outputDir: '/tmp/ignore',
   fieldNameCasing: 'camelCase',
   objectNameCasing: 'PascalCase',
   defaultEmptyArray: true,
   stringifyDates: true,
+  stringifyJson: true,
+  singularize: true,
+  coerceDates: true,
+  defaultNullsToUndefined: true,
+  caseTransform: true,
 };
 
 describe('DefaultRenderer', () => {
@@ -53,7 +57,7 @@ describe('DefaultRenderer', () => {
     expect(out).toContain('whatever: z.any()');
   });
 
-  it('renders core zod types & array/nullish/optional transforms', async () => {
+  it('renders core zod types & array/nullable/optional transforms', async () => {
     const tbl = table([
       column({ name: 'id', type: 'int', dataType: 'int4', isSerial: true }),
       column({ name: 'email', type: 'email', dataType: 'varchar' }),
@@ -71,27 +75,28 @@ describe('DefaultRenderer', () => {
         dataType: '_text',
         isArray: true,
         isNullable: true,
+        isOptional: true,
       }),
     ]);
     const out = await new DefaultRenderer().renderSchema(tbl, baseConfig);
     expect(out).toContain('id: z.number()');
     expect(out).toContain('email: z.string()');
     expect(out).toContain(
-      'profile: z.any().nullish().transform((value) => value ?? undefined).optional()'
+      'profile: z.any().nullable().transform((value) => value ?? undefined).optional()'
     );
     expect(out).toContain('created_at: z.coerce.date()');
     expect(out).toMatch(
-      /tags: z\.array\(z\.string\(\)\)\.nullish\(\)\.transform\(\(value\) => value \?\? \[\]\)\.optional\(\)/
+      /tags: z\.array\(z\.string\(\)\)\.nullable\(\)\.transform\(\(value\) => value \?\? \[\]\)\.optional\(\)/
     );
   });
 
-  it('honors disableCoerceDates for date fields', async () => {
+  it('honors coerceDates set to false for date fields', async () => {
     const tbl = table([
       column({ name: 'created_at', type: 'date', dataType: 'timestamptz' }),
     ]);
     const out = await new DefaultRenderer().renderSchema(tbl, {
       ...baseConfig,
-      disableCoerceDates: true,
+      coerceDates: false,
     });
     expect(out).toContain('created_at: z.date()');
   });
@@ -127,14 +132,14 @@ describe('DefaultRenderer', () => {
     // Read schema assertions (coerced dates, nullable with default [])
     expect(out).toMatch(/dates: z\.array\(z\.coerce\.date\(\)\)/);
     expect(out).toMatch(
-      /dates_nullable: z\.array\(z\.coerce\.date\(\)\)\.nullish\(\)\.transform\(\(value\) => value \?\? \[\]\)\.optional\(\)/
+      /dates_nullable: z\.array\(z\.coerce\.date\(\)\)\.nullable\(\)\.transform\(\(value\) => value \?\? \[\]\)\.optional\(\)/
     );
     // Write schema assertions (stringify logic)
     expect(out).toMatch(
       /dates: z\.array\(z\.date\(\)\)\.transform\(\(value\) => value\.map\(date => date\.toISOString\(\)\)\)/
     );
     expect(out).toMatch(
-      /datesNullable: z\.array\(z\.date\(\)\)\.nullish\(\)\.transform\(\(value\) => value \? value\.map\(date => date\.toISOString\(\)\) : value\)\.optional\(\)/
+      /datesNullable: z\.array\(z\.date\(\)\)\.nullable\(\)\.transform\(\(value\) => value \? value\.map\(date => date\.toISOString\(\)\) : value\)\.optional\(\)/
     );
   });
 
@@ -173,6 +178,7 @@ describe('DefaultRenderer', () => {
         type: 'json',
         dataType: 'json',
         isNullable: true,
+        isOptional: true,
       }),
     ]);
     const out = await new DefaultRenderer().renderSchema(tbl, {
@@ -184,22 +190,22 @@ describe('DefaultRenderer', () => {
     );
     expect(out).toContain('profile: UserProfileSchema');
     expect(out).toMatch(
-      /meta: UserMetaSchema\.nullish\(\)\.transform\(\(value\) => value \?\? undefined\)\.optional\(\)/
+      /meta: UserMetaSchema\.nullable\(\)\.transform\(\(value\) => value \?\? undefined\)\.optional\(\)/
     );
   });
 
-  it('respects disableStringifyJson flag', async () => {
+  it('respects stringifyJson flag set to false', async () => {
     const tbl = table([
       column({ name: 'profile', type: 'json', dataType: 'jsonb' }),
     ]);
     const out = await new DefaultRenderer().renderSchema(tbl, {
       ...baseConfig,
-      disableStringifyJson: true,
+      stringifyJson: false,
     });
     expect(out).not.toMatch(/JSON\.stringify/);
   });
 
-  it('does not stringify nullable json when disableStringifyJson is true', async () => {
+  it('does not stringify nullable json when stringifyJson is false', async () => {
     const tbl = table([
       column({
         name: 'meta',
@@ -210,7 +216,7 @@ describe('DefaultRenderer', () => {
     ]);
     const out = await new DefaultRenderer().renderSchema(tbl, {
       ...baseConfig,
-      disableStringifyJson: true,
+      stringifyJson: false,
     });
     // write schema should not contain JSON.stringify for meta
     expect(out).not.toMatch(/meta: .*JSON\.stringify/);
@@ -245,21 +251,15 @@ describe('DefaultRenderer', () => {
   });
 
   it('applies all writeTransforms in order (trim, lowercase, uppercase, normalize, nonnegative)', async () => {
-    const tbl = table([column({ name: 'value', type: 'int' })]);
+    const tbl = table([column({ name: 'value', type: 'string' })]);
     const out = await new DefaultRenderer({
       onColumnModelCreated: (m) => ({
         ...m,
-        writeTransforms: [
-          'trim',
-          'lowercase',
-          'uppercase',
-          'normalize',
-          'nonnegative',
-        ] as any,
+        writeTransforms: ['trim', 'lowercase', 'uppercase', 'normalize'] as any,
       }),
     }).renderSchema(tbl, baseConfig);
     expect(out).toMatch(
-      /value: z\.number\(\)\.trim\(\)\.lowercase\(\)\.uppercase\(\)\.normalize\(\)\.nonnegative\(\)/
+      /value: z\.string\(\)\.trim\(\)\.lowercase\(\)\.uppercase\(\)\.normalize\(\)/
     );
   });
 
@@ -300,11 +300,11 @@ describe('DefaultRenderer', () => {
     expect(out).toContain('export const CustomUsersSchema');
   });
 
-  it('uses schema.simple template when disableCaseTransform is true', async () => {
+  it('uses schema.simple template when transformCasing is false', async () => {
     const tbl = table([column({ name: 'id', type: 'int' })]);
     const out = await new DefaultRenderer().renderSchema(tbl, {
       ...baseConfig,
-      disableCaseTransform: true,
+      caseTransform: false,
     });
     expect(out).toContain('export const UsersTableSchema = z.object');
     expect(out).not.toContain('Base read schema');

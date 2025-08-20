@@ -27,10 +27,7 @@ it('generates correct zod schemas with default options', async () => {
   const outputDir = getOutputDir('generate', 'default');
 
   await generateZodSchemas({
-    connection: {
-      connectionString,
-      ssl: false,
-    },
+    connectionString,
     outputDir,
     moduleResolution: 'esm',
   });

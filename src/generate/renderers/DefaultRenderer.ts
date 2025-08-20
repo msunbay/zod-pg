@@ -6,10 +6,11 @@ import type {
   ZodPgTableInfo,
 } from '../../types.js';
 import type {
-  ZodPgColumn,
-  ZodPgColumnBaseModel,
+  ZodPgColumnBaseRenderModel,
+  ZodPgColumnBaseType,
+  ZodPgColumnRenderModel,
   ZodPgImport,
-  ZodPgTable,
+  ZodPgTableRenderModel,
 } from './types.js';
 
 import { convertCaseFormat, formatSingularString } from '../../utils/casing.js';
@@ -25,9 +26,11 @@ import { renderTemplate } from '../template.js';
 
 export interface DefaultRendererOptions {
   onColumnModelCreated?: (
-    model: ZodPgColumn
-  ) => ZodPgColumn | Promise<ZodPgColumn>;
-  onTableModelCreated?: (model: ZodPgTable) => ZodPgTable | Promise<ZodPgTable>;
+    model: ZodPgColumnRenderModel
+  ) => ZodPgColumnRenderModel | Promise<ZodPgColumnRenderModel>;
+  onTableModelCreated?: (
+    model: ZodPgTableRenderModel
+  ) => ZodPgTableRenderModel | Promise<ZodPgTableRenderModel>;
 }
 
 export class DefaultRenderer implements ZodPgRenderer {
@@ -38,26 +41,34 @@ export class DefaultRenderer implements ZodPgRenderer {
   }
 
   protected getSchemaTemplateName(config: ZodPgConfig): string {
-    if (config.disableCaseTransform) return 'schema.simple';
+    if (!config.caseTransform) return 'schema.simple';
     return 'schema';
   }
 
-  protected createRenderReadTransform(
-    _column: ZodPgColumnInfo,
-    _config: ZodPgConfig
-  ) {
-    return () => (text: string, render: (text: string) => string) => {
-      return render(text);
-    };
-  }
-
-  protected createRenderWriteTransform(
-    _column: ZodPgColumnBaseModel,
-    _config: ZodPgConfig
-  ) {
-    return () => (text: string, render: (text: string) => string) => {
-      return render(text);
-    };
+  /**
+   * Returns the base type for a ZodPgColumnType.
+   * Used to determine how to render the Zod type.
+   * E.g. minLen/maxLen constraints are only applied to string/number types.
+   */
+  protected getBaseType(type: ZodPgColumnType): ZodPgColumnBaseType {
+    switch (type) {
+      case 'string':
+      case 'email':
+      case 'url':
+      case 'uuid':
+        return 'string';
+      case 'int':
+      case 'number':
+        return 'number';
+      case 'boolean':
+        return 'boolean';
+      case 'date':
+        return 'date';
+      case 'json':
+        return 'object';
+      default:
+        return 'unknown';
+    }
   }
 
   /**
@@ -69,7 +80,7 @@ export class DefaultRenderer implements ZodPgRenderer {
     config: ZodPgConfig,
     isReadField: boolean
   ): string {
-    const { disableCoerceDates } = config;
+    const { coerceDates, defaultUnknown } = config;
 
     switch (zodType) {
       case 'string':
@@ -83,18 +94,16 @@ export class DefaultRenderer implements ZodPgRenderer {
       case 'boolean':
         return 'z.boolean()';
       case 'date':
-        return !disableCoerceDates && isReadField
-          ? 'z.coerce.date()'
-          : 'z.date()';
+        return coerceDates && isReadField ? 'z.coerce.date()' : 'z.date()';
       case 'unknown':
         return 'z.unknown()';
       default:
-        return 'z.any()';
+        return defaultUnknown ? 'z.unknown()' : 'z.any()';
     }
   }
 
   protected renderReadField(
-    column: ZodPgColumnBaseModel,
+    column: ZodPgColumnBaseRenderModel,
     config: ZodPgConfig
   ): string {
     let zodType = this.renderZodType(column.type, config, true);
@@ -111,44 +120,52 @@ export class DefaultRenderer implements ZodPgRenderer {
     }
 
     if (column.isNullable) {
-      zodType = `${zodType}.nullish()`;
+      zodType = `${zodType}.nullable()`;
     }
 
     if (column.isOptional || column.isNullable) {
       if (column.isArray && config.defaultEmptyArray)
         zodType = `${zodType}.transform((value) => value ?? [])`;
-      else zodType = `${zodType}.transform((value) => value ?? undefined)`;
+      else if (config.defaultNullsToUndefined)
+        zodType = `${zodType}.transform((value) => value ?? undefined)`;
 
-      zodType = `${zodType}.optional()`;
+      if (column.isOptional) {
+        zodType = `${zodType}.optional()`;
+      }
     }
 
     return zodType;
   }
 
   protected renderWriteField(
-    column: ZodPgColumnBaseModel,
+    column: ZodPgColumnBaseRenderModel,
     config: ZodPgConfig
   ): string {
     let zodType = this.renderZodType(column.type, config, false);
+    const baseType = this.getBaseType(column.type);
 
-    if (column.writeTransforms?.includes('trim')) {
-      zodType = `${zodType}.trim()`;
+    if (baseType === 'string' && !column.isEnum) {
+      if (column.writeTransforms?.includes('trim')) {
+        zodType = `${zodType}.trim()`;
+      }
+
+      if (column.writeTransforms?.includes('lowercase')) {
+        zodType = `${zodType}.lowercase()`;
+      }
+
+      if (column.writeTransforms?.includes('uppercase')) {
+        zodType = `${zodType}.uppercase()`;
+      }
+
+      if (column.writeTransforms?.includes('normalize')) {
+        zodType = `${zodType}.normalize()`;
+      }
     }
 
-    if (column.writeTransforms?.includes('lowercase')) {
-      zodType = `${zodType}.lowercase()`;
-    }
-
-    if (column.writeTransforms?.includes('uppercase')) {
-      zodType = `${zodType}.uppercase()`;
-    }
-
-    if (column.writeTransforms?.includes('normalize')) {
-      zodType = `${zodType}.normalize()`;
-    }
-
-    if (column.writeTransforms?.includes('nonnegative')) {
-      zodType = `${zodType}.nonnegative()`;
+    if (baseType === 'number' && !column.isEnum) {
+      if (column.writeTransforms?.includes('nonnegative')) {
+        zodType = `${zodType}.nonnegative()`;
+      }
     }
 
     if (column.isEnum) zodType = `z.enum(${column.enumConstantName})`;
@@ -162,27 +179,21 @@ export class DefaultRenderer implements ZodPgRenderer {
       zodType = column.jsonSchemaName;
     }
 
-    if (
-      column.minLen !== undefined &&
-      column.minLen !== null &&
-      !column.isEnum
-    ) {
-      zodType = `${zodType}.min(${column.minLen})`;
-    }
+    if (!column.isEnum && (baseType === 'string' || baseType === 'number')) {
+      if (column.minLen !== undefined && column.minLen !== null) {
+        zodType = `${zodType}.min(${column.minLen})`;
+      }
 
-    if (
-      column.maxLen !== undefined &&
-      column.maxLen !== null &&
-      !column.isEnum
-    ) {
-      zodType = `${zodType}.max(${column.maxLen})`;
+      if (column.maxLen !== undefined && column.maxLen !== null) {
+        zodType = `${zodType}.max(${column.maxLen})`;
+      }
     }
 
     if (column.isNullable) {
-      zodType = `${zodType}.nullish()`;
+      zodType = `${zodType}.nullable()`;
     }
 
-    if (column.type === 'json' && !config.disableStringifyJson) {
+    if (column.type === 'json' && config.stringifyJson) {
       if (!column.isNullable)
         zodType = `${zodType}.transform((value) => JSON.stringify(value))`;
       else
@@ -213,15 +224,20 @@ export class DefaultRenderer implements ZodPgRenderer {
   protected createColumnModel(
     column: ZodPgColumnInfo,
     config: ZodPgConfig
-  ): ZodPgColumn {
+  ): ZodPgColumnRenderModel {
     const baseModel = {
       propertyName: convertCaseFormat(column.name, config.fieldNameCasing),
-      enumConstantName: formatEnumConstantName(column.tableName, column.name),
-      jsonSchemaName: formatJsonSchemaName(
-        column.tableName,
-        column.name,
-        config.objectNameCasing
-      ),
+      enumConstantName: formatEnumConstantName({
+        tableName: column.tableName,
+        colName: column.name,
+        singularize: config.singularize,
+      }),
+      jsonSchemaName: formatJsonSchemaName({
+        tableName: column.tableName,
+        columnName: column.name,
+        casing: config.objectNameCasing,
+        singularize: config.singularize,
+      }),
       ...column,
     };
 
@@ -233,7 +249,7 @@ export class DefaultRenderer implements ZodPgRenderer {
   }
 
   protected createJsonSchemaImports(
-    columns: ZodPgColumn[],
+    columns: ZodPgColumnRenderModel[],
     config: ZodPgConfig
   ): ZodPgImport[] | undefined {
     if (!config.jsonSchemaImportLocation) return undefined;
@@ -248,15 +264,17 @@ export class DefaultRenderer implements ZodPgRenderer {
     })) as ZodPgImport[];
   }
 
-  protected createWritableColumns(columns: ZodPgColumn[]): ZodPgColumn[] {
+  protected createWritableColumns(
+    columns: ZodPgColumnRenderModel[]
+  ): ZodPgColumnRenderModel[] {
     return columns.filter((column) => column.isWritable);
   }
 
   protected async createTableModel(
     tableInfo: ZodPgTableInfo,
     config: ZodPgConfig
-  ): Promise<ZodPgTable> {
-    const readableColumns: ZodPgColumn[] = [];
+  ): Promise<ZodPgTableRenderModel> {
+    const readableColumns: ZodPgColumnRenderModel[] = [];
 
     for (const column of tableInfo.columns) {
       let model = this.createColumnModel(column, config);
@@ -300,11 +318,12 @@ export class DefaultRenderer implements ZodPgRenderer {
           constantName: column.enumConstantName!,
           typeName:
             column.enumTypeName ??
-            formatEnumTypeName(
-              column.tableName,
-              column.name,
-              config.objectNameCasing
-            ),
+            formatEnumTypeName({
+              tableName: column.tableName,
+              colName: column.name,
+              casing: config.objectNameCasing,
+              singularize: config.singularize,
+            }),
           values: enumValues.map((value, index) => ({
             value,
             last: index === enumValues.length - 1,
@@ -312,7 +331,7 @@ export class DefaultRenderer implements ZodPgRenderer {
         };
       });
 
-    const tableModel: ZodPgTable = {
+    const tableModel: ZodPgTableRenderModel = {
       type: tableInfo.type,
       tableName: tableInfo.name,
       schemaName: tableInfo.schemaName,
@@ -336,16 +355,19 @@ export class DefaultRenderer implements ZodPgRenderer {
         tableInfo,
         operation: 'read',
         casing: config.fieldNameCasing,
+        singularize: config.singularize,
       }),
       tableInsertTransformName: formatRecordTransformName({
         tableInfo,
         operation: 'insert',
         casing: config.fieldNameCasing,
+        singularize: config.singularize,
       }),
       tableUpdateTransformName: formatRecordTransformName({
         tableInfo,
         operation: 'update',
         casing: config.fieldNameCasing,
+        singularize: config.singularize,
       }),
       tableReadSchemaName: formatTableSchemaName({
         tableInfo,
@@ -366,33 +388,39 @@ export class DefaultRenderer implements ZodPgRenderer {
         tableInfo,
         operation: 'insert',
         casing: config.objectNameCasing,
+        singularize: config.singularize,
       }),
       tableReadBaseRecordName: formatTableRecordName({
         tableInfo,
         operation: 'read',
         casing: config.objectNameCasing,
+        singularize: config.singularize,
         suffix: 'BaseRecord',
       }),
       tableInsertBaseRecordName: formatTableRecordName({
         tableInfo,
         operation: 'insert',
         casing: config.objectNameCasing,
+        singularize: config.singularize,
         suffix: 'BaseRecord',
       }),
       tableUpdateBaseRecordName: formatTableRecordName({
         tableInfo,
         operation: 'update',
         casing: config.objectNameCasing,
+        singularize: config.singularize,
         suffix: 'BaseRecord',
       }),
       tableReadRecordName: formatTableRecordName({
         tableInfo,
         operation: 'read',
+        singularize: config.singularize,
         casing: config.objectNameCasing,
       }),
       tableUpdateRecordName: formatTableRecordName({
         tableInfo,
         operation: 'update',
+        singularize: config.singularize,
         casing: config.objectNameCasing,
       }),
       jsonSchemaImportLocation: config.jsonSchemaImportLocation,

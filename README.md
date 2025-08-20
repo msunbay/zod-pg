@@ -37,6 +37,7 @@ zod-pg supports PostgreSQL's type system including arrays, enums, and custom typ
 
 - **Database-First Development** - Generate schemas from your PostgreSQL database
 - **Multiple Schema Types** - Separate schemas for reading, inserting, and updating data
+- **Multiple Zod Versions** - Supports generating schemas in Zod v3, v4, and Zod v4-mini formats.
 - **PostgreSQL Support** - Arrays, enums, custom types, materialized views, and foreign tables
 - **Type Detection** - Detects serials, arrays, and enum constraints automatically
 - **Customization** - Hooks system and casing transformations
@@ -67,7 +68,7 @@ pnpm add -D zod-pg
 ### With connection string
 
 ```sh
-npx zod-pg --connection "postgres://user:password@localhost:5432/dbname" --ssl --output ./src/output
+npx zod-pg --connection "postgres://user:password@localhost:5432/dbname" --ssl --output-dir ./src/output
 ```
 
 ### With options
@@ -75,7 +76,7 @@ npx zod-pg --connection "postgres://user:password@localhost:5432/dbname" --ssl -
 You can also specify options directly:
 
 ```sh
-npx zod-pg --user postgres --password secret --host localhost --port 5432 --database mydb --ssl --output ./src/output
+npx zod-pg --user postgres --password secret --host localhost --port 5432 --database mydb --ssl --output-dir ./src/output
 ```
 
 ### With environment variables
@@ -92,7 +93,7 @@ zod-pg can read connection details from environment variables. Set the following
 Then run:
 
 ```sh
-npx zod-pg --output ./src/output
+npx zod-pg --output-dir ./src/output
 ```
 
 #### Using .env files:
@@ -100,7 +101,7 @@ npx zod-pg --output ./src/output
 zod-pg does not automatically load `.env` files, but you can use a package like `dotenv-cli` to load them before running zod-pg. For example:
 
 ```sh
-dotenv -e .env npx zod-pg --output ./src/output
+dotenv -e .env npx zod-pg --output-dir ./src/output
 ```
 
 ### Exclude / Include Tables
@@ -108,45 +109,56 @@ dotenv -e .env npx zod-pg --output ./src/output
 You can exclude specific tables from schema generation using the `--exclude` option with a regex pattern. For example, to exclude all tables starting with "temp":
 
 ```sh
-npx zod-pg --exclude '^temp_' --output ./src/output
+npx zod-pg --exclude '^temp_' --output-dir ./src/output
 ```
 
 To include only specific tables, use the `--include` option with a regex pattern. For example, to include only tables starting with "user" or "account:
 
 ```sh
-npx zod-pg --include '^(user|account)' --output ./src/output
+npx zod-pg --include '^(user|account)' --output-dir ./src/output
 ```
 
 Note that if you use both `--exclude` and `--include` options together, the `--include` option is applied first, then the `--exclude` option is applied to the included tables.
 
 ### All Options
 
-All CLI options are optional. Sensible defaults are applied (e.g. output defaults to `./zod-schemas`, schema defaults to `public`). You can also supply values via a config file or environment variables which override file values.
+All CLI options are optional. Sensible defaults are applied (e.g. output defaults to `./zod-schemas`, schema defaults to `public`). Values can be provided via:
 
-| Option                          | Description                                                                                        | Default         |
-| ------------------------------- | -------------------------------------------------------------------------------------------------- | --------------- |
-| `--connection-string`           | Connection string for PostgreSQL.                                                                  |                 |
-| `-o, --output`                  | Output directory for generated files.                                                              | `./zod-schemas` |
-| `--clean`                       | Delete the output directory before generation.                                                     | `false`         |
-| `--disable-coerce-dates`        | Disables using `z.coerce.date()` for date fields in read schemas (allows string-to-date coercion). | `false`         |
-| `--disable-stringify-json`      | Disables stringifying JSON values in write schemas using `JSON.stringify()` transforms.            | `false`         |
-| `--disable-case-transform`      | Disables transforming db record field casing. e.g snake_case to camelCase.                         | `false`         |
-| `--stringify-dates`             | Convert dates to ISO strings in write schemas using `.toISOString()` transforms.                   | `false`         |
-| `--default-empty-array`         | Provide empty arrays as defaults for nullable array fields in write schemas.                       | `false`         |
-| `--user`                        | PostgreSQL user name.                                                                              | `postgres`      |
-| `--password`                    | PostgreSQL user password.                                                                          |                 |
-| `--host`                        | PostgreSQL host.                                                                                   | `localhost`     |
-| `--port`                        | PostgreSQL port.                                                                                   | `5432`          |
-| `--database`                    | PostgreSQL database name.                                                                          | `postgres`      |
-| `--schema`                      | Specify schema name.                                                                               | `public`        |
-| `--ssl`                         | Use SSL for the connection.                                                                        | `false`         |
-| `--exclude`                     | Regex pattern to exclude tables from generation.                                                   |                 |
-| `--include`                     | Regex pattern to include only specific tables.                                                     |                 |
-| `--json-schema-import-location` | Location to import Zod schemas for JSON fields.                                                    |                 |
-| `--silent`                      | Suppress output messages during generation.                                                        | `false`         |
-| `--module`                      | Module resolution type (esm, commonjs). ESM uses file extensions in imports, CommonJS does not.    | `commonjs`      |
-| `--zod-version`                 | Target Zod version (3, 4, 4-mini).                                                                 | `3`             |
-| `--help`                        | Show help message.                                                                                 |                 |
+- CLI flags (highest precedence)
+- Environment variables (connection fields)
+- Config file (`zod-pg.config.{js,ts,json}`)
+- Built-in defaults
+
+Negative flags (`--no-*`) disable a feature that is enabled by default.
+
+| Option                                 | Description                                                                                       | Default         |
+| -------------------------------------- | ------------------------------------------------------------------------------------------------- | --------------- |
+| `--connection-string <string>`         | PostgreSQL connection string (overrides individual host/port/user/etc).                           |                 |
+| `-o, --output-dir <path>`              | Output directory for generated files.                                                             | `./zod-schemas` |
+| `--clean-output`                       | Delete the output directory before generation.                                                    | `false`         |
+| `--no-coerce-dates`                    | Disable using `z.coerce.date()` for date columns in read schemas (coercion enabled by default).   | `false`         |
+| `--no-stringify-json`                  | Disable `JSON.stringify()` transforms for `json` fields in write schemas.                         | `false`         |
+| `--stringify-dates`                    | Add `.toISOString()` transforms for date fields in write schemas.                                 | `false`         |
+| `--default-empty-array`                | Default nullable array fields to `[]` in write schemas.                                           | `false`         |
+| `--object-name-casing <value>`         | Casing for object/type names (one of: `PascalCase`, `camelCase`, `snake_case`, `passthrough`).    | `PascalCase`    |
+| `--field-name-casing <value>`          | Casing for field/property names (one of: `PascalCase`, `camelCase`, `snake_case`, `passthrough`). | `camelCase`     |
+| `--no-case-transform`                  | Disable transforming property name casing (skips base schema + transform helpers).                | `false`         |
+| `--no-singularize`                     | Preserve plural table / enum names (singularization on by default).                               | `false`         |
+| `--include <regex>`                    | Include only tables matching this regex (applied before exclude).                                 |                 |
+| `--exclude <regex>`                    | Exclude tables matching this regex.                                                               |                 |
+| `--json-schema-import-location <path>` | Path to import custom JSON field schemas from.                                                    |                 |
+| `--module-resolution <type>`           | Module resolution: `commonjs` or `esm`.                                                           | `commonjs`      |
+| `--zod-version <version>`              | Target Zod variant: `3`, `4`, or `4-mini`.                                                        | `3`             |
+| `--schema <name>`                      | Database schema to introspect.                                                                    | `public`        |
+| `--host <host>`                        | PostgreSQL host (ignored if connection string provided).                                          | `localhost`     |
+| `--port <number>`                      | PostgreSQL port (ignored if connection string provided).                                          | `5432`          |
+| `--user <user>`                        | PostgreSQL user (ignored if connection string provided).                                          | `postgres`      |
+| `--password <password>`                | PostgreSQL password (ignored if connection string provided).                                      |                 |
+| `--database <name>`                    | PostgreSQL database name (ignored if connection string provided).                                 | `postgres`      |
+| `--ssl`                                | Use SSL for connection.                                                                           | `false`         |
+| `--silent`                             | Suppress console output (still writes files).                                                     | `false`         |
+| `--debug`                              | Enable verbose debug logging.                                                                     | `false`         |
+| `--help`                               | Show help and exit.                                                                               |                 |
 
 ## Configuration File
 
@@ -160,10 +172,8 @@ In addition to CLI options, you can use configuration files to set your options.
 import type { ZodPgConfig } from 'zod-pg';
 
 const config: ZodPgConfig = {
-  connection: {
-    connectionString: 'postgresql://user:password@localhost:5432/mydb',
-    ssl: false,
-  },
+  connectionString: 'postgresql://user:password@localhost:5432/mydb',
+  ssl: false,
   outputDir: './src/generated',
   moduleResolution: 'esm',
   cleanOutput: true,
@@ -183,9 +193,7 @@ export default config;
 
 ```javascript
 module.exports = {
-  connection: {
-    connectionString: 'postgresql://user:password@localhost:5432/mydb',
-  },
+  connectionString: 'postgresql://user:password@localhost:5432/mydb',
   outputDir: './src/generated',
   moduleResolution: 'esm',
 };
@@ -199,14 +207,14 @@ The generator creates the following files:
 - `output/types.ts` – TypeScript types for all tables and views.
 - `output/[tables|views|materialized_views]/[name]/schema.ts` – Zod schema definitions for the table/view.
 - `output/[tables|views|materialized_views]/[name]/index.ts` – Zod schema and type exports for the table/view.
-- `output/[tables|views|materialized_views]/index.ts` – Exports all schemas / types-
+- `output/[tables|views|materialized_views]/index.ts` – Exports all schemas / types.
 
 ## Schema Output
 
-The generated Zod schemas will look something like this: (example for a "user" table)
+The generated Zod schemas will look something like this: (example for a "users" table)
 
 ```ts
-// output/tables/user.ts
+// output/tables/user/schema.ts
 import { z } from "zod";
 
 export const UsersTableSchema = z.object({..});
@@ -230,14 +238,47 @@ Since reading and writing are two different operations, zod-pg generates separat
 
 - Used for reading data from the database.
 - Does not enforce write constraints (e.g., max length).
-- Transforms nulls to `undefined`, making it easier to work with optional fields in TypeScript.
+- By default transforms nulls to `undefined`, making it easier to work with optional fields in TypeScript.
+- Optionally defaults nullable array fields to empty arrays.
 
 ### The Write Schemas
 
 - Enforces field constraints such as max length, ensuring that your data adheres to the database schema.
-- Transforms `jsonb` fields to strings.
+- By default transforms `json` fields to strings.
+- Optionally transforms date fields to ISO strings using `.toISOString()`.
 - Excludes only SERIAL/auto-incrementing columns and columns from non-table relations (views, etc.).
-- Includes columns with DEFAULT values (like `DEFAULT NOW()`) since applications can still provide explicit values.
+
+### Casing
+
+zod-pg supports different casing styles for generated schemas and types. By default zod-pg uses `PascalCase` for object names and `camelCase` for properties. You can specify the desired casing for field names and object names using the `--field-name-casing` and `--object-name-casing` options.
+
+### Singularization
+
+By default zod-pg converts plural table / view names into singular, PascalCase identifiers when generating TypeScript record types, insert/update record types, enum names, and related constants / transform helpers. This keeps generated symbols concise and aligned with typical TypeScript naming conventions.
+
+Example:
+
+| Database object     | Generated names                                      |
+| ------------------- | ---------------------------------------------------- |
+| `users` (table)     | `UserRecord`, `UserInsertRecord`, `UserUpdateRecord` |
+| `user_roles` (enum) | `UserRole`                                           |
+
+If you would prefer the generated identifiers to preserve the original (often plural / snake_case) names, disable singularization with the CLI flag:
+
+```
+npx zod-pg --no-singularize
+```
+
+Or in a config file:
+
+```ts
+export default {
+  // ...other config
+  singularize: false,
+};
+```
+
+When disabled, names are still cased according to your casing settings, but the plural form is retained (e.g. `UsersRecord`).
 
 ## Customizing Generated Models with Hooks
 
@@ -245,19 +286,25 @@ zod-pg provides hooks to customize the generated models during generation. These
 
 ### Available Hooks
 
-#### `onColumnModelCreated`
+#### `onColumnInfoCreated`
 
 This hook is called for each column after its initial model is created, allowing you to modify individual column properties.
 
 ```typescript
-onColumnModelCreated: async (column: ZodPgColumn) => {
+onColumnInfoCreated: (column) => {
   // Add email validation to email columns
   if (column.name === 'email') {
+    // Note that this only applies to the write schema.
+    // The read schema will still output the field as a z.string.
     column.type = 'email';
+
+    // Additional validation / tranformation
+    column.writeTransforms = ['trim', 'lowercase'];
   }
 
   // Add minimum length to password fields
   if (column.name === 'password') {
+    // Note that this only applies to the write schema.
     column.minLen = 8;
   }
 
@@ -270,17 +317,14 @@ onColumnModelCreated: async (column: ZodPgColumn) => {
 };
 ```
 
-#### `onTableModelCreated`
+#### `onTableInfoCreated`
 
-This hook is called for each table after all its columns have been processed, allowing you to modify the entire table model.
+This hook is called for each table after all its columns have been processed, allowing you to modify the table model.
 
 ```typescript
-onTableModelCreated: async (table: ZodPgTable) => {
-  // Add custom description
-  table.description = `Generated schema for ${table.tableName} table`;
-
+onTableInfoCreated: (table) => {
   // Add custom transformations based on table name
-  if (table.tableName === 'users') {
+  if (table.name === 'users') {
     // Add any table-specific customizations
   }
 
@@ -302,7 +346,7 @@ Say you have a "user" table with a JSON field called "profile", and you want to 
 Start by running, e.g.,
 
 ```sh
-npx zod-pg --json-schema-import-location '../../json' --output ./schema/generated
+npx zod-pg --json-schema-import-location '../../json' --output-dir ./schema/generated
 ```
 
 **Step 2: Generated schema imports your JSON schemas**
@@ -364,7 +408,7 @@ const ExtendedSchema = UsersTableBaseSchema.extend({
 }));
 ```
 
-If you have disabled case transforms (`--disable-case-transform`) then there are no "base" schemas or transform functions.
+If you have disabled case transforms (`--no-case-transform`) then there are no "base" schemas or transform functions.
 And you can just extend the read schema like:
 
 ```ts

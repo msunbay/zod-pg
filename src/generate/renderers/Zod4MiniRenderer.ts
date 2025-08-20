@@ -1,16 +1,16 @@
 import type { ZodPgConfig } from '../../types.js';
-import type { ZodPgColumnBaseModel } from './types.js';
+import type { ZodPgColumnBaseRenderModel } from './types.js';
 
 import { Zod4Renderer } from './Zod4Renderer.js';
 
 export class Zod4MiniRenderer extends Zod4Renderer {
   protected getSchemaTemplateName(config: ZodPgConfig): string {
-    if (config.disableCaseTransform) return 'schema.simple';
+    if (!config.caseTransform) return 'schema.simple';
     return 'schema.4mini';
   }
 
   protected override renderReadField(
-    column: ZodPgColumnBaseModel,
+    column: ZodPgColumnBaseRenderModel,
     config: ZodPgConfig
   ): string {
     let zodType = this.renderZodType(column.type, config, true);
@@ -42,36 +42,42 @@ export class Zod4MiniRenderer extends Zod4Renderer {
     if (column.isNullable || column.isOptional) {
       if (column.isArray && config.defaultEmptyArray)
         zodType = `z.pipe(${zodType}, z.transform(val => val ?? []))`;
-      else zodType = `z.pipe(${zodType}, z.transform(val => val ?? undefined))`;
+      else if (config.defaultNullsToUndefined)
+        zodType = `z.pipe(${zodType}, z.transform(val => val ?? undefined))`;
     }
 
     return zodType;
   }
 
   protected override renderWriteField(
-    column: ZodPgColumnBaseModel,
+    column: ZodPgColumnBaseRenderModel,
     config: ZodPgConfig
   ): string {
     let zodType = this.renderZodType(column.type, config, false);
+    const baseType = this.getBaseType(column.type);
 
-    if (column.writeTransforms?.includes('trim')) {
-      zodType = `${zodType}.check(z.trim())`;
+    if (baseType === 'string' && !column.isEnum) {
+      if (column.writeTransforms?.includes('trim')) {
+        zodType = `${zodType}.check(z.trim())`;
+      }
+
+      if (column.writeTransforms?.includes('lowercase')) {
+        zodType = `${zodType}.check(z.lowercase())`;
+      }
+
+      if (column.writeTransforms?.includes('uppercase')) {
+        zodType = `${zodType}.check(z.uppercase())`;
+      }
+
+      if (column.writeTransforms?.includes('normalize')) {
+        zodType = `${zodType}.check(z.normalize())`;
+      }
     }
 
-    if (column.writeTransforms?.includes('lowercase')) {
-      zodType = `${zodType}.check(z.lowercase())`;
-    }
-
-    if (column.writeTransforms?.includes('uppercase')) {
-      zodType = `${zodType}.check(z.uppercase())`;
-    }
-
-    if (column.writeTransforms?.includes('normalize')) {
-      zodType = `${zodType}.check(z.normalize())`;
-    }
-
-    if (column.writeTransforms?.includes('nonnegative')) {
-      zodType = `${zodType}.check(z.nonnegative())`;
+    if (baseType === 'number' && !column.isEnum) {
+      if (column.writeTransforms?.includes('nonnegative')) {
+        zodType = `${zodType}.check(z.nonnegative())`;
+      }
     }
 
     if (column.isEnum) {
@@ -95,9 +101,9 @@ export class Zod4MiniRenderer extends Zod4Renderer {
       column.minLen !== null &&
       !column.isEnum
     ) {
-      if (column.type === 'string')
+      if (baseType === 'string')
         zodType = `${zodType}.check(z.minLength(${column.minLen}))`;
-      else if (column.type === 'number' || column.type === 'int')
+      else if (baseType === 'number')
         zodType = `${zodType}.check(z.minimum(${column.minLen}))`;
     }
 
@@ -106,9 +112,9 @@ export class Zod4MiniRenderer extends Zod4Renderer {
       column.maxLen !== null &&
       !column.isEnum
     ) {
-      if (column.type === 'string')
+      if (baseType === 'string')
         zodType = `${zodType}.check(z.maxLength(${column.maxLen}))`;
-      else if (column.type === 'number' || column.type === 'int')
+      else if (baseType === 'number')
         zodType = `${zodType}.check(z.maximum(${column.maxLen}))`;
     }
 
@@ -120,7 +126,7 @@ export class Zod4MiniRenderer extends Zod4Renderer {
       zodType = `z.optional(${zodType})`;
     }
 
-    if (column.type === 'json' && !config.disableStringifyJson) {
+    if (column.type === 'json' && config.stringifyJson) {
       if (!column.isNullable)
         zodType = `z.pipe(${zodType}, z.transform((value) => JSON.stringify(value)))`;
       else

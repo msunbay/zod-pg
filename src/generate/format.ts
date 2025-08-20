@@ -54,15 +54,21 @@ export const getSchemaPrefix = (tableInfo: ZodPgTableInfo): string => {
 export const formatRecordTransformName = ({
   tableInfo,
   operation: type,
+  singularize = true,
   casing = 'camelCase',
   suffix = 'BaseRecord',
 }: {
   tableInfo: ZodPgTableInfo;
   operation: Operation;
   casing?: ZodPgCasing;
+  singularize?: boolean;
   suffix?: string;
 }): string => {
-  const name = `transform${singularPascalCase(tableInfo.name)}${getOperationSuffix(type)}${suffix}`;
+  const tableName = singularize
+    ? singularPascalCase(tableInfo.name)
+    : pascalCase(tableInfo.name);
+
+  const name = `transform${tableName}${getOperationSuffix(type)}${suffix}`;
   return convertCaseFormat(name, casing);
 };
 
@@ -77,52 +83,88 @@ export const formatTableSchemaName = ({
   casing?: ZodPgCasing;
   suffix?: string;
 }): string => {
-  const name = `${convertCaseFormat(tableInfo.name, 'PascalCase')}${getSchemaPrefix(tableInfo)}${getOperationSuffix(type)}${suffix}`;
+  const name = `${pascalCase(tableInfo.name)}${getSchemaPrefix(tableInfo)}${getOperationSuffix(type)}${suffix}`;
   return convertCaseFormat(name, casing);
 };
 
 export const formatTableRecordName = ({
   tableInfo,
   operation,
+  singularize = true,
   casing = 'PascalCase',
   suffix = 'Record',
 }: {
   tableInfo: ZodPgTableInfo;
   operation: Operation;
   casing?: ZodPgCasing;
+  singularize?: boolean;
   suffix?: string;
 }): string => {
-  const name = `${singularPascalCase(tableInfo.name)}${getOperationSuffix(operation)}${suffix}`;
+  const tableName = singularize
+    ? singularPascalCase(tableInfo.name)
+    : pascalCase(tableInfo.name);
+
+  const name = `${tableName}${getOperationSuffix(operation)}${suffix}`;
   return convertCaseFormat(name, casing);
 };
 
-export const formatJsonSchemaName = (
-  tableName: string,
-  columnName: string,
-  casing: ZodPgCasing = 'PascalCase'
-): string => {
-  return convertCaseFormat(
-    `${singularPascalCase(tableName)}${pascalCase(columnName)}Schema`,
-    casing
-  );
+export const formatJsonSchemaName = ({
+  tableName,
+  columnName,
+  casing = 'PascalCase',
+  singularize = true,
+  suffix = 'Schema',
+}: {
+  tableName: string;
+  columnName: string;
+  casing?: ZodPgCasing;
+  singularize?: boolean;
+  suffix?: string;
+}): string => {
+  const pascalTableName = singularize
+    ? singularPascalCase(tableName)
+    : pascalCase(tableName);
+
+  const name = `${pascalTableName}${pascalCase(columnName)}${suffix}`;
+  return convertCaseFormat(name, casing);
 };
 
-export const formatEnumConstantName = (
-  tableName: string,
-  colName: string
-): string => {
-  return pluralize(
-    `${singularUpperCase(tableName)}_${snakeCase(colName).toUpperCase()}`
-  );
+export const formatEnumConstantName = ({
+  tableName,
+  colName,
+  singularize = true,
+}: {
+  tableName: string;
+  colName: string;
+  singularize?: boolean;
+}): string => {
+  const upperTableName = singularize
+    ? singularUpperCase(tableName)
+    : tableName.toUpperCase();
+
+  const upperColName = snakeCase(colName).toUpperCase();
+
+  return pluralize(`${upperTableName}_${upperColName}`);
 };
 
-export const formatEnumTypeName = (
-  tableName: string,
-  colName: string,
-  casing: ZodPgCasing = 'PascalCase'
-): string => {
-  return convertCaseFormat(
-    `${singularPascalCase(tableName)}${singularPascalCase(colName)}`,
-    casing
-  );
+export const formatEnumTypeName = ({
+  tableName,
+  colName,
+  casing = 'PascalCase',
+  singularize = true,
+}: {
+  tableName: string;
+  colName: string;
+  casing?: ZodPgCasing;
+  singularize?: boolean;
+}): string => {
+  const pascalTableName = singularize
+    ? singularPascalCase(tableName)
+    : pascalCase(tableName);
+
+  const pascalColName = singularize
+    ? singularPascalCase(colName)
+    : pascalCase(colName);
+
+  return convertCaseFormat(`${pascalTableName}${pascalColName}`, casing);
 };

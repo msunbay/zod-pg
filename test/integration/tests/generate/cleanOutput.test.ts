@@ -45,10 +45,7 @@ describe('clean output option', () => {
     expect(fs.existsSync(`${outputDir}/old-root-file.ts`)).toBe(true);
 
     await generateZodSchemas({
-      connection: {
-        connectionString,
-        ssl: false,
-      },
+      connectionString,
       outputDir: outputDir,
       cleanOutput: true,
       include: ['users'],
@@ -83,10 +80,7 @@ describe('clean output option', () => {
     expect(fs.existsSync(`${outputDir}/tables/old-file.ts`)).toBe(true);
 
     await generateZodSchemas({
-      connection: {
-        connectionString,
-        ssl: false,
-      },
+      connectionString,
       outputDir,
       cleanOutput: false,
       include: ['users'],

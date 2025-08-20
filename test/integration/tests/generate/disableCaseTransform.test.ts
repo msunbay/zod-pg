@@ -27,13 +27,10 @@ it('generates schemas without case transformations', async () => {
   const outputDir = getOutputDir('generate', 'disableCaseTransform');
 
   await generateZodSchemas({
-    connection: {
-      connectionString,
-      ssl: false,
-    },
+    connectionString,
     outputDir,
     moduleResolution: 'esm',
-    disableCaseTransform: true,
+    caseTransform: true,
     include: ['users'],
   });
 

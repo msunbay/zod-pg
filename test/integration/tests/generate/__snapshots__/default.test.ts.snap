@@ -53,23 +53,23 @@ export const MvUserPostsBaseSchema = z.object({
      /**
       * dataType: int4
       */
-    user_id: z.number().int().nullish().transform((value) => value ?? undefined).optional(),
+    user_id: z.number().int().nullable().transform((value) => value ?? undefined).optional(),
      /**
       * dataType: varchar
       */
-    user_name: z.string().nullish().transform((value) => value ?? undefined).optional(),
+    user_name: z.string().nullable().transform((value) => value ?? undefined).optional(),
      /**
       * dataType: int4
       */
-    post_id: z.number().int().nullish().transform((value) => value ?? undefined).optional(),
+    post_id: z.number().int().nullable().transform((value) => value ?? undefined).optional(),
      /**
       * dataType: text
       */
-    post_title: z.string().nullish().transform((value) => value ?? undefined).optional(),
+    post_title: z.string().nullable().transform((value) => value ?? undefined).optional(),
      /**
       * dataType: text
       */
-    post_content: z.string().nullish().transform((value) => value ?? undefined).optional(),
+    post_content: z.string().nullable().transform((value) => value ?? undefined).optional(),
 });
 
 /**
@@ -153,7 +153,7 @@ export const AuditLogsTableBaseSchema = z.object({
      /**
       * dataType: int4
       */
-    user_id: z.number().int().nullish().transform((value) => value ?? undefined).optional(),
+    user_id: z.number().int().nullable().transform((value) => value ?? undefined).optional(),
      /**
       * dataType: varchar
       */
@@ -161,24 +161,24 @@ export const AuditLogsTableBaseSchema = z.object({
      /**
       * dataType: varchar
       */
-    table_name: z.string().nullish().transform((value) => value ?? undefined).optional(),
+    table_name: z.string().nullable().transform((value) => value ?? undefined).optional(),
      /**
       * dataType: int4
       */
-    record_id: z.number().int().nullish().transform((value) => value ?? undefined).optional(),
+    record_id: z.number().int().nullable().transform((value) => value ?? undefined).optional(),
      /**
       * dataType: jsonb
       */
-    old_values: z.any().nullish().transform((value) => value ?? undefined).optional(),
+    old_values: z.any().nullable().transform((value) => value ?? undefined).optional(),
      /**
       * dataType: jsonb
       */
-    new_values: z.any().nullish().transform((value) => value ?? undefined).optional(),
+    new_values: z.any().nullable().transform((value) => value ?? undefined).optional(),
      /**
       * dataType: timestamptz
       * defaultValue: now()
       */
-    created_at: z.coerce.date().nullish().transform((value) => value ?? undefined).optional(),
+    created_at: z.coerce.date().nullable().transform((value) => value ?? undefined).optional(),
 });
 
 /**
@@ -223,7 +223,7 @@ export const AuditLogsTableInsertBaseSchema = z.object({
      /**
       * dataType: int4
       */
-    userId: z.number().int().nullish().optional(),
+    userId: z.number().int().nullable().optional(),
      /**
       * dataType: varchar
       */
@@ -231,24 +231,24 @@ export const AuditLogsTableInsertBaseSchema = z.object({
      /**
       * dataType: varchar
       */
-    tableName: z.string().max(50).nullish().optional(),
+    tableName: z.string().max(50).nullable().optional(),
      /**
       * dataType: int4
       */
-    recordId: z.number().int().nullish().optional(),
+    recordId: z.number().int().nullable().optional(),
      /**
       * dataType: jsonb
       */
-    oldValues: z.any().nullish().transform((value) => value ? JSON.stringify(value) : value).optional(),
+    oldValues: z.any().nullable().optional(),
      /**
       * dataType: jsonb
       */
-    newValues: z.any().nullish().transform((value) => value ? JSON.stringify(value) : value).optional(),
+    newValues: z.any().nullable().optional(),
      /**
       * dataType: timestamptz
       * defaultValue: now()
       */
-    createdAt: z.date().nullish().optional(),
+    createdAt: z.date().nullable().optional(),
 });
 
 /**
@@ -433,16 +433,16 @@ export const CategoriesTableBaseSchema = z.object({
      /**
       * dataType: text
       */
-    description: z.string().nullish().transform((value) => value ?? undefined).optional(),
+    description: z.string().nullable().transform((value) => value ?? undefined).optional(),
      /**
       * dataType: varchar
       */
-    color: z.string().nullish().transform((value) => value ?? undefined).optional(),
+    color: z.string().nullable().transform((value) => value ?? undefined).optional(),
      /**
       * dataType: timestamptz
       * defaultValue: now()
       */
-    created_at: z.coerce.date().nullish().transform((value) => value ?? undefined).optional(),
+    created_at: z.coerce.date().nullable().transform((value) => value ?? undefined).optional(),
 });
 
 /**
@@ -485,16 +485,16 @@ export const CategoriesTableInsertBaseSchema = z.object({
      /**
       * dataType: text
       */
-    description: z.string().nullish().optional(),
+    description: z.string().nullable().optional(),
      /**
       * dataType: varchar
       */
-    color: z.string().max(7).nullish().optional(),
+    color: z.string().max(7).nullable().optional(),
      /**
       * dataType: timestamptz
       * defaultValue: now()
       */
-    createdAt: z.date().nullish().optional(),
+    createdAt: z.date().nullable().optional(),
 });
 
 /**
@@ -639,15 +639,15 @@ export const CommentsTableBaseSchema = z.object({
      /**
       * dataType: int4
       */
-    post_id: z.number().int().nullish().transform((value) => value ?? undefined).optional(),
+    post_id: z.number().int().nullable().transform((value) => value ?? undefined).optional(),
      /**
       * dataType: int4
       */
-    user_id: z.number().int().nullish().transform((value) => value ?? undefined).optional(),
+    user_id: z.number().int().nullable().transform((value) => value ?? undefined).optional(),
      /**
       * dataType: int4
       */
-    parent_id: z.number().int().nullish().transform((value) => value ?? undefined).optional(),
+    parent_id: z.number().int().nullable().transform((value) => value ?? undefined).optional(),
      /**
       * dataType: text
       */
@@ -656,17 +656,17 @@ export const CommentsTableBaseSchema = z.object({
       * dataType: bool
       * defaultValue: false
       */
-    is_approved: z.boolean().nullish().transform((value) => value ?? undefined).optional(),
+    is_approved: z.boolean().nullable().transform((value) => value ?? undefined).optional(),
      /**
       * dataType: timestamptz
       * defaultValue: now()
       */
-    created_at: z.coerce.date().nullish().transform((value) => value ?? undefined).optional(),
+    created_at: z.coerce.date().nullable().transform((value) => value ?? undefined).optional(),
      /**
       * dataType: timestamptz
       * defaultValue: now()
       */
-    updated_at: z.coerce.date().nullish().transform((value) => value ?? undefined).optional(),
+    updated_at: z.coerce.date().nullable().transform((value) => value ?? undefined).optional(),
 });
 
 /**
@@ -711,15 +711,15 @@ export const CommentsTableInsertBaseSchema = z.object({
      /**
       * dataType: int4
       */
-    postId: z.number().int().nullish().optional(),
+    postId: z.number().int().nullable().optional(),
      /**
       * dataType: int4
       */
-    userId: z.number().int().nullish().optional(),
+    userId: z.number().int().nullable().optional(),
      /**
       * dataType: int4
       */
-    parentId: z.number().int().nullish().optional(),
+    parentId: z.number().int().nullable().optional(),
      /**
       * dataType: text
       */
@@ -728,17 +728,17 @@ export const CommentsTableInsertBaseSchema = z.object({
       * dataType: bool
       * defaultValue: false
       */
-    isApproved: z.boolean().nullish().optional(),
+    isApproved: z.boolean().nullable().optional(),
      /**
       * dataType: timestamptz
       * defaultValue: now()
       */
-    createdAt: z.date().nullish().optional(),
+    createdAt: z.date().nullable().optional(),
      /**
       * dataType: timestamptz
       * defaultValue: now()
       */
-    updatedAt: z.date().nullish().optional(),
+    updatedAt: z.date().nullable().optional(),
 });
 
 /**
@@ -924,32 +924,32 @@ export const ConstraintVariationsTableBaseSchema = z.object({
      /**
       * dataType: varchar
       */
-    animal: z.enum(CONSTRAINT_VARIATION_ANIMALS).nullish().transform((value) => value ?? undefined).optional(),
+    animal: z.enum(CONSTRAINT_VARIATION_ANIMALS).nullable().transform((value) => value ?? undefined).optional(),
      /**
       * dataType: text
       */
-    fruit: z.enum(CONSTRAINT_VARIATION_FRUITS).nullish().transform((value) => value ?? undefined).optional(),
+    fruit: z.enum(CONSTRAINT_VARIATION_FRUITS).nullable().transform((value) => value ?? undefined).optional(),
      /**
       * dataType: varchar
       */
-    vehicle: z.enum(CONSTRAINT_VARIATION_VEHICLES).nullish().transform((value) => value ?? undefined).optional(),
+    vehicle: z.enum(CONSTRAINT_VARIATION_VEHICLES).nullable().transform((value) => value ?? undefined).optional(),
      /**
       * dataType: bpchar
       */
-    language: z.enum(CONSTRAINT_VARIATION_LANGUAGES).nullish().transform((value) => value ?? undefined).optional(),
+    language: z.enum(CONSTRAINT_VARIATION_LANGUAGES).nullable().transform((value) => value ?? undefined).optional(),
      /**
       * dataType: int2
       */
-    rating: z.number().int().nullish().transform((value) => value ?? undefined).optional(),
+    rating: z.number().int().nullable().transform((value) => value ?? undefined).optional(),
      /**
       * dataType: bool
       */
-    active_status: z.enum(CONSTRAINT_VARIATION_ACTIVE_STATUSES).nullish().transform((value) => value ?? undefined).optional(),
+    active_status: z.enum(CONSTRAINT_VARIATION_ACTIVE_STATUSES).nullable().transform((value) => value ?? undefined).optional(),
      /**
       * dataType: timestamptz
       * defaultValue: now()
       */
-    created_at: z.coerce.date().nullish().transform((value) => value ?? undefined).optional(),
+    created_at: z.coerce.date().nullable().transform((value) => value ?? undefined).optional(),
 });
 
 /**
@@ -994,32 +994,32 @@ export const ConstraintVariationsTableInsertBaseSchema = z.object({
      /**
       * dataType: varchar
       */
-    animal: z.enum(CONSTRAINT_VARIATION_ANIMALS).nullish().optional(),
+    animal: z.enum(CONSTRAINT_VARIATION_ANIMALS).nullable().optional(),
      /**
       * dataType: text
       */
-    fruit: z.enum(CONSTRAINT_VARIATION_FRUITS).nullish().optional(),
+    fruit: z.enum(CONSTRAINT_VARIATION_FRUITS).nullable().optional(),
      /**
       * dataType: varchar
       */
-    vehicle: z.enum(CONSTRAINT_VARIATION_VEHICLES).nullish().optional(),
+    vehicle: z.enum(CONSTRAINT_VARIATION_VEHICLES).nullable().optional(),
      /**
       * dataType: bpchar
       */
-    language: z.enum(CONSTRAINT_VARIATION_LANGUAGES).nullish().optional(),
+    language: z.enum(CONSTRAINT_VARIATION_LANGUAGES).nullable().optional(),
      /**
       * dataType: int2
       */
-    rating: z.number().int().nullish().optional(),
+    rating: z.number().int().nullable().optional(),
      /**
       * dataType: bool
       */
-    activeStatus: z.enum(CONSTRAINT_VARIATION_ACTIVE_STATUSES).nullish().optional(),
+    activeStatus: z.enum(CONSTRAINT_VARIATION_ACTIVE_STATUSES).nullable().optional(),
      /**
       * dataType: timestamptz
       * defaultValue: now()
       */
-    createdAt: z.date().nullish().optional(),
+    createdAt: z.date().nullable().optional(),
 });
 
 /**
@@ -1218,56 +1218,56 @@ export const EnumTestsTableBaseSchema = z.object({
      /**
       * dataType: varchar
       */
-    priority: z.enum(ENUM_TEST_PRIORITIES).nullish().transform((value) => value ?? undefined).optional(),
+    priority: z.enum(ENUM_TEST_PRIORITIES).nullable().transform((value) => value ?? undefined).optional(),
      /**
       * dataType: varchar
       */
-    color: z.enum(ENUM_TEST_COLORS).nullish().transform((value) => value ?? undefined).optional(),
+    color: z.enum(ENUM_TEST_COLORS).nullable().transform((value) => value ?? undefined).optional(),
      /**
       * dataType: text
       */
-    size: z.enum(ENUM_TEST_SIZES).nullish().transform((value) => value ?? undefined).optional(),
+    size: z.enum(ENUM_TEST_SIZES).nullable().transform((value) => value ?? undefined).optional(),
      /**
       * dataType: bpchar
       */
-    grade: z.enum(ENUM_TEST_GRADES).nullish().transform((value) => value ?? undefined).optional(),
+    grade: z.enum(ENUM_TEST_GRADES).nullable().transform((value) => value ?? undefined).optional(),
      /**
       * dataType: varchar
       */
-    category: z.enum(ENUM_TEST_CATEGORIES).nullish().transform((value) => value ?? undefined).optional(),
+    category: z.enum(ENUM_TEST_CATEGORIES).nullable().transform((value) => value ?? undefined).optional(),
      /**
       * dataType: text
       */
-    mood: z.enum(ENUM_TEST_MOODS).nullish().transform((value) => value ?? undefined).optional(),
+    mood: z.enum(ENUM_TEST_MOODS).nullable().transform((value) => value ?? undefined).optional(),
      /**
       * dataType: varchar
       */
-    direction: z.enum(ENUM_TEST_DIRECTIONS).nullish().transform((value) => value ?? undefined).optional(),
+    direction: z.enum(ENUM_TEST_DIRECTIONS).nullable().transform((value) => value ?? undefined).optional(),
      /**
       * dataType: text
       */
-    weather_condition: z.enum(ENUM_TEST_WEATHER_CONDITIONS).nullish().transform((value) => value ?? undefined).optional(),
+    weather_condition: z.enum(ENUM_TEST_WEATHER_CONDITIONS).nullable().transform((value) => value ?? undefined).optional(),
      /**
       * dataType: varchar
       */
-    task_status: z.enum(ENUM_TEST_TASK_STATUSES).nullish().transform((value) => value ?? undefined).optional(),
+    task_status: z.enum(ENUM_TEST_TASK_STATUSES).nullable().transform((value) => value ?? undefined).optional(),
      /**
       * dataType: int4
       */
-    difficulty: z.enum(ENUM_TEST_DIFFICULTIES).nullish().transform((value) => value ?? undefined).optional(),
+    difficulty: z.enum(ENUM_TEST_DIFFICULTIES).nullable().transform((value) => value ?? undefined).optional(),
      /**
       * dataType: varchar
       */
-    weekday: z.enum(ENUM_TEST_WEEKDAYS).nullish().transform((value) => value ?? undefined).optional(),
+    weekday: z.enum(ENUM_TEST_WEEKDAYS).nullable().transform((value) => value ?? undefined).optional(),
      /**
       * dataType: text
       */
-    payment_method: z.enum(ENUM_TEST_PAYMENT_METHODS).nullish().transform((value) => value ?? undefined).optional(),
+    payment_method: z.enum(ENUM_TEST_PAYMENT_METHODS).nullable().transform((value) => value ?? undefined).optional(),
      /**
       * dataType: timestamptz
       * defaultValue: now()
       */
-    created_at: z.coerce.date().nullish().transform((value) => value ?? undefined).optional(),
+    created_at: z.coerce.date().nullable().transform((value) => value ?? undefined).optional(),
 });
 
 /**
@@ -1324,56 +1324,56 @@ export const EnumTestsTableInsertBaseSchema = z.object({
      /**
       * dataType: varchar
       */
-    priority: z.enum(ENUM_TEST_PRIORITIES).nullish().optional(),
+    priority: z.enum(ENUM_TEST_PRIORITIES).nullable().optional(),
      /**
       * dataType: varchar
       */
-    color: z.enum(ENUM_TEST_COLORS).nullish().optional(),
+    color: z.enum(ENUM_TEST_COLORS).nullable().optional(),
      /**
       * dataType: text
       */
-    size: z.enum(ENUM_TEST_SIZES).nullish().optional(),
+    size: z.enum(ENUM_TEST_SIZES).nullable().optional(),
      /**
       * dataType: bpchar
       */
-    grade: z.enum(ENUM_TEST_GRADES).nullish().optional(),
+    grade: z.enum(ENUM_TEST_GRADES).nullable().optional(),
      /**
       * dataType: varchar
       */
-    category: z.enum(ENUM_TEST_CATEGORIES).nullish().optional(),
+    category: z.enum(ENUM_TEST_CATEGORIES).nullable().optional(),
      /**
       * dataType: text
       */
-    mood: z.enum(ENUM_TEST_MOODS).nullish().optional(),
+    mood: z.enum(ENUM_TEST_MOODS).nullable().optional(),
      /**
       * dataType: varchar
       */
-    direction: z.enum(ENUM_TEST_DIRECTIONS).nullish().optional(),
+    direction: z.enum(ENUM_TEST_DIRECTIONS).nullable().optional(),
      /**
       * dataType: text
       */
-    weatherCondition: z.enum(ENUM_TEST_WEATHER_CONDITIONS).nullish().optional(),
+    weatherCondition: z.enum(ENUM_TEST_WEATHER_CONDITIONS).nullable().optional(),
      /**
       * dataType: varchar
       */
-    taskStatus: z.enum(ENUM_TEST_TASK_STATUSES).nullish().optional(),
+    taskStatus: z.enum(ENUM_TEST_TASK_STATUSES).nullable().optional(),
      /**
       * dataType: int4
       */
-    difficulty: z.enum(ENUM_TEST_DIFFICULTIES).nullish().optional(),
+    difficulty: z.enum(ENUM_TEST_DIFFICULTIES).nullable().optional(),
      /**
       * dataType: varchar
       */
-    weekday: z.enum(ENUM_TEST_WEEKDAYS).nullish().optional(),
+    weekday: z.enum(ENUM_TEST_WEEKDAYS).nullable().optional(),
      /**
       * dataType: text
       */
-    paymentMethod: z.enum(ENUM_TEST_PAYMENT_METHODS).nullish().optional(),
+    paymentMethod: z.enum(ENUM_TEST_PAYMENT_METHODS).nullable().optional(),
      /**
       * dataType: timestamptz
       * defaultValue: now()
       */
-    createdAt: z.date().nullish().optional(),
+    createdAt: z.date().nullable().optional(),
 });
 
 /**
@@ -1655,42 +1655,42 @@ export const FilesTableBaseSchema = z.object({
      /**
       * dataType: varchar
       */
-    mime_type: z.string().nullish().transform((value) => value ?? undefined).optional(),
+    mime_type: z.string().nullable().transform((value) => value ?? undefined).optional(),
      /**
       * dataType: bpchar
       */
-    checksum: z.string().nullish().transform((value) => value ?? undefined).optional(),
+    checksum: z.string().nullable().transform((value) => value ?? undefined).optional(),
      /**
       * dataType: bytea
       */
-    binary_data: z.string().nullish().transform((value) => value ?? undefined).optional(),
+    binary_data: z.string().nullable().transform((value) => value ?? undefined).optional(),
      /**
       * dataType: bool
       * defaultValue: false
       */
-    is_encrypted: z.boolean().nullish().transform((value) => value ?? undefined).optional(),
+    is_encrypted: z.boolean().nullable().transform((value) => value ?? undefined).optional(),
      /**
       * dataType: timestamptz
       * defaultValue: now()
       */
-    upload_time: z.coerce.date().nullish().transform((value) => value ?? undefined).optional(),
+    upload_time: z.coerce.date().nullable().transform((value) => value ?? undefined).optional(),
      /**
       * dataType: timestamptz
       */
-    expiry_date: z.coerce.date().nullish().transform((value) => value ?? undefined).optional(),
+    expiry_date: z.coerce.date().nullable().transform((value) => value ?? undefined).optional(),
      /**
       * dataType: jsonb
       */
-    metadata: z.any().nullish().transform((value) => value ?? undefined).optional(),
+    metadata: z.any().nullable().transform((value) => value ?? undefined).optional(),
      /**
       * dataType: _text
       */
-    tags: z.array(z.string()).nullish().transform((value) => value ?? undefined).optional(),
+    tags: z.array(z.string()).nullable().transform((value) => value ?? undefined).optional(),
      /**
       * dataType: int4
       * defaultValue: 0
       */
-    access_count: z.number().int().nullish().transform((value) => value ?? undefined).optional(),
+    access_count: z.number().int().nullable().transform((value) => value ?? undefined).optional(),
 });
 
 /**
@@ -1762,42 +1762,42 @@ export const FilesTableInsertBaseSchema = z.object({
      /**
       * dataType: varchar
       */
-    mimeType: z.string().max(100).nullish().optional(),
+    mimeType: z.string().max(100).nullable().optional(),
      /**
       * dataType: bpchar
       */
-    checksum: z.string().max(64).nullish().optional(),
+    checksum: z.string().max(64).nullable().optional(),
      /**
       * dataType: bytea
       */
-    binaryData: z.string().nullish().optional(),
+    binaryData: z.string().nullable().optional(),
      /**
       * dataType: bool
       * defaultValue: false
       */
-    isEncrypted: z.boolean().nullish().optional(),
+    isEncrypted: z.boolean().nullable().optional(),
      /**
       * dataType: timestamptz
       * defaultValue: now()
       */
-    uploadTime: z.date().nullish().optional(),
+    uploadTime: z.date().nullable().optional(),
      /**
       * dataType: timestamptz
       */
-    expiryDate: z.date().nullish().optional(),
+    expiryDate: z.date().nullable().optional(),
      /**
       * dataType: jsonb
       */
-    metadata: z.any().nullish().transform((value) => value ? JSON.stringify(value) : value).optional(),
+    metadata: z.any().nullable().optional(),
      /**
       * dataType: _text
       */
-    tags: z.array(z.string()).nullish().optional(),
+    tags: z.array(z.string()).nullable().optional(),
      /**
       * dataType: int4
       * defaultValue: 0
       */
-    accessCount: z.number().int().nullish().optional(),
+    accessCount: z.number().int().nullable().optional(),
 });
 
 /**
@@ -2058,40 +2058,40 @@ export const GeographicDataTableBaseSchema = z.object({
      /**
       * dataType: polygon
       */
-    boundary: z.string().nullish().transform((value) => value ?? undefined).optional(),
+    boundary: z.string().nullable().transform((value) => value ?? undefined).optional(),
      /**
       * dataType: circle
       */
-    area_circle: z.string().nullish().transform((value) => value ?? undefined).optional(),
+    area_circle: z.string().nullable().transform((value) => value ?? undefined).optional(),
      /**
       * dataType: float4
       */
-    elevation: z.number().nullish().transform((value) => value ?? undefined).optional(),
+    elevation: z.number().nullable().transform((value) => value ?? undefined).optional(),
      /**
       * dataType: varchar
       */
-    timezone: z.string().nullish().transform((value) => value ?? undefined).optional(),
+    timezone: z.string().nullable().transform((value) => value ?? undefined).optional(),
      /**
       * dataType: bpchar
       */
-    country_code: z.string().nullish().transform((value) => value ?? undefined).optional(),
+    country_code: z.string().nullable().transform((value) => value ?? undefined).optional(),
      /**
       * dataType: _text
       */
-    postal_codes: z.array(z.string()).nullish().transform((value) => value ?? undefined).optional(),
+    postal_codes: z.array(z.string()).nullable().transform((value) => value ?? undefined).optional(),
      /**
       * dataType: int4
       */
-    population: z.number().int().nullish().transform((value) => value ?? undefined).optional(),
+    population: z.number().int().nullable().transform((value) => value ?? undefined).optional(),
      /**
       * dataType: date
       */
-    established_date: z.coerce.date().nullish().transform((value) => value ?? undefined).optional(),
+    established_date: z.coerce.date().nullable().transform((value) => value ?? undefined).optional(),
      /**
       * dataType: timestamptz
       * defaultValue: now()
       */
-    last_updated: z.coerce.date().nullish().transform((value) => value ?? undefined).optional(),
+    last_updated: z.coerce.date().nullable().transform((value) => value ?? undefined).optional(),
 });
 
 /**
@@ -2152,40 +2152,40 @@ export const GeographicDataTableInsertBaseSchema = z.object({
      /**
       * dataType: polygon
       */
-    boundary: z.string().nullish().optional(),
+    boundary: z.string().nullable().optional(),
      /**
       * dataType: circle
       */
-    areaCircle: z.string().nullish().optional(),
+    areaCircle: z.string().nullable().optional(),
      /**
       * dataType: float4
       */
-    elevation: z.number().nullish().optional(),
+    elevation: z.number().nullable().optional(),
      /**
       * dataType: varchar
       */
-    timezone: z.string().max(50).nullish().optional(),
+    timezone: z.string().max(50).nullable().optional(),
      /**
       * dataType: bpchar
       */
-    countryCode: z.string().max(2).nullish().optional(),
+    countryCode: z.string().max(2).nullable().optional(),
      /**
       * dataType: _text
       */
-    postalCodes: z.array(z.string()).nullish().optional(),
+    postalCodes: z.array(z.string()).nullable().optional(),
      /**
       * dataType: int4
       */
-    population: z.number().int().nullish().optional(),
+    population: z.number().int().nullable().optional(),
      /**
       * dataType: date
       */
-    establishedDate: z.date().nullish().optional(),
+    establishedDate: z.date().nullable().optional(),
      /**
       * dataType: timestamptz
       * defaultValue: now()
       */
-    lastUpdated: z.date().nullish().optional(),
+    lastUpdated: z.date().nullable().optional(),
 });
 
 /**
@@ -2443,29 +2443,29 @@ export const InventoryTableBaseSchema = z.object({
       * dataType: int4
       * defaultValue: 0
       */
-    reserved_quantity: z.number().int().nullish().transform((value) => value ?? undefined).optional(),
+    reserved_quantity: z.number().int().nullable().transform((value) => value ?? undefined).optional(),
      /**
       * dataType: int2
       * defaultValue: 10
       */
-    reorder_level: z.number().int().nullish().transform((value) => value ?? undefined).optional(),
+    reorder_level: z.number().int().nullable().transform((value) => value ?? undefined).optional(),
      /**
       * dataType: date
       */
-    last_restocked: z.coerce.date().nullish().transform((value) => value ?? undefined).optional(),
+    last_restocked: z.coerce.date().nullable().transform((value) => value ?? undefined).optional(),
      /**
       * dataType: jsonb
       */
-    supplier_info: z.any().nullish().transform((value) => value ?? undefined).optional(),
+    supplier_info: z.any().nullable().transform((value) => value ?? undefined).optional(),
      /**
       * dataType: _text
       */
-    warehouse_locations: z.array(z.string()).nullish().transform((value) => value ?? undefined).optional(),
+    warehouse_locations: z.array(z.string()).nullable().transform((value) => value ?? undefined).optional(),
      /**
       * dataType: timestamptz
       * defaultValue: now()
       */
-    updated_at: z.coerce.date().nullish().transform((value) => value ?? undefined).optional(),
+    updated_at: z.coerce.date().nullable().transform((value) => value ?? undefined).optional(),
 });
 
 /**
@@ -2520,29 +2520,29 @@ export const InventoryTableInsertBaseSchema = z.object({
       * dataType: int4
       * defaultValue: 0
       */
-    reservedQuantity: z.number().int().nullish().optional(),
+    reservedQuantity: z.number().int().nullable().optional(),
      /**
       * dataType: int2
       * defaultValue: 10
       */
-    reorderLevel: z.number().int().nullish().optional(),
+    reorderLevel: z.number().int().nullable().optional(),
      /**
       * dataType: date
       */
-    lastRestocked: z.date().nullish().optional(),
+    lastRestocked: z.date().nullable().optional(),
      /**
       * dataType: jsonb
       */
-    supplierInfo: z.any().nullish().transform((value) => value ? JSON.stringify(value) : value).optional(),
+    supplierInfo: z.any().nullable().optional(),
      /**
       * dataType: _text
       */
-    warehouseLocations: z.array(z.string()).nullish().optional(),
+    warehouseLocations: z.array(z.string()).nullable().optional(),
      /**
       * dataType: timestamptz
       * defaultValue: now()
       */
-    updatedAt: z.date().nullish().optional(),
+    updatedAt: z.date().nullable().optional(),
 });
 
 /**
@@ -2736,46 +2736,46 @@ export const NetworkLogsTableBaseSchema = z.object({
      /**
       * dataType: int4range
       */
-    port_range: z.any().nullish().transform((value) => value ?? undefined).optional(),
+    port_range: z.any().nullable().transform((value) => value ?? undefined).optional(),
      /**
       * dataType: macaddr
       */
-    mac_address: z.string().nullish().transform((value) => value ?? undefined).optional(),
+    mac_address: z.string().nullable().transform((value) => value ?? undefined).optional(),
      /**
       * dataType: timestamptz
       * defaultValue: now()
       */
-    request_time: z.coerce.date().nullish().transform((value) => value ?? undefined).optional(),
+    request_time: z.coerce.date().nullable().transform((value) => value ?? undefined).optional(),
      /**
       * dataType: interval
       */
-    response_time: z.any().nullish().transform((value) => value ?? undefined).optional(),
+    response_time: z.any().nullable().transform((value) => value ?? undefined).optional(),
      /**
       * dataType: int8
       * defaultValue: 0
       */
-    bytes_sent: z.number().int().nullish().transform((value) => value ?? undefined).optional(),
+    bytes_sent: z.number().int().nullable().transform((value) => value ?? undefined).optional(),
      /**
       * dataType: int8
       * defaultValue: 0
       */
-    bytes_received: z.number().int().nullish().transform((value) => value ?? undefined).optional(),
+    bytes_received: z.number().int().nullable().transform((value) => value ?? undefined).optional(),
      /**
       * dataType: varchar
       */
-    protocol: z.string().nullish().transform((value) => value ?? undefined).optional(),
+    protocol: z.string().nullable().transform((value) => value ?? undefined).optional(),
      /**
       * dataType: int2
       */
-    status_code: z.number().int().nullish().transform((value) => value ?? undefined).optional(),
+    status_code: z.number().int().nullable().transform((value) => value ?? undefined).optional(),
      /**
       * dataType: text
       */
-    user_agent: z.string().nullish().transform((value) => value ?? undefined).optional(),
+    user_agent: z.string().nullable().transform((value) => value ?? undefined).optional(),
      /**
       * dataType: jsonb
       */
-    headers: z.any().nullish().transform((value) => value ?? undefined).optional(),
+    headers: z.any().nullable().transform((value) => value ?? undefined).optional(),
 });
 
 /**
@@ -2832,46 +2832,46 @@ export const NetworkLogsTableInsertBaseSchema = z.object({
      /**
       * dataType: int4range
       */
-    portRange: z.any().nullish().optional(),
+    portRange: z.any().nullable().optional(),
      /**
       * dataType: macaddr
       */
-    macAddress: z.string().nullish().optional(),
+    macAddress: z.string().nullable().optional(),
      /**
       * dataType: timestamptz
       * defaultValue: now()
       */
-    requestTime: z.date().nullish().optional(),
+    requestTime: z.date().nullable().optional(),
      /**
       * dataType: interval
       */
-    responseTime: z.any().nullish().optional(),
+    responseTime: z.any().nullable().optional(),
      /**
       * dataType: int8
       * defaultValue: 0
       */
-    bytesSent: z.number().int().nullish().optional(),
+    bytesSent: z.number().int().nullable().optional(),
      /**
       * dataType: int8
       * defaultValue: 0
       */
-    bytesReceived: z.number().int().nullish().optional(),
+    bytesReceived: z.number().int().nullable().optional(),
      /**
       * dataType: varchar
       */
-    protocol: z.string().max(10).nullish().optional(),
+    protocol: z.string().max(10).nullable().optional(),
      /**
       * dataType: int2
       */
-    statusCode: z.number().int().nullish().optional(),
+    statusCode: z.number().int().nullable().optional(),
      /**
       * dataType: text
       */
-    userAgent: z.string().nullish().optional(),
+    userAgent: z.string().nullable().optional(),
      /**
       * dataType: jsonb
       */
-    headers: z.any().nullish().transform((value) => value ? JSON.stringify(value) : value).optional(),
+    headers: z.any().nullable().optional(),
 });
 
 /**
@@ -3101,11 +3101,11 @@ export const OrderItemsTableBaseSchema = z.object({
      /**
       * dataType: int8
       */
-    order_id: z.number().int().nullish().transform((value) => value ?? undefined).optional(),
+    order_id: z.number().int().nullable().transform((value) => value ?? undefined).optional(),
      /**
       * dataType: int4
       */
-    product_id: z.number().int().nullish().transform((value) => value ?? undefined).optional(),
+    product_id: z.number().int().nullable().transform((value) => value ?? undefined).optional(),
      /**
       * dataType: int2
       */
@@ -3118,12 +3118,12 @@ export const OrderItemsTableBaseSchema = z.object({
       * dataType: numeric
       * defaultValue: 0
       */
-    discount_percent: z.number().nullish().transform((value) => value ?? undefined).optional(),
+    discount_percent: z.number().nullable().transform((value) => value ?? undefined).optional(),
      /**
       * dataType: numeric
       * defaultValue: (((quantity)::numeric * unit_price) * ((1)::numeric - (discount_percent / (100)::numeric)))
       */
-    line_total: z.number().nullish().transform((value) => value ?? undefined).optional(),
+    line_total: z.number().nullable().transform((value) => value ?? undefined).optional(),
 });
 
 /**
@@ -3166,11 +3166,11 @@ export const OrderItemsTableInsertBaseSchema = z.object({
      /**
       * dataType: int8
       */
-    orderId: z.number().int().nullish().optional(),
+    orderId: z.number().int().nullable().optional(),
      /**
       * dataType: int4
       */
-    productId: z.number().int().nullish().optional(),
+    productId: z.number().int().nullable().optional(),
      /**
       * dataType: int2
       */
@@ -3183,12 +3183,12 @@ export const OrderItemsTableInsertBaseSchema = z.object({
       * dataType: numeric
       * defaultValue: 0
       */
-    discountPercent: z.number().max(327682).nullish().optional(),
+    discountPercent: z.number().max(327682).nullable().optional(),
      /**
       * dataType: numeric
       * defaultValue: (((quantity)::numeric * unit_price) * ((1)::numeric - (discount_percent / (100)::numeric)))
       */
-    lineTotal: z.number().max(786434).nullish().optional(),
+    lineTotal: z.number().max(786434).nullable().optional(),
 });
 
 /**
@@ -3363,12 +3363,12 @@ export const OrdersTableBaseSchema = z.object({
      /**
       * dataType: int4
       */
-    user_id: z.number().int().nullish().transform((value) => value ?? undefined).optional(),
+    user_id: z.number().int().nullable().transform((value) => value ?? undefined).optional(),
      /**
       * dataType: order_status
       * defaultValue: 'pending'::order_status
       */
-    status: z.any().nullish().transform((value) => value ?? undefined).optional(),
+    status: z.any().nullable().transform((value) => value ?? undefined).optional(),
      /**
       * dataType: money
       */
@@ -3377,38 +3377,38 @@ export const OrdersTableBaseSchema = z.object({
       * dataType: money
       * defaultValue: 0
       */
-    tax_amount: z.number().nullish().transform((value) => value ?? undefined).optional(),
+    tax_amount: z.number().nullable().transform((value) => value ?? undefined).optional(),
      /**
       * dataType: money
       * defaultValue: 0
       */
-    shipping_cost: z.number().nullish().transform((value) => value ?? undefined).optional(),
+    shipping_cost: z.number().nullable().transform((value) => value ?? undefined).optional(),
      /**
       * dataType: date
       * defaultValue: CURRENT_DATE
       */
-    order_date: z.coerce.date().nullish().transform((value) => value ?? undefined).optional(),
+    order_date: z.coerce.date().nullable().transform((value) => value ?? undefined).optional(),
      /**
       * dataType: date
       */
-    shipped_date: z.coerce.date().nullish().transform((value) => value ?? undefined).optional(),
+    shipped_date: z.coerce.date().nullable().transform((value) => value ?? undefined).optional(),
      /**
       * dataType: time
       */
-    delivery_time: z.string().nullish().transform((value) => value ?? undefined).optional(),
+    delivery_time: z.string().nullable().transform((value) => value ?? undefined).optional(),
      /**
       * dataType: _text
       */
-    notes: z.array(z.string()).nullish().transform((value) => value ?? undefined).optional(),
+    notes: z.array(z.string()).nullable().transform((value) => value ?? undefined).optional(),
      /**
       * dataType: jsonb
       */
-    metadata: z.any().nullish().transform((value) => value ?? undefined).optional(),
+    metadata: z.any().nullable().transform((value) => value ?? undefined).optional(),
      /**
       * dataType: timestamptz
       * defaultValue: now()
       */
-    created_at: z.coerce.date().nullish().transform((value) => value ?? undefined).optional(),
+    created_at: z.coerce.date().nullable().transform((value) => value ?? undefined).optional(),
 });
 
 /**
@@ -3467,12 +3467,12 @@ export const OrdersTableInsertBaseSchema = z.object({
      /**
       * dataType: int4
       */
-    userId: z.number().int().nullish().optional(),
+    userId: z.number().int().nullable().optional(),
      /**
       * dataType: order_status
       * defaultValue: 'pending'::order_status
       */
-    status: z.any().nullish().optional(),
+    status: z.any().nullable().optional(),
      /**
       * dataType: money
       */
@@ -3481,38 +3481,38 @@ export const OrdersTableInsertBaseSchema = z.object({
       * dataType: money
       * defaultValue: 0
       */
-    taxAmount: z.number().nullish().optional(),
+    taxAmount: z.number().nullable().optional(),
      /**
       * dataType: money
       * defaultValue: 0
       */
-    shippingCost: z.number().nullish().optional(),
+    shippingCost: z.number().nullable().optional(),
      /**
       * dataType: date
       * defaultValue: CURRENT_DATE
       */
-    orderDate: z.date().nullish().optional(),
+    orderDate: z.date().nullable().optional(),
      /**
       * dataType: date
       */
-    shippedDate: z.date().nullish().optional(),
+    shippedDate: z.date().nullable().optional(),
      /**
       * dataType: time
       */
-    deliveryTime: z.string().nullish().optional(),
+    deliveryTime: z.string().nullable().optional(),
      /**
       * dataType: _text
       */
-    notes: z.array(z.string()).nullish().optional(),
+    notes: z.array(z.string()).nullable().optional(),
      /**
       * dataType: jsonb
       */
-    metadata: z.any().nullish().transform((value) => value ? JSON.stringify(value) : value).optional(),
+    metadata: z.any().nullable().optional(),
      /**
       * dataType: timestamptz
       * defaultValue: now()
       */
-    createdAt: z.date().nullish().optional(),
+    createdAt: z.date().nullable().optional(),
 });
 
 /**
@@ -3907,7 +3907,7 @@ export const PostsTableBaseSchema = z.object({
      /**
       * dataType: int4
       */
-    user_id: z.number().int().nullish().transform((value) => value ?? undefined).optional(),
+    user_id: z.number().int().nullable().transform((value) => value ?? undefined).optional(),
      /**
       * dataType: text
       */
@@ -3915,39 +3915,39 @@ export const PostsTableBaseSchema = z.object({
      /**
       * dataType: text
       */
-    content: z.string().nullish().transform((value) => value ?? undefined).optional(),
+    content: z.string().nullable().transform((value) => value ?? undefined).optional(),
      /**
       * dataType: bool
       * defaultValue: false
       */
-    published: z.boolean().nullish().transform((value) => value ?? undefined).optional(),
+    published: z.boolean().nullable().transform((value) => value ?? undefined).optional(),
      /**
       * dataType: varchar
       * defaultValue: 'draft'::character varying
       */
-    status: z.enum(POST_STATUSES).nullish().transform((value) => value ?? undefined).optional(),
+    status: z.enum(POST_STATUSES).nullable().transform((value) => value ?? undefined).optional(),
      /**
       * dataType: int4
       * defaultValue: 0
       */
-    views: z.number().int().nullish().transform((value) => value ?? undefined).optional(),
+    views: z.number().int().nullable().transform((value) => value ?? undefined).optional(),
      /**
       * dataType: _text
       */
-    tags: z.array(z.string()).nullish().transform((value) => value ?? undefined).optional(),
+    tags: z.array(z.string()).nullable().transform((value) => value ?? undefined).optional(),
      /**
       * dataType: jsonb
       */
-    metadata: z.any().nullish().transform((value) => value ?? undefined).optional(),
+    metadata: z.any().nullable().transform((value) => value ?? undefined).optional(),
      /**
       * dataType: timestamptz
       */
-    published_at: z.coerce.date().nullish().transform((value) => value ?? undefined).optional(),
+    published_at: z.coerce.date().nullable().transform((value) => value ?? undefined).optional(),
      /**
       * dataType: timestamptz
       * defaultValue: now()
       */
-    updated_at: z.coerce.date().nullish().transform((value) => value ?? undefined).optional(),
+    updated_at: z.coerce.date().nullable().transform((value) => value ?? undefined).optional(),
 });
 
 /**
@@ -3998,7 +3998,7 @@ export const PostsTableInsertBaseSchema = z.object({
      /**
       * dataType: int4
       */
-    userId: z.number().int().nullish().optional(),
+    userId: z.number().int().nullable().optional(),
      /**
       * dataType: text
       */
@@ -4006,39 +4006,39 @@ export const PostsTableInsertBaseSchema = z.object({
      /**
       * dataType: text
       */
-    content: z.string().nullish().optional(),
+    content: z.string().nullable().optional(),
      /**
       * dataType: bool
       * defaultValue: false
       */
-    published: z.boolean().nullish().optional(),
+    published: z.boolean().nullable().optional(),
      /**
       * dataType: varchar
       * defaultValue: 'draft'::character varying
       */
-    status: z.enum(POST_STATUSES).nullish().optional(),
+    status: z.enum(POST_STATUSES).nullable().optional(),
      /**
       * dataType: int4
       * defaultValue: 0
       */
-    views: z.number().int().nullish().optional(),
+    views: z.number().int().nullable().optional(),
      /**
       * dataType: _text
       */
-    tags: z.array(z.string()).nullish().optional(),
+    tags: z.array(z.string()).nullable().optional(),
      /**
       * dataType: jsonb
       */
-    metadata: z.any().nullish().transform((value) => value ? JSON.stringify(value) : value).optional(),
+    metadata: z.any().nullable().optional(),
      /**
       * dataType: timestamptz
       */
-    publishedAt: z.date().nullish().optional(),
+    publishedAt: z.date().nullable().optional(),
      /**
       * dataType: timestamptz
       * defaultValue: now()
       */
-    updatedAt: z.date().nullish().optional(),
+    updatedAt: z.date().nullable().optional(),
 });
 
 /**
@@ -4259,33 +4259,33 @@ export const ProductsTableBaseSchema = z.object({
      /**
       * dataType: numeric
       */
-    cost: z.number().nullish().transform((value) => value ?? undefined).optional(),
+    cost: z.number().nullable().transform((value) => value ?? undefined).optional(),
      /**
       * dataType: float4
       */
-    weight: z.number().nullish().transform((value) => value ?? undefined).optional(),
+    weight: z.number().nullable().transform((value) => value ?? undefined).optional(),
      /**
       * dataType: point
       */
-    dimensions: z.string().nullish().transform((value) => value ?? undefined).optional(),
+    dimensions: z.string().nullable().transform((value) => value ?? undefined).optional(),
      /**
       * dataType: bool
       * defaultValue: true
       */
-    is_active: z.boolean().nullish().transform((value) => value ?? undefined).optional(),
+    is_active: z.boolean().nullable().transform((value) => value ?? undefined).optional(),
      /**
       * dataType: bpchar
       */
-    barcode: z.string().nullish().transform((value) => value ?? undefined).optional(),
+    barcode: z.string().nullable().transform((value) => value ?? undefined).optional(),
      /**
       * dataType: text
       */
-    description: z.string().nullish().transform((value) => value ?? undefined).optional(),
+    description: z.string().nullable().transform((value) => value ?? undefined).optional(),
      /**
       * dataType: timestamptz
       * defaultValue: now()
       */
-    created_at: z.coerce.date().nullish().transform((value) => value ?? undefined).optional(),
+    created_at: z.coerce.date().nullable().transform((value) => value ?? undefined).optional(),
 });
 
 /**
@@ -4348,33 +4348,33 @@ export const ProductsTableInsertBaseSchema = z.object({
      /**
       * dataType: numeric
       */
-    cost: z.number().max(655362).nullish().optional(),
+    cost: z.number().max(655362).nullable().optional(),
      /**
       * dataType: float4
       */
-    weight: z.number().nullish().optional(),
+    weight: z.number().nullable().optional(),
      /**
       * dataType: point
       */
-    dimensions: z.string().nullish().optional(),
+    dimensions: z.string().nullable().optional(),
      /**
       * dataType: bool
       * defaultValue: true
       */
-    isActive: z.boolean().nullish().optional(),
+    isActive: z.boolean().nullable().optional(),
      /**
       * dataType: bpchar
       */
-    barcode: z.string().max(13).nullish().optional(),
+    barcode: z.string().max(13).nullable().optional(),
      /**
       * dataType: text
       */
-    description: z.string().nullish().optional(),
+    description: z.string().nullable().optional(),
      /**
       * dataType: timestamptz
       * defaultValue: now()
       */
-    createdAt: z.date().nullish().optional(),
+    createdAt: z.date().nullable().optional(),
 });
 
 /**
@@ -4603,33 +4603,33 @@ export const TimeSeriesTableBaseSchema = z.object({
      /**
       * dataType: numeric
       */
-    temperature: z.number().nullish().transform((value) => value ?? undefined).optional(),
+    temperature: z.number().nullable().transform((value) => value ?? undefined).optional(),
      /**
       * dataType: numeric
       */
-    humidity: z.number().nullish().transform((value) => value ?? undefined).optional(),
+    humidity: z.number().nullable().transform((value) => value ?? undefined).optional(),
      /**
       * dataType: numeric
       */
-    pressure: z.number().nullish().transform((value) => value ?? undefined).optional(),
+    pressure: z.number().nullable().transform((value) => value ?? undefined).optional(),
      /**
       * dataType: _numeric
       */
-    readings: z.array(z.number()).nullish().transform((value) => value ?? undefined).optional(),
+    readings: z.array(z.number()).nullable().transform((value) => value ?? undefined).optional(),
      /**
       * dataType: bool
       * defaultValue: false
       */
-    anomaly_detected: z.boolean().nullish().transform((value) => value ?? undefined).optional(),
+    anomaly_detected: z.boolean().nullable().transform((value) => value ?? undefined).optional(),
      /**
       * dataType: int2
       */
-    data_quality: z.number().int().nullish().transform((value) => value ?? undefined).optional(),
+    data_quality: z.number().int().nullable().transform((value) => value ?? undefined).optional(),
      /**
       * dataType: timestamptz
       * defaultValue: now()
       */
-    created_at: z.coerce.date().nullish().transform((value) => value ?? undefined).optional(),
+    created_at: z.coerce.date().nullable().transform((value) => value ?? undefined).optional(),
 });
 
 /**
@@ -4686,33 +4686,33 @@ export const TimeSeriesTableInsertBaseSchema = z.object({
      /**
       * dataType: numeric
       */
-    temperature: z.number().max(327682).nullish().optional(),
+    temperature: z.number().max(327682).nullable().optional(),
      /**
       * dataType: numeric
       */
-    humidity: z.number().max(327682).nullish().optional(),
+    humidity: z.number().max(327682).nullable().optional(),
      /**
       * dataType: numeric
       */
-    pressure: z.number().max(458754).nullish().optional(),
+    pressure: z.number().max(458754).nullable().optional(),
      /**
       * dataType: _numeric
       */
-    readings: z.array(z.number()).nullish().optional(),
+    readings: z.array(z.number()).nullable().optional(),
      /**
       * dataType: bool
       * defaultValue: false
       */
-    anomalyDetected: z.boolean().nullish().optional(),
+    anomalyDetected: z.boolean().nullable().optional(),
      /**
       * dataType: int2
       */
-    dataQuality: z.number().int().nullish().optional(),
+    dataQuality: z.number().int().nullable().optional(),
      /**
       * dataType: timestamptz
       * defaultValue: now()
       */
-    createdAt: z.date().nullish().optional(),
+    createdAt: z.date().nullable().optional(),
 });
 
 /**
@@ -4920,7 +4920,7 @@ export const UserSessionsTableBaseSchema = z.object({
      /**
       * dataType: int4
       */
-    user_id: z.number().int().nullish().transform((value) => value ?? undefined).optional(),
+    user_id: z.number().int().nullable().transform((value) => value ?? undefined).optional(),
      /**
       * dataType: varchar
       */
@@ -4933,20 +4933,20 @@ export const UserSessionsTableBaseSchema = z.object({
       * dataType: timestamptz
       * defaultValue: now()
       */
-    created_at: z.coerce.date().nullish().transform((value) => value ?? undefined).optional(),
+    created_at: z.coerce.date().nullable().transform((value) => value ?? undefined).optional(),
      /**
       * dataType: timestamptz
       * defaultValue: now()
       */
-    last_used_at: z.coerce.date().nullish().transform((value) => value ?? undefined).optional(),
+    last_used_at: z.coerce.date().nullable().transform((value) => value ?? undefined).optional(),
      /**
       * dataType: inet
       */
-    ip_address: z.string().nullish().transform((value) => value ?? undefined).optional(),
+    ip_address: z.string().nullable().transform((value) => value ?? undefined).optional(),
      /**
       * dataType: text
       */
-    user_agent: z.string().nullish().transform((value) => value ?? undefined).optional(),
+    user_agent: z.string().nullable().transform((value) => value ?? undefined).optional(),
 });
 
 /**
@@ -4996,7 +4996,7 @@ export const UserSessionsTableInsertBaseSchema = z.object({
      /**
       * dataType: int4
       */
-    userId: z.number().int().nullish().optional(),
+    userId: z.number().int().nullable().optional(),
      /**
       * dataType: varchar
       */
@@ -5009,20 +5009,20 @@ export const UserSessionsTableInsertBaseSchema = z.object({
       * dataType: timestamptz
       * defaultValue: now()
       */
-    createdAt: z.date().nullish().optional(),
+    createdAt: z.date().nullable().optional(),
      /**
       * dataType: timestamptz
       * defaultValue: now()
       */
-    lastUsedAt: z.date().nullish().optional(),
+    lastUsedAt: z.date().nullable().optional(),
      /**
       * dataType: inet
       */
-    ipAddress: z.string().nullish().optional(),
+    ipAddress: z.string().nullable().optional(),
      /**
       * dataType: text
       */
-    userAgent: z.string().nullish().optional(),
+    userAgent: z.string().nullable().optional(),
 });
 
 /**
@@ -5217,29 +5217,29 @@ export const UsersTableBaseSchema = z.object({
      /**
       * dataType: varchar
       */
-    email: z.string().nullish().transform((value) => value ?? undefined).optional(),
+    email: z.string().nullable().transform((value) => value ?? undefined).optional(),
      /**
       * dataType: varchar
       * defaultValue: 'active'::character varying
       */
-    status: z.string().nullish().transform((value) => value ?? undefined).optional(),
+    status: z.string().nullable().transform((value) => value ?? undefined).optional(),
      /**
       * dataType: jsonb
       */
-    profile: z.any().nullish().transform((value) => value ?? undefined).optional(),
+    profile: z.any().nullable().transform((value) => value ?? undefined).optional(),
      /**
       * dataType: timestamptz
       * defaultValue: now()
       */
-    created_at: z.coerce.date().nullish().transform((value) => value ?? undefined).optional(),
+    created_at: z.coerce.date().nullable().transform((value) => value ?? undefined).optional(),
      /**
       * dataType: _text
       */
-    roles: z.array(z.enum(USER_ROLES)).nullish().transform((value) => value ?? undefined).optional(),
+    roles: z.array(z.enum(USER_ROLES)).nullable().transform((value) => value ?? undefined).optional(),
      /**
       * dataType: _timestamp
       */
-    dates: z.array(z.coerce.date()).nullish().transform((value) => value ?? undefined).optional(),
+    dates: z.array(z.coerce.date()).nullable().transform((value) => value ?? undefined).optional(),
 });
 
 /**
@@ -5288,29 +5288,29 @@ export const UsersTableInsertBaseSchema = z.object({
      /**
       * dataType: varchar
       */
-    email: z.string().max(255).nullish().optional(),
+    email: z.string().max(255).nullable().optional(),
      /**
       * dataType: varchar
       * defaultValue: 'active'::character varying
       */
-    status: z.string().max(20).nullish().optional(),
+    status: z.string().max(20).nullable().optional(),
      /**
       * dataType: jsonb
       */
-    profile: z.any().nullish().transform((value) => value ? JSON.stringify(value) : value).optional(),
+    profile: z.any().nullable().optional(),
      /**
       * dataType: timestamptz
       * defaultValue: now()
       */
-    createdAt: z.date().nullish().optional(),
+    createdAt: z.date().nullable().optional(),
      /**
       * dataType: _text
       */
-    roles: z.array(z.enum(USER_ROLES)).nullish().optional(),
+    roles: z.array(z.enum(USER_ROLES)).nullable().optional(),
      /**
       * dataType: _timestamp
       */
-    dates: z.array(z.date()).nullish().optional(),
+    dates: z.array(z.date()).nullable().optional(),
 });
 
 /**
@@ -5511,23 +5511,23 @@ export const ViewUserPostsBaseSchema = z.object({
      /**
       * dataType: int4
       */
-    user_id: z.number().int().nullish().transform((value) => value ?? undefined).optional(),
+    user_id: z.number().int().nullable().transform((value) => value ?? undefined).optional(),
      /**
       * dataType: varchar
       */
-    user_name: z.string().nullish().transform((value) => value ?? undefined).optional(),
+    user_name: z.string().nullable().transform((value) => value ?? undefined).optional(),
      /**
       * dataType: int4
       */
-    post_id: z.number().int().nullish().transform((value) => value ?? undefined).optional(),
+    post_id: z.number().int().nullable().transform((value) => value ?? undefined).optional(),
      /**
       * dataType: text
       */
-    post_title: z.string().nullish().transform((value) => value ?? undefined).optional(),
+    post_title: z.string().nullable().transform((value) => value ?? undefined).optional(),
      /**
       * dataType: text
       */
-    post_content: z.string().nullish().transform((value) => value ?? undefined).optional(),
+    post_content: z.string().nullable().transform((value) => value ?? undefined).optional(),
 });
 
 /**

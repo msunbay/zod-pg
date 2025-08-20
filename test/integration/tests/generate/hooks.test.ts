@@ -28,14 +28,11 @@ describe('hook options', () => {
     const outputDir = getOutputDir('generate', 'hooks', 'column-hook');
 
     await generateZodSchemas({
-      connection: {
-        connectionString,
-        ssl: false,
-      },
+      connectionString,
       moduleResolution: 'esm',
       outputDir,
       include: ['users'],
-      onColumnInfoCreated: (column) => {
+      onColumnModelCreated: (column) => {
         // Add custom validation to email columns
         if (column.name === 'email') {
           return {
@@ -67,14 +64,11 @@ describe('hook options', () => {
     const outputDir = getOutputDir('generate', 'hooks', 'table-hook');
 
     await generateZodSchemas({
-      connection: {
-        connectionString,
-        ssl: false,
-      },
+      connectionString,
       moduleResolution: 'esm',
       outputDir,
       include: ['users'],
-      onTableInfoCreated: (table) => {
+      onTableModelCreated: (table) => {
         // Add a custom description to all tables
         return {
           ...table,
@@ -97,14 +91,11 @@ describe('hook options', () => {
     const outputDir = getOutputDir('generate', 'hooks', 'combined-hooks');
 
     await generateZodSchemas({
-      connection: {
-        connectionString,
-        ssl: false,
-      },
+      connectionString,
       moduleResolution: 'esm',
       outputDir,
       include: ['users'],
-      onColumnInfoCreated: (column) => {
+      onColumnModelCreated: (column) => {
         // Mark all string columns as trimmed
         if (column.type === 'string') {
           return {
@@ -114,7 +105,7 @@ describe('hook options', () => {
         }
         return column;
       },
-      onTableInfoCreated: (table) => {
+      onTableModelCreated: (table) => {
         // Add table metadata
         return {
           ...table,

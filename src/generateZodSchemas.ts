@@ -1,5 +1,6 @@
-import type { ZodPgConfig, ZodPgProgress, ZodPgSchemaInfo } from './types.js';
+import type { ZodPgConfig, ZodPgSchemaInfo } from './types.js';
 
+import { DEFAULT_CONFIGURATION } from './config.js';
 import { PostgreSqlConnector } from './database/PostgreSqlConnector.js';
 import { generateConstantsFile } from './generate/generateConstantsFile.js';
 import { generateIndexFiles } from './generate/generateIndexFiles.js';
@@ -7,41 +8,28 @@ import { generateSchemaFiles } from './generate/generateSchemaFile.js';
 import { generateTypesFile } from './generate/generateTypesFile.js';
 import { clearTablesDirectory, logDebug } from './utils/index.js';
 
-export interface ZodPgGenerateConfig extends ZodPgConfig {
-  onProgress?: (status: ZodPgProgress, args?: unknown) => void;
-}
-
-const defaultConfig = {
-  zodVersion: '3',
-  fieldNameCasing: 'camelCase',
-  objectNameCasing: 'PascalCase',
-  moduleResolution: 'commonjs',
-} satisfies Partial<ZodPgGenerateConfig>;
-
 /**
- * Generates Zod schemas for all tables in the specified Postgres database schema.
+ * Generates Zod schemas for all tables in the specified database schema.
  */
-export const generateZodSchemas = async ({
-  onProgress,
-  ...config
-}: ZodPgGenerateConfig): Promise<ZodPgSchemaInfo> => {
+export const generateZodSchemas = async (
+  config: ZodPgConfig
+): Promise<ZodPgSchemaInfo> => {
   const generateConfig = {
-    ...defaultConfig,
+    ...DEFAULT_CONFIGURATION,
     ...config,
   };
 
-  const { connection, outputDir, schemaName, cleanOutput } = generateConfig;
+  const { connectionString, outputDir, schemaName, cleanOutput, onProgress } =
+    generateConfig;
 
   if (cleanOutput) {
     clearTablesDirectory(outputDir);
   }
 
-  logDebug(`Connecting to Postgres database at ${connection.connectionString}`);
+  logDebug(`Connecting to Postgres database at ${connectionString}`);
 
   const connector = config.dbConnector ?? new PostgreSqlConnector(config);
 
-  onProgress?.('connecting');
-  onProgress?.('fetchingSchema');
   const schema = await connector.getSchemaInformation(config);
 
   onProgress?.('generating', { total: schema.tables.length });

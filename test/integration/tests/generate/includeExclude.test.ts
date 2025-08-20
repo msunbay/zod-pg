@@ -32,10 +32,7 @@ describe('include and exclude options', () => {
     );
 
     await generateZodSchemas({
-      connection: {
-        connectionString,
-        ssl: false,
-      },
+      connectionString,
       moduleResolution: 'esm',
       outputDir,
       include: 'users',
@@ -62,10 +59,7 @@ describe('include and exclude options', () => {
     );
 
     await generateZodSchemas({
-      connection: {
-        connectionString,
-        ssl: false,
-      },
+      connectionString,
       moduleResolution: 'esm',
       outputDir,
       include: ['users', 'posts'],
@@ -93,10 +87,7 @@ describe('include and exclude options', () => {
     );
 
     await generateZodSchemas({
-      connection: {
-        connectionString,
-        ssl: false,
-      },
+      connectionString,
       moduleResolution: 'esm',
       outputDir,
       exclude: 'posts',
@@ -123,10 +114,7 @@ describe('include and exclude options', () => {
     );
 
     await generateZodSchemas({
-      connection: {
-        connectionString,
-        ssl: false,
-      },
+      connectionString,
       moduleResolution: 'esm',
       outputDir,
       exclude: ['posts', 'users'],
@@ -156,10 +144,7 @@ describe('include and exclude options', () => {
     );
 
     await generateZodSchemas({
-      connection: {
-        connectionString,
-        ssl: false,
-      },
+      connectionString,
       moduleResolution: 'esm',
       outputDir,
       include: ['users', 'posts'],

@@ -31,10 +31,7 @@ describe('progress callback', () => {
     const outputDir = getOutputDir('generate', 'progress', 'progress-tracking');
 
     await generateZodSchemas({
-      connection: {
-        connectionString,
-        ssl: false,
-      },
+      connectionString,
       moduleResolution: 'esm',
       outputDir,
       include: ['users', 'posts'],
@@ -74,10 +71,7 @@ describe('progress callback', () => {
     // Should not throw when no progress callback is provided
     await expect(
       generateZodSchemas({
-        connection: {
-          connectionString,
-          ssl: false,
-        },
+        connectionString,
         moduleResolution: 'esm',
         outputDir,
         include: ['users'],

@@ -28,10 +28,7 @@ describe('schema name option', () => {
     const outputDir = getOutputDir('generate', 'schemaName', 'default-schema');
 
     await generateZodSchemas({
-      connection: {
-        connectionString,
-        ssl: false,
-      },
+      connectionString,
       moduleResolution: 'esm',
       outputDir,
       include: ['users'],
@@ -50,10 +47,7 @@ describe('schema name option', () => {
     const outputDir = getOutputDir('generate', 'schemaName', 'explicit-public');
 
     await generateZodSchemas({
-      connection: {
-        connectionString,
-        ssl: false,
-      },
+      connectionString,
       moduleResolution: 'esm',
       outputDir,
       schemaName: 'public',

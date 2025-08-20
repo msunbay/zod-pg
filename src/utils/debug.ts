@@ -5,6 +5,6 @@ export const enableDebug = () => {
   debug.enable('zod-pg');
 };
 
-export const logDebug = (args: any) => {
+export const logDebug = (...args: any[]) => {
   debug('zod-pg')(args);
 };

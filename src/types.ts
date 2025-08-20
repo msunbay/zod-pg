@@ -54,9 +54,9 @@ export interface ZodPgRawColumnInfo {
   defaultValue?: string;
   /** Whether the column allows NULL values */
   isNullable: boolean;
-  /** Maximum length constraint for string columns */
+  /** Maximum length constraint for string or number columns */
   maxLen?: number;
-  /** Minimum length constraint for string columns */
+  /** Minimum length constraint for string or number columns */
   minLen?: number;
   /**
    * PostgreSQL type name from pg_type.typname. This is the actual type name used internally by PostgreSQL.
@@ -153,26 +153,6 @@ export type ZodPgProgress =
   | 'generating' // Processing and generating schemas
   | 'done'; // Generation complete
 
-/**
- * Configuration for PostgreSQL database connection.
- */
-export interface ZodPgConnectionConfig {
-  /** Database port (default: 5432) */
-  port?: string | number;
-  /** Database host (default: localhost) */
-  host?: string;
-  /** Database name to connect to */
-  database?: string;
-  /** Username for authentication */
-  user?: string;
-  /** Password for authentication */
-  password?: string;
-  /** Complete connection string (overrides individual connection params) */
-  connectionString?: string;
-  /** Whether to use SSL connection */
-  ssl?: boolean;
-}
-
 export interface ZodPgDbConnector {
   getSchemaInformation: (config: ZodPgConfig) => Promise<ZodPgSchemaInfo>;
 }
@@ -214,30 +194,79 @@ export type ZodPgColumnType =
  */
 export type ZodPgZodVersion = '3' | '4' | '4-mini';
 
+export interface ZodPgHooks {
+  /**
+   * Hook called during the schema generation process.
+   */
+  onProgress?: (
+    status: ZodPgProgress,
+    args?: { total?: number; index?: number }
+  ) => void;
+
+  /**
+   * Hook called for each column after initial model creation from the database schema.
+   * Allows customization of individual column properties and Zod types.
+   */
+  onColumnModelCreated?: (
+    column: ZodPgColumnInfo
+  ) => ZodPgColumnInfo | Promise<ZodPgColumnInfo>;
+
+  /**
+   * Hook called for each table after information is fetched from the database and columns are processed.
+   * Allows customization of the entire table model.
+   */
+  onTableModelCreated?: (
+    table: ZodPgTableInfo
+  ) => ZodPgTableInfo | Promise<ZodPgTableInfo>;
+}
+
+/**
+ * Configuration for PostgreSQL database connection.
+ */
+export interface ZodPgConnectionConfig {
+  /** Database port (default: 5432) */
+  port?: string | number;
+  /** Database host (default: localhost) */
+  host?: string;
+  /** Database name to connect to */
+  database?: string;
+  /** Username for authentication */
+  user?: string;
+  /** Password for authentication */
+  password?: string;
+  /** Complete connection string (overrides individual connection params) */
+  connectionString?: string;
+  /** Whether to use SSL connection */
+  ssl?: boolean;
+}
+
 /**
  * Main configuration interface for zod-pg schema generation.
  * This interface defines all available options for customizing the generation process.
  */
-export interface ZodPgConfig {
-  /** Database connection configuration */
-  connection: ZodPgConnectionConfig;
+export interface ZodPgConfig extends ZodPgHooks, ZodPgConnectionConfig {
   /** Whether to clean the output directory before generation */
   cleanOutput?: boolean;
   /** Regex pattern(s) to include only specific tables */
   include?: string | string[];
   /** Regex pattern(s) to exclude specific tables */
   exclude?: string | string[];
+
   /** Import location for JSON schemas (enables JSON schema feature) */
   jsonSchemaImportLocation?: string;
 
   /** Whether to stringify JSON values in write schemas */
-  disableStringifyJson?: boolean;
+  stringifyJson?: boolean;
   /** Whether to convert dates to ISO strings in write schemas */
   stringifyDates?: boolean;
   /** Whether to use z.coerce.date() instead of z.date() in read schemas */
-  disableCoerceDates?: boolean;
+  coerceDates?: boolean;
   /** Whether to provide empty arrays as defaults for nullable array fields */
   defaultEmptyArray?: boolean;
+  /** Whether to transform null values to undefined in generated read schemas */
+  defaultNullsToUndefined?: boolean;
+  /** Wheter to use "unknown" for unknown types, defaults to "any" */
+  defaultUnknown?: boolean;
 
   /** Target Zod version for generated code */
   zodVersion?: ZodPgZodVersion;
@@ -246,9 +275,10 @@ export interface ZodPgConfig {
   fieldNameCasing?: ZodPgCasing;
   /** Casing style for object/type names in generated schemas */
   objectNameCasing?: ZodPgCasing;
-
-  /** Whether to disable case transformations for generated schemas */
-  disableCaseTransform?: boolean;
+  /** Whether to enable case transformations for generated schemas */
+  caseTransform?: boolean;
+  /** Whether to enable singularization of table names / types in generated schemas */
+  singularize?: boolean;
 
   /** Whether to suppress console output during generation */
   silent?: boolean;
@@ -258,22 +288,6 @@ export interface ZodPgConfig {
   outputDir: string;
   /** Database schema name to process (default: 'public') */
   schemaName?: string;
-
-  /**
-   * Hook called for each column after initial model creation from the database schema.
-   * Allows customization of individual column properties and Zod types.
-   */
-  onColumnInfoCreated?: (
-    column: ZodPgColumnInfo
-  ) => ZodPgColumnInfo | Promise<ZodPgColumnInfo>;
-
-  /**
-   * Hook called for each table after information is fetched from the database.
-   * Allows customization of the entire table model.
-   */
-  onTableInfoCreated?: (
-    table: ZodPgTableInfo
-  ) => ZodPgTableInfo | Promise<ZodPgTableInfo>;
 
   /**
    * Custom renderer for generating Zod schemas.

@@ -100,7 +100,6 @@ describe('PostgreSqlConnector', () => {
 
     const connector = buildConnector(rows);
     const schema = await connector.getSchemaInformation({
-      connection: { connectionString: 'ignored', ssl: false },
       outputDir: '/tmp/ignore',
     });
 
@@ -121,7 +120,6 @@ describe('PostgreSqlConnector', () => {
     ];
     const connector = buildConnector(rows);
     const schema = await connector.getSchemaInformation({
-      connection: { connectionString: 'x', ssl: false },
       include: '^use',
       outputDir: '/tmp/ignore',
     });
@@ -137,7 +135,6 @@ describe('PostgreSqlConnector', () => {
     ];
     const connector = buildConnector(rows);
     const schema = await connector.getSchemaInformation({
-      connection: { connectionString: 'x', ssl: false },
       include: ['users', 'comments'],
       outputDir: '/tmp/ignore',
     });
@@ -155,7 +152,6 @@ describe('PostgreSqlConnector', () => {
     ];
     const connector = buildConnector(rows);
     const schema = await connector.getSchemaInformation({
-      connection: { connectionString: 'x', ssl: false },
       exclude: 'user',
       outputDir: '/tmp/ignore',
     });
@@ -171,7 +167,6 @@ describe('PostgreSqlConnector', () => {
     ];
     const connector = buildConnector(rows);
     const schema = await connector.getSchemaInformation({
-      connection: { connectionString: 'x', ssl: false },
       include: '^user_',
       exclude: 'settings',
       outputDir: '/tmp/ignore',
@@ -192,7 +187,6 @@ describe('PostgreSqlConnector', () => {
     ];
     const connector = buildConnector(rows);
     const schema = await connector.getSchemaInformation({
-      connection: { connectionString: 'x', ssl: false },
       outputDir: '/tmp/ignore',
     });
 
@@ -202,31 +196,29 @@ describe('PostgreSqlConnector', () => {
     expect(getEnumConstraints).toHaveBeenCalled();
   });
 
-  it('applies onColumnInfoCreated hook (async) before grouping', async () => {
+  it('applies onColumnModelCreated hook (async) before grouping', async () => {
     const rows = [createRaw({ name: 'id' })];
     const connector = buildConnector(rows, {
-      onColumnInfoCreated: async (c: ZodPgColumnInfo) => ({
+      onColumnModelCreated: async (c: ZodPgColumnInfo) => ({
         ...c,
         type: 'int',
       }),
     });
     const schema = await connector.getSchemaInformation({
-      connection: { connectionString: 'x', ssl: false },
       outputDir: '/tmp/ignore',
     });
     expect(schema.tables[0].columns[0].type).toBe('int');
   });
 
-  it('applies onTableInfoCreated hook (async) after grouping', async () => {
+  it('applies onTableModelCreated hook (async) after grouping', async () => {
     const rows = [createRaw({ tableName: 'users' })];
     const connector = buildConnector(rows, {
-      onTableInfoCreated: async (t: ZodPgTableInfo) => ({
+      onTableModelCreated: async (t: ZodPgTableInfo) => ({
         ...t,
         name: `${t.name}_x`,
       }),
     });
     const schema = await connector.getSchemaInformation({
-      connection: { connectionString: 'x', ssl: false },
       outputDir: '/tmp/ignore',
     });
     expect(schema.tables[0].name).toBe('users_x');
@@ -240,7 +232,6 @@ describe('PostgreSqlConnector', () => {
     const rows = [createRaw({ name: 'vals', dataType: '_int4' })];
     const connector = buildConnector(rows);
     const schema = await connector.getSchemaInformation({
-      connection: { connectionString: 'x', ssl: false },
       outputDir: '/tmp/ignore',
     });
     const col = schema.tables[0].columns[0];
@@ -252,7 +243,6 @@ describe('PostgreSqlConnector', () => {
   it('returns empty tables list when no columns', async () => {
     const connector = buildConnector([]);
     const schema = await connector.getSchemaInformation({
-      connection: { connectionString: 'x', ssl: false },
       outputDir: '/tmp/ignore',
     });
     expect(schema.tables).toEqual([]);
@@ -261,7 +251,6 @@ describe('PostgreSqlConnector', () => {
   it('ensures maxLen undefined normalization', async () => {
     const connector = buildConnector([createRaw({ maxLen: undefined })]);
     const schema = await connector.getSchemaInformation({
-      connection: { connectionString: 'x', ssl: false },
       outputDir: '/tmp/ignore',
     });
     expect(schema.tables[0].columns[0].maxLen).toBeUndefined();

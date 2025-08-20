@@ -3,19 +3,29 @@ import { cosmiconfig } from 'cosmiconfig';
 import type { ZodPgConfig, ZodPgConnectionConfig } from './types.js';
 
 // Base defaults independent of environment.
-const baseDefaults: ZodPgConnectionConfig = {
+export const DEFAULT_CONFIGURATION: ZodPgConfig = {
   host: 'localhost',
   user: 'postgres',
   password: 'postgres',
   database: 'postgres',
-  port: '5432',
+  port: 5432,
   ssl: false,
-};
-
-const baseConfig: ZodPgConfig = {
-  connection: baseDefaults,
   schemaName: 'public',
+
+  zodVersion: '3',
   outputDir: './zod-schemas',
+  moduleResolution: 'commonjs',
+  cleanOutput: false,
+
+  fieldNameCasing: 'camelCase',
+  objectNameCasing: 'PascalCase',
+
+  caseTransform: true,
+  singularize: true,
+  coerceDates: true,
+  defaultEmptyArray: false,
+  defaultNullsToUndefined: true,
+  defaultUnknown: false,
 };
 
 // Build an overrides object containing only values explicitly supplied via env vars.
@@ -39,26 +49,11 @@ export const getConfiguration = async (
   const result = await explorer.search();
   const envOverrides = getEnvOverrides();
 
-  if (!result) {
-    return {
-      ...baseConfig,
-      ...overrides,
-      connection: { ...baseDefaults, ...envOverrides, ...overrides.connection },
-    };
-  }
-
-  const config = result.config;
-
   // Precedence (lowest -> highest): base defaults < config file < env overrides
   return {
-    ...baseConfig,
-    ...config,
+    ...DEFAULT_CONFIGURATION,
+    ...result?.config,
+    ...envOverrides,
     ...overrides,
-    connection: {
-      ...baseDefaults,
-      ...(config.connection || {}),
-      ...envOverrides,
-      ...overrides.connection,
-    },
   };
 };

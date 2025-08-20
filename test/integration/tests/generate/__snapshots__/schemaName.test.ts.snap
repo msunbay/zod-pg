@@ -45,29 +45,29 @@ export const UsersTableBaseSchema = z.object({
      /**
       * dataType: varchar
       */
-    email: z.string().nullish().transform((value) => value ?? undefined).optional(),
+    email: z.string().nullable().transform((value) => value ?? undefined).optional(),
      /**
       * dataType: varchar
       * defaultValue: 'active'::character varying
       */
-    status: z.string().nullish().transform((value) => value ?? undefined).optional(),
+    status: z.string().nullable().transform((value) => value ?? undefined).optional(),
      /**
       * dataType: jsonb
       */
-    profile: z.any().nullish().transform((value) => value ?? undefined).optional(),
+    profile: z.any().nullable().transform((value) => value ?? undefined).optional(),
      /**
       * dataType: timestamptz
       * defaultValue: now()
       */
-    created_at: z.coerce.date().nullish().transform((value) => value ?? undefined).optional(),
+    created_at: z.coerce.date().nullable().transform((value) => value ?? undefined).optional(),
      /**
       * dataType: _text
       */
-    roles: z.array(z.enum(USER_ROLES)).nullish().transform((value) => value ?? undefined).optional(),
+    roles: z.array(z.enum(USER_ROLES)).nullable().transform((value) => value ?? undefined).optional(),
      /**
       * dataType: _timestamp
       */
-    dates: z.array(z.coerce.date()).nullish().transform((value) => value ?? undefined).optional(),
+    dates: z.array(z.coerce.date()).nullable().transform((value) => value ?? undefined).optional(),
 });
 
 /**
@@ -116,29 +116,29 @@ export const UsersTableInsertBaseSchema = z.object({
      /**
       * dataType: varchar
       */
-    email: z.string().max(255).nullish().optional(),
+    email: z.string().max(255).nullable().optional(),
      /**
       * dataType: varchar
       * defaultValue: 'active'::character varying
       */
-    status: z.string().max(20).nullish().optional(),
+    status: z.string().max(20).nullable().optional(),
      /**
       * dataType: jsonb
       */
-    profile: z.any().nullish().transform((value) => value ? JSON.stringify(value) : value).optional(),
+    profile: z.any().nullable().optional(),
      /**
       * dataType: timestamptz
       * defaultValue: now()
       */
-    createdAt: z.date().nullish().optional(),
+    createdAt: z.date().nullable().optional(),
      /**
       * dataType: _text
       */
-    roles: z.array(z.enum(USER_ROLES)).nullish().optional(),
+    roles: z.array(z.enum(USER_ROLES)).nullable().optional(),
      /**
       * dataType: _timestamp
       */
-    dates: z.array(z.date()).nullish().optional(),
+    dates: z.array(z.date()).nullable().optional(),
 });
 
 /**
@@ -334,29 +334,29 @@ export const UsersTableBaseSchema = z.object({
      /**
       * dataType: varchar
       */
-    email: z.string().nullish().transform((value) => value ?? undefined).optional(),
+    email: z.string().nullable().transform((value) => value ?? undefined).optional(),
      /**
       * dataType: varchar
       * defaultValue: 'active'::character varying
       */
-    status: z.string().nullish().transform((value) => value ?? undefined).optional(),
+    status: z.string().nullable().transform((value) => value ?? undefined).optional(),
      /**
       * dataType: jsonb
       */
-    profile: z.any().nullish().transform((value) => value ?? undefined).optional(),
+    profile: z.any().nullable().transform((value) => value ?? undefined).optional(),
      /**
       * dataType: timestamptz
       * defaultValue: now()
       */
-    created_at: z.coerce.date().nullish().transform((value) => value ?? undefined).optional(),
+    created_at: z.coerce.date().nullable().transform((value) => value ?? undefined).optional(),
      /**
       * dataType: _text
       */
-    roles: z.array(z.enum(USER_ROLES)).nullish().transform((value) => value ?? undefined).optional(),
+    roles: z.array(z.enum(USER_ROLES)).nullable().transform((value) => value ?? undefined).optional(),
      /**
       * dataType: _timestamp
       */
-    dates: z.array(z.coerce.date()).nullish().transform((value) => value ?? undefined).optional(),
+    dates: z.array(z.coerce.date()).nullable().transform((value) => value ?? undefined).optional(),
 });
 
 /**
@@ -405,29 +405,29 @@ export const UsersTableInsertBaseSchema = z.object({
      /**
       * dataType: varchar
       */
-    email: z.string().max(255).nullish().optional(),
+    email: z.string().max(255).nullable().optional(),
      /**
       * dataType: varchar
       * defaultValue: 'active'::character varying
       */
-    status: z.string().max(20).nullish().optional(),
+    status: z.string().max(20).nullable().optional(),
      /**
       * dataType: jsonb
       */
-    profile: z.any().nullish().transform((value) => value ? JSON.stringify(value) : value).optional(),
+    profile: z.any().nullable().optional(),
      /**
       * dataType: timestamptz
       * defaultValue: now()
       */
-    createdAt: z.date().nullish().optional(),
+    createdAt: z.date().nullable().optional(),
      /**
       * dataType: _text
       */
-    roles: z.array(z.enum(USER_ROLES)).nullish().optional(),
+    roles: z.array(z.enum(USER_ROLES)).nullable().optional(),
      /**
       * dataType: _timestamp
       */
-    dates: z.array(z.date()).nullish().optional(),
+    dates: z.array(z.date()).nullable().optional(),
 });
 
 /**

@@ -29,9 +29,11 @@ export class PostgreSqlConnector extends DatabaseConnector {
   ): Promise<ZodPgRawColumnInfo[]> {
     const { schemaName = 'public' } = config;
 
-    const client = this.createClient(config.connection);
+    this.options.onProgress?.('connecting');
+    const client = this.createClient(config);
     await client.connect();
 
+    this.options.onProgress?.('fetchingSchema');
     logDebug(`Retrieving schema information for schema '${schemaName}'`);
 
     try {

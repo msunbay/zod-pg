@@ -29,10 +29,14 @@ const table = (cols: ZodPgColumnInfo[]): ZodPgTableInfo => ({
   columns: cols,
 });
 const config: ZodPgConfig = {
-  connection: { connectionString: 'x', ssl: false },
   outputDir: '/tmp/ignore',
   fieldNameCasing: 'camelCase',
   objectNameCasing: 'PascalCase',
+  stringifyJson: true,
+  singularize: true,
+  coerceDates: true,
+  defaultNullsToUndefined: true,
+  caseTransform: true,
 };
 
 describe('Zod3Renderer', () => {
@@ -81,13 +85,13 @@ describe('Zod3Renderer', () => {
     });
     expect(out).toMatch(/dates: z\.array\(z\.coerce\.date\(\)\)/);
     expect(out).toMatch(
-      /dates_nullable: z\.array\(z\.coerce\.date\(\)\)\.nullish\(\)\.transform\(\(value\) => value \?\? undefined\)\.optional\(\)/
+      /dates_nullable: z\.array\(z\.coerce\.date\(\)\)\.nullable\(\)\.transform\(\(value\) => value \?\? undefined\)\.optional\(\)/
     );
     expect(out).toMatch(
       /dates: z\.array\(z\.date\(\)\)\.transform\(\(value\) => value\.map\(date => date\.toISOString\(\)\)\)/
     );
     expect(out).toMatch(
-      /datesNullable: z\.array\(z\.date\(\)\)\.nullish\(\)\.transform\(\(value\) => value \? value\.map\(date => date\.toISOString\(\)\) : value\)\.optional\(\)/
+      /datesNullable: z\.array\(z\.date\(\)\)\.nullable\(\)\.transform\(\(value\) => value \? value\.map\(date => date\.toISOString\(\)\) : value\)\.optional\(\)/
     );
   });
 

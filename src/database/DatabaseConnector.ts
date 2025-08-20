@@ -3,6 +3,7 @@ import {
   ZodPgConfig,
   ZodPgConnectionConfig,
   ZodPgDbConnector,
+  ZodPgHooks,
   ZodPgRawColumnInfo,
   ZodPgSchemaInfo,
   ZodPgTableInfo,
@@ -10,24 +11,6 @@ import {
 import { logDebug } from '../utils/debug.js';
 import { getEnumConstraints } from './enumConstraints.js';
 import { getZodType, isArrayType, isSerialType } from './typeMap.js';
-
-export interface DatabaseConnectorOptions {
-  /**
-   * Hook called for each column after initial model creation from the database schema.
-   * Allows customization of individual column properties and Zod types.
-   */
-  onColumnInfoCreated?: (
-    column: ZodPgColumnInfo
-  ) => ZodPgColumnInfo | Promise<ZodPgColumnInfo>;
-
-  /**
-   * Hook called for each table after information is fetched from the database and columns are processed.
-   * Allows customization of the entire table model.
-   */
-  onTableInfoCreated?: (
-    table: ZodPgTableInfo
-  ) => ZodPgTableInfo | Promise<ZodPgTableInfo>;
-}
 
 export interface DatabaseClient {
   connect: () => Promise<void>;
@@ -41,9 +24,9 @@ export interface DatabaseClient {
  * Should be extended by specific database connectors like PostgreSqlConnector.
  */
 export abstract class DatabaseConnector implements ZodPgDbConnector {
-  protected options: DatabaseConnectorOptions;
+  protected options: ZodPgHooks;
 
-  constructor(options: DatabaseConnectorOptions = {}) {
+  constructor(options: ZodPgHooks = {}) {
     this.options = options;
   }
 
@@ -85,8 +68,8 @@ export abstract class DatabaseConnector implements ZodPgDbConnector {
     parsedColumn.isOptional = parsedColumn.isNullable;
     parsedColumn.isEnum = !!parsedColumn.enumValues?.length;
 
-    if (this.options.onColumnInfoCreated) {
-      return this.options.onColumnInfoCreated(parsedColumn);
+    if (this.options.onColumnModelCreated) {
+      return this.options.onColumnModelCreated(parsedColumn);
     }
 
     return parsedColumn;
@@ -98,11 +81,11 @@ export abstract class DatabaseConnector implements ZodPgDbConnector {
   ): Promise<ZodPgSchemaInfo> {
     const result: ZodPgSchemaInfo = { name: schemaName, tables };
 
-    if (this.options.onTableInfoCreated) {
+    if (this.options.onTableModelCreated) {
       const modifiedTables = [];
 
       for (const table of tables) {
-        const modifiedTable = await this.options.onTableInfoCreated(table);
+        const modifiedTable = await this.options.onTableModelCreated(table);
         modifiedTables.push(modifiedTable);
       }
 

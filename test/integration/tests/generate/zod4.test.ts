@@ -27,10 +27,7 @@ it('generates schemas compatible with zod version 4', async () => {
   const outputDir = getOutputDir('generate', 'zod4');
 
   await generateZodSchemas({
-    connection: {
-      connectionString,
-      ssl: false,
-    },
+    connectionString,
     outputDir,
     moduleResolution: 'esm',
     zodVersion: '4',

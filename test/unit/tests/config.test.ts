@@ -1,11 +1,14 @@
 import { cosmiconfig } from 'cosmiconfig';
 
-import { getConfiguration } from '../../../src/config.js';
+import {
+  DEFAULT_CONFIGURATION,
+  getConfiguration,
+} from '../../../src/config.js';
 
 // Mock cosmiconfig
 vi.mock('cosmiconfig');
 
-describe('getConfiguration', () => {
+describe.sequential('getConfiguration', () => {
   const mockExplorer = {
     search: vi.fn(),
   };
@@ -23,29 +26,16 @@ describe('getConfiguration', () => {
 
     const config = await getConfiguration();
 
-    expect(config).toEqual({
-      connection: {
-        database: 'postgres',
-        host: 'localhost',
-        port: '5432',
-        user: 'postgres',
-        password: 'postgres',
-        ssl: false,
-      },
-      outputDir: './zod-schemas',
-      schemaName: 'public',
-    });
+    expect(config).toEqual(DEFAULT_CONFIGURATION);
     expect(cosmiconfig).toHaveBeenCalledWith('zod-pg');
   });
 
   it('should return merged config when configuration file is found (merging defaults for missing connection fields)', async () => {
     const mockConfig = {
-      connection: {
-        host: 'conf-host',
-        port: 5432,
-        user: 'conf-user',
-        password: 'conf-pass',
-      },
+      host: 'conf-host',
+      port: 5432,
+      user: 'conf-user',
+      password: 'conf-pass',
       outputDir: './custom-output',
       schemaName: 'test_schema',
     };
@@ -58,14 +48,11 @@ describe('getConfiguration', () => {
     const config = await getConfiguration();
 
     expect(config).toEqual({
-      connection: {
-        host: 'conf-host',
-        port: 5432,
-        user: 'conf-user',
-        password: 'conf-pass',
-        database: 'postgres',
-        ssl: false,
-      },
+      ...DEFAULT_CONFIGURATION,
+      host: 'conf-host',
+      port: 5432,
+      user: 'conf-user',
+      password: 'conf-pass',
       outputDir: './custom-output',
       schemaName: 'test_schema',
     });
@@ -74,9 +61,7 @@ describe('getConfiguration', () => {
   it('should handle partial connection config', async () => {
     const mockConfig = {
       outputDir: './schemas',
-      connection: {
-        host: 'db.example.com',
-      },
+      host: 'db.example.com',
     };
 
     mockExplorer.search.mockResolvedValue({
@@ -87,16 +72,9 @@ describe('getConfiguration', () => {
     const config = await getConfiguration();
 
     expect(config).toEqual({
-      connection: {
-        host: 'db.example.com',
-        user: 'postgres',
-        password: 'postgres',
-        database: 'postgres',
-        port: '5432',
-        ssl: false,
-      },
+      ...DEFAULT_CONFIGURATION,
+      host: 'db.example.com',
       outputDir: './schemas',
-      schemaName: 'public',
     });
   });
 
@@ -108,18 +86,7 @@ describe('getConfiguration', () => {
 
     const config = await getConfiguration();
 
-    expect(config).toEqual({
-      connection: {
-        host: 'localhost',
-        user: 'postgres',
-        password: 'postgres',
-        database: 'postgres',
-        port: '5432',
-        ssl: false,
-      },
-      outputDir: './zod-schemas',
-      schemaName: 'public',
-    });
+    expect(config).toEqual(DEFAULT_CONFIGURATION);
   });
 
   it('applies environment variable overrides for defaults (no config file)', async () => {
@@ -132,7 +99,9 @@ describe('getConfiguration', () => {
     process.env.POSTGRES_SSL = 'true';
 
     const config = await getConfiguration();
-    expect(config.connection).toEqual({
+
+    expect(config).toEqual({
+      ...DEFAULT_CONFIGURATION,
       host: 'env-host',
       user: 'env-user',
       password: 'env-pass',
@@ -152,14 +121,12 @@ describe('getConfiguration', () => {
 
   it('environment variables override config file values', async () => {
     const mockConfig = {
-      connection: {
-        host: 'conf-host',
-        user: 'conf-user',
-        password: 'conf-pass',
-        database: 'conf-db',
-        port: '9999',
-        ssl: false,
-      },
+      host: 'conf-host',
+      user: 'conf-user',
+      password: 'conf-pass',
+      database: 'conf-db',
+      port: '9999',
+      ssl: false,
       outputDir: './out',
     };
     mockExplorer.search.mockResolvedValue({
@@ -174,13 +141,17 @@ describe('getConfiguration', () => {
     process.env.POSTGRES_SSL = 'true';
 
     const config = await getConfiguration();
-    expect(config.connection).toEqual({
+
+    expect(config).toEqual({
+      ...DEFAULT_CONFIGURATION,
       host: 'env-host2',
       user: 'env-user2',
       password: 'env-pass2',
       database: 'env-db2',
       port: '7777',
       ssl: true,
+      outputDir: './out',
+      schemaName: 'public',
     });
 
     delete process.env.POSTGRES_HOST;
@@ -193,14 +164,12 @@ describe('getConfiguration', () => {
 
   it('environment variables override only provided fields and retain others from config', async () => {
     const mockConfig = {
-      connection: {
-        host: 'conf-host',
-        user: 'conf-user',
-        password: 'conf-pass',
-        database: 'conf-db',
-        port: '9999',
-        ssl: false,
-      },
+      host: 'conf-host',
+      user: 'conf-user',
+      password: 'conf-pass',
+      database: 'conf-db',
+      port: '9999',
+      ssl: false,
       outputDir: './out',
     };
     mockExplorer.search.mockResolvedValue({
@@ -213,13 +182,17 @@ describe('getConfiguration', () => {
     process.env.POSTGRES_PASSWORD = 'env-pass-partial';
 
     const config = await getConfiguration();
-    expect(config.connection).toEqual({
+
+    expect(config).toEqual({
+      ...DEFAULT_CONFIGURATION,
       host: 'env-host-partial',
       user: 'conf-user',
       password: 'env-pass-partial',
       database: 'conf-db',
       port: '9999',
       ssl: false,
+      outputDir: './out',
+      schemaName: 'public',
     });
 
     delete process.env.POSTGRES_HOST;

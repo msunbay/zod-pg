@@ -28,10 +28,7 @@ describe('casing options', () => {
     const outputDir = getOutputDir('generate', 'casing', 'default');
 
     await generateZodSchemas({
-      connection: {
-        connectionString,
-        ssl: false,
-      },
+      connectionString,
       moduleResolution: 'esm',
       outputDir,
       fieldNameCasing: 'camelCase',
@@ -51,10 +48,7 @@ describe('casing options', () => {
     const outputDir = getOutputDir('generate', 'casing', 'snake-case-fields');
 
     await generateZodSchemas({
-      connection: {
-        connectionString,
-        ssl: false,
-      },
+      connectionString,
       moduleResolution: 'esm',
       outputDir: outputDir,
       fieldNameCasing: 'snake_case',
@@ -76,10 +70,7 @@ describe('casing options', () => {
     const outputDir = getOutputDir('generate', 'casing', 'passthrough');
 
     await generateZodSchemas({
-      connection: {
-        connectionString,
-        ssl: false,
-      },
+      connectionString,
       moduleResolution: 'esm',
       outputDir,
       fieldNameCasing: 'passthrough',

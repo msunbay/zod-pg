@@ -4,6 +4,7 @@ import {
   formatEnumConstantName,
   formatEnumTypeName,
   formatJsonSchemaName,
+  formatRecordTransformName,
   formatTableRecordName,
   formatTableSchemaName,
   getSchemaPrefix,
@@ -136,6 +137,15 @@ describe('format', () => {
         operation: 'update',
       });
       expect(result).toBe('UserPostsTableUpdateSchema');
+    });
+
+    it('should format write schema name for table', () => {
+      const tableInfo = createMockTableInfo({
+        type: 'table',
+        name: 'user_posts',
+      });
+      const result = formatTableSchemaName({ tableInfo, operation: 'write' });
+      expect(result).toBe('UserPostsTableWriteSchema');
     });
 
     it('should format schema name for view', () => {
@@ -303,163 +313,310 @@ describe('format', () => {
       const result = formatTableRecordName({ tableInfo, operation: 'read' });
       expect(result).toBe('CategoryRecord');
     });
+
+    it('should format write record name with write operation suffix', () => {
+      const tableInfo = createMockTableInfo({
+        type: 'table',
+        name: 'user_posts',
+      });
+      const result = formatTableRecordName({ tableInfo, operation: 'write' });
+      expect(result).toBe('UserPostWriteRecord');
+    });
+  });
+
+  describe('formatRecordTransformName', () => {
+    it('should format read transform name (singularized) with default casing', () => {
+      const tableInfo = createMockTableInfo({ name: 'user_posts' });
+      const result = formatRecordTransformName({
+        tableInfo,
+        operation: 'read',
+      });
+      expect(result).toBe('transformUserPostBaseRecord');
+    });
+
+    it('should format insert transform name', () => {
+      const tableInfo = createMockTableInfo({ name: 'users' });
+      const result = formatRecordTransformName({
+        tableInfo,
+        operation: 'insert',
+      });
+      expect(result).toBe('transformUserInsertBaseRecord');
+    });
+
+    it('should format update transform name with PascalCase table already singular', () => {
+      const tableInfo = createMockTableInfo({ name: 'user_profile' });
+      const result = formatRecordTransformName({
+        tableInfo,
+        operation: 'update',
+      });
+      expect(result).toBe('transformUserProfileUpdateBaseRecord');
+    });
+
+    it('should format write transform name', () => {
+      const tableInfo = createMockTableInfo({ name: 'user_profiles' });
+      const result = formatRecordTransformName({
+        tableInfo,
+        operation: 'write',
+      });
+      expect(result).toBe('transformUserProfileWriteBaseRecord');
+    });
+
+    it('should respect camelCase casing', () => {
+      const tableInfo = createMockTableInfo({ name: 'user_profiles' });
+      const result = formatRecordTransformName({
+        tableInfo,
+        operation: 'read',
+        casing: 'camelCase',
+      });
+      expect(result).toBe('transformUserProfileBaseRecord'); // first letter already lower due to camelCase
+    });
+
+    it('should respect snake_case casing', () => {
+      const tableInfo = createMockTableInfo({ name: 'user_profiles' });
+      const result = formatRecordTransformName({
+        tableInfo,
+        operation: 'insert',
+        casing: 'snake_case',
+      });
+      expect(result).toBe('transform_user_profile_insert_base_record');
+    });
+
+    it('should disable singularization when singularize=false', () => {
+      const tableInfo = createMockTableInfo({ name: 'user_profiles' });
+      const result = formatRecordTransformName({
+        tableInfo,
+        operation: 'read',
+        singularize: false,
+      });
+      expect(result).toBe('transformUserProfilesBaseRecord');
+    });
+
+    it('should apply custom suffix', () => {
+      const tableInfo = createMockTableInfo({ name: 'users' });
+      const result = formatRecordTransformName({
+        tableInfo,
+        operation: 'read',
+        suffix: 'XYZ',
+      });
+      expect(result).toBe('transformUserXYZ');
+    });
   });
 
   describe('formatJsonSchemaName', () => {
     it('should format JSON schema name with default PascalCase', () => {
-      const result = formatJsonSchemaName('user_posts', 'metadata');
+      const result = formatJsonSchemaName({
+        tableName: 'user_posts',
+        columnName: 'metadata',
+      });
       expect(result).toBe('UserPostMetadataSchema');
     });
 
     it('should handle plural table names by singularizing', () => {
-      const result = formatJsonSchemaName('users', 'preferences');
+      const result = formatJsonSchemaName({
+        tableName: 'users',
+        columnName: 'preferences',
+      });
       expect(result).toBe('UserPreferencesSchema');
     });
 
     it('should handle camelCase column names', () => {
-      const result = formatJsonSchemaName('users', 'userPreferences');
+      const result = formatJsonSchemaName({
+        tableName: 'users',
+        columnName: 'userPreferences',
+      });
       expect(result).toBe('UserUserPreferencesSchema');
     });
 
     it('should respect camelCase casing', () => {
-      const result = formatJsonSchemaName(
-        'user_posts',
-        'metadata',
-        'camelCase'
-      );
+      const result = formatJsonSchemaName({
+        tableName: 'user_posts',
+        columnName: 'metadata',
+        casing: 'camelCase',
+      });
       expect(result).toBe('userPostMetadataSchema');
     });
 
     it('should respect snake_case casing', () => {
-      const result = formatJsonSchemaName(
-        'UserPosts',
-        'MetaData',
-        'snake_case'
-      );
+      const result = formatJsonSchemaName({
+        tableName: 'UserPosts',
+        columnName: 'MetaData',
+        casing: 'snake_case',
+      });
       expect(result).toBe('user_post_meta_data_schema');
     });
 
     it('should respect passthrough casing', () => {
-      const result = formatJsonSchemaName(
-        'user_posts',
-        'metadata',
-        'passthrough'
-      );
+      const result = formatJsonSchemaName({
+        tableName: 'user_posts',
+        columnName: 'metadata',
+        casing: 'passthrough',
+      });
       expect(result).toBe('UserPostMetadataSchema');
     });
 
     it('should handle complex table and column names', () => {
-      const result = formatJsonSchemaName(
-        'user_account_settings',
-        'notification_preferences'
-      );
+      const result = formatJsonSchemaName({
+        tableName: 'user_account_settings',
+        columnName: 'notification_preferences',
+      });
       expect(result).toBe('UserAccountSettingNotificationPreferencesSchema');
     });
   });
 
   describe('formatEnumConstantName', () => {
     it('should format enum constant name in UPPER_SNAKE_CASE', () => {
-      const result = formatEnumConstantName('users', 'status');
+      const result = formatEnumConstantName({
+        tableName: 'users',
+        colName: 'status',
+      });
       expect(result).toBe('USER_STATUSES');
     });
 
     it('should handle plural table names by singularizing then pluralizing', () => {
-      const result = formatEnumConstantName('user_posts', 'category');
+      const result = formatEnumConstantName({
+        tableName: 'user_posts',
+        colName: 'category',
+      });
       expect(result).toBe('USER_POST_CATEGORIES');
     });
 
     it('should handle camelCase column names', () => {
-      const result = formatEnumConstantName('users', 'accountType');
+      const result = formatEnumConstantName({
+        tableName: 'users',
+        colName: 'accountType',
+      });
       expect(result).toBe('USER_ACCOUNT_TYPES');
     });
 
     it('should handle PascalCase column names', () => {
-      const result = formatEnumConstantName('users', 'AccountType');
+      const result = formatEnumConstantName({
+        tableName: 'users',
+        colName: 'AccountType',
+      });
       expect(result).toBe('USER_ACCOUNT_TYPES');
     });
 
     it('should handle snake_case table names', () => {
-      const result = formatEnumConstantName(
-        'user_account_settings',
-        'notification_type'
-      );
+      const result = formatEnumConstantName({
+        tableName: 'user_account_settings',
+        colName: 'notification_type',
+      });
       expect(result).toBe('USER_ACCOUNT_SETTING_NOTIFICATION_TYPES');
     });
 
     it('should handle kebab-case inputs', () => {
-      const result = formatEnumConstantName('user-posts', 'post-status');
+      const result = formatEnumConstantName({
+        tableName: 'user-posts',
+        colName: 'post-status',
+      });
       expect(result).toBe('USER_POST_POST_STATUSES');
     });
 
     it('should handle single character names', () => {
-      const result = formatEnumConstantName('a', 'b');
+      const result = formatEnumConstantName({ tableName: 'a', colName: 'b' });
       expect(result).toBe('A_BS');
     });
 
     it('should handle special pluralization cases', () => {
-      const result = formatEnumConstantName('categories', 'type');
+      const result = formatEnumConstantName({
+        tableName: 'categories',
+        colName: 'type',
+      });
       expect(result).toBe('CATEGORY_TYPES');
     });
   });
 
   describe('formatEnumTypeName', () => {
     it('should format enum type name with default PascalCase', () => {
-      const result = formatEnumTypeName('users', 'status');
+      const result = formatEnumTypeName({
+        tableName: 'users',
+        colName: 'status',
+      });
       expect(result).toBe('UserStatus');
     });
 
     it('should handle plural table names by singularizing', () => {
-      const result = formatEnumTypeName('user_posts', 'category');
+      const result = formatEnumTypeName({
+        tableName: 'user_posts',
+        colName: 'category',
+      });
       expect(result).toBe('UserPostCategory');
     });
 
     it('should handle camelCase column names', () => {
-      const result = formatEnumTypeName('users', 'accountType');
+      const result = formatEnumTypeName({
+        tableName: 'users',
+        colName: 'accountType',
+      });
       expect(result).toBe('UserAccountType');
     });
 
     it('should handle PascalCase column names', () => {
-      const result = formatEnumTypeName('users', 'AccountType');
+      const result = formatEnumTypeName({
+        tableName: 'users',
+        colName: 'AccountType',
+      });
       expect(result).toBe('UserAccountType');
     });
 
     it('should respect camelCase casing', () => {
-      const result = formatEnumTypeName('users', 'status', 'camelCase');
+      const result = formatEnumTypeName({
+        tableName: 'users',
+        colName: 'status',
+        casing: 'camelCase',
+      });
       expect(result).toBe('userStatus');
     });
 
     it('should respect snake_case casing', () => {
-      const result = formatEnumTypeName('Users', 'Status', 'snake_case');
+      const result = formatEnumTypeName({
+        tableName: 'Users',
+        colName: 'Status',
+        casing: 'snake_case',
+      });
       expect(result).toBe('user_status');
     });
 
     it('should respect passthrough casing', () => {
-      const result = formatEnumTypeName('users', 'status', 'passthrough');
+      const result = formatEnumTypeName({
+        tableName: 'users',
+        colName: 'status',
+        casing: 'passthrough',
+      });
       expect(result).toBe('UserStatus');
     });
 
     it('should handle complex table and column names', () => {
-      const result = formatEnumTypeName(
-        'user_account_settings',
-        'notification_type'
-      );
+      const result = formatEnumTypeName({
+        tableName: 'user_account_settings',
+        colName: 'notification_type',
+      });
       expect(result).toBe('UserAccountSettingNotificationType');
     });
 
     it('should handle special characters in names', () => {
-      const result = formatEnumTypeName('user_2fa_settings', 'auth_method');
+      const result = formatEnumTypeName({
+        tableName: 'user_2fa_settings',
+        colName: 'auth_method',
+      });
       expect(result).toBe('User2faSettingAuthMethod');
     });
   });
 
   describe('edge cases and combinations', () => {
     it('should handle empty string table names gracefully', () => {
-      const result = formatEnumConstantName('', 'status');
+      const result = formatEnumConstantName({
+        tableName: '',
+        colName: 'status',
+      });
       expect(result).toBe('_STATUSES');
     });
 
     it('should handle empty string column names gracefully', () => {
-      const result = formatEnumConstantName('users', '');
+      const result = formatEnumConstantName({
+        tableName: 'users',
+        colName: '',
+      });
       expect(result).toBe('USER_s');
     });
 
@@ -467,19 +624,25 @@ describe('format', () => {
       const longTableName = 'very_long_table_name_that_exceeds_normal_length';
       const longColumnName =
         'very_long_column_name_that_also_exceeds_normal_length';
-      const result = formatEnumConstantName(longTableName, longColumnName);
+      const result = formatEnumConstantName({
+        tableName: longTableName,
+        colName: longColumnName,
+      });
       expect(result).toBe(
         'VERY_LONG_TABLE_NAME_THAT_EXCEED_NORMAL_LENGTH_VERY_LONG_COLUMN_NAME_THAT_ALSO_EXCEEDS_NORMAL_LENGTHS'
       );
     });
 
     it('should handle names with numbers', () => {
-      const result = formatEnumTypeName('table_v2', 'status_2fa');
+      const result = formatEnumTypeName({
+        tableName: 'table_v2',
+        colName: 'status_2fa',
+      });
       expect(result).toBe('TableV2Status2fa');
     });
 
     it('should handle names with underscores only', () => {
-      const result = formatJsonSchemaName('_', '_');
+      const result = formatJsonSchemaName({ tableName: '_', columnName: '_' });
       expect(result).toBe('Schema');
     });
   });

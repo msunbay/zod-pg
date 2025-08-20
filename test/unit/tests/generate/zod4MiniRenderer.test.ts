@@ -29,12 +29,16 @@ const table = (cols: ZodPgColumnInfo[]): ZodPgTableInfo => ({
   columns: cols,
 });
 const config: ZodPgConfig = {
-  connection: { connectionString: 'x', ssl: false },
   outputDir: '/tmp/ignore',
   fieldNameCasing: 'camelCase',
   objectNameCasing: 'PascalCase',
   defaultEmptyArray: true,
   stringifyDates: true,
+  stringifyJson: true,
+  singularize: true,
+  coerceDates: true,
+  defaultNullsToUndefined: true,
+  caseTransform: true,
 };
 
 describe('Zod4MiniRenderer', () => {
@@ -104,17 +108,11 @@ describe('Zod4MiniRenderer', () => {
     const out = await new Zod4MiniRenderer({
       onColumnModelCreated: (m) => ({
         ...m,
-        writeTransforms: [
-          'trim',
-          'lowercase',
-          'uppercase',
-          'normalize',
-          'nonnegative',
-        ] as any,
+        writeTransforms: ['trim', 'lowercase', 'uppercase', 'normalize'] as any,
       }),
     }).renderSchema(tbl, config);
     expect(out).toMatch(
-      /val: z\.string\(\)(?:\.check\(z\.(?:trim|lowercase|uppercase|normalize|nonnegative)\(\)\)){5}/
+      /val: z\.string\(\)(?:\.check\(z\.(?:trim|lowercase|uppercase|normalize)\(\)\)){4}/
     );
   });
 
@@ -143,7 +141,7 @@ describe('Zod4MiniRenderer', () => {
     expect(out).not.toMatch(/from '@schemas'/);
   });
 
-  it('does not stringify nullable json when disableStringifyJson true', async () => {
+  it('does not stringify nullable json when stringifyJson is false', async () => {
     const tbl = table([
       column({
         name: 'meta',
@@ -154,7 +152,7 @@ describe('Zod4MiniRenderer', () => {
     ]);
     const out = await new Zod4MiniRenderer().renderSchema(tbl, {
       ...config,
-      disableStringifyJson: true,
+      stringifyJson: false,
     });
     expect(out).not.toMatch(/JSON\.stringify/);
   });
@@ -184,11 +182,11 @@ describe('Zod4MiniRenderer', () => {
     );
   });
 
-  it('falls back to simple template when disableCaseTransform set', async () => {
+  it('falls back to simple template when transformCasing is false', async () => {
     const tbl = table([column({ name: 'id', type: 'int', dataType: 'int4' })]);
     const out = await new Zod4MiniRenderer().renderSchema(tbl, {
       ...config,
-      disableCaseTransform: true,
+      caseTransform: false,
     });
     expect(out).toContain("import { z } from 'zod'");
     expect(out).not.toContain('Base read schema');

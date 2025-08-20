@@ -1,10 +1,18 @@
 import type { ZodPgColumnInfo, ZodPgTableType } from '../../types.js';
 
+export type ZodPgColumnBaseType =
+  | 'string'
+  | 'number'
+  | 'boolean'
+  | 'date'
+  | 'object'
+  | 'unknown';
+
 /**
  * Base model for a column with additional processing and naming information.
  * This represents the column after initial processing but before final rendering.
  */
-export interface ZodPgColumnBaseModel extends ZodPgColumnInfo {
+export interface ZodPgColumnBaseRenderModel extends ZodPgColumnInfo {
   /**
    * The property name of the column in the generated Zod schema.
    * This is typically the column name transformed according to the specified casing (e.g., camelCase).
@@ -34,7 +42,7 @@ export interface ZodPgColumnBaseModel extends ZodPgColumnInfo {
  * Final column model with fully rendered Zod types and transforms.
  * This represents the column after all processing and is ready for template generation.
  */
-export interface ZodPgColumn extends ZodPgColumnBaseModel {
+export interface ZodPgColumnRenderModel extends ZodPgColumnBaseRenderModel {
   /**
    * The fully rendered Zod type/schema for reading operations.
    * Example: 'z.string()', 'z.number().optional()', 'z.date()'
@@ -84,7 +92,7 @@ export interface ZodPgImport {
  * Complete table model ready for template generation.
  * Contains all processed information needed to generate Zod schemas for a table or view.
  */
-export interface ZodPgTable {
+export interface ZodPgTableRenderModel {
   /** The schema name where this table resides */
   schemaName: string;
   /** The type of relation (table, view, etc.) */
@@ -137,9 +145,9 @@ export interface ZodPgTable {
   /** Array of enum types found in this table */
   enums: ZodPgEnum[];
   /** Columns that should be included in read schemas */
-  readableColumns: ZodPgColumn[];
+  readableColumns: ZodPgColumnRenderModel[];
   /** Columns that should be included in write (insert/update) schemas */
-  writableColumns: ZodPgColumn[];
+  writableColumns: ZodPgColumnRenderModel[];
   /** Whether this table supports write operations (false for views, etc.) */
   isWritable: boolean;
 }
