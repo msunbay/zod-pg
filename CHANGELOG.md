@@ -13,8 +13,8 @@
 
 - Flattened the configuration options to simplify usage. The "connection" options are now directly part of the main configuration object.
 - Renamed several cli arguments.
-- Renamed the `onColumnModelCreated` hook to `onColumnInfoCreated`. This hook is called after the column info object is created from the database schema, allowing for modifications before the Zod schema is generated.
-- Renamed the `onTableModelCreated` hook to `onTableInfoCreated`. This hook is called after the table info object is created from the database schema, allowing for modifications before the Zod schema is generated.
+- Changed the `onColumnModelCreated` hook. This hook is called after the column info object is created from the database schema, allowing for modifications before the Zod schema is generated.
+- Changed the `onTableModelCreated` hook. This hook is called after the table info object is created from the database schema, allowing for modifications before the Zod schema is generated.
 
 ### v2.0.1 (2025-08-20)
 

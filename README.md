@@ -294,12 +294,12 @@ zod-pg provides hooks to customize the generated models during generation. These
 
 ### Available Hooks
 
-#### `onColumnInfoCreated`
+#### `onColumnModelCreated`
 
 This hook is called for each column after its initial model is created, allowing you to modify individual column properties.
 
 ```typescript
-onColumnInfoCreated: (column) => {
+onColumnModelCreated: (column) => {
   // Add email validation to email columns
   if (column.name === 'email') {
     // Note that this only applies to the write schema.
@@ -325,12 +325,12 @@ onColumnInfoCreated: (column) => {
 };
 ```
 
-#### `onTableInfoCreated`
+#### `onTableModelCreated`
 
 This hook is called for each table after all its columns have been processed, allowing you to modify the table model.
 
 ```typescript
-onTableInfoCreated: (table) => {
+onTableModelCreated: (table) => {
   // Add custom transformations based on table name
   if (table.name === 'users') {
     // Add any table-specific customizations
