@@ -28,6 +28,8 @@ Under the hood zod-pg uses [zod-dbs](https://github.com/msolvaag/zod-dbs) that p
 - [Schema Output](#schema-output)
   - [The Read Schemas](#the-read-schemas)
   - [The Write Schemas](#the-write-schemas)
+  - [Casing](#casing)
+  - [Singularization](#singularization)
 - [Customizing Generated Models with Hooks](#customizing-generated-models-with-hooks)
   - [Available Hooks](#available-hooks)
 - [JSON Schema Support](#json-schema-support)
@@ -174,18 +176,20 @@ In addition to CLI options, you can use configuration files to set your options.
 import type { ZodPgConfig } from 'zod-pg';
 
 const config: ZodPgConfig = {
-  connectionString: 'postgresql://user:password@localhost:5432/mydb',
-  ssl: false,
+  user: 'postgres',
+  database: 'mydb',
+  password: 'secret',
+  host: 'localhost',
+  port: 5432,
+  schemaName: 'public',
+
   outputDir: './src/generated',
-  moduleResolution: 'esm',
   cleanOutput: true,
   include: ['users', 'posts'],
   exclude: ['^temp_'],
+  moduleResolution: 'esm',
   zodVersion: '4',
-  stringifyDates: false,
   defaultEmptyArray: true,
-  fieldNameCasing: 'camelCase',
-  objectNameCasing: 'PascalCase',
 };
 
 export default config;
@@ -375,7 +379,7 @@ export const UsersTableSchema = z.object({
 });
 ```
 
-The JSON Zod schema name is derived from `[TableName][FieldName]Schema`, so in this case, it will look for `UserProfileSchema` in the specified import location.
+The JSON Zod schema name is derived from `[Singular(TableName)][FieldName]Schema`, so in this case, it will look for `UserProfileSchema` in the specified import location.
 
 **Step 3: Create your JSON schemas**
 
