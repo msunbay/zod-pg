@@ -1,5 +1,14 @@
 # Changelog
 
+### v4.0.0 (2025-09-01)
+
+- Switched to using `zod-dbs` for schema generation. `zod-dbs` provides a consistent interface for generating schemas from various databases, including PostgreSQL.
+
+#### BREAKING CHANGES:
+
+- `--no-singularize` option is renamed to `--no-singularization`.
+- `zod-pg` no longer exports functions for programmatic schema generation. Instead, it relies on `zod-dbs` for this functionality. If you need to generate schemas programmatically, use the `zod-dbs` and `zod-dbs-pg` packages instead.
+
 ### v3.0.0 (2025-08-25)
 
 - Added support for Zod v4 mini.

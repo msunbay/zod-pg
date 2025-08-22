@@ -8,6 +8,8 @@
 
 zod-pg supports PostgreSQL's type system including arrays, enums, and custom types, and generates validation schemas with TypeScript integration.
 
+Under the hood zod-pg uses [zod-dbs](https://github.com/msolvaag/zod-dbs) that provides a consistent interface for generating schemas from various databases, including PostgreSQL.
+
 ## Table of Contents
 
 - [Key Features](#key-features)
@@ -143,7 +145,7 @@ Negative flags (`--no-*`) disable a feature that is enabled by default.
 | `--object-name-casing <value>`         | Casing for object/type names (one of: `PascalCase`, `camelCase`, `snake_case`).                   | `PascalCase`    |
 | `--field-name-casing <value>`          | Casing for field/property names (one of: `PascalCase`, `camelCase`, `snake_case`, `passthrough`). | `camelCase`     |
 | `--no-case-transform`                  | Disable transforming property name casing (skips base schema + transform helpers).                | `false`         |
-| `--no-singularize`                     | Preserve plural table / enum names (singularization on by default).                               | `false`         |
+| `--no-singularization`                 | Preserve plural table / enum names (singularization on by default).                               | `false`         |
 | `--include <regex>`                    | Include only tables matching this regex (applied before exclude).                                 |                 |
 | `--exclude <regex>`                    | Exclude tables matching this regex.                                                               |                 |
 | `--json-schema-import-location <path>` | Path to import custom JSON field schemas from.                                                    |                 |
@@ -274,7 +276,7 @@ Example:
 If you would prefer the generated identifiers to preserve the original (often plural / snake_case) names, disable singularization with the CLI flag:
 
 ```
-npx zod-pg --no-singularize
+npx zod-pg --no-singularization
 ```
 
 Or in a config file:
@@ -282,7 +284,7 @@ Or in a config file:
 ```ts
 export default {
   // ...other config
-  singularize: false,
+  singularization: false,
 };
 ```
 
