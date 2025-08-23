@@ -1,5 +1,9 @@
 # Changelog
 
+### v4.0.2 (2025-08-23)
+
+- Fixed a bug preventing loading the correct env vars.
+
 ### v4.0.1 (2025-08-22)
 
 - Fixed a bug preventing loading the configuration file.

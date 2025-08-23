@@ -87,12 +87,12 @@ npx zod-pg --user postgres --password secret --host localhost --port 5432 --data
 
 zod-pg can read connection details from environment variables. Set the following variables:
 
-- `POSTGRES_USER`
-- `POSTGRES_PASSWORD`
-- `POSTGRES_HOST`
-- `POSTGRES_PORT`
-- `POSTGRES_DB`
-- `POSTGRES_SSL` (optional, defaults to `false`)
+- `ZOD_PG_USER`
+- `ZOD_PG_PASSWORD`
+- `ZOD_PG_HOST`
+- `ZOD_PG_PORT`
+- `ZOD_PG_DATABASE`
+- `ZOD_PG_SSL` (optional, defaults to `false`)
 
 Then run:
 
