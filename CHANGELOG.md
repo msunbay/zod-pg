@@ -1,5 +1,9 @@
 # Changelog
 
+### v4.0.3 (2025-08-24)
+
+- Fixed a bug where ENUM column types were not correctly detected.
+
 ### v4.0.2 (2025-08-23)
 
 - Fixed a bug preventing loading the correct env vars.
