@@ -1,5 +1,9 @@
 # Changelog
 
+### v4.0.4 (2025-08-25)
+
+- Fixed a bug where UPPER_SNAKE_CASE field names were not correctly converted to camelCase.
+
 ### v4.0.3 (2025-08-24)
 
 - Fixed a bug where ENUM column types were not correctly detected.
