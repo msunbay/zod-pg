@@ -25,6 +25,10 @@ export const getClientConnectionString = (): string => {
   return `postgres://${client.user}:${client.password}@${client.host}:${client.port}/${client.database}`;
 };
 
+export const getCliPath = (): string => {
+  return path.resolve(import.meta.dirname, '../../index.js');
+};
+
 export async function setupTestDb(): Promise<TestDbContext> {
   const schemaPath = path.resolve(import.meta.dirname, './schema.sql');
 

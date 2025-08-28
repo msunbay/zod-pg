@@ -1,5 +1,10 @@
 # Changelog
 
+### v4.0.5 (2025-08-28)
+
+- Ensured compatibility with the latest version of Zod.
+- Updated zod-dbs dependencies to their latest versions.
+
 ### v4.0.4 (2025-08-25)
 
 - Fixed a bug where UPPER_SNAKE_CASE field names were not correctly converted to camelCase.
