@@ -15,6 +15,7 @@ it('outputs default options', async () => {
     Generates Zod schemas from database schema.
 
     Options:
+      -V, --version                         output the version number
       -o,--output-dir <path>                Output directory for generated schemas
       --silent                              Suppress all console output
       --module-resolution <type>            Module resolution type for generated

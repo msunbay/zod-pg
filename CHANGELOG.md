@@ -1,5 +1,9 @@
 # Changelog
 
+### v4.0.6 (2025-08-28)
+
+- Fixed an issue with reading the package.json file to get the version number.
+
 ### v4.0.5 (2025-08-28)
 
 - Ensured compatibility with the latest version of Zod.

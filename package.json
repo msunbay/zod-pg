@@ -1,6 +1,6 @@
 {
   "name": "zod-pg",
-  "version": "4.0.5",
+  "version": "4.0.6",
   "description": "Opinionated Zod schema generator for PostgreSQL databases",
   "packageManager": "npm@10.8.2",
   "main": "./dist/index.js",
@@ -63,7 +63,7 @@
     "pg": ">=8.12.0"
   },
   "dependencies": {
-    "zod-dbs-cli": "^1.0.20",
+    "zod-dbs-cli": "^1.0.21",
     "zod-dbs-pg": "^1.0.10"
   }
 }
