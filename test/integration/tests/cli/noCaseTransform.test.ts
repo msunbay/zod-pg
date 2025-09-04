@@ -23,23 +23,24 @@ afterAll(async () => {
   await teardownTestDb(ctx);
 });
 
-it('CLI works with --zod-version option', async () => {
+it('CLI works with --no-case-transform option', async () => {
+  const outputDir = getOutputDir('cli', 'noCaseTransform');
   const connectionString = getClientConnectionString();
-  const outputDir = getOutputDir('cli', 'zodVersion', 'zod-version-4');
 
   execSync(
-    `node ${cliPath} --connection-string "${connectionString}" --output-dir "${outputDir}" --zod-version 4 --silent --include orders --module-resolution esm`,
+    `node ${cliPath} --connection-string "${connectionString}" --output-dir "${outputDir}" --no-case-transform --silent --include "^posts$" --module-resolution esm`,
     { stdio: 'inherit' }
   );
 
   const outputFiles = await getOutputFiles(outputDir);
-  const usersFile = outputFiles.find((file) =>
-    file.includes('orders/schema.ts')
+
+  const postsFile = outputFiles.find((file) =>
+    file.includes('posts/schema.ts')
   );
 
-  expect(usersFile).toBeDefined();
-  const content = fs.readFileSync(usersFile!, 'utf8');
+  expect(postsFile).toBeDefined();
+  const content = fs.readFileSync(postsFile!, 'utf8');
 
-  // Zod v4 uses z.int() instead of z.number().int()
-  expect(content).toMatch(/z\.int\(\)/);
+  // Should not contain case transformations in schema (check for presence of transform function)
+  expect(content).not.toMatch(/transformUserBaseRecord/s);
 });

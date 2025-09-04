@@ -216,6 +216,7 @@ CREATE TABLE constraint_variations (
 );
 
 -- Column descriptions for posts table
+COMMENT ON TABLE posts IS 'Table containing blog posts';
 COMMENT ON COLUMN posts.views IS 'Number of views for the post';
 COMMENT ON COLUMN posts.tags IS 'Array of tags associated with the post';
 COMMENT ON COLUMN posts.metadata IS 'Additional metadata for the post';

@@ -3,7 +3,6 @@ import fs from 'fs';
 import path from 'path';
 
 import {
-  getClientConnectionString,
   getOutputDir,
   getOutputFiles,
   setupTestDb,
@@ -23,12 +22,17 @@ afterAll(async () => {
   await teardownTestDb(ctx);
 });
 
-it('CLI generates correct zod schemas with basic options', async () => {
-  const connectionString = getClientConnectionString();
-  const outputDir = getOutputDir('cli', 'basic');
+it('CLI generates correct zod schemas with env vars', async () => {
+  const outputDir = getOutputDir('cli', 'envVars');
+
+  process.env.ZOD_PG_USER = ctx.client.user;
+  process.env.ZOD_PG_PASSWORD = ctx.client.password;
+  process.env.ZOD_PG_HOST = ctx.client.host;
+  process.env.ZOD_PG_PORT = ctx.client.port.toString();
+  process.env.ZOD_PG_DATABASE = ctx.client.database;
 
   execSync(
-    `node ${cliPath} --connection-string "${connectionString}" --output-dir "${outputDir}" --silent --module-resolution esm --schema-name public`,
+    `node ${cliPath} --output-dir "${outputDir}" --silent --module-resolution esm --schema-name public`,
     { stdio: 'inherit' }
   );
 

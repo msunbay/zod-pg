@@ -1,14 +1,17 @@
-import { sql } from '../../../../src/utils/sql.js';
-import {
-  UserInsertRecord,
-  UsersTableInsertSchema,
-  UsersTableSchema,
-} from '../../output/generated/tables/users.js';
+/**
+ * Note that this file relies on the generated files from the integration/tests/cli/base.test.ts test suite.
+ * After initial checkout or if the test files are deleted, run the `npm run test:integration:cli` command first.
+ */
 import {
   setupTestDb,
   teardownTestDb,
   TestDbContext,
 } from '../../testDbUtils.js';
+import {
+  UserInsertRecord,
+  UsersTableInsertSchema,
+  UsersTableSchema,
+} from '../../tests/cli/output/basic/tables/users/index.js';
 
 let ctx: TestDbContext;
 
@@ -23,8 +26,8 @@ afterAll(async () => {
 describe('Generated Schema Integration', () => {
   beforeEach(async () => {
     // Clean up any existing data before each test
-    await ctx.client.query(sql`DELETE FROM users`);
-    await ctx.client.query(sql`ALTER SEQUENCE users_id_seq RESTART WITH 1`);
+    await ctx.client.query(`DELETE FROM users`);
+    await ctx.client.query(`ALTER SEQUENCE users_id_seq RESTART WITH 1`);
   });
 
   it('insert schema works with full record', async () => {
@@ -46,7 +49,7 @@ describe('Generated Schema Integration', () => {
 
     // Insert all the fields that were provided
     await ctx.client.query(
-      sql`
+      `
       INSERT INTO users (name, email, profile, created_at, roles, status, dates)
       VALUES ($1, $2, $3, $4, $5, $6, $7)`,
       [
@@ -61,7 +64,7 @@ describe('Generated Schema Integration', () => {
     );
 
     // Retrieve and validate the stored record
-    const result = await ctx.client.query(sql`SELECT * FROM users`);
+    const result = await ctx.client.query(`SELECT * FROM users`);
     const userRecord = result.rows[0];
 
     // Parse the retrieved record with the read schema
@@ -88,11 +91,11 @@ describe('Generated Schema Integration', () => {
 
     const parsedRecord = UsersTableInsertSchema.parse(minimalRecord);
 
-    await ctx.client.query(sql`INSERT INTO users (name) VALUES ($1)`, [
+    await ctx.client.query(`INSERT INTO users (name) VALUES ($1)`, [
       parsedRecord.name,
     ]);
 
-    const result = await ctx.client.query(sql`SELECT * FROM users`);
+    const result = await ctx.client.query(`SELECT * FROM users`);
     const user = UsersTableSchema.parse(result.rows[0]);
 
     expect(user).toMatchObject({

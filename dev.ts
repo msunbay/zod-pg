@@ -24,7 +24,24 @@ const setup = async () => {
     console.log('Test database connection closed and container stopped.');
   });
 
-  await main(db.client.port);
+  await main({
+    port: db.client.port,
+    zodVersion: '4-mini',
+    moduleResolution: 'esm',
+    defaultUnknown: true,
+    defaultNullsToUndefined: true,
+    onColumnModelCreated: (model) => {
+      if (model.type === 'json') {
+        return {
+          ...model,
+          minLen: 1,
+        };
+      }
+
+      return model;
+    },
+  });
+
   process.exit(0);
 };
 

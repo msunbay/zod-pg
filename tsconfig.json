@@ -15,5 +15,5 @@
     "types": ["vitest/globals"]
   },
 
-  "include": ["src/**/*.ts", "test/**/*.ts", "./vitest.config.ts", "./dev.ts"]
+  "include": ["src/**/*.ts", "test/**/*.ts", "./vitest.config.ts", "./dev.ts", "zod-schemas/**/*.ts"],
 }

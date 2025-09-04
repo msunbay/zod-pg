@@ -1,4 +1,5 @@
 import { execSync } from 'child_process';
+import fs from 'fs';
 import path from 'path';
 
 import {
@@ -22,18 +23,21 @@ afterAll(async () => {
   await teardownTestDb(ctx);
 });
 
-it('CLI works with connection parameters instead of connection string', async () => {
-  const outputDir = getOutputDir('cli', 'connectionParams');
-
-  // Use the same connection details as the test database
+it('CLI works with --no-coerce-dates option', async () => {
+  const outputDir = getOutputDir('cli', 'noCoerceDates');
   const connectionString = getClientConnectionString();
-  const url = new URL(connectionString);
 
   execSync(
-    `node ${cliPath} --host ${url.hostname} --port ${url.port} --database ${url.pathname.slice(1)} --user ${url.username} --password ${url.password} --output-dir "${outputDir}" --silent --include users --module-resolution esm`,
+    `node ${cliPath} --connection-string "${connectionString}" --output-dir "${outputDir}" --no-coerce-dates --silent --include users --module-resolution esm`,
     { stdio: 'inherit' }
   );
 
   const outputFiles = await getOutputFiles(outputDir);
-  expect(outputFiles.length).toBeGreaterThan(0);
+  const usersFile = outputFiles.find((file) =>
+    file.includes('users/schema.ts')
+  );
+
+  expect(usersFile).toBeDefined();
+  const content = fs.readFileSync(usersFile!, 'utf8');
+  expect(content).not.toMatch(/z\.coerce\.date\(\)/);
 });

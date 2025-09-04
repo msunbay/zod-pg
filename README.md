@@ -8,31 +8,17 @@
 
 zod-pg supports PostgreSQL's type system including arrays, enums, and custom types, and generates validation schemas with TypeScript integration.
 
+Under the hood zod-pg uses [zod-dbs](https://github.com/msolvaag/zod-dbs) that provides a consistent interface for generating schemas from various databases, including PostgreSQL.
+
 ## Table of Contents
 
 - [Key Features](#key-features)
 - [Requirements](#requirements)
 - [Why zod-pg?](#why-zod-pg)
-  - [The Problem](#the-problem)
-  - [The zod-pg Solution](#the-zod-pg-solution)
-- [Advanced PostgreSQL Features](#advanced-postgresql-features)
-  - [Array Types](#array-types)
-  - [Enum Detection from Check Constraints](#enum-detection-from-check-constraints)
-  - [Complex JSON with Schema Integration](#complex-json-with-schema-integration)
-  - [Smart Serial Detection](#smart-serial-detection)
-  - [Views and Materialized Views](#views-and-materialized-views)
-  - [Constraint Detection](#constraint-detection)
-- [Date Handling Options](#date-handling-options)
-  - [Coerce Dates](#coerce-dates---coerce-dates)
-  - [Stringify Dates](#stringify-dates---stringify-dates)
-  - [Best Practices](#best-practices)
-- [When to Use zod-pg](#when-to-use-zod-pg)
-  - [Use Cases](#use-cases)
 - [Installation](#installation)
 - [Usage](#usage)
   - [With connection string](#with-connection-string)
   - [With options](#with-options)
-  - [With advanced options](#with-advanced-options)
   - [With environment variables](#with-environment-variables)
   - [Exclude / Include Tables](#exclude--include-tables)
   - [All Options](#all-options)
@@ -42,24 +28,25 @@ zod-pg supports PostgreSQL's type system including arrays, enums, and custom typ
 - [Schema Output](#schema-output)
   - [The Read Schemas](#the-read-schemas)
   - [The Write Schemas](#the-write-schemas)
+  - [Casing](#casing)
+  - [Singularization](#singularization)
 - [Customizing Generated Models with Hooks](#customizing-generated-models-with-hooks)
   - [Available Hooks](#available-hooks)
-  - [Hook Usage Examples](#hook-usage-examples)
-  - [Column Model Properties](#column-model-properties)
-  - [Table Model Properties](#table-model-properties)
 - [JSON Schema Support](#json-schema-support)
   - [Setting up JSON Schema Integration](#setting-up-json-schema-integration)
+- [Extending schemas](#extending-schemas)
 - [Contributing](#contributing)
 
 ## Key Features
 
-- **Database-First Development** - Generate schemas from your PostgreSQL database
-- **Multiple Schema Types** - Separate schemas for reading, inserting, and updating data
-- **PostgreSQL Support** - Arrays, enums, custom types, materialized views, and foreign tables
-- **Type Detection** - Detects serials, arrays, and enum constraints automatically
-- **Customization** - Hooks system and casing transformations
-- **File Organization** - Generates organized file structures with imports and TypeScript types
-- **No Runtime Dependencies** - Generated schemas use only Zod
+- **Database-First Development** – Generate schemas directly from your PostgreSQL database.
+- **Multiple Schema Types** – Separate read, insert, and update schemas for clearer intent.
+- **Multiple Zod Versions** – Generate for Zod v3, v4, or the lightweight v4-mini build.
+- **PostgreSQL Coverage** – Arrays, enums, custom types, materialized views, foreign tables.
+- **Type Detection** – Detects serial, enum, array, and nullable characteristics automatically.
+- **Customization** – Hooks, casing transformations, singularization control.
+- **Organized Output** – Predictable file structure (constants, types, per-table schemas).
+- **No Runtime Dependencies** – Generated artifacts only depend on Zod.
 
 ## Requirements
 
@@ -68,290 +55,9 @@ zod-pg supports PostgreSQL's type system including arrays, enums, and custom typ
 
 ## Why zod-pg?
 
-### The Problem
+Manually writing and maintaining TypeScript types and Zod schemas for database tables is time-consuming and error-prone.
 
-Manually writing and maintaining Zod schemas for database tables is time-consuming and error-prone:
-
-```typescript
-// Manual approach - lots of repetitive work
-const UserSchema = z.object({
-  id: z.number().int(),
-  email: z.string().email(),
-  name: z.string(),
-  tags: z.array(z.string()),
-  profile: z.object({...}),
-  created_at: z.date(),
-  updated_at: z.date(),
-});
-
-// Separate insert schema - more duplication
-const UserInsertSchema = UserSchema.omit({ id: true, created_at: true, updated_at: true });
-
-// Update schema - even more duplication
-const UserUpdateSchema = UserInsertSchema.partial();
-```
-
-### The zod-pg Solution
-
-Generate everything with one command:
-
-```bash
-npx zod-pg --output ./src/schemas
-```
-
-```typescript
-// Generated from PostgreSQL schema
-export const UserSchema = z.object({
-  id: z.number().int(),
-  email: z.string().email(),
-  name: z.string(),
-  tags: z.array(z.string()), // Detected from _text PostgreSQL type
-  profile: json.UserProfileSchema, // Custom JSON schema integration
-  status: z.enum(['active', 'inactive']), // Extracted from check constraints
-  created_at: z.date(),
-  updated_at: z.date(),
-});
-
-export const UserInsertSchema = z.object({
-  email: z.string().email().max(255), // Includes length constraints
-  name: z.string().max(100),
-  tags: z.array(z.string()).default([]),
-  profile: json.UserProfileSchema,
-  status: z.enum(['active', 'inactive']).default('active'),
-  created_at: z.date(), // DEFAULT values are included in write schemas
-  updated_at: z.date(), // Only SERIAL columns are excluded
-});
-
-export const UserUpdateSchema = UserInsertSchema.partial();
-
-// TypeScript interfaces included
-export interface UserRecord {
-  id: number;
-  email: string;
-  name: string;
-  tags: string[];
-  profile: UserProfileSchema; // Custom JSON schema type when using --json-schema-import-location
-  status: 'active' | 'inactive';
-  createdAt: Date;
-  updatedAt: Date;
-}
-
-// Write interface without primary key
-export interface UserInsertRecord {
-  email: string;
-  name: string;
-  tags?: string[];
-  profile: UserProfileSchema;
-  status?: 'active' | 'inactive';
-  createdAt: Date;
-  updatedAt: Date;
-}
-
-// Update interface with optional props
-export type UserUpdateRecord = Partial<UserInsertRecord>;
-```
-
-## PostgreSQL Features
-
-zod-pg supports PostgreSQL's type system:
-
-### **Array Types**
-
-```sql
--- PostgreSQL
-CREATE TABLE posts (
-  id SERIAL PRIMARY KEY,
-  tags TEXT[],
-  view_counts INTEGER[]
-);
-```
-
-```typescript
-// Generated Zod schemas
-export const PostSchema = z.object({
-  id: z.number().int(),
-  tags: z.array(z.string()),
-  viewCounts: z.array(z.number().int()),
-});
-```
-
-### **Enum Detection from Check Constraints**
-
-```sql
--- PostgreSQL
-CREATE TABLE users (
-  status VARCHAR(20) CHECK (status IN ('active', 'inactive', 'pending'))
-);
-```
-
-```typescript
-// Detected and generated from check constraints
-export const USER_STATUS_ENUM = ['active', 'inactive', 'pending'] as const;
-export type UserStatus = (typeof USER_STATUS_ENUM)[number];
-
-export const UserSchema = z.object({
-  status: z.enum(USER_STATUS_ENUM),
-});
-```
-
-### **Complex JSON with Schema Integration**
-
-```sql
--- PostgreSQL
-CREATE TABLE profiles (
-  id SERIAL PRIMARY KEY,
-  metadata JSONB
-);
-```
-
-```typescript
-// With JSON schema integration
-export const ProfileSchema = z.object({
-  id: z.number().int(),
-  metadata: json.ProfileMetadataSchema, // Your custom schema
-});
-```
-
-_See [JSON Schema Support](#json-schema-support) section for detailed configuration._
-
-### **Serial Detection**
-
-```sql
--- PostgreSQL
-CREATE TABLE articles (
-  id SERIAL PRIMARY KEY,        -- Excluded from insert schemas (SERIAL types only)
-  title VARCHAR(255) NOT NULL,
-  created_at TIMESTAMP DEFAULT NOW() -- Included in insert schemas (has DEFAULT but not SERIAL)
-);
-```
-
-```typescript
-// Read schema includes everything
-export const ArticleSchema = z.object({
-  id: z.number().int(),
-  title: z.string(),
-  createdAt: z.date(),
-});
-
-// Insert schema excludes only SERIAL columns
-export const ArticleInsertSchema = z.object({
-  title: z.string().max(255),
-  createdAt: z.date(), // DEFAULT NOW() columns are included
-});
-```
-
-### **Views and Materialized Views**
-
-Supports all PostgreSQL relation types:
-
-- Regular tables
-- Views (read-only schemas)
-- Materialized views
-- Foreign tables (via foreign data wrappers)
-
-### **Constraint Detection**
-
-- Length constraints (`VARCHAR(255)` → `z.string().max(255)`)
-- NOT NULL constraints
-- Default values
-- Check constraints for enum detection
-- Primary key detection (excluded from insert schemas)
-
-## Date Handling Options
-
-zod-pg provides date handling options:
-
-### **Coerce Dates (`--coerce-dates`)**
-
-By default, date fields use `z.date()` which requires actual Date objects. Enable `--coerce-dates` to use `z.coerce.date()` in read schemas, allowing automatic string-to-date conversion:
-
-```sql
--- PostgreSQL
-CREATE TABLE events (
-  id SERIAL PRIMARY KEY,
-  event_date TIMESTAMP,
-  created_at TIMESTAMPTZ DEFAULT NOW()
-);
-```
-
-**Without `--coerce-dates` (default):**
-
-```typescript
-// Read schema - requires Date objects
-export const EventSchema = z.object({
-  id: z.number().int(),
-  eventDate: z.date(),
-  createdAt: z.date(),
-});
-
-// Insert schema - also requires Date objects
-export const EventInsertSchema = z.object({
-  eventDate: z.date(),
-});
-```
-
-**With `--coerce-dates`:**
-
-```typescript
-// Read schema - accepts strings or Date objects
-export const EventSchema = z.object({
-  id: z.number().int(),
-  eventDate: z.coerce.date(), // Converts strings to dates
-  createdAt: z.coerce.date(),
-});
-
-// Insert schema - still uses z.date() for strict validation
-export const EventInsertSchema = z.object({
-  eventDate: z.date(),
-  createdAt: z.date(),
-});
-```
-
-### **Stringify Dates (`--stringify-dates`)**
-
-For APIs that need to serialize dates as ISO strings, use `--stringify-dates` to add automatic date-to-string transforms in write schemas:
-
-```typescript
-// With --stringify-dates
-export const EventInsertSchema = z
-  .object({
-    eventDate: z.date(),
-    metadata: z.object({
-      scheduledAt: z.date(),
-    }),
-  })
-  .transform((data) => ({
-    eventDate: data.eventDate.toISOString(),
-    metadata: {
-      scheduledAt: data.metadata.scheduledAt.toISOString(),
-    },
-  }));
-```
-
-### **Best Practices**
-
-- **Use `--coerce-dates`** when reading data from sources that provide date strings
-- **Use `--stringify-dates`** when your API needs to serialize dates as ISO strings
-- **Combine both options** for data processing pipelines that handle both formats
-
-## When to Use zod-pg
-
-zod-pg works well for projects that:
-
-- **Use PostgreSQL** - Takes advantage of PostgreSQL's type system
-- **Follow database-first development** - Database schema drives application structure
-- **Need API validation** - Generate schemas for request/response validation
-- **Want to reduce manual schema maintenance** - Synchronize with database changes
-- **Use PostgreSQL features** - Arrays, enums, JSONB, custom types
-- **Need type safety** - From database to frontend
-
-### Use Cases
-
-- **API Development** - Validate requests against your database schema
-- **Database-First Architecture** - Generate application types from database design
-- **Data Processing** - Type-safe data transformation and validation
-- **Schema Evolution** - Keep validation logic synchronized with database changes
-- **Prototyping** - Generate type-safe schemas from database designs
+zod-pg automates this process by generating type-safe validation schemas directly from your PostgreSQL database schema. This approach ensures your validation logic stays synchronized with your database structure, eliminating the manual work of writing and updating schemas when your database changes. Whether you're building APIs that need request validation, working with complex PostgreSQL features like arrays and enums, or maintaining type safety across your entire stack, zod-pg bridges the gap between your database and TypeScript application.
 
 ## Installation
 
@@ -366,7 +72,7 @@ pnpm add -D zod-pg
 ### With connection string
 
 ```sh
-npx zod-pg --connection "postgres://user:password@localhost:5432/dbname" --ssl --output ./src/output
+npx zod-pg --connection "postgres://user:password@localhost:5432/dbname" --ssl --output-dir ./src/output
 ```
 
 ### With options
@@ -374,44 +80,24 @@ npx zod-pg --connection "postgres://user:password@localhost:5432/dbname" --ssl -
 You can also specify options directly:
 
 ```sh
-npx zod-pg --user postgres --password secret --host localhost --port 5432 --database mydb --ssl --output ./src/output
-```
-
-### With advanced options
-
-**Enable date coercion and JSON stringification:**
-
-```sh
-npx zod-pg --connection "postgres://user:password@localhost:5432/dbname" --output ./src/schemas --coerce-dates --stringify-json
-```
-
-**Clean output directory and stringify dates:**
-
-```sh
-npx zod-pg --connection "postgres://user:password@localhost:5432/dbname" --output ./src/schemas --clean --stringify-dates
-```
-
-**Include only specific tables with date options:**
-
-```sh
-npx zod-pg --connection "postgres://user:password@localhost:5432/dbname" --output ./src/schemas --include "^(users|posts)$" --coerce-dates --default-empty-array
+npx zod-pg --user postgres --password secret --host localhost --port 5432 --database mydb --ssl --output-dir ./src/output
 ```
 
 ### With environment variables
 
 zod-pg can read connection details from environment variables. Set the following variables:
 
-- `POSTGRES_USER`
-- `POSTGRES_PASSWORD`
-- `POSTGRES_HOST`
-- `POSTGRES_PORT`
-- `POSTGRES_DB`
-- `POSTGRES_SSL` (optional, defaults to `false`)
+- `ZOD_PG_USER`
+- `ZOD_PG_PASSWORD`
+- `ZOD_PG_HOST`
+- `ZOD_PG_PORT`
+- `ZOD_PG_DATABASE`
+- `ZOD_PG_SSL` (optional, defaults to `false`)
 
 Then run:
 
 ```sh
-npx zod-pg --output ./src/output
+npx zod-pg --output-dir ./src/output
 ```
 
 #### Using .env files:
@@ -419,7 +105,7 @@ npx zod-pg --output ./src/output
 zod-pg does not automatically load `.env` files, but you can use a package like `dotenv-cli` to load them before running zod-pg. For example:
 
 ```sh
-dotenv -e .env npx zod-pg --output ./src/output
+dotenv -e .env npx zod-pg --output-dir ./src/output
 ```
 
 ### Exclude / Include Tables
@@ -427,60 +113,60 @@ dotenv -e .env npx zod-pg --output ./src/output
 You can exclude specific tables from schema generation using the `--exclude` option with a regex pattern. For example, to exclude all tables starting with "temp":
 
 ```sh
-npx zod-pg --exclude '^temp_' --output ./src/output
+npx zod-pg --exclude '^temp_' --output-dir ./src/output
 ```
 
 To include only specific tables, use the `--include` option with a regex pattern. For example, to include only tables starting with "user" or "account:
 
 ```sh
-npx zod-pg --include '^(user|account)' --output ./src/output
+npx zod-pg --include '^(user|account)' --output-dir ./src/output
 ```
 
 Note that if you use both `--exclude` and `--include` options together, the `--include` option is applied first, then the `--exclude` option is applied to the included tables.
 
 ### All Options
 
-| Option                          | Description                                                                                     | Required | Default     |
-| ------------------------------- | ----------------------------------------------------------------------------------------------- | -------- | ----------- |
-| `--connection`                  | Connection string for PostgreSQL.                                                               | false    |             |
-| `-o, --output`                  | Output directory for generated files.                                                           | true     |             |
-| `--clean`                       | Delete the output directory before generation.                                                  | false    | `false`     |
-| `--coerce-dates`                | Use `z.coerce.date()` for date fields in read schemas (allows string-to-date coercion).         | false    | `false`     |
-| `--stringify-json`              | Stringify JSON values in write schemas using `JSON.stringify()` transforms.                     | false    | `true`      |
-| `--stringify-dates`             | Convert dates to ISO strings in write schemas using `.toISOString()` transforms.                | false    | `false`     |
-| `--default-empty-array`         | Provide empty arrays as defaults for nullable array fields in write schemas.                    | false    | `true`      |
-| `--user`                        | PostgreSQL user name.                                                                           | false    | `postgres`  |
-| `--password`                    | PostgreSQL user password.                                                                       | false    |             |
-| `--host`                        | PostgreSQL host.                                                                                | false    | `localhost` |
-| `--port`                        | PostgreSQL port.                                                                                | false    | `5432`      |
-| `--database`                    | PostgreSQL database name.                                                                       | false    | `postgres`  |
-| `--schema`                      | Specify schema name (default: public)                                                           | false    | `public`    |
-| `--ssl`                         | Use SSL for the connection.                                                                     | false    | `false`     |
-| `--exclude`                     | Regex pattern to exclude tables from generation.                                                | false    |             |
-| `--include`                     | Regex pattern to include only specific tables.                                                  | false    |             |
-| `--json-schema-import-location` | Location to import Zod schemas for JSON fields.                                                 | false    |             |
-| `--silent`                      | Suppress output messages during generation.                                                     | false    | `false`     |
-| `--module`                      | Module resolution type (esm, commonjs). ESM uses file extensions in imports, CommonJS does not. | false    | `commonjs`  |
-| `--zod-version`                 | Target Zod version (3, 4).                                                                      | false    | `3`         |
-| `--help`                        | Show help message.                                                                              | false    |             |
+All CLI options are optional. Sensible defaults are applied (e.g. output defaults to `./zod-schemas`, schema defaults to `public`). Values can be provided via:
+
+- CLI flags (highest precedence)
+- Environment variables (connection fields)
+- Config file (`zod-pg.config.{js,ts,json}`)
+- Built-in defaults
+
+Negative flags (`--no-*`) disable a feature that is enabled by default.
+
+| Option                                 | Description                                                                                       | Default         |
+| -------------------------------------- | ------------------------------------------------------------------------------------------------- | --------------- |
+| `--connection-string <string>`         | PostgreSQL connection string (overrides individual host/port/user/etc).                           |                 |
+| `-o, --output-dir <path>`              | Output directory for generated files.                                                             | `./zod-schemas` |
+| `--clean-output`                       | Delete the output directory before generation.                                                    | `false`         |
+| `--no-coerce-dates`                    | Disable using `z.coerce.date()` for date columns in read schemas (coercion enabled by default).   | `false`         |
+| `--no-stringify-json`                  | Disable `JSON.stringify()` transforms for `json` fields in write schemas.                         | `false`         |
+| `--stringify-dates`                    | Add `.toISOString()` transforms for date fields in write schemas.                                 | `false`         |
+| `--default-empty-array`                | Default nullable array fields to `[]` in write schemas.                                           | `false`         |
+| `--object-name-casing <value>`         | Casing for object/type names (one of: `PascalCase`, `camelCase`, `snake_case`).                   | `PascalCase`    |
+| `--field-name-casing <value>`          | Casing for field/property names (one of: `PascalCase`, `camelCase`, `snake_case`, `passthrough`). | `camelCase`     |
+| `--no-case-transform`                  | Disable transforming property name casing (skips base schema + transform helpers).                | `false`         |
+| `--no-singularization`                 | Preserve plural table / enum names (singularization on by default).                               | `false`         |
+| `--include <regex>`                    | Include only tables matching this regex (applied before exclude).                                 |                 |
+| `--exclude <regex>`                    | Exclude tables matching this regex.                                                               |                 |
+| `--json-schema-import-location <path>` | Path to import custom JSON field schemas from.                                                    |                 |
+| `--module-resolution <type>`           | Module resolution: `commonjs` or `esm`.                                                           | `commonjs`      |
+| `--zod-version <version>`              | Target Zod variant: `3`, `4`, or `4-mini`.                                                        | `3`             |
+| `--schema-name <name>`                 | Database schema to introspect.                                                                    | `public`        |
+| `--host <host>`                        | PostgreSQL host (ignored if connection string provided).                                          | `localhost`     |
+| `--port <number>`                      | PostgreSQL port (ignored if connection string provided).                                          | `5432`          |
+| `--user <user>`                        | PostgreSQL user (ignored if connection string provided).                                          | `postgres`      |
+| `--password <password>`                | PostgreSQL password (ignored if connection string provided).                                      |                 |
+| `--database <name>`                    | PostgreSQL database name (ignored if connection string provided).                                 | `postgres`      |
+| `--ssl`                                | Use SSL for connection.                                                                           | `false`         |
+| `--silent`                             | Suppress console output (still writes files).                                                     | `false`         |
+| `--debug`                              | Enable verbose debug logging.                                                                     | `false`         |
+| `--help`                               | Show help and exit.                                                                               |                 |
 
 ## Configuration File
 
-In addition to CLI options, you can use configuration files to set your options. zod-pg uses [cosmiconfig](https://github.com/davidtheclark/cosmiconfig) which means it will look for configuration in the following places (in order):
-
-- `package.json` property: `"zod-pg"`
-- `.zod-pgrc` file (JSON or YAML)
-- `.zod-pgrc.json` file
-- `.zod-pgrc.yaml` file
-- `.zod-pgrc.yml` file
-- `.zod-pgrc.js` file
-- `.zod-pgrc.cjs` file
-- `.zod-pgrc.mjs` file
-- `.zod-pgrc.ts` file
-- `zod-pg.config.js` file
-- `zod-pg.config.cjs` file
-- `zod-pg.config.mjs` file
-- `zod-pg.config.ts` file
+In addition to CLI options, you can use configuration files to set your options. zod-pg uses [cosmiconfig](https://github.com/davidtheclark/cosmiconfig).
 
 ### Example Configuration File
 
@@ -490,78 +176,62 @@ In addition to CLI options, you can use configuration files to set your options.
 import type { ZodPgConfig } from 'zod-pg';
 
 const config: ZodPgConfig = {
-  connection: {
-    connectionString: 'postgresql://user:password@localhost:5432/mydb',
-    ssl: false,
-  },
+  user: 'postgres',
+  database: 'mydb',
+  password: 'secret',
+  host: 'localhost',
+  port: 5432,
+  schemaName: 'public',
+
   outputDir: './src/generated',
-  moduleResolution: 'esm',
   cleanOutput: true,
   include: ['users', 'posts'],
   exclude: ['^temp_'],
-  zodVersion: 4,
-  coerceDates: true,
-  stringifyJson: true,
-  stringifyDates: false,
+  moduleResolution: 'esm',
+  zodVersion: '4',
   defaultEmptyArray: true,
-  fieldNameCasing: 'camelCase',
-  objectNameCasing: 'PascalCase',
 };
 
 export default config;
-```
-
-**package.json:**
-
-```json
-{
-  "zod-pg": {
-    "connection": {
-      "connectionString": "postgresql://user:password@localhost:5432/mydb"
-    },
-    "outputDir": "./src/generated",
-    "moduleResolution": "esm"
-  }
-}
 ```
 
 **zod-pg.config.js:**
 
 ```javascript
 module.exports = {
-  connection: {
-    connectionString: 'postgresql://user:password@localhost:5432/mydb',
-  },
+  user: 'postgres',
+  database: 'mydb',
+  password: 'secret',
+  host: 'localhost',
+  port: 5432,
+  schemaName: 'public',
+  ssl: false,
   outputDir: './src/generated',
-  moduleResolution: 'esm',
 };
 ```
 
 ## Output File Structure
 
-The generator creates the following files:
+The generator creates a predictable structure:
 
-- `output/constants.ts` – Constants for all table and view names
-- `output/types.ts` – TypeScript types for all tables and views
-- `output/tables/` – Zod schemas for each table (one file per table)
-- `output/tables/index.ts` – Exports all table schemas
-- `output/views/` – Zod schemas for each view (one file per view)
-- `output/views/index.ts` – Exports all view schemas
-- `output/materialized-views/` – Zod schemas for each mview (one file per view)
-- `output/materialized-views/index.ts` – Exports all mview schemas
-- `output/index.ts` – Exports all schemas and types
+- `output/constants.ts` – Constants for all table and view names.
+- `output/types.ts` – TypeScript types for all tables and views.
+- `output/tables/<table>/schema.ts` – Zod schemas for the table (read / insert / update; plus base + transform when casing enabled).
+- `output/tables/<table>/index.ts` – Re-exports for the table.
+- `output/tables/index.ts` – Aggregated exports of all table schemas & types.
+- (Folders `views/` and `materialized_views/` are generated similarly when those relation types exist.)
 
 ## Schema Output
 
-The generated Zod schemas will look like this: (example for a "user" table)
+The generated Zod schemas will look something like this: (example for a "users" table)
 
 ```ts
-// output/tables/user.ts
+// output/tables/users/schema.ts
 import { z } from "zod";
 
-export const UserSchema = z.object({..});
-export const UserInsertSchema = z.object({..});
-export const UserUpdateSchema = UserInsertSchema.partial();
+export const UsersTableSchema = z.object({..});
+export const UsersTableInsertSchema = z.object({..});
+export const UsersTableUpdateSchema = UsersTableInsertSchema.partial();
 
 export interface UserRecord {
   // TypeScript interface with proper types
@@ -574,20 +244,55 @@ export interface UserInsertRecord {
 export type UserUpdateRecord = Partial<UserInsertRecord>;
 ```
 
-Since reading and writing are two different operations, zod-pg generates separate schemas for reads, inserts and updates. The `UserTableInsertSchema` is used for creating new records, while the `UserTableUpdateSchema` is a partial version of the insert schema, allowing you to update only specific fields.
+Since reading and writing are two different operations, zod-pg generates separate schemas for reads, inserts and updates. The `UsersTableInsertSchema` is used for creating new records, while the `UsersTableUpdateSchema` is a partial version of the insert schema, allowing you to update only specific fields.
 
 ### The Read Schemas
 
 - Used for reading data from the database.
 - Does not enforce write constraints (e.g., max length).
-- Transforms nulls to `undefined`, making it easier to work with optional fields in TypeScript.
+- By default transforms nulls to `undefined`, making it easier to work with optional fields in TypeScript.
+- Optionally defaults nullable array fields to empty arrays.
 
 ### The Write Schemas
 
 - Enforces field constraints such as max length, ensuring that your data adheres to the database schema.
-- Transforms `jsonb` fields to strings.
+- By default transforms `json` fields to strings.
+- Optionally transforms date fields to ISO strings using `.toISOString()`.
 - Excludes only SERIAL/auto-incrementing columns and columns from non-table relations (views, etc.).
-- Includes columns with DEFAULT values (like `DEFAULT NOW()`) since applications can still provide explicit values.
+
+### Casing
+
+zod-pg supports different casing styles for generated schemas and types. By default zod-pg uses `PascalCase` for object names and `camelCase` for properties. You can specify the desired casing for field names and object names using the `--field-name-casing` and `--object-name-casing` options.
+The `--no-case-transform` option disables the automatic casing transformation for field names, which means that the generated schemas will use the original database column names as-is without any transformation.
+
+### Singularization
+
+By default zod-pg converts plural table / view names into singular, PascalCase identifiers when generating TypeScript record types, insert/update record types, enum names, and related constants / transform helpers. This keeps generated symbols concise and aligned with typical TypeScript naming conventions.
+
+Example:
+
+| Database object          | Generated names                                                           |
+| ------------------------ | ------------------------------------------------------------------------- |
+| `users` (table)          | `UserRecord`, `UserInsertRecord`, `UserUpdateRecord`                      |
+| `users_accounts` (table) | `UserAccountRecord`, `UserAccountInsertRecord`, `UserAccountUpdateRecord` |
+| `users.roles` (enum)     | `UserRole`                                                                |
+
+If you would prefer the generated identifiers to preserve the original (often plural / snake_case) names, disable singularization with the CLI flag:
+
+```
+npx zod-pg --no-singularization
+```
+
+Or in a config file:
+
+```ts
+export default {
+  // ...other config
+  singularization: false,
+};
+```
+
+When disabled, names are still cased according to your casing settings, but the plural form is retained (e.g. `UsersRecord`).
 
 ## Customizing Generated Models with Hooks
 
@@ -600,15 +305,21 @@ zod-pg provides hooks to customize the generated models during generation. These
 This hook is called for each column after its initial model is created, allowing you to modify individual column properties.
 
 ```typescript
-onColumnModelCreated: async (column: ZodPgColumn) => {
+onColumnModelCreated: (column) => {
   // Add email validation to email columns
   if (column.name === 'email') {
-    column.renderedWriteType = 'z.string().email()';
+    // Note that this only applies to the write schema.
+    // The read schema will still output the field as a z.string.
+    column.type = 'email';
+
+    // Additional validation / transformation
+    column.writeTransforms = ['trim', 'lowercase'];
   }
 
   // Add minimum length to password fields
   if (column.name === 'password') {
-    column.renderedWriteType = 'z.string().min(8)';
+    // Note that this only applies to the write schema.
+    column.minLen = 8;
   }
 
   // Add custom transformations based on table name
@@ -622,96 +333,18 @@ onColumnModelCreated: async (column: ZodPgColumn) => {
 
 #### `onTableModelCreated`
 
-This hook is called for each table after all its columns have been processed, allowing you to modify the entire table model.
+This hook is called for each table after all its columns have been processed, allowing you to modify the table model.
 
 ```typescript
-onTableModelCreated: async (table: ZodPgTable) => {
-  // Add custom description
-  table.description = `Generated schema for ${table.tableName} table`;
-
+onTableModelCreated: (table) => {
   // Add custom transformations based on table name
-  if (table.tableName === 'users') {
+  if (table.name === 'users') {
     // Add any table-specific customizations
   }
 
   return table;
 };
 ```
-
-### Hook Usage Examples
-
-#### Example 1: Adding Global String validation for write schemas
-
-```typescript
-// zod-pg.config.ts
-export default {
-  // ... other config
-  onColumnModelCreated: async (column) => {
-    // Trim all string fields
-    if (column.renderedWriteType === 'z.string()') {
-      column.renderedWriteType = 'z.string().trim()';
-    }
-
-    // Add email validation
-    if (column.name.toLowerCase().includes('email')) {
-      column.renderedWriteType = 'z.string().email().trim()';
-    }
-
-    return column;
-  },
-};
-```
-
-#### Example 2: Renaming column properties
-
-```typescript
-// zod-pg.config.ts
-export default {
-  // ... other config
-  onColumnModelCreated: async (column) => {
-    if (column.tableName === 'users' && column.name === 'user') {
-      return { ...column, propertyName: 'userName' };
-    }
-  },
-};
-```
-
-### Column Model Properties
-
-The `ZodPgColumn` object passed to `onColumnModelCreated` contains:
-
-- `name: string` - Column name
-- `tableName: string` - Name of the table this column belongs to
-- `dataType: string` - PostgreSQL data type
-- `renderedReadType: string` - Generated Zod type for reading (can be modified)
-- `renderedWriteType: string` - Generated Zod type for writing (can be modified)
-- `isNullable: boolean` - Whether the column can be null
-- `defaultValue?: string` - Default value expression if any
-- `maxLen?: number` - Maximum length constraint
-- `minLen?: number` - Minimum length constraint
-- `enumValues?: string[]` - Enum values if applicable
-- `isArray: boolean` - Whether the column is an array type
-- `isEnum: boolean` - Whether the column is an enum type
-- `isSerial: boolean` - Whether the column is auto-incrementing
-- `isWritable: boolean` - Whether column should be included in write schemas
-- `propertyName: string` - Transformed property name for generated schemas
-
-### Table Model Properties
-
-The `ZodPgTable` object passed to `onTableModelCreated` contains:
-
-- `tableName: string` - Table name
-- `tableSingularName: string` - Singular form of table name
-- `schemaName: string` - Database schema name
-- `type: ZodPgTableType` - Table type ('table', 'view', 'materialized_view', etc.)
-- `readableColumns: ZodPgColumn[]` - Array of columns for read schemas
-- `writableColumns: ZodPgColumn[]` - Array of columns for write schemas
-- `isWritable: boolean` - Whether table supports write operations
-- `enums: ZodPgEnum[]` - Array of enum types found in this table
-- `description?: string` - Optional description (can be set)
-- `tableReadSchemaName?: string` - Generated read schema name
-- `tableInsertSchemaName?: string` - Generated insert schema name
-- `tableUpdateSchemaName?: string` - Generated update schema name
 
 ## JSON Schema Support
 
@@ -727,26 +360,26 @@ Say you have a "user" table with a JSON field called "profile", and you want to 
 Start by running, e.g.,
 
 ```sh
-npx zod-pg --json-schema-import-location '../../json' --output ./schema/generated
+npx zod-pg --json-schema-import-location '../../json' --output-dir ./schema/generated
 ```
 
 **Step 2: Generated schema imports your JSON schemas**
 
-This will create a `./schema/generated/tables/user.ts` file looking similar to this:
+This will create a `./schema/generated/tables/users/schema.ts` file looking similar to this:
 
 ```ts
 import { z } from 'zod';
 
 import { UserProfileSchema } from '../../json';
 
-export const UserSchema = z.object({
+export const UsersTableSchema = z.object({
   id: z.number().int(),
   name: z.string(),
   profile: UserProfileSchema,
 });
 ```
 
-The JSON Zod schema name is derived from `[tableName][FieldName]Schema`, so in this case, it will look for `UserProfileSchema` in the specified import location.
+The JSON Zod schema name is derived from `[Singular(TableName)][FieldName]Schema`, so in this case, it will look for `UserProfileSchema` in the specified import location.
 
 **Step 3: Create your JSON schemas**
 
@@ -762,6 +395,42 @@ export const UserProfileSchema = z.object({
   firstName: z.string(),
   lastName: z.string(),
   age: z.number().optional(),
+});
+```
+
+## Extending schemas
+
+It is possible to extend the generated Zod schemas with additional fields / rules / transformations.
+This is especially handy if you are doing a joined query.
+
+To extend a read schema you need to import the base read schema and apply the casing transformations afterwards (if needed).
+e.g.
+
+```ts
+import {
+  transformUserBaseRecord,
+  UsersTableBaseSchema,
+} from '[output]/tables/users';
+
+const ExtendedSchema = UsersTableBaseSchema.extend({
+  permissions: z.array(z.string()).nullish().optional(),
+  signed_in_at: z.coerce.date().nullish().optional(),
+}).transform((data) => ({
+  ...transformUserBaseRecord(data),
+  permissions: data.permissions,
+  signedInAt: data.signed_in_at,
+}));
+```
+
+If you have disabled case transforms (`--no-case-transform`) then there are no "base" schemas or transform functions.
+And you can just extend the read schema like:
+
+```ts
+import { UsersTableSchema } from '[output]/tables';
+
+const ExtendedSchema = UsersTableSchema.extend({
+  permissions: z.array(z.string()).nullish().optional(),
+  signed_in_at: z.coerce.date().nullish().optional(),
 });
 ```
 

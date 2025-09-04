@@ -2,8 +2,8 @@ import { execSync } from 'child_process';
 import path from 'path';
 
 import {
-  deleteOutputFiles,
   getClientConnectionString,
+  getOutputDir,
   getOutputFiles,
   setupTestDb,
   teardownTestDb,
@@ -11,8 +11,8 @@ import {
 } from '../../testDbUtils.js';
 
 let ctx: TestDbContext;
+
 const cliPath = path.resolve(import.meta.dirname, '../../../../index.js');
-const outputDir = `${import.meta.dirname}/test-output/include-exclude`;
 
 beforeAll(async () => {
   ctx = await setupTestDb();
@@ -20,39 +20,42 @@ beforeAll(async () => {
 
 afterAll(async () => {
   await teardownTestDb(ctx);
-  await deleteOutputFiles(outputDir);
 });
 
-describe('CLI Include/Exclude Options', () => {
-  it('CLI works with --exclude option', async () => {
-    const connectionString = getClientConnectionString();
-    const testOutputDir = `${outputDir}/exclude`;
+it('CLI works with --exclude option', async () => {
+  const connectionString = getClientConnectionString();
+  const outputDir = getOutputDir('cli', 'includeExclude', 'exclude');
 
-    execSync(
-      `node ${cliPath} --connection-string "${connectionString}" --output "${testOutputDir}" --exclude "posts" --silent --module esm`,
-      { stdio: 'inherit' }
-    );
+  execSync(
+    `node ${cliPath} --connection-string "${connectionString}" --output-dir "${outputDir}" --exclude posts --silent --module-resolution esm`,
+    { stdio: 'inherit' }
+  );
 
-    const outputFiles = await getOutputFiles(testOutputDir);
-    const hasPostsFile = outputFiles.some((file) => file.includes('posts.ts'));
+  const outputFiles = await getOutputFiles(outputDir);
+  const hasPostsFile = outputFiles.some((file) =>
+    file.includes('posts/schema.ts')
+  );
 
-    expect(hasPostsFile).toBe(false);
-  });
+  expect(hasPostsFile).toBe(false);
+});
 
-  it('CLI works with --include option', async () => {
-    const connectionString = getClientConnectionString();
-    const testOutputDir = `${outputDir}/include`;
+it('CLI works with --include option', async () => {
+  const connectionString = getClientConnectionString();
+  const outputDir = getOutputDir('cli', 'includeExclude', 'include');
 
-    execSync(
-      `node ${cliPath} --connection-string "${connectionString}" --output "${testOutputDir}" --include "users" --silent --module esm`,
-      { stdio: 'inherit' }
-    );
+  execSync(
+    `node ${cliPath} --connection-string "${connectionString}" --output-dir "${outputDir}" --include ^users$ --silent --module-resolution esm`,
+    { stdio: 'inherit' }
+  );
 
-    const outputFiles = await getOutputFiles(testOutputDir);
-    const hasUsersFile = outputFiles.some((file) => file.includes('users.ts'));
-    const hasPostsFile = outputFiles.some((file) => file.includes('posts.ts'));
+  const outputFiles = await getOutputFiles(outputDir);
+  const hasUsersFile = outputFiles.some((file) =>
+    file.includes('users/schema.ts')
+  );
+  const hasPostsFile = outputFiles.some((file) =>
+    file.includes('posts/schema.ts')
+  );
 
-    expect(hasUsersFile).toBe(true);
-    expect(hasPostsFile).toBe(false);
-  });
+  expect(hasUsersFile).toBe(true);
+  expect(hasPostsFile).toBe(false);
 });

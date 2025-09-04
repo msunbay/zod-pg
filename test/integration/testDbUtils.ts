@@ -25,13 +25,17 @@ export const getClientConnectionString = (): string => {
   return `postgres://${client.user}:${client.password}@${client.host}:${client.port}/${client.database}`;
 };
 
+export const getCliPath = (): string => {
+  return path.resolve(import.meta.dirname, '../../index.js');
+};
+
 export async function setupTestDb(): Promise<TestDbContext> {
   const schemaPath = path.resolve(import.meta.dirname, './schema.sql');
 
   const container = await new PostgreSqlContainer('postgres')
-    .withDatabase('test')
-    .withUsername('test')
-    .withPassword('test')
+    .withDatabase('postgres')
+    .withUsername('postgres')
+    .withPassword('postgres')
     .withExposedPorts(5432)
     .start();
 
@@ -59,12 +63,19 @@ export async function teardownTestDb(ctx: TestDbContext) {
   await ctx.container.stop();
 }
 
-export const outputDir = path.resolve(
-  import.meta.dirname,
-  './output/generated'
-);
+export const getOutputDir = (
+  project: 'cli' | 'generate',
+  testSuite: string,
+  subPath = ''
+): string =>
+  path.resolve(
+    import.meta.dirname,
+    `./tests/${project}/output/`,
+    testSuite,
+    subPath
+  );
 
-export async function getOutputFiles(dir = outputDir): Promise<string[]> {
+export async function getOutputFiles(dir: string): Promise<string[]> {
   let results: string[] = [];
   const list = await fs.readdir(dir, { withFileTypes: true });
 
