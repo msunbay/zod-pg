@@ -1,5 +1,10 @@
 # Changelog
 
+### v5.0.0 (2025-10-26)
+
+- Updated to use zod-dbs-cli v2.0.3 and zod-dbs-pg v2.0.1 for improved schema generation and compatibility.
+- Some breaking changes in configuration options to align with zod-dbs updates. Please refer to the updated documentation for details.
+
 ### v4.0.6 (2025-08-28)
 
 - Fixed an issue with reading the package.json file to get the version number.

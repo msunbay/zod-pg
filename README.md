@@ -137,32 +137,35 @@ Negative flags (`--no-*`) disable a feature that is enabled by default.
 
 | Option                                 | Description                                                                                       | Default         |
 | -------------------------------------- | ------------------------------------------------------------------------------------------------- | --------------- |
-| `--connection-string <string>`         | PostgreSQL connection string (overrides individual host/port/user/etc).                           |                 |
-| `-o, --output-dir <path>`              | Output directory for generated files.                                                             | `./zod-schemas` |
 | `--clean-output`                       | Delete the output directory before generation.                                                    | `false`         |
-| `--no-coerce-dates`                    | Disable using `z.coerce.date()` for date columns in read schemas (coercion enabled by default).   | `false`         |
-| `--no-stringify-json`                  | Disable `JSON.stringify()` transforms for `json` fields in write schemas.                         | `false`         |
-| `--stringify-dates`                    | Add `.toISOString()` transforms for date fields in write schemas.                                 | `false`         |
+| `--config-name <name>`                 | Name of configuration file (e.g. "development" loads "zod-pg-development.ts").                    |                 |
+| `--connection-string <string>`         | PostgreSQL connection string (overrides individual host/port/user/etc).                           |                 |
+| `--database <name>`                    | PostgreSQL database name (ignored if connection string provided).                                 | `postgres`      |
+| `--debug`                              | Enable verbose debug logging.                                                                     | `false`         |
 | `--default-empty-array`                | Default nullable array fields to `[]` in write schemas.                                           | `false`         |
-| `--object-name-casing <value>`         | Casing for object/type names (one of: `PascalCase`, `camelCase`, `snake_case`).                   | `PascalCase`    |
-| `--field-name-casing <value>`          | Casing for field/property names (one of: `PascalCase`, `camelCase`, `snake_case`, `passthrough`). | `camelCase`     |
-| `--no-case-transform`                  | Disable transforming property name casing (skips base schema + transform helpers).                | `false`         |
-| `--no-singularization`                 | Preserve plural table / enum names (singularization on by default).                               | `false`         |
-| `--include <regex>`                    | Include only tables matching this regex (applied before exclude).                                 |                 |
+| `--default-unknown`                    | Use "unknown" instead of "any" for unresolved types.                                              | `false`         |
 | `--exclude <regex>`                    | Exclude tables matching this regex.                                                               |                 |
+| `--field-name-casing <value>`          | Casing for field/property names (one of: `PascalCase`, `camelCase`, `snake_case`, `passthrough`). | `camelCase`     |
+| `--help`                               | Show help and exit.                                                                               |                 |
+| `--host <host>`                        | PostgreSQL host (ignored if connection string provided).                                          | `localhost`     |
+| `--include <regex>`                    | Include only tables matching this regex (applied before exclude).                                 |                 |
 | `--json-schema-import-location <path>` | Path to import custom JSON field schemas from.                                                    |                 |
 | `--module-resolution <type>`           | Module resolution: `commonjs` or `esm`.                                                           | `commonjs`      |
-| `--zod-version <version>`              | Target Zod variant: `3`, `4`, or `4-mini`.                                                        | `3`             |
-| `--schema-name <name>`                 | Database schema to introspect.                                                                    | `public`        |
-| `--host <host>`                        | PostgreSQL host (ignored if connection string provided).                                          | `localhost`     |
-| `--port <number>`                      | PostgreSQL port (ignored if connection string provided).                                          | `5432`          |
-| `--user <user>`                        | PostgreSQL user (ignored if connection string provided).                                          | `postgres`      |
+| `--no-case-transform`                  | Disable transforming property name casing (skips base schema + transform helpers).                | `false`         |
+| `--no-coerce-dates`                    | Disable using `z.coerce.date()` for date columns in read schemas (coercion enabled by default).   | `false`         |
+| `--no-nulls-to-undefined`              | Disable transforming null values to undefined in read schemas.                                    | `false`         |
+| `--no-singularization`                 | Preserve plural table / enum names (singularization on by default).                               | `false`         |
+| `--no-stringify-json`                  | Disable `JSON.stringify()` transforms for `json` fields in write schemas.                         | `false`         |
+| `--object-name-casing <value>`         | Casing for object/type names (one of: `PascalCase`, `camelCase`, `snake_case`).                   | `PascalCase`    |
+| `-o, --output-dir <path>`              | Output directory for generated files.                                                             | `./zod-schemas` |
 | `--password <password>`                | PostgreSQL password (ignored if connection string provided).                                      |                 |
-| `--database <name>`                    | PostgreSQL database name (ignored if connection string provided).                                 | `postgres`      |
-| `--ssl`                                | Use SSL for connection.                                                                           | `false`         |
+| `--port <number>`                      | PostgreSQL port (ignored if connection string provided).                                          | `5432`          |
+| `--schema-name <name>`                 | Database schema to introspect.                                                                    | `public`        |
 | `--silent`                             | Suppress console output (still writes files).                                                     | `false`         |
-| `--debug`                              | Enable verbose debug logging.                                                                     | `false`         |
-| `--help`                               | Show help and exit.                                                                               |                 |
+| `--ssl`                                | Use SSL for connection.                                                                           | `false`         |
+| `--stringify-dates`                    | Add `.toISOString()` transforms for date fields in write schemas.                                 | `false`         |
+| `--user <user>`                        | PostgreSQL user (ignored if connection string provided).                                          | `postgres`      |
+| `--zod-version <version>`              | Target Zod variant: `3`, `4`, or `4-mini`.                                                        | `3`             |
 
 ## Configuration File
 

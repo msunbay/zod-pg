@@ -11,7 +11,7 @@ it('outputs default options', async () => {
 
   expect(output.toString()).toMatchInlineSnapshot(`
     "
-    zod-pg CLI v4.0.6
+    zod-pg CLI
 
     Usage: zod-pg [options]
 
