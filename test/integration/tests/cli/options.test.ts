@@ -10,51 +10,71 @@ it('outputs default options', async () => {
   });
 
   expect(output.toString()).toMatchInlineSnapshot(`
-    "Usage: zod-pg [options]
+    "
+    zod-pg CLI v4.0.6
+
+    Usage: zod-pg [options]
 
     Generates Zod schemas from database schema.
 
     Options:
       -V, --version                         output the version number
+      --config-name <name>                  Name of configuration file. E.g.
+                                            "development" will load
+                                            "zod-pg-development.ts
+      -h, --help                            display help for command
+
+    PostgreSQL options:
+      --connection-string <value>           Full database connection string
+                                            (overrides other connection options)
+      --host <value>                        Database host
+      --port <value>                        Database server port
+      --user <value>                        Database user
+      --password <value>                    Database password
+      --database <value>                    Database name
+      --schema-name <value>                 Database schema to introspect
+      --ssl                                 Use SSL connection
+
+    Output options:
       -o,--output-dir <path>                Output directory for generated schemas
-      --silent                              Suppress all console output
       --module-resolution <type>            Module resolution type for generated
-                                            files (commonjs or esm)
+                                            files. (defaults to commonjs) (choices:
+                                            "commonjs", "esm")
       --clean-output                        Clean output directory before generating
                                             schemas
-      --no-coerce-dates                     Disable using z.coerce.date() for date
-                                            fields in read schemas
-      --no-stringify-json                   Disable JSON.stringify() on json fields
-                                            in write schemas
-      --stringify-dates                     Convert dates to ISO strings in write
-                                            schemas
-      --default-empty-array                 Provide empty arrays as defaults for
-                                            nullable array fields
-      --object-name-casing <type>           Casing for generated object/type names
-                                            (choices: "PascalCase", "camelCase",
-                                            "snake_case", default: "PascalCase")
-      --field-name-casing <type>            Casing for field/property names in
-                                            schemas & records (choices: "camelCase",
-                                            "snake_case", "PascalCase",
-                                            "passthrough", default: "camelCase")
+      --exclude <regex>                     Exclude tables matching this regex
+      --include <regex>                     Include only tables matching this regex
+      --silent                              Suppress all console output
+      --debug                               Enable debug logging
+      --json-schema-import-location <path>  Path to import JSON schemas
+      --zod-version <value>                 Zod version to use. (defaults to 3)
+                                            (choices: "3", "4", "4-mini")
       --no-case-transform                   Disable case transformations /
                                             conversions for generated schemas
       --no-singularization                  Disable singularization of type and enum
                                             names
-      --exclude <regex>                     Exclude tables matching this regex
-      --include <regex>                     Include only tables matching this regex
-      --schema-name <name>                  Specify schema name (default: public)
-      --json-schema-import-location <path>  Path to import JSON schemas
-      --zod-version <number>                Zod version to use
-      --connection-string <string>          Connection string
-      --password <string>                   Database password
-      --user <string>                       Database user
-      --database <string>                   Database name
-      --host <string>                       Database host
-      --ssl                                 Use SSL for database connection
-      --port <number>                       Database port
-      --debug                               Enable debug logging (default: false)
-      -h, --help                            display help for command
+      --no-coerce-dates                     Disable using z.coerce.date() for date
+                                            fields in read schemas
+      --no-stringify-json                   Disable using JSON.stringify() on json
+                                            fields in write schemas
+      --no-nulls-to-undefined               Disable transforming null values to
+                                            undefined in generated read schemas
+      --stringify-dates                     Whether to convert dates to ISO strings
+                                            in write schemas. (defaults to false)
+      --default-empty-array                 Whether to use empty arrays as defaults
+                                            for nullable array fields. (defaults to
+                                            false)
+      --default-unknown                     Whether to use "unknown" instead of
+                                            "any" for unresolved types. (defaults to
+                                            false)
+      --object-name-casing <type>           Casing for generated object/type names.
+                                            (defaults to PascalCase) (choices:
+                                            "PascalCase", "camelCase", "snake_case")
+      --field-name-casing <type>            Casing for field/property names in
+                                            schemas & records. (defaults to
+                                            camelCase) (choices: "camelCase",
+                                            "snake_case", "PascalCase",
+                                            "passthrough")
     "
   `);
 });

@@ -1,6 +1,8 @@
 import { main } from './src/cli.js';
 import { setupTestDb, teardownTestDb } from './test/integration/testDbUtils.js';
 
+import 'zod-dbs-pg';
+
 const setup = async () => {
   const db = await setupTestDb();
 
@@ -29,9 +31,9 @@ const setup = async () => {
     zodVersion: '4-mini',
     moduleResolution: 'esm',
     defaultUnknown: true,
-    defaultNullsToUndefined: true,
+    nullsToUndefined: true,
     onColumnModelCreated: (model) => {
-      if (model.type === 'json') {
+      if (model.zodType === 'json') {
         return {
           ...model,
           minLen: 1,
