@@ -31,7 +31,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/msolvaag/zod-pg.git"
+    "url": "git+https://github.com/msunbay/zod-pg.git"
   },
   "publishConfig": {
     "access": "public"
