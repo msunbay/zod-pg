@@ -1,6 +1,6 @@
 {
   "name": "zod-pg",
-  "version": "5.0.0",
+  "version": "5.0.1",
   "description": "Opinionated Zod schema generator for PostgreSQL databases",
   "packageManager": "npm@10.8.2",
   "main": "./dist/index.js",
@@ -38,7 +38,21 @@
   },
   "keywords": [
     "zod",
-    "postgresql"
+    "zod-dbs",
+    "typescript",
+    "validation",
+    "pg",
+    "postgres",
+    "postgresql",
+    "database",
+    "sql",
+    "schema",
+    "generator",
+    "types",
+    "codegen",
+    "schema-generator",
+    "type-safe",
+    "validation-schema"
   ],
   "files": [
     "dist",
