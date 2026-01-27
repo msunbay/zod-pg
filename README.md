@@ -24,6 +24,7 @@ Under the hood zod-pg uses [zod-dbs](https://github.com/msolvaag/zod-dbs) that p
   - [All Options](#all-options)
 - [Configuration File](#configuration-file)
   - [Example Configuration File](#example-configuration-file)
+  - [SSL Support](#ssl-support)
 - [Output File Structure](#output-file-structure)
 - [Schema Output](#schema-output)
   - [The Read Schemas](#the-read-schemas)
@@ -211,6 +212,26 @@ module.exports = {
   ssl: false,
   outputDir: './src/generated',
 };
+```
+
+### SSL Support
+
+To connect to databases that require SSL, use the `--ssl` flag. For more advanced SSL configurations (e.g., providing certificates), you can provide parameters using the `ssl` option in a configuration file.
+
+```ts
+import type { ZodPgConfig } from 'zod-pg';
+
+const config: ZodPgConfig = {
+  ...
+  ssl: {
+    rejectUnauthorized: true,
+    ca: fs.readFileSync('/path/to/ca.crt').toString(),
+    key: fs.readFileSync('/path/to/client.key').toString(),
+    cert: fs.readFileSync('/path/to/client.crt').toString(),
+  },
+};
+
+export default config;
 ```
 
 ## Output File Structure

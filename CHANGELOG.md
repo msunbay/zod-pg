@@ -1,5 +1,11 @@
 # Changelog
 
+### v5.0.3 (2026-01-27)
+
+- Updated to use zod-dbs-cli v2.0.6 and zod-dbs-pg v2.0.3 for bug fixes.
+- Updated README to include a section about SSL.
+- Fixed a typing issue in the config typescript files.
+
 ### v5.0.0 (2025-10-26)
 
 - Updated to use zod-dbs-cli v2.0.3 and zod-dbs-pg v2.0.1 for improved schema generation and compatibility.
