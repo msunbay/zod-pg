@@ -157,6 +157,7 @@ Negative flags (`--no-*`) disable a feature that is enabled by default.
 | `--no-nulls-to-undefined`              | Disable transforming null values to undefined in read schemas.                                    | `false`         |
 | `--no-singularization`                 | Preserve plural table / enum names (singularization on by default).                               | `false`         |
 | `--no-stringify-json`                  | Disable `JSON.stringify()` transforms for `json` fields in write schemas.                         | `false`         |
+| `--no-barrel-files`                    | Disable generation of index.ts files                                                              | `false`         |
 | `--object-name-casing <value>`         | Casing for object/type names (one of: `PascalCase`, `camelCase`, `snake_case`).                   | `PascalCase`    |
 | `-o, --output-dir <path>`              | Output directory for generated files.                                                             | `./zod-schemas` |
 | `--password <password>`                | PostgreSQL password (ignored if connection string provided).                                      |                 |
