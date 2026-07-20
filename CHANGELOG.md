@@ -1,5 +1,9 @@
 # Changelog
 
+### v5.1.1 (2026-07-20)
+
+- Updated to use zod-dbs-cli v2.1.1 which has some security fixes
+
 ### v5.1.0 (2026-02-09)
 
 - Updated to use zod-dbs-cli v2.1.0 and zod-dbs-pg v2.0.5 for added barrel file option.
