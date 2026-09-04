@@ -1,5 +1,9 @@
 # Changelog
 
+### v5.2.0 (2026-09-04)
+
+- Updated to use zod-dbs-cli v2.2.0 which supports typescript 7
+
 ### v5.1.1 (2026-07-20)
 
 - Updated to use zod-dbs-cli v2.1.1 which has some security fixes
