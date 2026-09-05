@@ -52,7 +52,7 @@ Under the hood zod-pg uses [zod-dbs](https://github.com/msolvaag/zod-dbs) that p
 ## Requirements
 
 - **PostgreSQL 9.3+**
-- **Node.js 20+**
+- **Node.js 22+**
 
 ## Why zod-pg?
 
