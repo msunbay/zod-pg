@@ -13,8 +13,14 @@
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "isolatedModules": true,
-    "types": ["vitest/globals", "node"],
+    "types": ["vitest/globals", "node"]
   },
 
-  "include": ["src/**/*.ts", "test/**/*.ts", "./vitest.config.ts", "./dev.ts", "zod-schemas/**/*.ts"],
+  "include": [
+    "src/**/*.ts",
+    "test/**/*.ts",
+    "./vitest.config.ts",
+    "./dev.ts",
+    "zod-schemas/**/*.ts"
+  ]
 }
